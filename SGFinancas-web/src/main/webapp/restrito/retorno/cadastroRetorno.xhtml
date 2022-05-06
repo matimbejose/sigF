@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:define name="content">
+            <h:form acceptcharset="ISO-8859-1" id="formIndicador" prependId="false" enctype="multipart/form-data">
+                <h:messages class="alertMessage" id="msgResultado"  errorClass="alert alert-danger" />
+                <div class="row">
+                    <div class="col-md-12 ">
+                        <!-- BEGIN SAMPLE FORM PORTLET-->
+                        <div class="portlet light bordered">
+                            <div class="portlet-title">
+                                <div class="caption">
+                                    <i class="fa fa-download"></i> 
+                                    Cadastro
+                                </div>
+                                <div class="actions">
+                                </div> 
+                            </div>
+                            <div class="portlet-body form">
+                                <div class="form-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group form-md-line-input"> 
+                                                <label class="control-label"><span class="required">* </span>Conta bancária</label>
+                                                <p:selectOneMenu value="#{retornoControle.retornoSelecionado.idContaBancaria}" 
+                                                                 style="width:50px !important"
+                                                                 required="true"
+                                                                 requiredMessage="Informe a conta bancária"  effect="fade" 
+                                                                 var="t" filter="true" filterMatchMode="contains"
+                                                                 converter="#{genericConverter}" >
+                                                    <p:column>
+                                                        <h:outputText value="#{t.descricao}" />
+                                                    </p:column>
+
+                                                    <f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+                                                    <f:selectItems value="#{contaBancariaControle.contaBancarias}"  var="contaBancaria" itemLabel="#{contaBancaria.descricao}" itemValue="#{contaBancaria}"/>
+
+                                                </p:selectOneMenu>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label"><span class="required">* </span>Arquivo</label>
+                                                <h:inputFile 
+                                                    value="#{retornoControle.part}" 
+                                                    required="true"
+                                                    requiredMessage="Informe o arquivo"
+                                                    />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="form-actions">
+                                    <h:commandButton action="#{retornoControle.uploadArquivo()}"  styleClass="btn blue" value="Salvar" />
+                                    <h:commandButton action="listaRetorno.xhtml" immediate="true" styleClass="btn default" value="Cancelar" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </h:form>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

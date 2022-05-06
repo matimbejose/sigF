@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite/components"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Centro de custo"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Financeiro</li>
+            <li>/</li>
+            <li>Apoio</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/centroCusto/listaCentroCusto.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteSave" action="#{centroCustoControle.doFinishAdd()}"/>
+            <h:commandButton id="remoteCancel" action="listaCentroCusto.xhtml" immediate="true"/>
+            <h:commandButton id="remoteHelp" rendered="false" action="#{centroCustoControle.mostrarAjuda()}" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <div class="card">
+                <div class="row">
+                    <div class="col">
+                        <div class="row">
+                            <div class="col form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Descrição"/>
+                                <p:inputText value="#{centroCustoControle.centroCustoSelecionado.descricao}"
+                                             required="true" requiredMessage="Informe a descrição"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="CNPJ"/>
+                                <p:inputMask value="#{centroCustoControle.centroCustoSelecionado.cnpj}" mask="99.999.999/9999-99"/>
+                            </div>
+                            <div class="col form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Situação"/>
+                                <p:selectOneMenu value="#{centroCustoControle.centroCustoSelecionado.ativo}">
+                                    <f:selectItem itemLabel="Ativo" itemValue="S"/>
+                                    <f:selectItem itemLabel="Inativo" itemValue="N"/>
+                                </p:selectOneMenu>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Token integracao"/>
+                                <p:inputText value="#{centroCustoControle.centroCustoSelecionado.token}">
+                                    <p:ajax process="@this" update="planoConta"/>
+                                </p:inputText>
+                            </div>
+                            <div class="col form-group form-md-line-input">
+                                <cc:addButton label="Conta Bancaria" entityName="contaBancaria">
+                                    <p:selectOneMenu value="#{centroCustoControle.centroCustoSelecionado.idContaBancaria}" effect="fade"
+                                                     var="t" filter="true" filterMatchMode="contains" converter="#{genericConverter}">
+                                        <p:column>
+                                            <h:outputText value="#{t.descricao}"/>
+                                        </p:column>
+
+                                        <f:selectItem itemLabel="" noSelectionOption="true"/>
+                                        <f:selectItems value="#{contaBancariaControle.contaBancarias}" var="contaBancaria"
+                                                       itemLabel="#{contaBancaria.descricao}" itemValue="#{contaBancaria}"/>
+                                    </p:selectOneMenu>
+                                </cc:addButton>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-auto px-0 border-right"></div>
+                    <div class="col">
+                        <p:outputPanel id="pnlEndereco">
+                            <div class="row">
+                                <div class="col-auto pr-0 form-group form-md-line-input" style="width: 160px;">
+                                    <p:outputLabel for="inpCep" value="CEP"/>
+                                    <div class="input-group">
+                                        <div class="input-group-append">
+                                            <p:inputMask value="#{centroCustoControle.centroCustoSelecionado.cep}"
+                                                         mask="99.999-999" id="inpCep"/>
+                                            <span class="input-group-btn">
+                                                <p:commandLink action="#{centroCustoControle.buscarEnderecoPorCep()}" process="@this, inpCep"
+                                                               styleClass="btn blue btn-outline sbold" update="pnlEndereco">
+                                                    <i class="fa fa-search"></i>
+                                                </p:commandLink>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col pr-0 form-group form-md-line-input">
+                                    <p:outputLabel for="@next" value="Logradouro"/>
+                                    <p:inputText value="#{centroCustoControle.centroCustoSelecionado.logradouro}"/>
+                                </div>
+                                <div class="col-2 pl-0 form-group form-md-line-input">
+                                    <p:outputLabel for="@next" value="Número"/>
+                                    <p:inputMask value="#{centroCustoControle.centroCustoSelecionado.numeroLogradouro}" mask="9?9999999"/>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-3 form-group form-md-line-input">
+                                    <p:outputLabel for="@next" value="Complemento"/>
+                                    <p:inputText value="#{centroCustoControle.centroCustoSelecionado.complementoEndereco}"/>
+                                </div>
+                                <div class="col form-group form-md-line-input">
+                                    <p:outputLabel for="@next" value="Bairro"/>
+                                    <p:inputText value="#{centroCustoControle.centroCustoSelecionado.bairro}"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-3 form-group form-md-line-input">
+                                    <p:outputLabel for="@next" value="UF"/>
+                                    <p:selectOneMenu value="#{centroCustoControle.ufSelecionado}" converter="#{genericConverter}">
+                                        <f:selectItem itemLabel="--" noSelectionOption="true"/>
+                                        <f:selectItems value="#{centroCustoControle.UFs}" var="uf"
+                                                       itemLabel="#{uf.descricao}" itemValue="#{uf}"/>
+                                        <p:ajax event="change" process="@this" update="@this, cidade"/>
+                                    </p:selectOneMenu>
+                                </div>
+                                <div class="col form-group form-md-line-input">
+                                    <p:outputLabel for="@next" value="Cidade"/>
+                                    <p:selectOneMenu id="cidade" value="#{centroCustoControle.centroCustoSelecionado.idCidade}"
+                                                     panelStyle="width:180px" effect="fade" var="t" converter="#{genericConverter}"
+                                                     filter="true" filterMatchMode="contains">
+                                        <p:column>
+                                            <h:outputText value="#{t.descricao}"/>
+                                        </p:column>
+
+                                        <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                        <f:selectItems value="#{centroCustoControle.cidades}" var="cidade"
+                                                       itemLabel="#{cidade.descricao}" itemValue="#{cidade}"/>
+                                    </p:selectOneMenu>
+                                </div>
+                            </div>
+                        </p:outputPanel>
+                    </div>
+                </div>
+                <div><!-- Não remover --></div>
+            </div>
+            <p:outputPanel id="planoConta">
+                <p:row rendered="#{centroCustoControle.centroCustoSelecionado.token ne null}">
+                    <div class="card">
+                        <h5>Plano de contas</h5>
+                        <div class="row">
+                            <div class="col form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Dinheiro"/>
+                                <p:selectOneMenu value="#{centroCustoControle.centroCustoSelecionado.idPlanoContaDinheiro}" panelStyle="width:180px" effect="fade"
+                                                 var="t" style="width:160px" filter="true" filterMatchMode="contains" converter="#{genericConverter}">
+                                    <p:column>
+                                        <h:outputText value="#{t.codigo}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{t.descricao}"/>
+                                    </p:column>
+
+                                    <f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+                                    <f:selectItems value="#{planoContaControle.listarPlanosContaParaTransacoesContaReceber()}" var="pc" itemLabel="#{pc.descricao}" itemValue="#{pc}"
+                                                   itemDisabled="#{pc.tipoIndicador ne 'S' or pc.idContaPai.bloqueiaFilhoContaReceber eq 'S'}"
+                                                   itemDescription="#{planoContaControle.obterNomesDosPais(pc)}">
+                                    </f:selectItems>
+                                </p:selectOneMenu>
+                            </div>
+                            <div class="col form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="IUGU"/>
+                                <p:selectOneMenu value="#{centroCustoControle.centroCustoSelecionado.idPlanoContaIugu}" panelStyle="width:180px" effect="fade"
+                                                 var="t" style="width:160px" filter="true" filterMatchMode="contains" converter="#{genericConverter}">
+                                    <p:column>
+                                        <h:outputText value="#{t.codigo}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{t.descricao}"/>
+                                    </p:column>
+
+                                    <f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+                                    <f:selectItems value="#{planoContaControle.listarPlanosContaParaTransacoesContaReceber()}" var="pc" itemLabel="#{pc.descricao}" itemValue="#{pc}"
+                                                   itemDisabled="#{pc.tipoIndicador ne 'S' or pc.idContaPai.bloqueiaFilhoContaReceber eq 'S'}"
+                                                   itemDescription="#{planoContaControle.obterNomesDosPais(pc)}">
+                                    </f:selectItems>
+                                </p:selectOneMenu>
+                            </div>
+                            <div class="col form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Rede"/>
+                                <p:selectOneMenu value="#{centroCustoControle.centroCustoSelecionado.idPlanoContaRede}" panelStyle="width:180px" effect="fade"
+                                                 var="t" style="width:160px" filter="true" filterMatchMode="contains" converter="#{genericConverter}">
+                                    <p:column>
+                                        <h:outputText value="#{t.codigo}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{t.descricao}"/>
+                                    </p:column>
+
+                                    <f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+                                    <f:selectItems value="#{planoContaControle.listarPlanosContaParaTransacoesContaReceber()}" var="pc" itemLabel="#{pc.descricao}" itemValue="#{pc}"
+                                                   itemDisabled="#{pc.tipoIndicador ne 'S' or pc.idContaPai.bloqueiaFilhoContaReceber eq 'S'}"
+                                                   itemDescription="#{planoContaControle.obterNomesDosPais(pc)}">
+                                    </f:selectItems>
+                                </p:selectOneMenu>
+                            </div>
+                            <div class="col form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Outros"/>
+                                <p:selectOneMenu value="#{centroCustoControle.centroCustoSelecionado.idPlanoContaOutros}" panelStyle="width:180px" effect="fade"
+                                                 var="t" style="width:160px" filter="true" filterMatchMode="contains" converter="#{genericConverter}">
+                                    <p:column>
+                                        <h:outputText value="#{t.codigo}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{t.descricao}"/>
+                                    </p:column>
+
+                                    <f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+                                    <f:selectItems value="#{planoContaControle.listarPlanosContaParaTransacoesContaReceber()}" var="pc" itemLabel="#{pc.descricao}" itemValue="#{pc}"
+                                                   itemDisabled="#{pc.tipoIndicador ne 'S' or pc.idContaPai.bloqueiaFilhoContaReceber eq 'S'}"
+                                                   itemDescription="#{planoContaControle.obterNomesDosPais(pc)}">
+                                    </f:selectItems>
+                                </p:selectOneMenu>
+                            </div>
+                        </div>
+                    </div>
+                    <div><!-- não remover --></div>
+                </p:row>
+            </p:outputPanel>
+            <div class="card">
+                <h5>Contato</h5>
+                <div class="row">
+                    <div class="col form-group form-md-line-input" style="min-width: 250px;">
+                        <p:outputLabel for="@next" value="Responsável"/>
+                        <p:inputText value="#{centroCustoControle.centroCustoSelecionado.responsavel}"/>
+                    </div>
+                    <div class="col form-group form-md-line-input" style="min-width: 250px;">
+                        <p:outputLabel for="@next" value="Email"/>
+                        <p:inputText value="#{centroCustoControle.centroCustoSelecionado.email}"/>
+                    </div>
+                    <div class="col-auto form-group form-md-line-input" style="width: 180px;">
+                        <p:outputLabel for="@next" value="Celular do responsável"/>
+                        <p:inputMask mask="(99) 9999-9999?9" style="padding: 6px;" value="#{centroCustoControle.centroCustoSelecionado.celularResponsavel}"/>
+                    </div>
+                    <div class="col-auto form-group form-md-line-input" style="width: 180px;">
+                        <p:outputLabel for="@next" value="Telefone comercial"/>
+                        <p:inputMask mask="(99) 9999-9999?9" style="padding: 6px;" value="#{centroCustoControle.centroCustoSelecionado.fone}"/>
+                    </div>
+                    <div class="col-auto form-group form-md-line-input" style="width: 180px;">
+                        <p:outputLabel for="@next" value="Celular"/>
+                        <p:inputMask mask="(99) 9999-9999?9" style="padding: 6px;" value="#{centroCustoControle.centroCustoSelecionado.celular}"/>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

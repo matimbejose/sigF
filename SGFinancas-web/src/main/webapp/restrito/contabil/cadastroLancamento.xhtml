@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Lançamento"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Contábil</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/contabil/listaLancamento.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteSave" action="#{planoContaLancamentoControle.doFinishAdd()}"/>
+            <h:commandButton id="remoteCancel" action="listaLancamento.xhtml" immediate="true"/>
+            <h:commandButton id="remoteHelp" rendered="false" action="#{planoContaLancamentoControle.mostrarAjuda()}" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label"><span class="required"> * </span>Conta crédito</label>
+                                <p:selectOneMenu id="auto2" value="#{planoContaLancamentoControle.planoContaLancamentoContabilSelecionado.idPlanoContaCredito}"
+                                                 panelStyle="width:180px" effect="fade"
+                                                 var="t" style="width:160px" filter="true" filterMatchMode="startsWith"
+                                                 converter="#{genericConverter}"
+                                                 required="true"
+                                                 requiredMessage="Informe um item do plano de conta">
+                                    <p:column>
+                                        <h:outputText value="#{t.codigo}" />
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{t.descricao}" />
+                                    </p:column>
+
+                                    <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                    <f:selectItems value="#{planoContaControle.listarPlanosContaParaTransacoes()}"  var="planoConta"
+                                                   itemLabel="#{planoConta.descricao}" itemValue="#{planoConta}"
+                                                   itemDisabled="#{planoConta.tipoIndicador ne 'S' or planoConta.idContaPai.bloqueiaFilhoContaReceber eq 'S'}"
+                                                   itemDescription="#{planoContaControle.obterNomesDosPais(planoConta)}">
+                                    </f:selectItems>
+                                </p:selectOneMenu>
+                            </div>
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label"><span class="required"> * </span>Conta débito</label>
+                                <p:selectOneMenu id="auto3" value="#{planoContaLancamentoControle.planoContaLancamentoContabilSelecionado.idPlanoContaDebito}"
+                                                 panelStyle="width:180px" effect="fade"
+                                                 var="t" style="width:160px" filter="true" filterMatchMode="startsWith"
+                                                 converter="#{genericConverter}"
+                                                 required="true"
+                                                 requiredMessage="Informe um item do plano de conta">
+                                    <p:column>
+                                        <h:outputText value="#{t.codigo}" />
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{t.descricao}" />
+                                    </p:column>
+
+                                    <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                    <f:selectItems value="#{planoContaControle.listarPlanosContaParaTransacoes()}"  var="planoConta"
+                                                   itemLabel="#{planoConta.descricao}" itemValue="#{planoConta}"
+                                                   itemDisabled="#{planoConta.tipoIndicador ne 'S' or planoConta.idContaPai.bloqueiaFilhoContaReceber eq 'S'}"
+                                                   itemDescription="#{planoContaControle.obterNomesDosPais(planoConta)}">
+                                    </f:selectItems>
+                                </p:selectOneMenu>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label"> <span class="required">* </span>Valor</label>
+                                        <p:inputNumber  value="#{planoContaLancamentoControle.planoContaLancamentoContabilSelecionado.valor}"
+                                                        symbol="R$ "
+                                                        thousandSeparator="."
+                                                        decimalSeparator=","
+                                                        decimalPlaces="2"
+                                                        required="true"
+                                                        requiredMessage="Favor informar um valor.">
+                                        </p:inputNumber>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label"> <span class="required"> * </span>Data</label>
+                                        <p:calendar navigator="true" id="inpDataVencimento" pattern="dd/MM/yyyy" mask="true" maxdate="#{planoContaLancamentoControle.dataMaxima()}"
+                                                    value="#{planoContaLancamentoControle.planoContaLancamentoContabilSelecionado.data}" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label"><span class="required">* </span>Conta bancária</label>
+                                        <p:selectOneMenu value="#{planoContaLancamentoControle.planoContaLancamentoContabilSelecionado.idContaBancaria}"
+                                                         required="true"
+                                                         requiredMessage="Informe a conta bancária"  effect="fade"
+                                                         var="t" filter="true" filterMatchMode="contains"
+                                                         converter="#{genericConverter}" >
+                                            <p:column>
+                                                <h:outputText value="#{t.descricao}" />
+                                            </p:column>
+
+                                            <f:selectItem itemLabel="" noSelectionOption="true"/>
+                                            <f:selectItems value="#{contaBancariaControle.contaBancarias}"  var="contaBancaria" itemLabel="#{contaBancaria.descricao}" itemValue="#{contaBancaria}"/>
+
+                                        </p:selectOneMenu>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+</html>

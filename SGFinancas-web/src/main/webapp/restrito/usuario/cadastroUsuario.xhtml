@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Usuário"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Segurança</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/usuario/listaUsuario.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteSave" action="#{usuarioControle.doFinishAdd()}"/>
+            <h:commandButton id="remoteCancel" action="listaUsuario.xhtml?faces-redirect=true" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <div class="card p-0">
+                <p:tabView>
+                    <p:tab title="Informações">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group form-md-line-input">
+                                    <label class="control-label"><span class="required">* </span>Nome</label>
+                                    <p:inputText value="#{usuarioControle.usuarioSelecionado.nome}" styleClass="form-control" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group form-md-line-input">
+                                    <label class="control-label"><span class="required">* </span>E-mail</label>
+                                    <p:inputText value="#{usuarioControle.usuarioSelecionado.email}" styleClass="form-control" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <p:row rendered="#{not usuarioControle.usuarioSelecionado.idPerfil.ehSuporte or usuarioControle.usuarioSelecionado.id eq null}">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group" >
+                                        <label class="control-label"><span class="required">* </span>Senha</label>
+                                        <p:inputText value="#{usuarioControle.senha}" type="password" styleClass="form-control" disabled="#{usuarioControle.usuarioSelecionado.id ne null}" />
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label"><span class="required">* </span>Conta bloqueada?</label>
+                                        <p:selectOneMenu value="#{usuarioControle.usuarioSelecionado.contaBloqueada}" >
+                                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                            <f:selectItem itemValue="S" itemLabel="Sim"/>
+                                            <f:selectItem itemValue="N" itemLabel="Não"/>
+                                        </p:selectOneMenu>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label"><span class="required">* </span>Conta expirada?</label>
+                                        <p:selectOneMenu value="#{usuarioControle.usuarioSelecionado.contaExpirada}">
+                                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                            <f:selectItem itemValue="S" itemLabel="Sim"/>
+                                            <f:selectItem itemValue="N" itemLabel="Não"/>
+                                        </p:selectOneMenu>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label"><span class="required">* </span>Perfil</label>
+                                        <p:selectOneMenu value="#{usuarioControle.usuarioSelecionado.idPerfil}" id="perfi"
+                                                         required="true" requiredMessage="Informe o perfil" converter="#{genericConverter}"
+                                                         disabled="#{usuarioControle.usuarioSelecionado.cadCredenciamento eq 'S'}">
+
+                                            <f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+                                            <f:selectItems value="#{usuarioControle.perfisPorPerfil}" var="perfil"
+                                                           itemLabel="#{perfil.descricao}" itemValue="#{perfil}"/>
+                                            <p:ajax update="pnlContabilidade" process="@this"/>
+                                        </p:selectOneMenu>
+                                    </div>
+                                </div>
+                                <p:outputPanel id="pnlContabilidade" styleClass="col row">
+                                    <div class="col-md-12">
+                                        <p:outputPanel rendered="#{usuarioControle.usuarioSelecionado.idPerfil.ehMasterContabilidade or usuarioControle.usuarioSelecionado.idPerfil.ehContabilidade}">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label"><span class="required">* </span>Contabilidade</label>
+                                                <p:selectOneMenu
+                                                    value="#{usuarioControle.usuarioSelecionado.idContabilidade}"
+                                                    required="true"
+                                                    requiredMessage="Informe a contabilidade"
+                                                    rendered="#{usuarioControle.usuarioLogado.idPerfil.ehSuporte}"
+                                                    panelStyle="width:180px" effect="fade" styleClass="prime-min-width"
+                                                    var="t" style="width:160px;" filter="true" filterMatchMode="contains"
+                                                    converter="#{genericConverter}"  >
+
+                                                    <p:column>
+                                                        <h:outputText value="#{t.descricao}" />
+                                                    </p:column>
+
+                                                    <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                    <f:selectItems value="#{contabilidadeControle.contabilidades}"  var="c" itemLabel="#{c.descricao}" itemValue="#{c}"/>
+                                                </p:selectOneMenu>
+
+                                                <p:inputText rendered="#{!usuarioControle.usuarioLogado.idPerfil.ehSuporte}"
+                                                             value="#{usuarioControle.usuarioSelecionado.idContabilidade.descricao}"
+                                                             disabled="true" styleClass="form-control"/>
+
+                                            </div>
+                                        </p:outputPanel>
+                                        <p:outputPanel rendered="#{!usuarioControle.usuarioSelecionado.idPerfil.ehMasterContabilidade and !usuarioControle.usuarioSelecionado.idPerfil.ehContabilidade}">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label">Funcionário</label>
+                                                <p:selectOneMenu value="#{usuarioControle.usuarioSelecionado.idFuncionario}" panelStyle="width:180px" effect="fade"
+                                                                 rendered="#{usuarioControle.usuarioLogado.idPerfil.ehSuporte}" var="t" filter="true" filterMatchMode="contains"
+                                                                 converter="#{genericConverter}">
+
+                                                    <p:column>
+                                                        <h:outputText value="#{t.nome}" />
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{t.cpf}" />
+                                                    </p:column>
+
+                                                    <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                    <f:selectItems value="#{usuarioControle.funcionariosSemUsuario}"  var="f" itemLabel="#{f.nome}" itemValue="#{f}"/>
+                                                </p:selectOneMenu>
+
+                                                <p:inputText rendered="#{!usuarioControle.usuarioLogado.idPerfil.ehSuporte}"
+                                                             value="#{usuarioControle.usuarioSelecionado.idFuncionario.nome}"
+                                                             disabled="true" styleClass="form-control"/>
+
+                                            </div>
+                                        </p:outputPanel>
+                                    </div>
+                                </p:outputPanel>
+                            </div>
+                        </p:row>
+                    </p:tab>
+                    <p:tab title="Permissões" rendered="#{not usuarioControle.usuarioSelecionado.idPerfil.ehSuporte }">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group form-md-line-input">
+                                    <div class="input-group">
+                                        <div class="input-group-append">
+                                            <p:inputText id="pesquisaDescricao" value="#{usuarioControle.descricaoPesquisa}" placeholder="Pesquisar..."
+                                                         style="min-width: 400px !important;"/>
+                                            <p:commandLink  action="#{usuarioControle.doPesquisaPermissao()}" class="btn blue btn-outline sbold" update="tblPesquisa" process="@this, pesquisaDescricao, perfi">
+                                                <i class="fa fa-search"></i>
+                                            </p:commandLink>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="portlet-body flip-scroll">
+                                    <p:dataTable value="#{usuarioControle.permissaoList}" id="tblPesquisa"
+                                                 emptyMessage="Nenhuma permissão localizada" var="itemPermissaoSelecionada"
+                                                 styleClass="card p-0 ui-datatable-striped ui-datatable-sm ui-datatable-gridlines">
+
+                                        <p:column headerText="Permissões disponíveis"  sortBy="#{itemPermissaoSelecionada.descricaoDetalhada}">
+                                            <h:outputText value="#{itemPermissaoSelecionada.descricaoDetalhada}"/>
+                                        </p:column>
+
+                                        <p:column headerText="" width="50">
+                                            <f:facet name="header">
+                                                <div class="pesquisa-list .pesquisa-dois .pesquisa-tres">
+                                                    <p:commandLink class="btn btn-circle btn-icon-only btn-default icones" title="Selecionar todas" action="#{usuarioControle.doAceitarPermissaoTodas()}" update="@(.ui-datatable)"  immediate="true">
+                                                        <i class="fa fa-angle-double-right"></i>
+                                                    </p:commandLink>
+                                                </div>
+                                            </f:facet>
+                                            <p:commandLink  title="Selecionar permissão" class="btn btn-circle btn-icon-only btn-default icones" action="#{usuarioControle.doAdicionaPermissao()}" update="@(.ui-datatable)"  immediate="true">
+                                                <i class="fa fa-angle-double-right"></i>
+                                                <f:setPropertyActionListener value="#{itemPermissaoSelecionada}" target="#{usuarioControle.permissaoSelecionada}"/>
+                                            </p:commandLink>
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="portlet-body flip-scroll">
+                                    <p:dataTable value="#{usuarioControle.usuarioSelecionado.usuarioPermissaoList}" id="tblPermissao"
+                                                 emptyMessage="Nenhuma permissão localizada" var="itemPermissao" editable="true" editMode="cell"
+                                                 styleClass="card p-0 ui-datatable-striped ui-datatable-sm ui-datatable-gridlines">
+
+                                        <p:column headerText="Permissões atribuídas" sortBy="#{itemPermissao.idPermissao.descricaoDetalhada}">
+                                            <h:outputText value="#{itemPermissao.idPermissao.descricaoDetalhada}"/>
+                                        </p:column>
+
+                                        <p:column headerText="" width="50">
+                                            <f:facet name="header">
+                                                <div class="pesquisa-list .pesquisa-dois .pesquisa-tres">
+                                                    <p:commandLink title="Remover todas permissões"  class="btn btn-circle btn-icon-only btn-default icones"  action="#{usuarioControle.doRemoverPermissaoTodas()}" update="@(.ui-datatable)" immediate="true" >
+                                                        <i class="fa fa-trash-o"></i>
+                                                    </p:commandLink>
+                                                </div>
+                                            </f:facet>
+                                            <p:commandLink  title="Remover permissão" class="btn btn-circle btn-icon-only btn-default icones" action="#{usuarioControle.doRemoverPermissao()}" update="@(.ui-datatable)" immediate="true" >
+                                                <i class="fa fa-trash-o"></i>
+                                                <f:setPropertyActionListener value="#{itemPermissao}" target="#{usuarioControle.usuarioPermissaoSelecionada}"/>
+                                            </p:commandLink>
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                        </div>
+                    </p:tab>
+                    <p:tab title="Grupo" rendered="#{not usuarioControle.usuarioSelecionado.idPerfil.ehSuporte}">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group form-md-line-input">
+                                    <div class="input-group">
+                                        <div class="input-group-append">
+                                            <p:inputText id="descricaoPesquisaPermissao" value="#{usuarioControle.descricaoPesquisaGrupo}" placeholder="Pesquisar..."
+                                                         style="min-width: 400px !important;"/>
+                                            <p:commandLink  action="#{usuarioControle.doPesquisaGrupo()}" class="btn blue btn-outline sbold" update="tblPesquisaGrupo" process="@this, descricaoPesquisaPermissao">
+                                                <i class="fa fa-search"></i>
+                                            </p:commandLink>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="portlet-body flip-scroll">
+                                    <p:dataTable value="#{usuarioControle.grupoEmpresaList}" id="tblPesquisaGrupo"
+                                                 emptyMessage="Nenhuma grupo localizado" var="itemGrupoSelecionado"
+                                                 styleClass="card p-0 ui-datatable-striped ui-datatable-sm ui-datatable-gridlines">
+
+                                        <p:column width="50">
+                                            <h:outputText value="#{itemGrupoSelecionado.idGrupo.id}"/>
+                                        </p:column>
+
+                                        <p:column headerText="Grupos disponíveis" >
+                                            <h:outputText value="#{itemGrupoSelecionado.idGrupo.descricao}"/>
+                                        </p:column>
+
+                                        <p:column headerText="" width="50">
+                                            <p:commandLink  title="Selecionar grupo" class="btn btn-circle btn-icon-only btn-default icones" action="#{usuarioControle.doAdicionaGrupo()}" update="@(.ui-datatable)"  immediate="true">
+                                                <i class="fa fa-angle-double-right"></i>
+                                                <f:setPropertyActionListener value="#{itemGrupoSelecionado}" target="#{usuarioControle.grupoEmpresaSelecionado}"/>
+                                            </p:commandLink>
+                                        </p:column>
+
+
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="portlet-body flip-scroll">
+                                    <p:dataTable value="#{usuarioControle.usuarioSelecionado.usuarioGrupoEmpresaList}" id="tblGrupo"
+                                                 emptyMessage="Nenhum grupo localizado" var="itemGrupoUsuario"
+                                                 styleClass="card p-0 ui-datatable-striped ui-datatable-sm ui-datatable-gridlines">
+
+                                        <p:column width="50">
+                                            <h:outputText value="#{itemGrupoUsuario.idGrupoEmpresa.idGrupo.id}"/>
+                                        </p:column>
+
+                                        <p:column headerText="Grupos vinculados" >
+                                            <h:outputText value="#{itemGrupoUsuario.idGrupoEmpresa.idGrupo.descricao}"/>
+                                        </p:column>
+
+                                        <p:column headerText="" width="50">
+                                            <p:commandLink  title="Remover usuário" class="btn btn-circle btn-icon-only btn-default icones" action="#{usuarioControle.doRemoveGrupo()}" update="@(.ui-datatable)" immediate="true" >
+                                                <i class="fa fa-trash-o"></i>
+                                                <f:setPropertyActionListener value="#{itemGrupoUsuario}" target="#{usuarioControle.usuarioGrupoEmpresaSelecionado}"/>
+                                            </p:commandLink>
+                                        </p:column>
+
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                        </div>
+                    </p:tab>
+                </p:tabView>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

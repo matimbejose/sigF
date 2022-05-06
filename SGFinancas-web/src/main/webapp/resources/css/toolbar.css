@@ -1,0 +1,48 @@
+.my-toolbar {
+    background : #f3f6f8;
+}
+
+.my-toolbar .x-btn {
+    background : transparent !important;
+    border     : 0 none !important;
+}
+
+.my-toolbar .icon{
+    margin-top:2px;
+}
+
+.my-toolbar .x-btn-over .x-btn-icon-el {
+    opacity : 0.8;
+}
+
+.my-toolbar .x-btn-icon-el {
+    background-size : 20px 20px !important;
+    opacity         : 0.4;
+}
+
+.icon-right { margin-top       : 2px !important; background-image : url(../images/arrow-right.png); }
+
+.icon-left { margin-top       : 3px !important; background-image : url(../images/arrow-left.png); }
+
+.icon-zoomin { background-image : url(../images/zoom-in.png); }
+
+.icon-zoomout { background-image : url(../images/zoom-out.png); }
+
+.icon-zoomfit { background-image : url(../images/move.png); }
+
+.icon-fullscreen { background-image : url(../images/fullscreen-enter.png); }
+
+.icon-collapseall { background-image : url(../images/collapse.png); }
+
+.icon-expandall { background-image : url(../images/expand.png); }
+
+.icon-criticalpath { background-image : url(../images/hot.png); }
+
+.icon-add { background-image : url(../images/add-task.png); }
+
+.icon-delete { background-image : url(../images/delete.png)}
+
+.icon-indent { background-image : url(../images/indent.png)}
+
+.icon-outdent { background-image : url(../images/outdent.png)}
+

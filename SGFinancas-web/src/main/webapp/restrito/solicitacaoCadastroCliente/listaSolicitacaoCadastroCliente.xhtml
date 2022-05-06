@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:sec="http://www.springframework.org/security/facelets/tags"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Solicitações de cadastro de cliente"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Cadastro</li>
+            <li>/</li>
+            <li>Vistoria</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/solicitacaoCadastroCliente/listaSolicitacaoCadastroCliente.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="formButtons">
+            <p:commandButton type="button" value="Limpar filtros" onclick="clearDataTableFilters('tbl');"/>
+            <p:commandButton id="toggler" type="button" value="Colunas"/>
+            <p:columnToggler datasource="tbl" trigger="toggler"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <p:dataTable value="#{solicitacaoCadastroClienteControle.model}" emptyMessage="Nenhum registro encontrado." var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+                <p:column headerText="#" width="55" sortBy="#{item.id}" visible="false">
+                    <h:outputText value="#{item.id}"/>
+                </p:column>
+
+                <p:column headerText="Solicitante" sortBy="#{item.idSolicitacaoCadastroCliente.nome}">
+                    <h:outputText value="#{item.idSolicitacaoCadastroCliente.nome}"/>
+                </p:column>
+
+                <p:column headerText="Veículo">
+                    <h:outputText value="#{item.idModeloInformacao.idModelo.nomeTipo} - "/>
+                    <h:outputText value="#{item.idModeloInformacao.idModelo.idMarca.nome} - "/>
+                    <h:outputText value="#{item.idModeloInformacao.idModelo.nome} - "/>
+                    <h:outputText value="#{item.idModeloInformacao.ano} - "/>
+                    <h:outputText value="#{item.anoFabricacao}"/>
+                </p:column>
+
+                <p:column headerText="Placa" sortBy="#{item.placa}">
+                    <h:outputText value="#{item.placa}"/>
+                </p:column>
+
+                <p:column headerText="Valor protegido/FIPE" sortBy="#{item.valorFipe}">
+                    <h:outputText value="#{item.valorFipe}"/>
+                </p:column>
+
+                <p:column headerText="Tipo de solicitação">
+                    <h:outputText value="Adesão"/>
+                </p:column>
+
+                <p:column headerText="Status" sortBy="#{item.status}">
+                    <h:outputText value="#{solicitacaoCadastroClienteControle.getDescricaoStatus(item.status)}"/>
+                </p:column>
+
+                <p:column width="170" headerText="Ações" rendered="#{sec:ifAnyGranted('SOLICITACAO_GERENCIAR')}">
+                    <div class="actions">
+                        <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                       title="Visualizar solicitação" action="#{solicitacaoCadastroClienteControle.doStartView()}"  >
+                            <i class="fa fa-eye"></i>
+                            <f:setPropertyActionListener value="#{item}" target="#{solicitacaoCadastroClienteControle.objetoSelecionado}"/>
+                        </h:commandLink>
+                    </div>
+                </p:column>
+
+            </p:dataTable>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

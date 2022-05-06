@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <ui:composition template="/WEB-INF/templateModalCadastro.xhtml">
+
+        <ui:param name="title" value="Cadastro de conta bancária"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="content">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-4">
+                        <div class="form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Descrição"/>
+                            <p:inputText value="#{contaBancariaControle.dtoCadastro.descricao}" styleClass="form-control" required="true"/>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Banco"/>
+                            <p:selectOneMenu id="somCapitulo" value="#{contaBancariaControle.dtoCadastro.banco}"
+                                             panelStyle="width:180px" effect="fade" styleClass="prime-min-width"
+                                             required="true" requiredMessage="Informe o banco"
+                                             var="t" filter="true" filterMatchMode="contains"
+                                             converter="#{genericConverter}">
+                                <p:column>
+                                    <h:outputText value="#{t.numero}" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{t.descricao}" />
+                                </p:column>
+
+                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                <f:selectItems value="#{contaBancariaControle.bancos}"  var="banco" itemLabel="#{banco.numero} - #{banco.descricao}" itemValue="#{banco}"/>
+                            </p:selectOneMenu>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Tipo conta"/>
+                            <p:selectOneMenu  value="#{contaBancariaControle.dtoCadastro.tipoConta}">
+                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                <f:selectItem itemLabel="Conta corrente" itemValue="C" />
+                                <f:selectItem itemLabel="Conta salário" itemValue="S" />
+                                <f:selectItem itemLabel="Conta poupança" itemValue="P" />
+                            </p:selectOneMenu >
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-3">
+                        <div class="form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Agencia"/>
+                            <p:inputText value="#{contaBancariaControle.dtoCadastro.agencia}" styleClass="form-control"  required="true"/>
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        <div class="form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Digito"/>
+                            <p:inputText value="#{contaBancariaControle.dtoCadastro.digitoAgencia}" styleClass="form-control"/>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Conta"/>
+                            <p:inputText value="#{contaBancariaControle.dtoCadastro.conta}" styleClass="form-control"  required="true"/>
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        <div class="form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Digito"/>
+                            <p:inputText value="#{contaBancariaControle.dtoCadastro.digitoConta}" styleClass="form-control"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Data saldo"/>
+                            <p:calendar navigator="true" value="#{contaBancariaControle.dtoCadastro.dataSaldo}"
+                                                    required="true" requiredMessage="Informe a data do saldo" mask="true"
+                                                    pattern="dd/MM/yyyy" maxdate="#{contaBancariaControle.dataHoje()}"/>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Saldo inicial"/>
+                            <p:inputNumber value="#{contaBancariaControle.dtoCadastro.saldoInicial}"
+                                                       required="true" requiredMessage="Informe o saldo inicial"
+                                                       decimalSeparator=","  thousandSeparator="." symbol="R$ " decimalPlaces="2"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

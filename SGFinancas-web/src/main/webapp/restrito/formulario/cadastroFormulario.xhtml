@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Formulário"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Cadastro</li>
+            <li>/</li>
+            <li>Vistoria</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/formulario/listaFormulario.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteSave" action="#{formularioControle.doFinishAdd()}" rendered="#{formularioControle.podeEditar()}"/>
+            <h:commandButton id="remoteCancel" action="listaFormulario.xhtml" immediate="true" rendered="#{formularioControle.podeEditar()}"/>
+            <h:commandButton id="remoteBack" action="listaFormulario.xhtml" immediate="true" rendered="#{!formularioControle.podeEditar()}"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <p:importEnum type="br.com.villefortconsulting.sgfinancas.util.EnumTipoRespostaFormulario"/>
+            <div class="card">
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group form-md-line-input">
+                            <label class="control-label"><span class="required">* </span>Descrição</label>
+                            <p:inputText value="#{formularioControle.formularioSelecionado.descricao}" disabled="#{!formularioControle.podeEditar()}"
+                                         required="true" requiredMessage="Informe a descrição"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <h5>Composição do formulário</h5>
+                <div class="row">
+                    <div class="col-5">
+                        <p:dataTable value="#{formularioControle.formularioSelecionado.formularioSecaoList}" var="secao" id="secaoList"
+                                     styleClass="card p-0 ui-datatable-striped ui-datatable-sm ui-datatable-gridlines"
+                                     emptyMessage="Nenhuma seção cadastrada." draggableRows="#{formularioControle.podeEditar()}"
+                                     selectionMode="single" selection="#{formularioControle.secaoSelecionada}" rowKey="#{secao.key}">
+
+                            <p:ajax event="rowReorder" process="@this" update="@this, form:itemList, form:subItemList" listener="#{formularioControle.onSecaoReorder}"/>
+                            <p:ajax event="rowSelect" process="@this" update="form:itemList, form:subItemList" listener="#{formularioControle.cleanItemSelecionado}"/>
+
+                            <f:facet name="header">
+                                Seções
+                                <div class="pull-right">
+                                    <p:commandButton value="Adicionar" action="#{formularioControle.doStartAdicionarSecao}" rendered="#{formularioControle.podeEditar()}"
+                                                     process="@this" update="secaoList, form:itemList, form:subItemList"/>
+                                </div>
+                                <div class="clearfix"></div>
+                            </f:facet>
+
+                            <p:column width="30" style="text-align: center;">
+                                <i class="fa fa-bars ui-state-disabled"></i>
+                            </p:column>
+
+                            <p:column headerText="Nome">
+                                <p:inputText value="#{secao.descricao}" required="true" disabled="#{!formularioControle.podeEditar()}">
+                                    <p:ajax process="@this"/>
+                                </p:inputText>
+                            </p:column>
+
+                            <p:column headerText="Tipo de resposta" width="200">
+                                <p:selectOneMenu value="#{secao.tipoResposta}" required="true" disabled="#{!formularioControle.podeEditar()}">
+                                    <f:selectItem noSelectionOption="true" itemLabel="Selecione"/>
+                                    <f:selectItems value="#{EnumTipoRespostaFormulario.ALL_VALUES}" var="enum"
+                                                   itemLabel="#{enum.descricao}" itemValue="#{enum.tipo}"/>
+                                </p:selectOneMenu>
+                            </p:column>
+
+                            <p:column width="40" style="text-align: center;" headerText="Ações" rendered="#{formularioControle.podeEditar()}">
+                                <p:commandLink styleClass="icones" title="Remover" process="@this" update="secaoList, form:itemList, form:subItemList"
+                                               action="#{formularioControle.doStartRemoverSecao(secao)}" ajax="true" immediate="true">
+                                    <i class="fa fa-minus-circle"></i>
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                    </div>
+                    <div class="col">
+                        <p:dataTable value="#{formularioControle.secaoSelecionada.secaoItemSecaoList}" var="item" id="itemList"
+                                     styleClass="card p-0 ui-datatable-striped ui-datatable-sm ui-datatable-gridlines"
+                                     emptyMessage="#{formularioControle.emptyItem}" draggableRows="#{formularioControle.podeEditar()}"
+                                     selectionMode="single" selection="#{formularioControle.itemSecaoSelecionado}" rowKey="#{item.key}">
+
+                            <p:ajax event="rowReorder" process="@this" update="@this, form:subItemList" listener="#{formularioControle.onItemReorder}"/>
+                            <p:ajax event="rowSelect" process="@this" update="form:subItemList"/>
+
+                            <f:facet name="header">
+                                <h:outputText value="Itens da seção #{formularioControle.secaoSelecionada.descricao}" rendered="#{formularioControle.secaoSelecionada ne null}"/>
+                                <h:outputText value="Nenhuma seção selecionada" rendered="#{formularioControle.secaoSelecionada eq null}"/>
+                                <div class="pull-right">
+                                    <p:commandButton value="Adicionar" action="#{formularioControle.doStartAdicionarItemSecao}" rendered="#{formularioControle.podeEditar()}"
+                                                     process="@this" update="itemList, form:subItemList" disabled="#{formularioControle.secaoSelecionada eq null}"/>
+                                </div>
+                                <div class="clearfix"></div>
+                            </f:facet>
+
+                            <p:column width="30" style="text-align: center;">
+                                <i class="fa fa-bars ui-state-disabled"></i>
+                            </p:column>
+
+                            <p:column headerText="Nome">
+                                <p:inputText value="#{item.descricao}" disabled="#{!formularioControle.podeEditar()}">
+                                    <p:ajax process="@this"/>
+                                </p:inputText>
+                            </p:column>
+
+                            <p:column width="40" style="text-align: center;" headerText="Ações" rendered="#{formularioControle.podeEditar()}">
+                                <p:commandLink styleClass="icones" title="Remover" process="@this" update="itemList, form:subItemList"
+                                               action="#{formularioControle.doStartRemoverItemSecao(item)}" ajax="true" immediate="true">
+                                    <i class="fa fa-minus-circle"></i>
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                    </div>
+                    <div class="col">
+                        <p:dataTable value="#{formularioControle.itemSecaoSelecionado.itemSecaoSubItemSecaoList}" var="subItem" id="subItemList"
+                                     styleClass="card p-0 ui-datatable-striped ui-datatable-sm ui-datatable-gridlines"
+                                     emptyMessage="#{formularioControle.emptySubItem}" draggableRows="#{formularioControle.podeEditar()}">
+
+                            <p:ajax event="rowReorder" process="@this" update="@this"/>
+
+                            <f:facet name="header">
+                                <h:outputText value="Sub-itens da seção #{formularioControle.itemSecaoSelecionado.descricao}" rendered="#{formularioControle.itemSecaoSelecionado ne null}"/>
+                                <h:outputText value="Nenhum item selecionada" rendered="#{formularioControle.itemSecaoSelecionado eq null}"/>
+                                <div class="pull-right">
+                                    <p:commandButton value="Adicionar" action="#{formularioControle.doStartAdicionarSubItemSecao}" rendered="#{formularioControle.podeEditar()}"
+                                                     process="@this" update="subItemList" disabled="#{formularioControle.itemSecaoSelecionado eq null}"/>
+                                </div>
+                                <div class="clearfix"></div>
+                            </f:facet>
+
+                            <p:column width="30" style="text-align: center;">
+                                <i class="fa fa-bars ui-state-disabled"></i>
+                            </p:column>
+
+                            <p:column headerText="Nome">
+                                <p:inputText value="#{subItem.descricao}" disabled="#{!formularioControle.podeEditar()}">
+                                    <p:ajax process="@this"/>
+                                </p:inputText>
+                            </p:column>
+
+                            <p:column width="40" style="text-align: center;" headerText="Ações" rendered="#{formularioControle.podeEditar()}">
+                                <p:commandLink styleClass="icones" title="Remover" process="@this" update="subItemList"
+                                               action="#{formularioControle.doStartRemoverSubItemSecao(subItem)}" ajax="true" immediate="true">
+                                    <i class="fa fa-minus-circle"></i>
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="row">
+                    <div class="col">
+                        <h5>Observações</h5>
+                        <p:textEditor value="#{formularioControle.formularioSelecionado.observacoes}" height="300"
+                                      allowImages="false" allowLinks="false"/>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

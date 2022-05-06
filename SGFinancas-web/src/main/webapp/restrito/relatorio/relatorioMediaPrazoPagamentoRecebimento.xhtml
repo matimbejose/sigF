@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <f:metadata>
+        <f:event listener="#{mediaPrazoControle.preencherData()}" type="preRenderView"/>
+    </f:metadata>
+
+    <ui:composition template="/WEB-INF/templateReport.xhtml">
+
+        <ui:param name="title" value="Relatório média prazo de pagamento e recebimento"/>
+
+        <ui:param name="link" value="/restrito/relatorio/relatorioMediaPrazoPagamentoRecebimento.xhtml"/>
+
+        <ui:param name="fileDownload" value="#{mediaPrazoControle.gerarRelatorio()}"/>
+
+        <ui:define name="config">
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <p:outputLabel for="@next" value="Início do periodo"/>
+                        <p:calendar navigator="true" value="#{mediaPrazoControle.data.min}" pattern="dd/MM/yyyy" mask="true"
+                                    required="true" requiredMessage="Favor informar uma data para início do período."/>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <p:outputLabel for="@next" value="Fim do periodo"/>
+                        <p:calendar navigator="true" value="#{mediaPrazoControle.data.max}" pattern="dd/MM/yyyy" mask="true"
+                                    required="true" requiredMessage="Favor informar uma data para final do período."/>
+                    </div>
+                </div>
+            </div>
+            
+        </ui:define>
+
+    </ui:composition>
+
+</html>

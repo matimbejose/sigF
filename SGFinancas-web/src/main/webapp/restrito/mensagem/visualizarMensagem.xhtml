@@ -1,0 +1,99 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:define name="cssInicial">
+            <style>
+                .title-inbox {
+                    background-color: #e0eaf0;
+                }
+                .head-inbox {
+                    width: 100%;
+                }
+                .body-inbox {
+                    overflow-y: scroll;
+                    height: 250px;
+                }
+            </style>
+            <link href="#{facesContext.externalContext.requestContextPath}/resources/metronic/assets/admin/pages/css/inbox.css" rel="stylesheet" type="text/css"/>
+        </ui:define>
+
+        <ui:param name="title" value="Mensagem"/>
+        <ui:define name="title">#{title}</ui:define>
+        <ui:define name="viewname">
+            <li>##SECTION_NAME##</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/mensagem/listaMensagem.xhtml"> #{title}</p:link></li>
+        </ui:define>
+        <ui:define name="content">
+            <h:form acceptcharset="ISO-8859-1">
+            <h:messages class="alertMessage" errorClass="alert alert-danger" infoClass="alert alert-success"/>
+
+            <div class="row inbox">
+                <div class="col-md-3">
+                    <ul class="ver-inline-menu margin-bottom-10">
+                        <li class="#{mensagemControle.filtro.somentePrioritarias?'':'active'}">
+                            <h:commandLink action="#{controleMenu.doAcionarPagina('mensagem/listaMensagem.xhtml')}">
+                                <i class="fa fa-inbox"></i> Caixa de entrada  (#{mensagemControle.qtdMensagensNaoLidas})
+                                <f:setPropertyActionListener value="#{false}" target="#{mensagemControle.filtro.somentePrioritarias}" />
+                            </h:commandLink>
+                        </li>
+                        <li class="#{mensagemControle.filtro.somentePrioritarias?'active':''}">
+                            <h:commandLink action="#{controleMenu.doAcionarPagina('mensagem/listaMensagem.xhtml')}">
+                                <i class="fa fa-star"></i> Prioritárias  (#{mensagemControle.qtdMensagensPrioritarias})
+                                <f:setPropertyActionListener value="#{true}" target="#{mensagemControle.filtro.somentePrioritarias}" />
+                            </h:commandLink>
+                        </li>
+                        <li class="trash">
+                            <a href="javascript:;" >
+                                <i class="icon-trash"></i> Lixo eletrônico </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="col-md-9">
+                    <div class="inbox-content">
+                        <p:toolbar>
+                            <p:toolbarGroup align="left">
+                                <h:commandLink  title="Baixar anexos"  action="#{mensagemControle.downloadAnexosCompactados()}" styleClass="btn blue btn-sm">
+                                    <f:setPropertyActionListener value="#{mensagemControle.mensagemDestinatarioSelecionada.idMensagem}" target="#{mensagemControle.mensagem}" />
+                                    <i class="fa fa-arrow-down"></i> Baixar anexos
+                                </h:commandLink>
+                            </p:toolbarGroup>
+                            <p:toolbarGroup align="right">
+                                <h:commandLink  title="Apagar mensagem"  action="#" onclick="return confirm('Tem certeza que deseja excluir este mensagens ?');" styleClass="btn blue btn-sm">
+                                    <i class="fa fa-trash-o"></i> Apagar
+                                </h:commandLink>
+                            </p:toolbarGroup>
+                        </p:toolbar>
+
+                        <p:panelGrid columns="2" columnClasses="title-inbox,head-inbox">
+
+                            <h:outputText value="De:" />
+                            <h:outputText value="#{mensagemControle.mensagemDestinatarioSelecionada.idMensagem.idUsuarioEnvio.nome}" />
+
+                            <h:outputText value="Para:" />
+                            <h:outputText value="#{mensagemControle.mensagemDestinatarioSelecionada.idUsuarioDestino.nome}" />
+
+                            <h:outputText value="Assunto:" />
+                            <h:outputText value="#{mensagemControle.mensagemDestinatarioSelecionada.idMensagem.assunto}" />
+
+                        </p:panelGrid>
+
+                        <p:panel styleClass="body-inbox">
+                            <h:outputText escape="false" value="#{mensagemControle.mensagemDestinatarioSelecionada.idMensagem.texto}" />
+                        </p:panel>
+                    </div>
+                </div>
+            </div>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

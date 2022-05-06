@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Conta por cliente"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Cadastro</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/cliente/listaCliente.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteBack" action="listaCliente.xhtml" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <h5>Contas do: #{clienteControle.clienteSelecionado.nome}</h5>
+            <p:dataTable value="#{clienteControle.listConta}" var="item" emptyMessage="Nenhuma conta encontrada." rowsPerPageTemplate="10,20,30,50,100"
+                         lazy="true" rows="10" paginator="true" paginatorPosition="bottom" id="tbl" widgetVar="tbl"
+                         paginatorTemplate="#{clienteControle.paginatorTemplate}" currentPageReportTemplate="#{clienteControle.currentPageReportTemplate}" styleClass="#{clienteControle.styleClass}">
+
+                <p:column headerText="Descrição" sortBy="#{item.idConta.idPlanoConta.descricao} (#{item.numParcela}/#{item.idConta.numeroParcelas})" >
+                    <h:outputText value="#{item.idConta.idPlanoConta.descricao} (#{item.numParcela}/#{item.idConta.numeroParcelas})"/>
+                </p:column>
+
+                <p:column headerText="Venc." sortBy="#{item.dataVencimento}" width="95">
+                    <h:outputText value="#{item.dataVencimento}">
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Valor parcela"  sortBy="#{item.valor}" style="text-align: right">
+                    <h:outputText value="#{item.valor}">
+                        <f:convertNumber currencySymbol="R$" type="currency" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Valor total" sortBy="#{item.valorTotal}" style="text-align: right">
+                    <h:outputText value="#{item.valorTotal}">
+                        <f:convertNumber currencySymbol="R$" type="currency" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Valor pago" sortBy="#{item.valorPago}" style="text-align: right">
+                    <h:outputText value="#{item.valorPago}">
+                        <f:convertNumber currencySymbol="R$" type="currency" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Situação" sortBy="#{item.situacao}">
+                    <h:outputText value="#{contaPagarControle.buscarSituacao(item.situacao)}"/>
+                </p:column>
+
+                <p:column width="70" headerText="Ações" >
+
+                    <div class="actions">
+                        <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Detalhes da conta" action="#{contaReceberControle.doStartContaPorCliente()}"  >
+                            <i class="fa fa-info"></i>
+                            <f:setPropertyActionListener value="#{item.idConta}" target="#{contaReceberControle.contaSelecionada}"/>
+                        </h:commandLink>
+                    </div>
+
+                </p:column>
+
+            </p:dataTable>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

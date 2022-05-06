@@ -1,0 +1,198 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      lang="pt" class="no-js"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite/components">
+
+    <f:metadata >
+        <f:event listener="#{pagamentoControle.iniciar()}" type="preRenderView"/>
+    </f:metadata>
+
+    <ui:composition template="/WEB-INF/templateUser.xhtml">
+
+        <ui:define name="title">SG Finanças - Link pagamento</ui:define>
+
+        <ui:define name="content">
+            <ui:param name="formaPagamento" value="#{pagamentoControle.transacao.idVenda.idFormaPagamento}"/>
+            <p:importEnum type="br.com.villefortconsulting.sgfinancas.util.EnumMeioDePagamento"/>
+            <div id="imgContainer" onclick="collapseImage();">
+                <img/>
+            </div>
+            <div class="row px-3" style="min-height: 500px;">
+                <div class="col py-3" style="background: white;padding-bottom: 145px !important;box-shadow: 5px 0 #eeeeee;">
+                    <h1>Dados pagamento</h1>
+                    <div class="row">
+                        <div class="col" style="font-size: 16px;">
+                            <h:messages class="alertMessage" id="msgResultado" errorClass="font-red-mint" warnClass="font-blue-steel" infoClass="font-green-meadow"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col mb-2">
+                            <p style="color:#536976; margin-left:10px; margin-top: 0px">Escolha uma forma de pagamento</p>
+                            <p:selectOneRadio value="#{pagamentoControle.formaSelecionada}" converter="#{genericConverter}">
+                                <f:selectItems value="#{pagamentoControle.listaMeioPagamento}" var="mp" itemLabel="#{mp.descricao}" itemValue="#{mp}"
+                                               itemDisabled="#{formaPagamento ne null and formaPagamento.enumNfe ne mp}"/>
+                            </p:selectOneRadio>
+                        </div>
+                    </div>
+                    <p:row rendered="#{formaPagamento.enumNfe ne EnumMeioDePagamento.BOLETO}">
+                        <div class="row">
+                            <div class="col-12 col-sm-8 col-md-6">
+                                <div class="form-group">
+                                    <label>Nome do cartão</label>
+                                    <p:inputText id="nome" value="#{pagamentoControle.cartao.nomeCartao}"
+                                                 required="true" requiredMessage="Preencha o nome do cartão"/>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-8 col-md-6">
+                                <div class="form-group">
+                                    <label>Numero do cartão</label>
+                                    <p:inputMask id="numero" mask="9999.9999.9999.9999" value="#{pagamentoControle.cartao.numeroCartao}"
+                                                 required="true" requiredMessage="Preencha o numero do cartão"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 col-sm-4">
+                                <div class="form-group">
+                                    <label>Mês Vencimento</label>
+                                    <p:inputText id="mes" size="2" value="#{pagamentoControle.cartao.mesValidade}"
+                                                 required="true" requiredMessage="Preencha mês de vencimento"/>
+                                </div>
+                            </div>
+                            <div class="col-6 col-sm-4">
+                                <div class="form-group">
+                                    <label>Ano Vencimento</label>
+                                    <p:inputText id="ano" size="2" value="#{pagamentoControle.cartao.anoValidade}"
+                                                 required="true" requiredMessage="Preencha ano de vencimento"/>
+                                </div>
+                            </div>
+                            <div class="col-6 col-sm-4">
+                                <div class="form-group">
+                                    <label>CVV</label>
+                                    <p:inputText id="cvv" value="#{pagamentoControle.cartao.cvv}"
+                                                 required="true" requiredMessage="Preencha o codigo de segurança do cartão"/>
+                                </div>
+                            </div>
+                        </div>
+                    </p:row>
+                    <div class="w-100 d-block d-sm-none my-4"></div>
+                    <div style="position: absolute;bottom: 15px;right: 15px;">
+                        <h:commandLink action="#{pagamentoControle.realizarPagamento()}" class="btn btn-md btn-success ri"
+                                       style="float: right"
+                                       disabled="#{pagamentoControle.transacao.idVenda.idConta.situacao eq 'PG' or pagamentoControle.transacao.idVenda.idConta.situacao eq 'PP'}">
+                            <i class="icon-check"></i> Confirmar
+                        </h:commandLink>
+                    </div>
+                </div>
+                <div class="w-100 d-block d-sm-none"></div>
+                <div class="col-12 col-sm-5 py-3" style="background: #eeeeee;padding-bottom: 145px !important;box-shadow: 5px 0 #eeeeee;">
+                    <h1>Dados da venda</h1>
+                    <h5 style="font-size: 16px;margin-bottom: 0;">Cliente</h5>
+                    <span style="padding-left: 15px;">#{pagamentoControle.transacao.idVenda.idCliente.nome}</span>
+                    <h5 style="font-size: 16px;margin-bottom: 0;">Data</h5>
+                    <span style="padding-left: 15px;"><cc:convertDate value="#{pagamentoControle.transacao.idVenda.dataVenda}"/></span>
+                    <h5 style="font-size: 16px;">Produtos</h5>
+                    <ul class="list-group list-group-flush">
+                        <ui:repeat value="#{pagamentoControle.itensList}" var="produto">
+                            <li class="list-group-item" style="background: #eeeeee; margin: 0px; padding: 0px; border: none">
+                                <div class="row px-3">
+                                    <div class="col-auto px-0">
+                                        <p:row rendered="#{produto.idProdutoServico.foto eq null}">
+                                            <img class="rounded-left" src="/resources/images/sem-foto.jpg" width="48px" height="48px"/>
+                                        </p:row>
+                                        <p:row rendered="#{produto.idProdutoServico.foto ne null}">
+                                            <img class="rounded-left" src="#{produto.idProdutoServico.foto}" onclick="expandImage(this)"
+                                                 style="cursor: zoom-in;width: 48px;height: 48px;"/>
+                                        </p:row>
+                                    </div>
+                                    <div class="col px-1">
+                                        <div style="max-width: 35ch; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;margin-top: 3px;">
+                                            <span>#{produto.idProdutoServico.descricao}</span>
+                                        </div>
+                                        <p style="font-size: 12px;color: #536976">
+                                            Quantidade: <cc:convertNumber value="#{produto.quantidade}"/>
+                                        </p>
+                                    </div>
+                                    <div class="col-auto px-0">
+                                        <cc:convertMoney value="#{produto.idProdutoServico.valor}"/>
+                                    </div>
+                                </div>
+                            </li>
+                        </ui:repeat>
+                    </ul>
+                    <div style="position: absolute;bottom: 15px;right: 15px;width: calc(100% - 30px);font-weight: bold;" class="well">
+                        <div class="row px-3">
+                            <div class="col">
+                                <p class="title-capt">SubTotal</p>
+                                <p class="title-capt">Frete</p>
+                                <p class="title-capt">Desconto</p>
+                            </div>
+                            <div class="col-auto text-right">
+                                <p class="title-capt"><cc:convertMoney value="#{pagamentoControle.transacao.idVenda.valor}"/></p>
+                                <p class="title-capt"><cc:convertMoney value="#{pagamentoControle.transacao.idVenda.valorFrete}"/></p>
+                                <p class="title-capt"><cc:convertMoney value="#{pagamentoControle.transacao.idVenda.valorDesconto}"/></p>
+                            </div>
+                        </div>
+                        <div class="well w-100 font-grey-cararra">
+                            <div class="row px-2">
+                                <div class="col-auto">Total</div>
+                                <div class="col"></div>
+                                <div class="col-auto">
+                                    <cc:convertMoney value="#{pagamentoControle.totalCompra()}"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script>
+                function expandImage(elem) {
+                    imgContainer.classList.add('active');
+                    imgContainer.querySelector('img').src = elem.src;
+                    setTimeout(() => imgContainer.classList.add('show'), 10);
+                }
+                function collapseImage() {
+                    imgContainer.classList.remove('show');
+                    setTimeout(() => imgContainer.classList.remove('active'), 400);
+                }
+            </script>
+            <style>
+                #imgContainer {
+                    display: none;
+                    opacity: 0;
+                    background-color: #0005;
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100vw;
+                    height: 100vh;
+                    cursor: zoom-out;
+                    z-index: 99;
+                    transition: opacity .4s;
+                    padding: 10vh 15px;
+                    text-align: center;
+                }
+                #imgContainer.active {
+                    display: block;
+                }
+                #imgContainer.show {
+                    opacity: 1;
+                }
+                #imgContainer > img {
+                    height: 100%;
+                    width: auto;
+                }
+                img.rounded-left{
+                    border-radius: .25rem;
+                    box-shadow: 0 0 0 2px #ccc;
+                }
+            </style>
+        </ui:define>
+
+    </ui:composition>
+
+
+</html>

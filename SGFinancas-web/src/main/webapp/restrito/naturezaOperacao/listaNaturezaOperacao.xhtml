@@ -1,0 +1,101 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:sec="http://www.springframework.org/security/facelets/tags"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <f:metadata >
+        <f:event listener="#{usuarioControle.controleMenu.setMenuCadastroNaturezaOperacao() }" type="preRenderView" />
+    </f:metadata>
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Natureza de Operação"/>
+        <ui:define name="title">#{title}</ui:define>
+        <ui:define name="viewname">
+            <li>##SECTION_NAME##</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/naturezaOperacao/listaNaturezaOperacao.xhtml"> #{title}</p:link></li>
+        </ui:define>
+        <ui:define name="content">
+            <h:messages class="alertMessage" errorClass="alert alert-danger" infoClass="alert alert-success"/>
+            <h:form acceptcharset="ISO-8859-1">
+                <div class="row">
+                    <div class="col-md-12">
+                        <!-- BEGIN EXAMPLE TABLE PORTLET-->
+                        <div class="portlet light bordered">
+
+                            <div class="portlet-title">
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="btn-group" >
+                                            <h:commandLink action="#{naturezaOperacaoControle.doStartAdd() }"  title="Nova natureza de operação" class="btn btn-circle default blue-stripe">
+                                                <i class="fa fa-plus"></i> Nova natureza de operação </h:commandLink>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="input-group">
+                                            <p:inputText value="#{naturezaOperacaoControle.filtro.descricao}" placeholder="Pesquisar..." />
+                                            <span class="input-group-btn">
+                                                <div class="btn-group">
+                                                    <div class="form-group form-md-line-input">
+                                                        <p:commandLink  title="Consultar" styleClass="btn blue btn-outline sbold" update="tbl" >
+                                                            <i class="fa fa-search"></i>
+                                                        </p:commandLink>
+                                                    </div>
+
+                                                </div>
+                                            </span>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="portlet-body">
+                                <div class="portlet-body flip-scroll">
+                                    <p:dataTable value="#{naturezaOperacaoControle.model}" emptyMessage="Nenhum registro encontrado." var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+
+                                        <p:column headerText="Descrição" sortBy="#{item.descricao}">
+                                            <h:outputText value="#{item.descricao}"/>
+                                        </p:column>
+
+                                        <p:column width="117" headerText="Ações" >
+
+                                            <div class="actions">
+                                                <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Alterar natureza de operação" action="#{naturezaOperacaoControle.doStartAlterar()}"  >
+                                                    <i class="fa fa-edit"></i>
+                                                    <f:setPropertyActionListener value="#{item}" target="#{naturezaOperacaoControle.naturezaOperacaoSelecionada}"/>
+                                                </h:commandLink>
+
+                                                <h:commandLink  styleClass="btn btn-circle btn-icon-only btn-default icones" title="Remover Natureza de Operação" action="#{naturezaOperacaoControle.doFinishExcluir()}" onclick="return confirm('Tem certeza que deseja excluir esta natureza de operação?');" >
+                                                    <i class="icon-trash"></i>
+                                                    <f:setPropertyActionListener value="#{item}" target="#{naturezaOperacaoControle.naturezaOperacaoSelecionada}"/>
+                                                </h:commandLink>
+
+                                                <h:commandLink  title="Auditoria" styleClass="btn btn-circle btn-icon-only btn-default icones" action="#{naturezaOperacaoControle.doShowAuditoria()}" >
+                                                    <i class="fa fa-history"></i>
+                                                    <f:setPropertyActionListener value="#{item}" target="#{naturezaOperacaoControle.naturezaOperacaoSelecionada}"/>
+                                                </h:commandLink>
+
+                                            </div>
+
+                                        </p:column>
+
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </h:form>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+        <f:metadata>
+            <f:event listener="#{usuarioControle.verificarUsuarioLogado()}" type="preRenderView" />
+        </f:metadata>
+
+        <ui:param name="title" value="Alteração de senha do usuário"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Segurança</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/usuario/listaUsuario.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteSave" action="#{usuarioControle.alterarSenhaContaExpirada()}"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <h1>Alteração de senha</h1>
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group form-md-line-input">
+                            <label>Nome</label>
+                            <p:inputText disabled="true" value="#{usuarioControle.usuarioSelecionado.nome}" placeholder="Nome do usuário" type="text" autocomplete="off" styleClass="form-control" ></p:inputText>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group form-md-line-input">
+                            <label>Login</label>
+                            <p:inputText disabled="true" value="#{usuarioControle.usuarioSelecionado.login}" placeholder="Login do usuário" type="text" autocomplete="off" styleClass="form-control" ></p:inputText>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group" >
+                            <label>Senha</label>
+                            <p:inputText value="#{usuarioControle.senha}" placeholder="Senha do usuário" required="true" requiredMessage="Informe uma senha para o usuário" type="password" autocomplete="off" styleClass="form-control" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group" >
+                            <label>E-mail</label>
+                            <p:inputText value="#{usuarioControle.usuarioSelecionado.email}" required="true" requiredMessage="Informe o email do usuário" placeholder="E-mail" type="text" autocomplete="off" styleClass="form-control" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+</html>

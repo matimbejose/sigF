@@ -1,0 +1,9 @@
+#signatureControlsPanel {
+    margin-top: 1em;
+    display: none;
+}
+
+#blockPanel {
+    display: none;
+    padding: 0.5em;
+}

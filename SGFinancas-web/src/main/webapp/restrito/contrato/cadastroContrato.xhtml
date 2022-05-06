@@ -1,0 +1,463 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:cc="http://xmlns.jcp.org/jsf/composite/components"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <p:importEnum type="br.com.villefortconsulting.sgfinancas.util.EnumTipoContrato" var="EnumTipoContrato"/>
+    <ui:param name="inativo" value="#{controle.contratoSelecionado.situacao eq 'IT'}"/>
+    <style>
+        .info-msg {
+            cursor: pointer;
+        }
+        .info-msg.disabled {
+            opacity: .4;
+            pointer-events: none;
+        }
+    </style>
+
+    <div class="card p-0">
+        <p:tabView style="z-index: 2;" widgetVar="tabs" id="tabs">
+            <p:tab title="Geral" id="geral">
+                <div class="row">
+                    <div class="col form-group form-md-line-input">
+                        <p:row rendered="#{controle.tipoContrato eq EnumTipoContrato.FORNECEDOR}">
+                            <cc:addButton label="Fornecedor" entityName="fornecedor" disabled="#{inativo}">
+                                <p:selectOneMenu value="#{controle.contratoSelecionado.idFornecedor}" panelStyle="width:180px" effect="fade"
+                                                 var="t" style="width:160px" filter="true" filterMatchMode="startsWith" converter="#{genericConverter}"
+                                                 required="true" requiredMessage="Informe um fornecedor" disabled="#{inativo}">
+                                    <p:column>
+                                        <h:outputText value="#{t.razaoSocial}" />
+                                    </p:column>
+
+                                    <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                    <f:selectItems value="#{controle.fornecedores}" var="fornecedor" itemLabel="#{fornecedor.razaoSocial}" itemValue="#{fornecedor}"/>
+                                </p:selectOneMenu>
+                            </cc:addButton>
+                        </p:row>
+                        <p:row rendered="#{controle.tipoContrato eq EnumTipoContrato.CLIENTE }">
+                            <cc:addButton label="Cliente" entityName="cliente" disabled="#{inativo and controle.solicitanteTurmaSelecionado eq null}">
+                                <p:selectOneMenu value="#{controle.contratoSelecionado.idCliente}" panelStyle="width:180px" effect="fade"
+                                                 var="t" style="width:160px" filter="true" filterMatchMode="startsWith" converter="#{genericConverter}"
+                                                 disabled="#{inativo and controle.solicitanteTurmaSelecionado eq null}"
+                                                 required="true" requiredMessage="Informe um cliente">
+
+                                    <p:column>
+                                        <h:outputText value="#{t.nome}" />
+                                    </p:column>
+
+                                    <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                    <f:selectItems value="#{contratoClienteControle.clientes}" var="cliente" itemLabel="#{cliente.nome}" itemValue="#{cliente}"/>
+                                    <p:ajax process="@this" update="@form" />
+                                </p:selectOneMenu>
+                            </cc:addButton>
+                        </p:row>
+                    </div>
+                    <div class="col form-group form-md-line-input">
+                        <cc:addButton label="Plano de conta" entityName="planoConta" disabled="#{inativo}"
+                                      context="#{controle.tipoContrato eq EnumTipoContrato.FORNECEDOR ? 'compra' : 'venda'}">
+                            <p:selectOneMenu value="#{controle.contratoSelecionado.idPlanoConta}" panelStyle="width:180px" effect="fade"
+                                             var="t" style="width:160px" filter="true" filterMatchMode="startsWith" disabled="#{inativo}"
+                                             converter="#{genericConverter}" required="true" requiredMessage="Informe um plano de conta">
+                                <p:column>
+                                    <h:outputText value="#{t.codigo}" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{t.descricao}" />
+                                </p:column>
+
+                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                <f:selectItems value="#{controle.planoContas()}" var="pc" itemLabel="#{pc.descricao}" itemValue="#{pc}"
+                                               itemDescription="#{planoContaControle.obterNomesDosPais(pc)}"
+                                               itemDisabled="#{pc.tipoIndicador ne 'S' or pc.idContaPai.bloqueiaFilhoContaReceber eq 'S'}"/>
+                            </p:selectOneMenu>
+                        </cc:addButton>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col form-group form-md-line-input">
+                        <cc:addButton label="Centro de custo" entityName="centroCusto">
+                            <p:selectOneMenu value="#{controle.contratoSelecionado.idCentroCusto}" panelStyle="width:180px" effect="fade"
+                                             var="t" style="width:160px" filter="true" filterMatchMode="startsWith" disabled="#{inativo}"
+                                             converter="#{genericConverter}">
+                                <p:column>
+                                    <h:outputText value="#{t.descricao}" />
+                                </p:column>
+
+                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                <f:selectItems value="#{centroCustoControle.centroCustos}"  var="centroCusto" itemLabel="#{centroCusto.descricao}" itemValue="#{centroCusto}"/>
+
+                            </p:selectOneMenu>
+                        </cc:addButton>
+                    </div>
+                    <div class="col form-group form-md-line-input">
+                        <p:row rendered="#{controle.tipoContrato eq EnumTipoContrato.CLIENTE and empresaControle.empresaLogada.idCategoriaEmpresa.descricao eq 'Oficina mecânica'}">
+                            <cc:addButton label="Veiculo" entityName="veiculo" context="#{controle.contratoSelecionado.idCliente}"
+                                          disabled="#{inativo or (controle.solicitanteTurmaSelecionado eq null and controle.contratoSelecionado.idCliente eq null)}">
+                                <p:selectOneMenu value="#{controle.veiculo}" panelStyle="width:180px" effect="fade"
+                                                 var="t" style="width:160px" filter="true" filterMatchMode="startsWith" converter="#{genericConverter}"
+                                                 disabled="#{inativo or (controle.solicitanteTurmaSelecionado eq null and controle.contratoSelecionado.idCliente eq null)}">
+
+                                    <p:column>
+                                        <h:outputText value="#{t.nome}" />
+                                    </p:column>
+
+                                    <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                    <f:selectItems value="#{contratoClienteControle.veiculos}" var="veiculo" itemLabel="#{veiculo.nome}" itemValue="#{veiculo}"/>
+                                </p:selectOneMenu>
+                            </cc:addButton>
+                        </p:row>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Data de início" />
+                        <p:calendar navigator="true" id="dataInicio" value="#{controle.contratoSelecionado.dataInicio}" pattern="dd/MM/yyyy" mask="true"
+                                    required="true" requiredMessage="Informe a data de início do seu contrato" disabled="#{inativo}"/>
+                    </div>
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Data de termino" />
+                        <p:calendar navigator="true" value="#{controle.contratoSelecionado.dataFim}" pattern="dd/MM/yyyy" mask="true" disabled="#{inativo}"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col form-group form-md-line-input">
+                        <label class="control-label">Observação</label>
+                        <p:inputText value="#{controle.contratoSelecionado.observacao}"  styleClass="form-control" disabled="#{inativo}"/>
+                    </div>
+                </div>
+            </p:tab>
+            <p:tab title="Itens do contrato" id="servicos">
+                <p:dataTable value="#{controle.contratoSelecionado.contratoServicoList}" var="item" emptyMessage="Nenhum serviço selecionado."
+                             styleClass="card p-0 ui-datatable-striped ui-datatable-sm ui-datatable-gridlines">
+                    <f:facet name="header">
+                        Itens do contrato
+                        <p:commandButton value="Adicionar" class="pull-right" update="form:servicoBody" immediate="true"
+                                         rendered="#{!inativo}" action="#{controle.doStartAdicionarServico}"/>
+                        <div class="clearfix"></div>
+                    </f:facet>
+
+                    <p:column headerText="Serviço">
+                        <h:outputText value="#{item.idServico.descricao}"/>
+                    </p:column>
+
+                    <p:column headerText="Quantidade">
+                        <cc:convertNumber value="#{item.quantidade}"/>
+                    </p:column>
+
+                    <p:column headerText="Valor unitário">
+                        <cc:convertMoney value="#{item.valor}"/>
+                    </p:column>
+
+                    <p:column headerText="Desconto">
+                        <cc:convertMoney value="#{item.desconto}"/>
+                    </p:column>
+
+                    <p:column headerText="Valor total">
+                        <cc:convertMoney value="#{item.valorTotal}"/>
+                    </p:column>
+
+                    <p:column headerText="Observação">
+                        <h:outputText value="#{item.observacao}"/>
+                    </p:column>
+
+                    <p:column headerText="Ações" style="text-align: center;">
+                        <p:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Editar"
+                                       update="form:servicoBody" oncomplete="PF('modal').show();" action="#{controle.doStartEditar}">
+                            <i class="fa fa-edit"></i>
+                            <f:setPropertyActionListener value="#{item}" target="#{controle.contratoServicoSelecionado}"/>
+                        </p:commandLink>
+                        <p:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" update="form:tabs:pagamento"
+                                       title="Ativar" action="#{controle.doAtivarServico}" rendered="#{item.ativo eq 'N'}">
+                            <i class="fa fa-plus-circle"></i>
+                            <f:setPropertyActionListener value="#{item}" target="#{controle.contratoServicoSelecionado}"/>
+                        </p:commandLink>
+                        <p:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" update="form:tabs:pagamento"
+                                       title="Inativar" action="#{controle.doInativarServico}" rendered="#{item.ativo eq 'S'}">
+                            <i class="fa fa-minus-circle"></i>
+                            <f:setPropertyActionListener value="#{item}" target="#{controle.contratoServicoSelecionado}"/>
+                        </p:commandLink>
+                        <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                       title="Auditoria" action="#{controle.doShowAuditoriaServico}">
+                            <i class="fa fa-history"></i>
+                            <f:setPropertyActionListener value="#{item}" target="#{controle.contratoServicoSelecionado}"/>
+                        </h:commandLink>
+                    </p:column>
+                </p:dataTable>
+            </p:tab>
+            <p:tab title="Pagamento" id="pagamento">
+                <div class="row">
+                    <div class="col form-group form-md-line-input">
+                        <label class="control-label">
+                            Taxa de instalação
+                            <small style="color: #3f5f98;">
+                                <h:outputText value="#{controle.labelSituacaoTxInstalacao}"
+                                              rendered="#{controle.contratoSelecionado.id ne null}"/>
+                            </small>
+                        </label>
+                        <p:inputNumber value="#{controle.contratoSelecionado.taxaInstalacao}" disabled="#{inativo}"
+                                       symbol="R$ " decimalSeparator="," thousandSeparator="." decimalPlaces="2" />
+                    </div>
+                    <div class="col form-group form-md-line-input">
+                        <label class="control-label">Data venc. taxa de instalação</label>
+                        <p:calendar navigator="true" value="#{controle.contratoSelecionado.dataVencimentoInstalacao}" pattern="dd/MM/yyyy"
+                                    mask="true" disabled="#{inativo}"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col form-group form-md-line-input">
+                        <label class="control-label">
+                            Taxa de adesão
+                            <small style="color: #3f5f98;">
+                                <h:outputText value="#{controle.labelSituacaoTxAdesao}"
+                                              rendered="#{controle.contratoSelecionado.id ne null}"/>
+                            </small>
+                        </label>
+                        <p:inputNumber value="#{controle.contratoSelecionado.taxaAdesao}" disabled="#{inativo}"
+                                       symbol="R$ " decimalSeparator="," thousandSeparator="." decimalPlaces="2" />
+                    </div>
+                    <div class="col form-group form-md-line-input">
+                        <label class="control-label">Data venc. taxa de adesão</label>
+                        <p:calendar navigator="true"  value="#{controle.contratoSelecionado.dataVencimentoAdesao}" pattern="dd/MM/yyyy"
+                                    mask="true" disabled="#{inativo}"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Atualização automática do valor do contrato ao alterar parcela"/>
+                        <p:selectOneMenu  value="#{controle.contratoSelecionado.usaAtualizacaoAutomatica}" disabled="#{inativo}"
+                                          required="true" requiredMessage="Informe se usa atualização automática com sim ou não.">
+                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                            <f:selectItem itemLabel="Sim" itemValue="S" />
+                            <f:selectItem itemLabel="Não" itemValue="N" />
+                        </p:selectOneMenu >
+                    </div>
+                    <div class="col form-group form-md-line-input">
+                        <label class="control-label">Prazo para notificação</label>
+                        <p:inputNumber id="prazoNotitficacao" value="#{controle.contratoSelecionado.prazoParaNotificacao}" disabled="#{inativo}"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col form-group form-md-line-input">
+                        <label class="control-label"> <span class="required"> * </span>Vencimento da 1ª parcela</label>
+                        <p:calendar navigator="true" id="dataVencimento" value="#{controle.contratoSelecionado.dataVencimentoPagamento}" pattern="dd/MM/yyyy"
+                                    required="true" requiredMessage="Informe a data de vencimento da parcela de seu contrato" mask="true"
+                                    disabled="#{inativo}">
+                            <p:ajax event="dateSelect" process="@this, dataInicio, somFormaPagamento" update="pnlFormaPagamento, pnlParcelado" listener="#{controle.preencherParcela()}"/>
+                        </p:calendar>
+                    </div>
+                    <div class="col form-group form-md-line-input">
+                        <p:outputPanel id="pnlFormaPagamento">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label"><span class="required"> * </span>Parcelas</label>
+                                <p:selectOneMenu  id="somFormaPagamento" value="#{controle.contratoSelecionado.numeroParcelas}"
+                                                  required="true" requiredMessage="Informe o número de parcelas" disabled="#{inativo}">
+                                    <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                    <f:selectItems value="#{controle.parcelas}"
+                                                   itemDisabled="#{controle.podeSelecionarAParcela(parcelas)}"
+                                                   var="parcelas" itemLabel="#{parcelas.descricao}" itemValue="#{parcelas.forma}"/>
+                                    <p:ajax process="@this, dataInicio, dataVencimento" update="pnlParcelado" listener="#{controle.preencherParcela()}" />
+                                </p:selectOneMenu >
+                            </div>
+                        </p:outputPanel>
+                    </div>
+                    <p:row rendered="#{controle.tipoContrato eq EnumTipoContrato.CLIENTE}">
+                        <div class="col form-group form-md-line-input">
+                            <cc:addButton label="Conta bancária" entityName="contaBancaria" rendered="#{controle.tipoContrato eq EnumTipoContrato.CLIENTE}">
+                                <p:selectOneMenu value="#{controle.contratoSelecionado.idContaBancaria}" panelStyle="width:180px" effect="fade" var="t"
+                                                 style="width:160px" filter="true" filterMatchMode="startsWith" disabled="#{inativo}"
+                                                 required="true" requiredMessage="Favor informar uma conta bancária" converter="#{genericConverter}"
+                                                 rendered="#{controle.tipoContrato eq EnumTipoContrato.CLIENTE}">
+                                    <p:column>
+                                        <h:outputText value="#{t.descricao}" />
+                                    </p:column>
+
+                                    <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                    <f:selectItems value="#{controle.contasBancarias()}"  var="contaBancaria" itemLabel="#{contaBancaria.descricao}" itemValue="#{contaBancaria}"/>
+                                </p:selectOneMenu>
+                            </cc:addButton>
+                        </div>
+                    </p:row>
+                </div>
+                <div class="row">
+                    <div class="col form-group form-md-line-input">
+                        <h5>Parcelamento</h5>
+                        <p:outputPanel id="pnlParcelado">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p:row rendered="#{controle.contratoSelecionado.numeroParcelas eq null}">
+                                        Sem parcelas - necessário informar a data de vencimento e a quantidade de parcelas.
+                                    </p:row>
+                                    <p:row rendered="#{controle.contratoSelecionado.numeroParcelas ne null}">
+                                        <p:dataTable value="#{controle.contratoSelecionado.listParcelaDTO}" var="item" editable="true" editMode="cell"
+                                                     emptyMessage="Nenhuma parcela informada." id="tblParcela"
+                                                     styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+                                            <p:column headerText="Parcela" width="10%">
+                                                <h:outputText value="#{item.numParcela}"/>
+                                                <f:facet name="footer">Total</f:facet>
+                                            </p:column>
+
+                                            <p:column headerText="Valor Bruto" width="25%">
+                                                <p:inputNumber rendered="#{item.dataPagamento eq null and item.dataCancelamento eq null}" value="#{item.valor}" symbol="R$ "
+                                                               thousandSeparator="." decimalSeparator="," decimalPlaces="2" disabled="#{inativo or controle.temListaDeServicos}">
+                                                    <p:ajax event="change" update="tblParcela"  process="@this, tblParcela"  listener="#{controle.calcularValorTotal(item)}" />
+                                                </p:inputNumber>
+                                                <p:inputText value="#{item.valor}" rendered="#{item.dataPagamento ne null or item.dataCancelamento ne null}"
+                                                             disabled="#{true}">
+                                                    <f:convertNumber type="currency" locale="pt_BR" />
+                                                </p:inputText>
+                                                <f:facet name="footer">
+                                                    <h:outputText id="outputTotalBruto" value="#{controle.totalizaValorBruto()}">
+                                                        <f:convertNumber type="currency" currencySymbol="R$" />
+                                                    </h:outputText>
+                                                </f:facet>
+                                            </p:column>
+
+                                            <p:column headerText="Valor Pago" width="25%">
+                                                <h:outputText value="#{item.valorPago}" >
+                                                    <f:convertNumber currencySymbol="R$" type="currency" />
+                                                </h:outputText>
+                                            </p:column>
+
+                                            <p:column headerText="Data vencimento" width="25%">
+                                                <p:calendar navigator="true" value="#{item.dataVencimento}" pattern="dd/MM/yyyy"
+                                                            mask="true" rendered="#{item.dataPagamento eq null || item.dataCancelamento ne null}" />
+                                                <h:outputText value="#{item.dataVencimento}" rendered="#{item.dataPagamento ne null}">
+                                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                </h:outputText>
+                                            </p:column>
+
+                                            <p:column headerText="Situação" width="15%">
+                                                <h:outputText value="Pago" rendered="#{item.situacao eq 'PG'}"/>
+                                                <h:outputText value="Pago Parcialmente" rendered="#{item.situacao eq 'PP'}"/>
+                                                <h:outputText value="Não pago" rendered="#{item.situacao eq 'NP'}"/>
+                                                <h:outputText value="Cancelada" rendered="#{item.situacao eq 'CC'}"/>
+
+                                            </p:column>
+
+                                            <p:column headerText="" width="12">
+                                                <i class="fa fa-info-circle info-msg #{item.observacao eq null ? 'disabled' : 'blue'}"
+                                                   title="#{item.observacao}" data-toggle="tooltip" data-placement="left"/>
+                                            </p:column>
+
+                                        </p:dataTable>
+                                    </p:row>
+                                </div>
+                            </div>
+                        </p:outputPanel>
+                    </div>
+                </div>
+            </p:tab>
+            <p:tab title="Anexos">
+                <p:fileUpload fileUploadListener="#{controle.setPart}" mode="advanced" id="fileUpload"
+                              multiple="true" style="display: none;" auto="true" process="@this" update="fileList"/>
+                <p:dataTable value="#{controle.listaAnexos}" var="arquivo" id="fileList" emptyMessage="Nenhum arquivo enviado."
+                             styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+                    <f:facet name="header">
+                        Arquivos
+                        <p:commandButton onclick="Array.from(document.querySelectorAll('.ui-fileupload'))/* Busca os widgets p:fileUpload */
+                                        .filter(element => element.id.indexOf(':fileUpload') >= 0)[0]/* Pega o que tiver o ID correto */
+                                        .querySelector('input[type=file]')/* Busca o input nele e dispara um clique */
+                                        .click();
+                                return false;" value="Adicionar" class="pull-right" rendered="#{!inativo}"/>
+                        <div class="clearfix"></div>
+                    </f:facet>
+                    <p:column headerText="Nome do arquivo">
+                        <h:outputText value="#{arquivo.nome}" title="#{arquivo.nome}"/>
+                    </p:column>
+                    <p:column headerText="Data do upload">
+                        <h:outputText value="#{arquivo.dataEnvio}">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Usuário">
+                        <h:outputText value="#{arquivo.nomeUsuarioEnvio}" title="#{arquivo.nomeUsuarioEnvio}"/>
+                    </p:column>
+                    <p:column headerText="" style="width: 16px;text-align: center;">
+                        <f:facet name="header">
+                            <i class="fa fa-arrow-down" title="Baixar arquivos"></i>
+                        </f:facet>
+                        <p:commandLink title="Baixar arquivo" ajax="false" class="btn btn-circle btn-icon-only btn-default icones" immediate="true">
+                            <i class="fa fa-arrow-down"></i>
+                            <p:fileDownload value="#{documentoControle.downloadAnexo(arquivo)}"/>
+                        </p:commandLink>
+                    </p:column>
+                    <p:column headerText="" style="width: 16px;" rendered="#{!inativo}">
+                        <f:facet name="header">
+                            <p:commandLink action="#{controle.removerArquivos()}" title="Remover todos os arquivos" class="btn btn-circle btn-default btn-xs"
+                                           update="fileList" style="padding: 0;" immediate="true">
+                                <i class="icon-trash"></i>
+                            </p:commandLink>
+                        </f:facet>
+                        <p:commandLink action="#{controle.removerArquivo(arquivo)}" title="Remover arquivo" class="btn btn-circle btn-default btn-xs"
+                                       update="fileList" style="padding: 0;" immediate="true">
+                            <i class="icon-trash"></i>
+                        </p:commandLink>
+                    </p:column>
+                </p:dataTable>
+            </p:tab>
+        </p:tabView>
+    </div>
+    <p:dialog widgetVar="modal">
+        <p:outputPanel id="servicoBody">
+            <p:outputPanel rendered="#{controle.contratoServicoSelecionado ne null}">
+                <div class="row">
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Serviço"/>
+                        <p:selectOneMenu value="#{controle.contratoServicoSelecionado.idServico}" converter="#{genericConverter}" var="t"
+                                         filter="true" filterMatchMode="startsWith">
+                            <p:column>
+                                <h:outputText value="#{t.descricao}"/>
+                            </p:column>
+
+                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                            <f:selectItems value="#{servicoControle.servicos}" var="s" itemLabel="#{s.descricao}" itemValue="#{s}"/>
+                            <p:ajax process="@this" update="servicoBody" listener="#{controle.doSelecionarServico}"/>
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="col-4 form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Valor unitário"/>
+                        <p:inputNumber value="#{controle.contratoServicoSelecionado.valor}" disabled="true"
+                                       symbol="R$ " symbolPosition="p" thousandSeparator="." decimalSeparator="," decimalPlaces="2"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Quantidade"/>
+                        <p:inputNumber value="#{controle.contratoServicoSelecionado.quantidade}"
+                                       thousandSeparator="." decimalSeparator="," decimalPlaces="2">
+                            <p:ajax process="@this" update="valorTotal"/>
+                        </p:inputNumber>
+                    </div>
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Desconto"/>
+                        <p:inputNumber value="#{controle.contratoServicoSelecionado.desconto}"
+                                       symbol="R$ " symbolPosition="p" thousandSeparator="." decimalSeparator="," decimalPlaces="2">
+                            <p:ajax process="@this" update="valorTotal"/>
+                        </p:inputNumber>
+                    </div>
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Valor total"/>
+                        <p:inputNumber value="#{controle.contratoServicoSelecionado.valorTotal}" disabled="true" id="valorTotal"
+                                       symbol="R$ " symbolPosition="p" thousandSeparator="." decimalSeparator="," decimalPlaces="2"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Observação"/>
+                        <p:inputText value="#{controle.contratoServicoSelecionado.observacao}"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col ml-auto">
+                        <p:commandButton value="Cancelar" onclick="PF('modal').hide();" immediate="true"/>
+                        <p:spacer width="10"/>
+                        <p:commandButton value="Salvar" action="#{controle.doFinishAdicionar}" process="servicoBody, tabs:geral" update="form"/>
+                    </div>
+                </div>
+            </p:outputPanel>
+        </p:outputPanel>
+    </p:dialog>
+
+</ui:composition>

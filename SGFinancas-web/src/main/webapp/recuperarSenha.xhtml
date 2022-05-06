@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui" >
+    <h:head>
+        <meta charset="utf-8" />
+        <title>SGFinanças 1.0</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        <meta content="width=device-width, initial-scale=1" name="viewport" />
+        <meta content="" name="description" />
+        <meta content="" name="author" />
+        <h:outputStylesheet name="main.css" library="css" />
+        <h:outputStylesheet name="css/layout-chateau-green-light.css" library="rain-layout" />
+        <link rel="stylesheet" href="#{facesContext.externalContext.requestContextPath}/resources/bootstrap-4.3.1/css/bootstrap.css"></link>
+        <script src="#{facesContext.externalContext.requestContextPath}/resources/bootstrap-4.3.1/js/bootstrap.min.js"></script>
+        <link href="#{facesContext.externalContext.requestContextPath}/resources/metronic/assets/pages/css/login-5.min.css" rel="stylesheet" type="text/css" />
+        <link rel="shortcut icon" href="resources/images/favicon.png" />
+    </h:head>
+    <h:body class=" login">
+
+        <!-- BEGIN : LOGIN PAGE 5-1 -->
+        <h:form acceptcharset="ISO-8859-1" styleClass="login-form" id="form" prependId="false" >
+
+            <style type="text/css">
+                .forgot {
+                    color: #a0a9b4;
+                    padding-top: 20px;
+                    margin-right: 1em;
+                    display: inline-block;
+                }
+
+                .msg {
+                    border-width: 1px ;
+                    background-color: #fbe1e3;
+                    border-color: #fbe1e3;
+                    color: #e73d4a;
+                    margin-top: -60px;
+                    padding: 15px;
+                }
+            </style>
+
+            <div class="user-login-5">
+                <div class="row bs-reset">
+                    <div class="col-md-6 bs-reset">
+                        <div class="login-bg" style="background-image:url('resources/images/logo_aplicacao3d.jpg')">
+                            <img class="login-logo" src="resources/images/logo_ville.png" /> </div>
+                    </div>
+                    <div class="col-md-6 login-container bs-reset">
+                        <div class="login-content">
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <h:messages class="alertMessage" id="msgResultado"  errorClass="alert alert-danger" infoClass="alert alert-sucess"/>
+
+                                </div>
+                            </div>
+
+                            <div class="headerLogin">
+                                <h1 >Recuperação de senha</h1>
+                                <div>
+                                    <p> Informe seu email cadastrado e enviaremos uma nova senha. </p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label"><span class="required">* </span>Email</label>
+                                        <p:inputText value="#{recuperarSenhaUsuarioControle.login}"
+                                                     styleClass="form-control" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <a href="login.xhtml" class="btn default button-previous" style="color: #78a242;">
+                                        <i class="fa fa-angle-left"></i> Voltar
+                                    </a>
+                                </div>
+                                <div class="col text-right">
+                                    <h:commandLink action="#{recuperarSenhaUsuarioControle.recuperarSenhaEmailCadastrado()}"
+                                                   class="btn btn-light" style="background-color: #78a242;color: #f0ffe9;">
+                                        Nova senha
+                                    </h:commandLink>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+    </h:body>
+
+</html>

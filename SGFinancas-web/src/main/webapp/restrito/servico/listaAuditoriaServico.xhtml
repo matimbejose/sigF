@@ -1,0 +1,26 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/restrito/generic/auditoria.xhtml">
+        <ui:define name="remotes">
+            <h:commandButton id="remoteBack" action="listaServico.xhtml"/>
+        </ui:define>
+
+        <ui:param name="descricaoMenu" value="Cadastro"/>
+        <ui:param name="title" value="Serviços"/>
+        <ui:param name="caminhoAuditoria" value="/restrito/servico/listaAuditoriaServico.xhtml"/>
+        <ui:param name="objetoSelecionado" value=" #{servicoControle.servicoSelecionado.descricao}"/>
+
+        <ui:param name="model" value="#{servicoControle.dadosAuditoria}"/>
+        <ui:define name="colunas">
+            <p:column headerText="Descrição" sortBy="#{item[0].descricao}">  
+                <h:outputText value="#{item[0].descricao}"/>
+            </p:column>
+        </ui:define>
+    </ui:composition>
+
+</html>

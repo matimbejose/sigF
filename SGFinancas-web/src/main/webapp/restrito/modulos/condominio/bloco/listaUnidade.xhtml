@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:sec="http://www.springframework.org/security/facelets/tags"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Unidade"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Condomínio</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/modulos/condominio/bloco/listaUnidade.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <sec:ifAnyGranted roles ="UNIDADE_GERENCIAR" >
+                <h:commandButton id="remoteAdd" action="#{unidadeControle.doStartAdd()}"/>
+            </sec:ifAnyGranted>
+            <h:commandButton id="remoteBack" action="listaBloco.xhtml" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <p:dataTable value="#{unidadeControle.model}" emptyMessage="Nenhum registro encontrado." var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+                <f:facet name="header">
+                    Condomínio #{unidadeControle.filtro.bloco.descricao}
+                </f:facet>
+
+                <p:column headerText="#" width="55" sortBy="#{item.id}" visible="false">
+                    <h:outputText value="#{item.id}"/>
+                </p:column>
+
+                <p:column headerText="Descrição" sortBy="#{item.descricao}">
+                    <h:outputText value="#{item.descricao}"/>
+                </p:column>
+
+                <p:column headerText="Proprietário">
+                    <h:outputText value="#{item.idDono.nome}"/>
+                </p:column>
+
+                <p:column headerText="Tipo">
+                    <h:outputText value="#{unidadeControle.buscarTipoUnidade(item.tipoUnidade)}"/>
+                </p:column>
+
+                <p:column headerText="Situacao">
+                    <h:outputText value="#{unidadeControle.buscarSituacaoUnidade(item.situacao)}"/>
+                </p:column>
+
+                <sec:ifAnyGranted roles ="UNIDADE_GERENCIAR" >
+                    <p:column width="120" headerText="Ações" >
+                        <div class="actions">
+                            <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Alterar unidade" action="#{unidadeControle.doStartAlterar()}"  >
+                                <i class="fa fa-edit"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{unidadeControle.unidadeSelecionada}"/>
+                            </h:commandLink>
+                            <h:commandLink  title="Auditoria" styleClass="btn btn-circle btn-icon-only btn-default icones" action="#{unidadeControle.doShowAuditoria()}" >
+                                <i class="fa fa-history"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{unidadeControle.unidadeSelecionada}"/>
+                            </h:commandLink>
+                        </div>
+                    </p:column>
+                </sec:ifAnyGranted>
+
+            </p:dataTable>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

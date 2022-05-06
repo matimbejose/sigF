@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html">
+    <ui:composition template="/WEB-INF/templateModalCadastro.xhtml">
+
+        <ui:param name="title" value="Cadastro de plano de conta"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="content">
+            <p:row rendered="#{planoContaControle.dtoCadastro.codigoOrigem eq 'skip'}">
+                <h5>Não foi possível abrir o cadastro rápido para essa página.</h5>
+                <script>
+                    setTimeout(() => PF('salvarBtn').disable(), 500);
+                </script>
+            </p:row>
+            <p:row rendered="#{planoContaControle.dtoCadastro.codigoOrigem ne 'skip'}">
+                <div class="form-body">
+                    <div class="row mb-5">
+                        <div class="col">
+                            <p:outputLabel for="@next" value="Conta pai"/>
+                            <p:selectOneMenu value="#{planoContaControle.dtoCadastro.idContaPai}" panelStyle="width:300px" effect="fade"
+                                             var="t" filter="true" filterMatchMode="contains" converter="#{genericConverter}">
+                                <p:column>
+                                    <h:outputText value="#{t.codigo}"/>
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{t.descricao}"/>
+                                </p:column>
+
+                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                <f:selectItems value="#{planoContaControle.listarPlanosContaQuePodemTerFilhos()}" var="planoConta"
+                                               itemLabel="#{planoConta.descricao}" itemValue="#{planoConta}"/>
+                                <p:ajax event="itemSelect" process="@this" update="formData" listener="#{planoContaControle.buscaProximoCodigoLivre(planoContaControle.dtoCadastro.idContaPai)}"/>
+                                <p:ajax process="@this" update="formData"/>
+                            </p:selectOneMenu>
+                        </div>
+                    </div>
+                    <p:outputPanel id="formData">
+                        <div class="row">
+                            <div class="col-auto">
+                                <div class="form-group form-md-line-input">
+                                    <p:outputLabel for="@next" value="Tipo de conta"/>
+                                    <br/>
+                                    <p:selectOneButton value="#{planoContaControle.dtoCadastro.tipo}"
+                                                       disabled="#{planoContaControle.dtoCadastro.idContaPai eq null}"
+                                                       required="true" requiredMessage="Informe o tipo">
+                                        <f:selectItem itemLabel="Débito" itemValue="D"/>
+                                        <f:selectItem itemLabel="Crédito" itemValue="C"/>
+                                    </p:selectOneButton>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <div class="form-group form-md-line-input">
+                                    <p:outputLabel for="@next" value="Tipo balanço"/>
+                                    <br/>
+                                    <p:selectOneButton value="#{planoContaControle.dtoCadastro.tipoBalanco}"
+                                                       disabled="#{planoContaControle.dtoCadastro.idContaPai eq null}"
+                                                       required="true" requiredMessage="Informe o tipo de balanço">
+                                        <f:selectItem itemLabel="Patrimônio" itemValue="P"/>
+                                        <f:selectItem itemLabel="Resultado" itemValue="R"/>
+                                    </p:selectOneButton>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <div class="form-group form-md-line-input">
+                                    <p:outputLabel for="@next" value="Mostra na tela incial"/>
+                                    <br/>
+                                    <p:selectOneButton value="#{planoContaControle.dtoCadastro.mostraTelaInicial}"
+                                                       disabled="#{planoContaControle.dtoCadastro.idContaPai eq null}">
+                                        <f:selectItem itemLabel="Sim" itemValue="S"/>
+                                        <f:selectItem itemLabel="Não" itemValue="N"/>
+                                    </p:selectOneButton>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group form-md-line-input">
+                                    <p:outputLabel for="@next" value="Código"/>
+                                    <div class="input-group">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" id="basic-addon1">
+                                                #{planoContaControle.dtoCadastro.idContaPai.codigo}.
+                                            </span>
+                                            <div>
+                                                <p:inputMask value="#{planoContaControle.dtoCadastro.codigo}" mask="9?99"
+                                                             disabled="#{true}"
+                                                             required="true" requiredMessage="Informe o código do plano de conta">
+                                                    <p:ajax process="@this" update="@this"/>
+                                                </p:inputMask>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group form-md-line-input">
+                                    <p:outputLabel for="@next" value="Descricao"/>
+                                    <p:inputText value="#{planoContaControle.dtoCadastro.descricao}"
+                                                 disabled="#{planoContaControle.dtoCadastro.idContaPai eq null}"
+                                                 required="true" requiredMessage="Informe a descrição"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="form-group form-md-line-input">
+                                    <p:outputLabel for="@next" value="Conta contrapartida"/>
+                                    <p:selectOneMenu value="#{planoContaControle.dtoCadastro.idContaContrapartida}" panelStyle="width:300px" var="t"
+                                                     filter="true" filterMatchMode="contains" converter="#{genericConverter}"
+                                                     disabled="#{planoContaControle.dtoCadastro.idContaPai eq null}">
+                                        <p:column>
+                                            <h:outputText value="#{t.codigo}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <h:outputText value="#{t.descricao}"/>
+                                        </p:column>
+
+                                        <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                        <f:selectItems value="#{planoContaControle.listarPlanosContaParaContrapartida()}"
+                                                       var="planoConta" itemLabel="#{planoConta.descricao}" itemValue="#{planoConta}"/>
+                                    </p:selectOneMenu>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group form-md-line-input">
+                                    <p:outputLabel for="@next" value="Código na contabilidade"/>
+                                    <p:inputText value="#{planoContaControle.dtoCadastro.codigoContabilidade}"
+                                                 disabled="#{planoContaControle.dtoCadastro.idContaPai eq null}"/>
+                                </div>
+                            </div>
+                        </div>
+                    </p:outputPanel>
+                </div>
+            </p:row>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

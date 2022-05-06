@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui" 
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+    <f:metadata>
+        <f:event listener="#{relatorioProdutosMaisVendidosControle.preecherData() }" type="preRenderView" />
+    </f:metadata>
+    
+    <ui:composition template="/WEB-INF/templateReport.xhtml">
+
+        <ui:param name="title" value="Relatório dos produtos mais vendidos"/>
+
+        <ui:param name="link" value="/restrito/relatorio/relatorioProdutosMaisVendidos.xhtml"/>
+
+        <ui:param name="fileDownload" value="#{relatorioProdutosMaisVendidosControle.gerarRelatorioProdutosMaisVenndidos()}"/>
+
+        <ui:define name="config">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <p:outputLabel for="@next" value="Início do periodo"/>
+                        <p:calendar navigator="true" value="#{relatorioProdutosMaisVendidosControle.dataInicio}" pattern="dd/MM/yyyy"
+                                    required="true" requiredMessage="Informe o início do período da consulta"/>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <p:outputLabel for="@next" value="Fim do periodo"/>
+                        <p:calendar navigator="true" value="#{relatorioProdutosMaisVendidosControle.dataFim}" pattern="dd/MM/yyyy"
+                                    required="true" requiredMessage="Informe o fim do período da consulta"/>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+</html>

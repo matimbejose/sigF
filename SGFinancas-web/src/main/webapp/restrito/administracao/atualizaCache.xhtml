@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Atualização do cache do sistema" />
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Segurança</li>
+            <li>/</li>
+            <li>Administração</li>
+            <li>/</li>
+            <li>
+                <p:link outcome="/restrito/administracao/atualizaCache.xhtml"> #{title}</p:link>
+            </li>
+        </ui:define>
+
+        <ui:define name="content">
+            <div class="notification">
+                <div class="notification-title">
+                    Cuidado!
+                </div>
+                Limpar o cache do sistema, reduz o desempenho até que todos os elementos estejam novamente carregados.
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card card-w-title">
+                        <h1>ATENÇÃO: Essa operação não poderá ser desfeita.</h1>
+                        <div class="row">
+                            <div class="col">
+                                <p:commandButton action="#{administracaoControle.limpaCache()}" value="Atualizar" update="msgResultado"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

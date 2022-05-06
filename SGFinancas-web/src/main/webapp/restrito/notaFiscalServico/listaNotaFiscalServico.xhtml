@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:sec="http://www.springframework.org/security/facelets/tags"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Nota fiscal de serviço"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Nota fiscal</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/notaFiscalServico/listaNotaFiscalServico.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteAdd" action="#{notaFiscalServicoControle.doStartAdicionarNovaNota()}"/>
+        </ui:define>
+
+        <ui:define name="formButtons">
+            <p:commandButton value="Gerar relatório" ajax="false">
+                <p:fileDownload value="#{notaFiscalServicoControle.gerarRelatorio()}"/>
+            </p:commandButton>
+            <p:commandButton type="button" value="Limpar filtros" onclick="clearDataTableFilters('tbl');"/>
+            <p:commandButton id="toggler" type="button" value="Colunas"/>
+            <p:columnToggler datasource="tbl" trigger="toggler"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <ui:include src="/WEB-INF/msgErro.xhtml"/>
+            <div class="layout-dashboard mb-3">
+                <div class="row">
+                    <div class="col intro-text">
+                        <span>
+                            Período de
+                            <p:calendar navigator="true" pattern="dd/MM/yyyy" styleClass="top-calendar m-0" value="#{notaFiscalServicoControle.filtro.data.min}">
+                                <p:ajax event="dateSelect" oncomplete="PF('tbl').filter();"/>
+                            </p:calendar>
+                            até
+                            <p:calendar navigator="true" pattern="dd/MM/yyyy" styleClass="top-calendar m-0" value="#{notaFiscalServicoControle.filtro.data.max}">
+                                <p:ajax event="dateSelect" oncomplete="PF('tbl').filter();"/>
+                            </p:calendar>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+            <p:dataTable value="#{notaFiscalServicoControle.model}" emptyMessage="Nenhum registro encontrado." var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow" sortBy="#{item.numeroNotaFiscal}" sortOrder="descending">
+
+                <f:facet name="header">
+                    <div style="font-weight: normal;margin-top: 7px;">
+                        <i class="fa fa-wifi"></i>
+                        #{notaFiscalServicoControle.consultaSituacaoAmbiente()}
+                    </div>
+                </f:facet>
+
+                <p:column headerText="#" width="55" sortBy="#{item.id}" visible="false">
+                    <h:outputText value="#{item.id}"/>
+                </p:column>
+
+                <p:column headerText="Nº"  sortBy="#{item.numeroNotaFiscal}" width="75" filterBy="#{item.numeroNotaFiscal}">
+                    <f:facet name="filter">
+                        <p:inputText value="#{notaFiscalServicoControle.filtro.numero}" onchange="PF('tbl').filter()"/>
+                    </f:facet>
+                    <h:outputText value="#{item.numeroNotaFiscalFormatada}"/>
+                </p:column>
+
+                <p:column headerText="Cliente" sortBy="#{item.nomeCliente}" filterBy="#{item.cliente}">
+                    <f:facet name="filter">
+                        <p:selectOneMenu value="#{notaFiscalServicoControle.filtro.cliente}" onchange="PF('tbl').filter()" styleClass="custom-filter"
+                                         filter="true" filterMatchMode="contains" converter="#{genericConverter}">
+                            <f:selectItem itemLabel="Todos" noSelectionOption="true"/>
+                            <f:selectItems value="#{clienteControle.clientes}" var="cliente"
+                                           itemLabel="#{cliente.nome}" itemValue="#{cliente}"/>
+                        </p:selectOneMenu>
+                    </f:facet>
+
+                    <h:outputText value="#{item.nomeCliente}"/>
+                </p:column>
+
+                <p:column headerText="Valor" sortBy="#{item.valorTotal}" width="100" style="text-align: right" filterBy="#{item.valorTotal}">
+                    <f:facet name="filter">
+                        <p:inputNumber value="#{notaFiscalServicoControle.filtro.valorNota}" decimalPlaces="2" decimalSeparator=","
+                                       thousandSeparator="." onchange="PF('tbl').filter()"/>
+                    </f:facet>
+                    <h:outputText value="#{item.valorTotal}" >
+                        <f:convertNumber type="currency" currencySymbol="R$ "  />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Email" filterBy="#{item.emailCliente}">
+                    <f:facet name="filter">
+                        <p:inputText value="#{notaFiscalServicoControle.filtro.email}" onchange="PF('tbl').filter()"/>
+                    </f:facet>
+                    <h:outputText value="#{item.idCliente.email}" rendered="#{item.idCliente ne null}"/>
+                </p:column>
+
+                <p:column headerText="Descrição" sortBy="#{item.descricaoServico}"  width="35%" visible="false">
+                    <f:facet name="filter">
+                        <p:inputText value="#{notaFiscalServicoControle.filtro.descricao}" onchange="PF('tbl').filter()"/>
+                    </f:facet>
+                    <h:outputText value="#{item.descricaoServico}"/>
+                </p:column>
+
+                <p:column headerText="Emissão" sortBy="#{item.dataEmissao}" width="100">
+                    <h:outputText value="#{item.dataEmissao}">
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Situação" sortBy="#{item.situacao}" filterBy="#{item.situacao}">
+                    <f:facet name="filter">
+                        <p:selectCheckboxMenu onchange="PF('tbl').filter()" value="#{notaFiscalServicoControle.filtro.situacoes}"
+                                              emptyLabel="Todos" updateLabel="true">
+                            <f:selectItem itemLabel="Transmitida" itemValue="E"/>
+                            <f:selectItem itemLabel="Rejeitada" itemValue="J"/>
+                            <f:selectItem itemLabel="Rascunho" itemValue="R"/>
+                            <f:selectItem itemLabel="Em processamento" itemValue="P"/>
+                            <f:selectItem itemLabel="Cancelada" itemValue="C"/>
+                            <f:selectItem itemLabel="Cancelamento em processamento" itemValue="L"/>
+                            <f:selectItem itemLabel="Cancelamento rejeitado:" itemValue="G"/>
+                        </p:selectCheckboxMenu>
+                    </f:facet>
+                    <h:outputText value="Transmitida" rendered="#{item.situacao eq 'E'}" style="color: blue"/>
+                    <h:outputText value="Rejeitada: #{item.mensagemErroEnvio}"  style="color: red" rendered="#{item.situacao eq 'J'}"/>
+                    <h:outputText value="Cancelamento rejeitado: #{item.mensagemErroEnvio}" style="color: red" rendered="#{item.situacao eq 'G'}"/>
+                    <h:outputText value="Rascunho" rendered="#{item.situacao eq 'R'}"/>
+                    <h:outputText value="Em processamento" rendered="#{item.situacao eq 'P'}"/>
+                    <h:outputText value="Cancelada" rendered="#{item.situacao eq 'C'}" style="color: red"/>
+                    <h:outputText value="Cancelamento em processamento" rendered="#{item.situacao eq 'L'}"/>
+                </p:column>
+
+                <sec:ifAnyGranted roles ="NOTA_FISCAL_SERVICO_GERENCIAR" >
+
+                    <p:column width="110" headerText="Ações" >
+
+                        <div class="actions">
+
+                            <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                           rendered="#{item.situacao ne 'E' and item.situacao ne 'C' and item.situacao ne 'L' and item.situacao ne 'P'}"
+                                           title="Alterar nota fiscal" action="#{notaFiscalServicoControle.doStartAlterar()}"  >
+                                <i class="fa fa-edit"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{notaFiscalServicoControle.nfsSelecionado}"/>
+                            </h:commandLink>
+
+                            <p:commandLink title="Gerar nota fiscal" ajax="false" class="btn btn-circle btn-icon-only btn-default icones"
+                                           rendered="#{item.situacao ne 'E' and item.situacao ne 'C' and item.situacao ne 'L' and item.situacao ne 'P'}"
+                                           update="alertMessage" action="#{notaFiscalServicoControle.transmitirNFS()}" >
+                                <i class="fa fa-send-o"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{notaFiscalServicoControle.nfsSelecionado}"/>
+                            </p:commandLink>
+
+                            <p:commandLink title="Imprimir nota fiscal serviço" rendered="#{item.situacao eq 'E' or item.situacao eq 'C'}" ajax="false" class="btn btn-circle btn-icon-only btn-default icones">
+                                <i class="fa fa-sticky-note"></i>
+                                <p:fileDownload  value="#{notaFiscalServicoControle.gerarNotaServico(item)}" />
+                            </p:commandLink>
+
+                            <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" rendered="#{item.situacao eq 'E' or item.situacao eq 'C'}"
+                                           title="Visualizar nota fiscal" action="#{notaFiscalServicoControle.doStartVisualizar()}"  >
+                                <i class="fa fa-eye"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{notaFiscalServicoControle.nfsSelecionado}"/>
+                            </h:commandLink>
+
+                            <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" rendered="#{item.situacao eq 'E'}"
+                                           title="Cancelar nota fiscal" action="#{notaFiscalServicoControle.doStartCancelar()}">
+                                <i class="fa fa-close"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{notaFiscalServicoControle.nfsSelecionado}"/>
+                            </h:commandLink>
+
+                            <h:commandLink  styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                            title="Remover nota fiscal" rendered="#{item.situacao eq 'J' or item.situacao eq 'R'}" action="#{notaFiscalServicoControle.doFinishExcluir()}" onclick="return confirm('Tem certeza que deseja excluir esta nota?');" >
+                                <i class="icon-trash"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{notaFiscalServicoControle.nfsSelecionado}"/>
+                            </h:commandLink>
+
+                            <h:commandLink  title="Auditoria" styleClass="btn btn-circle btn-icon-only btn-default icones" action="#{notaFiscalServicoControle.doShowAuditoria()}" >
+                                <i class="fa fa-history"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{notaFiscalServicoControle.nfsSelecionado}"/>
+                            </h:commandLink>
+
+                            <p:commandLink title="Download xml" ajax="false"
+                                           rendered="#{item.xmlEnvio ne null and usuarioControle.perfilSuporte}"
+                                           class="btn btn-circle btn-icon-only btn-default icones">
+                                <i class="fa fa-arrow-down"></i>
+                                <p:fileDownload  value="#{notaFiscalServicoControle.downloadXmls(item)}" />
+                            </p:commandLink>
+
+                            <p:commandLink title="Download xml" ajax="false"
+                                           rendered="#{item.xmlArmazenamento ne null and !usuarioControle.perfilSuporte}"
+                                           class="btn btn-circle btn-icon-only btn-default icones">
+                                <i class="fa fa-arrow-down"></i>
+                                <p:fileDownload  value="#{notaFiscalServicoControle.downloadXmlArmazenamento(item)}" />
+                            </p:commandLink>
+
+                        </div>
+
+                    </p:column>
+                </sec:ifAnyGranted>
+
+            </p:dataTable>
+            <p:idleMonitor timeout="5000">
+                <p:ajax event="idle" oncomplete="interval = setInterval(() => PF(`tbl`).filter(), 5e3);"/>
+                <p:ajax event="active" oncomplete="if (interval) clearInterval(interval);"/>
+            </p:idleMonitor>
+            <script>
+                let interval;
+            </script>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

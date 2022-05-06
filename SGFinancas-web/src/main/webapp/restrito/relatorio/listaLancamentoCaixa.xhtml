@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <f:metadata >
+        <f:event listener="#{lancamentoCaixaControle.preecherData() }" type="preRenderView" />
+    </f:metadata>
+
+    <ui:composition template="/WEB-INF/templateReport.xhtml">
+
+        <ui:param name="title" value="Lançamentos de caixa"/>
+
+        <ui:param name="link" value="/restrito/relatorio/listaLancamentoCaixa.xhtml"/>
+
+        <ui:param name="fileDownload" value="#{lancamentoCaixaControle.gerarRelatorioLancamentoCaixa()}"/>
+
+        <ui:define name="config">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="control-label"> <span class="required"> * </span>Início do periodo</label>
+                        <p:calendar navigator="true" value="#{lancamentoCaixaControle.dataInicio}"
+                                    required="true" requiredMessage="Informe o início do período da consulta"
+                                    pattern="dd/MM/yyyy" mask="true"/>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="control-label"> <span class="required"> * </span>Fim do periodo</label>
+                        <p:calendar navigator="true" value="#{lancamentoCaixaControle.dataFim}"
+                                    required="true" requiredMessage="Informe o fim do período da consulta"
+                                    pattern="dd/MM/yyyy" mask="true"/>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group form-md-line-input">
+                        <label class="control-label">Plano de conta</label>
+                        <p:selectOneMenu value="#{lancamentoCaixaControle.planoContaSelecionado}" panelStyle="width:180px" effect="fade"
+                                         var="t" style="width:160px" filter="true" filterMatchMode="startsWith" converter="#{genericConverter}">
+                            <p:column>
+                                <h:outputText value="#{t.codigo}" />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{t.descricao}" />
+                            </p:column>
+
+                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                            <f:selectItems value="#{planoContaControle.getPlanoContas()}"  var="planoConta"
+                                           itemLabel="#{planoConta.descricao}" itemValue="#{planoConta}"
+                                           id="itens"
+                                           itemDescription="#{planoContaControle.obterNomesDosPais(planoConta)}">
+                            </f:selectItems>
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group form-md-line-input">
+                        <label class="control-label">Conta bancária</label>
+                        <p:selectOneMenu value="#{lancamentoCaixaControle.contaBancaria}"
+                                         effect="fade" var="t" filter="true" filterMatchMode="contains"
+                                         converter="#{genericConverter}" >
+                            <p:column>
+                                <h:outputText value="#{t.descricao}" />
+                            </p:column>
+
+                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                            <f:selectItems value="#{contaBancariaControle.contaBancarias}"  var="contaBancaria" itemLabel="#{contaBancaria.descricao}" itemValue="#{contaBancaria}"/>
+
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group form-md-line-input">
+                        <label class="control-label">Centro de custo</label>
+                        <p:selectOneMenu value="#{lancamentoCaixaControle.centroCusto}" panelStyle="width:180px" effect="fade"
+                                         var="t" style="width:160px" filter="true" filterMatchMode="startsWith" converter="#{genericConverter}">
+                            <p:column>
+                                <h:outputText value="#{t.descricao}" />
+                            </p:column>
+
+                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                            <f:selectItems value="#{centroCustoControle.centroCustos}"  var="centroCusto" itemLabel="#{centroCusto.descricao}" itemValue="#{centroCusto}"/>
+
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

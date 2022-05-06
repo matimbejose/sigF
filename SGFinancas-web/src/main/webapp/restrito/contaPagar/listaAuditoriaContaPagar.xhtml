@@ -1,0 +1,45 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/restrito/generic/auditoria.xhtml">
+        <ui:define name="remotes">
+            <h:commandButton id="remoteBack" action="listaContaPagar.xhtml"/>
+        </ui:define>
+
+        <ui:param name="title" value="Contas a pagar"/>
+        <ui:param name="descricaoMenu" value="Compra"/>
+        <ui:param name="caminhoAuditoria" value="/restrito/contaPagar/listaAuditoriaContaPagar.xhtml"/>
+        <ui:param name="objetoSelecionado" value="#{contaPagarControle.contaSelecionada.idPlanoConta.descricao}"/>
+
+        <ui:param name="model" value="#{contaPagarControle.dadosAuditoria}"/>
+
+        <ui:define name="colunas">
+
+            <p:column headerText="Valor" sortBy="#{item[0].valor}">  
+                <h:outputText value="#{item[0].valor}">
+                    <f:convertNumber currencySymbol="R$" type="currency"/>
+                </h:outputText>
+            </p:column>
+
+            <p:column headerText="Valor total" sortBy="#{item[0].valorTotal}">  
+                <h:outputText value="#{item[0].valorTotal}">
+                    <f:convertNumber currencySymbol="R$" type="currency"/>
+                </h:outputText>
+            </p:column>
+
+            <p:column headerText="Venc." sortBy="#{item[0].dataVencimento}">
+                <h:outputText value="#{item[0].dataVencimento}">
+                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                </h:outputText>
+            </p:column>
+
+        </ui:define>
+
+    </ui:composition>
+
+</html>

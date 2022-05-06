@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:sec="http://www.springframework.org/security/facelets/tags"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Módulo"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li><p:link outcome="/restrito/administracao/modulo/listaModulo.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteSave" action="#{moduloControle.doFinishAdd()}"/>
+            <h:commandButton id="remoteCancel" action="listaModulo.xhtml" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <div class="form-body">
+                <div class="card">
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label"><span class="required">* </span>Nome</label>
+                                <p:inputText value="#{moduloControle.moduloSelecionado.nome}"
+                                             required="true" requiredMessage="Informe o nome do módulo"/>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label"><span class="required">* </span>Descrição do módulo</label>
+                                <p:inputTextarea value="#{moduloControle.moduloSelecionado.descricao}"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label"><span class="required">* </span>Valor adesão</label>
+                                <p:inputNumber value="#{moduloControle.moduloSelecionado.valorAdesao}"
+                                               required="true" requiredMessage="Informe o valor de adesão"
+                                               symbol="R$ " decimalSeparator=","
+                                               thousandSeparator="." decimalPlaces="2">
+                                </p:inputNumber>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label"><span class="required">* </span>Valor mensalidade</label>
+                                <p:inputNumber value="#{moduloControle.moduloSelecionado.valorMensalidade}"
+                                               required="true" requiredMessage="Informe o valor de mensalidade"
+                                               symbol="R$ " decimalSeparator=","
+                                               thousandSeparator="." decimalPlaces="2">
+                                </p:inputNumber>
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label"><span class="required">* </span>Situação</label>
+                                <p:selectOneMenu value="#{moduloControle.moduloSelecionado.ativo}">
+                                    <f:selectItem itemLabel="Ativo" itemValue="S"/>
+                                    <f:selectItem itemLabel="Inativo" itemValue="N"/>
+                                </p:selectOneMenu>
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label"><span class="required">* </span>Permite renovação</label>
+                                <p:selectOneMenu value="#{moduloControle.moduloSelecionado.permiteRenovacao}">
+                                    <f:selectItem itemLabel="Sim" itemValue="S"/>
+                                    <f:selectItem itemLabel="Não" itemValue="N"/>
+                                </p:selectOneMenu>
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label"><span class="required">* </span>Obrigatório</label>
+                                <p:selectOneMenu value="#{moduloControle.moduloSelecionado.obrigatorio}">
+                                    <f:selectItem itemLabel="Sim" itemValue="S"/>
+                                    <f:selectItem itemLabel="Não" itemValue="N"/>
+                                </p:selectOneMenu>
+                            </div>
+                        </div>
+                    </div>
+                    <p:row rendered="#{sec:ifAnyGranted('DEV')}">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group form-md-line-input">
+                                    <label class="control-label"><span class="required">* </span>Flag</label>
+                                    <p:inputText value="#{moduloControle.moduloSelecionado.flag}"/>
+                                </div>
+                            </div>
+                        </div>
+                    </p:row>
+                    <div class="row">
+                        <div class="col-6 form-group form-md-line-input">
+                            <div class="input-group">
+                                <div class="input-group-append">
+                                    <p:inputText id="pesquisaDescricao" value="#{moduloControle.descricaoPesquisa}" placeholder="Pesquisar..."
+                                                 style="min-width: 400px !important;"/>
+                                    <p:commandLink  action="#{moduloControle.doPesquisaPermissao()}" class="btn blue btn-outline sbold" update="tblPesquisa" process="@this, pesquisaDescricao">
+                                        <i class="fa fa-search"></i>
+                                    </p:commandLink>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="portlet-body flip-scroll">
+                                <p:dataTable value="#{moduloControle.permissaoList}" id="tblPesquisa"
+                                             emptyMessage="Nenhuma permissão localizada" var="itemPermissaoSelecionada"
+                                             styleClass="card p-0 ui-datatable-striped ui-datatable-sm ui-datatable-gridlines">
+
+                                    <p:column headerText="Permissões disponíveis"  sortBy="#{itemPermissaoSelecionada.descricaoDetalhada}">
+                                        <h:outputText value="#{itemPermissaoSelecionada.descricaoDetalhada}"/>
+                                    </p:column>
+
+                                    <p:column headerText="" width="50">
+                                        <f:facet name="header">
+                                            <div class="pesquisa-list .pesquisa-dois .pesquisa-tres">
+                                                <p:commandLink class="btn btn-circle btn-icon-only btn-default icones" title="Selecionar todas" action="#{moduloControle.doAceitarPermissaoTodas()}" update="@(.ui-datatable)"  immediate="true">
+                                                    <i class="fa fa-angle-double-right"></i>
+                                                </p:commandLink>
+                                            </div>
+                                        </f:facet>
+                                        <p:commandLink  title="Selecionar permissão" class="btn btn-circle btn-icon-only btn-default icones" action="#{moduloControle.doAdicionaPermissao()}" update="@(.ui-datatable)"  immediate="true">
+                                            <i class="fa fa-angle-double-right"></i>
+                                            <f:setPropertyActionListener value="#{itemPermissaoSelecionada}" target="#{moduloControle.permissaoSelecionada}"/>
+                                        </p:commandLink>
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="portlet-body flip-scroll">
+                                <p:dataTable value="#{moduloControle.moduloSelecionado.moduloPermissaoList}" id="tblPermissao"
+                                             emptyMessage="Nenhuma permissão localizada" var="itemPermissao" editable="true" editMode="cell"
+                                             styleClass="card p-0 ui-datatable-striped ui-datatable-sm ui-datatable-gridlines">
+
+                                    <p:column headerText="Permissões atribuídas" sortBy="#{itemPermissao.idPermissao.descricaoDetalhada}">
+                                        <h:outputText value="#{itemPermissao.idPermissao.descricaoDetalhada}"/>
+                                    </p:column>
+
+                                    <p:column headerText="" width="50">
+                                        <f:facet name="header">
+                                            <div class="pesquisa-list .pesquisa-dois .pesquisa-tres">
+                                                <p:commandLink title="Remover todas permissões"  class="btn btn-circle btn-icon-only btn-default icones" action="#{moduloControle.doRemoverPermissaoTodas()}" update="@(.ui-datatable)" immediate="true" >
+                                                    <i class="fa fa-trash-o"></i>
+                                                </p:commandLink>
+                                            </div>
+                                        </f:facet>
+                                        <p:commandLink  title="Remover permissão" class="btn btn-circle btn-icon-only btn-default icones" action="#{moduloControle.doRemoverPermissao()}" update="@(.ui-datatable)" immediate="true" >
+                                            <i class="fa fa-trash-o"></i>
+                                            <f:setPropertyActionListener value="#{itemPermissao}" target="#{moduloControle.moduloPermissaoSelecionada}"/>
+                                        </p:commandLink>
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

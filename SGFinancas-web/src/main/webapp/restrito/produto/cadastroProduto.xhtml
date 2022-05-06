@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite/components">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Produto" />
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Cadastro</li>
+            <li>/</li>
+            <li>
+                <p:link outcome="/restrito/produto/listaProduto.xhtml"> #{title}</p:link>
+            </li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteSave" action="#{produtoControle.doFinishAdd()}" />
+            <h:commandButton id="remoteCancel" action="listaProduto.xhtml" immediate="true" />
+            <h:commandButton id="remoteHelp" rendered="false" action="#{produtoControle.mostrarAjuda()}" immediate="true" />
+        </ui:define>
+
+        <ui:define name="content">
+            <div class="form-body">
+                <div class="card p-0">
+                    <p:tabView id="tab" activeIndex="0">
+                        <p:tab title="Geral">
+                            <h5>Informações gerais</h5>
+                            <div class="mx-1">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label"><span class="required">* </span>Descrição do produto</label>
+                                            <p:inputText value="#{produtoControle.produtoSelecionado.descricao}" required="true"
+                                                         requiredMessage="Informe a descrição do produto" />
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Código do produto</label>
+                                            <p:inputNumber value="#{produtoControle.produtoSelecionado.codigo}" decimalPlaces="0" thousandSeparator=""/>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label"><span class="required">* </span>Unidade de medida</label>
+                                            <p:selectOneMenu value="#{produtoControle.produtoSelecionado.idUnidadeMedida}"
+                                                             required="true" requiredMessage="Informe a unidade medida"
+                                                             converter="#{genericConverter}">
+                                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true" />
+                                                <f:selectItems value="#{unidadeMedidaControle.unidadeMedidas}" var="unidadeMedida"
+                                                               itemLabel="#{unidadeMedida.descricao}" itemValue="#{unidadeMedida}" />
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-4">
+                                        <cc:addButton label="Fabricante" entityName="fabricante">
+                                            <p:selectOneMenu value="#{produtoControle.produtoSelecionado.idFabricante}" converter="#{genericConverter}" var="t"
+                                                             filter="true" filterMatchMode="startsWith">
+                                                <p:column>
+                                                    <h:outputText value="#{t.descricao}"/>
+                                                </p:column>
+
+                                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                <f:selectItems value="#{fabricanteControle.fabricantes}" var="fabricante"
+                                                               itemLabel="#{fabricante.descricao}" itemValue="#{fabricante}" />
+                                            </p:selectOneMenu>
+                                        </cc:addButton>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Código de barra</label>
+                                            <p:inputText value="#{produtoControle.produtoSelecionado.codigoBarra}" maxlength="13" />
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <label class="control-label"><span class="required">* </span>Situação</label>
+                                        <p:selectOneMenu value="#{produtoControle.produtoSelecionado.ativo}">
+                                            <f:selectItem itemLabel="Ativo" itemValue="S"/>
+                                            <f:selectItem itemLabel="Inativo" itemValue="N"/>
+                                        </p:selectOneMenu>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group form-md-line-input">
+                                            <cc:addButton label="Categoria do produto" entityName="produtoCategoria">
+                                                <p:selectOneMenu value="#{produtoControle.produtoSelecionado.idProdutoCategoria}" converter="#{genericConverter}">
+                                                    <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true" />
+                                                    <f:selectItems value="#{produtoControle.produtosCategoria}" var="produtoCategoria"
+                                                                   itemLabel="#{produtoCategoria.descricao}" itemValue="#{produtoCategoria}"/>
+                                                    <p:ajax update="form:tab:subcategoria" process="@this" listener="#{produtoControle.limpaSubcategoria}"/>
+                                                </p:selectOneMenu>
+                                            </cc:addButton>
+                                        </div>
+                                    </div>
+                                    <p:outputPanel styleClass="col" id="subcategoria">
+                                        <label class="control-label">Sub-categoria</label>
+                                        <p:selectOneMenu value="#{produtoControle.produtoSelecionado.idProdutoCategoriaSubcategoria}" converter="#{genericConverter}">
+                                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true" />
+                                            <f:selectItems value="#{produtoControle.produtosCategoriaSubcategoria}" var="pcsc"
+                                                           itemLabel="#{pcsc.descricao}" itemValue="#{pcsc}"/>
+                                        </p:selectOneMenu>
+                                    </p:outputPanel>
+                                </div>
+                            </div>
+                            <h5>Informações de estoque</h5>
+                            <div class="mx-1">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label"><span class="required">* </span>Data de entrada</label>
+                                            <p:calendar navigator="true" required="true" requiredMessage="Informe a data de entrada"
+                                                        value="#{produtoControle.produtoSelecionado.dataEntrada}" pattern="dd/MM/yyyy"
+                                                        mask="true" maxdate="#{produtoControle.dataMaxima()}" />
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label"><span class="required">* </span>Estoque disponível</label>
+                                            <p:inputNumber value="#{produtoControle.produtoSelecionado.estoqueDisponivel}"
+                                                           required="true" requiredMessage="Favor informar o estoque disponível"
+                                                           decimalPlaces="0">
+                                                <p:ajax listener="#{produtoControle.updateEstoque}" global="false" process="@this"/>
+                                            </p:inputNumber>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Estoque mínimo</label>
+                                            <p:inputNumber value="#{produtoControle.produtoSelecionado.estoqueMinimo}" decimalPlaces="0"/>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Estoque máximo</label>
+                                            <p:inputNumber value="#{produtoControle.produtoSelecionado.estoqueMaximo}" decimalPlaces="0"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </p:tab>
+                        <p:tab title="NFe">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label class="control-label">NCM</label>
+                                        <div></div>
+                                        <p:autoComplete value="#{produtoControle.produtoSelecionado.idNcm}" converter="#{genericConverter}" widgetVar="ncm"
+                                                        completeMethod="#{notaFiscalProdutoControle.listarNcm}" onclick="PF('ncm').search(PF('ncm').input.val())"
+                                                        var="ncm" itemLabel="#{ncm.codigo}" itemValue="#{ncm}" forceSelection="true" style="width: 100%;">
+                                            <p:column style="width:10%">
+                                                <h:outputText value="#{ncm.codigo}"/>
+                                            </p:column>
+
+                                            <p:column>
+                                                <h:outputText value="#{ncm.descricao}"/>
+                                            </p:column>
+                                        </p:autoComplete>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label class="control-label">CEST</label>
+                                        <p:row rendered="#{produtoControle.produtoSelecionado.idNcm eq null}">
+                                            <input class="ui-inputfield ui-inputtext ui-widget ui-state-default ui-corner-all ui-state-disabled"/>
+                                        </p:row>
+                                        <p:row rendered="#{produtoControle.produtoSelecionado.idNcm ne null}">
+                                            <p:inputText value="#{produtoControle.produtoSelecionado.idNcm.cest}" disabled="true"
+                                                         rendered="#{produtoControle.produtoSelecionado.idNcm.cest ne null}"/>
+                                            <p:inputText value="--" disabled="true"
+                                                         rendered="#{produtoControle.produtoSelecionado.idNcm.cest eq null}"/>
+                                        </p:row>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <p:outputPanel rendered="#{!empresaControle.empresaPertenceAoSimplesNacional()}">
+                                        <div class="form-group">
+                                            <label class="control-label">CST</label>
+                                            <p:selectOneMenu id="somCst" value="#{produtoControle.produtoSelecionado.idCst}" effect="fade"
+                                                             var="t" filter="true" filterMatchMode="contains" converter="#{genericConverter}">
+                                                <p:column>
+                                                    <h:outputText value="#{t.codigo}" />
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{t.descricao}" />
+                                                </p:column>
+
+                                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true" />
+                                                <f:selectItems value="#{cstControle.csts}" var="ncm"
+                                                               itemLabel="#{ncm.codigo}" itemValue="#{ncm}" />
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </p:outputPanel>
+                                    <p:outputPanel rendered="#{empresaControle.empresaPertenceAoSimplesNacional()}">
+                                        <div class="form-group">
+                                            <label class="control-label">CSOSN</label>
+                                            <p:selectOneMenu id="somCsosn" value="#{produtoControle.produtoSelecionado.idCsosn}" effect="fade" var="t"
+                                                             styleClass="prime-min-width" filter="true" filterMatchMode="contains" converter="#{genericConverter}">
+                                                <p:column>
+                                                    <h:outputText value="#{t.codigo}" />
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{t.descricao}" />
+                                                </p:column>
+
+                                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true" />
+                                                <f:selectItems value="#{csosnControle.csosns}" var="csosn"
+                                                               itemLabel="#{csosn.descricao}" itemValue="#{csosn}" />
+
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </p:outputPanel>
+                                </div>
+                                <p:row rendered="#{!empresaControle.empresaPertenceAoSimplesNacional()}">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label class="control-label">CFOP</label>
+                                            <p:selectOneMenu id="somCfop" value="#{produtoControle.produtoSelecionado.idCfop}"
+                                                             panelStyle="max-width: 500px;" effect="fade" var="t" filter="true"
+                                                             filterMatchMode="contains" converter="#{genericConverter}">
+                                                <p:column>
+                                                    <h:outputText value="#{t.codigo}" />
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{t.descricao}" />
+                                                </p:column>
+
+                                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true" />
+                                                <f:selectItems value="#{cfopControle.cfops}" var="cfop"
+                                                               itemLabel="#{cfop.codigo} - #{cfop.descricao}" itemValue="#{cfop}" />
+
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+                                </p:row>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label class="control-label">Origem mercadoria</label>
+                                        <p:selectOneMenu value="#{produtoControle.produtoSelecionado.idOrigemMercadoria}"
+                                                         panelStyle="width:180px" effect="fade" var="t" styleClass="prime-min-width"
+                                                         filter="true" filterMatchMode="contains" converter="#{genericConverter}">
+                                            <p:column>
+                                                <h:outputText value="#{t.descricao}" />
+                                            </p:column>
+
+                                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true" />
+                                            <f:selectItems value="#{origemMercadoriaControle.origemMercadorias}"
+                                                           var="origemMercadoria" itemLabel="#{origemMercadoria.descricao}"
+                                                           itemValue="#{origemMercadoria}" />
+
+                                        </p:selectOneMenu>
+                                    </div>
+                                </div>
+                            </div>
+                            <p:row rendered="#{!empresaControle.empresaPertenceAoSimplesNacional()}">
+                                <div class="row align-items-end">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label class="control-label">(%) ICMS interestadual</label>
+                                            <p:inputNumber value="#{produtoControle.produtoSelecionado.porcentagemIcmsInterestadual}"
+                                                           symbol="%" thousandSeparator="." decimalSeparator="," decimalPlaces="2"
+                                                           symbolPosition="s" />
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label class="control-label">(%) ICMS interno</label>
+                                            <p:inputNumber value="#{produtoControle.produtoSelecionado.porcentagemIcmsInterno}"
+                                                           symbol="%" thousandSeparator="." decimalSeparator="," decimalPlaces="2"
+                                                           symbolPosition="s" />
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label class="control-label">(%) FCP</label>
+                                            <p:inputNumber value="#{produtoControle.produtoSelecionado.porcentagemFcp}"
+                                                           symbol="%" thousandSeparator="." decimalSeparator="," decimalPlaces="2"
+                                                           symbolPosition="s" />
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label class="control-label">(%) Aliquota PIS</label>
+                                            <p:inputNumber value="#{produtoControle.produtoSelecionado.aliquotaPis}" symbol="%"
+                                                           thousandSeparator="." decimalSeparator="," decimalPlaces="2"
+                                                           symbolPosition="s" />
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label class="control-label">(%) Aliquota COFINS</label>
+                                            <p:inputNumber value="#{produtoControle.produtoSelecionado.aliquotaCofins}"
+                                                           symbol="%" thousandSeparator="." decimalSeparator="," decimalPlaces="2"
+                                                           symbolPosition="s" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </p:row>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label class="control-label">(%) IPI</label>
+                                        <p:inputNumber value="#{produtoControle.produtoSelecionado.porcentagemIpi}"
+                                                       symbol="%" thousandSeparator="." decimalSeparator="," decimalPlaces="2"
+                                                       symbolPosition="s" />
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label class="control-label">Possui substituição tributária</label>
+                                        <p:selectOneMenu value="#{produtoControle.produtoSelecionado.possuiSubstituicaoTributaria}">
+                                            <f:selectItem itemLabel="Sim" itemValue="S"/>
+                                            <f:selectItem itemLabel="Não" itemValue="N"/>
+                                        </p:selectOneMenu>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label">Peso bruto</label>
+                                        <p:inputNumber value="#{produtoControle.produtoSelecionado.pesoBruto}" maxValue="99" />
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label">Peso líquido</label>
+                                        <p:inputNumber value="#{produtoControle.produtoSelecionado.pesoLiquido}" maxValue="99" />
+                                    </div>
+                                </div>
+                            </div>
+                        </p:tab>
+                        <p:tab title="Fornecedor">
+                            <p:outputPanel id="pnlFornecedor">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label>Fornecedores</label>
+                                            <p:selectOneMenu id="somFornecedor" value="#{produtoControle.fornecedorSelecionado}"
+                                                             panelStyle="width:180px" effect="fade" styleClass="teste" var="t"
+                                                             style="width:160px;" filter="true" filterMatchMode="contains"
+                                                             converter="#{genericConverter}">
+                                                <p:column>
+                                                    <h:outputText value="#{t.razaoSocial}" />
+                                                </p:column>
+
+                                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true" />
+                                                <f:selectItems value="#{produtoControle.fornecedores}" var="fornecedor"
+                                                               itemLabel="#{fornecedor.razaoSocial}" itemValue="#{fornecedor}" />
+                                                <p:ajax update="inpDescricao, inpCpfCnpj" event="itemSelect" />
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label"><span class="required">* </span>Descrição</label>
+                                            <p:inputText id="inpDescricao"
+                                                         value="#{produtoControle.fornecedorSelecionado.razaoSocial}" disabled="true"
+                                                         readonly="true" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label"><span class="required">* </span>CNPJ/CPF</label>
+                                            <p:inputText id="inpCpfCnpj"
+                                                         value="#{produtoControle.fornecedorSelecionado.cpfCnpj}" disabled="true"
+                                                         readonly="true" />
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </p:outputPanel>
+
+                            <p:outputPanel id="pnlTblFornecedor">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <p:dataTable value="#{produtoControle.produtoSelecionado.produtoFornecedorList}"
+                                                     var="item" emptyMessage="Nenhum fornecedor encontrado." id="tblFornecedor"
+                                                     styleClass="#{produtoControle.styleClass}">
+
+                                            <p:column headerText="Descricao" sortBy="#{item.idFornecedor}">
+                                                <h:outputText value="#{item.idFornecedor.razaoSocial}" />
+                                            </p:column>
+
+                                            <p:column headerText="CPF/CNPJ" sortBy="#{item.idFornecedor}">
+                                                <h:outputText value="#{item.idFornecedor.cpfCnpj}" />
+                                            </p:column>
+
+                                            <p:column width="77" headerText="Ações">
+                                                <div class="actions">
+                                                    <p:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                                                   title="Remover fornecedor" process="@this"
+                                                                   action="#{produtoControle.removeFornecedor()}" update="tblFornecedor">
+                                                        <i class="icon-trash"></i>
+                                                        <f:setPropertyActionListener value="#{item}"
+                                                                                     target="#{produtoControle.fornecedorProdutoSelecionado}" />
+                                                    </p:commandLink>
+                                                </div>
+                                            </p:column>
+
+                                            <f:facet name="footer">
+                                                <p:commandButton action="#{produtoControle.addFornecedor()}" value="Adicionar"
+                                                                 icon="fa fa-plus" update="tblFornecedor, form:tab:pnlFornecedor"
+                                                                 process="@this, form:tab:pnlFornecedor" />
+                                            </f:facet>
+                                        </p:dataTable>
+                                    </div>
+                                </div>
+                            </p:outputPanel>
+                        </p:tab>
+                        <p:tab title="Composição">
+                            <div class="row mb-3">
+                                <div class="col" style="max-width: 200px;">
+                                    <p:outputLabel for="@next" value="Produto composto?"/>
+                                    <p:selectOneMenu value="#{produtoControle.produtoSelecionado.composto}">
+                                        <p:importEnum type="br.com.villefortconsulting.sgfinancas.util.EnumTipoComposicaoProduto"/>
+                                        <f:selectItems var="enum" itemLabel="#{enum.descricao}" itemValue="#{enum.tipo}"
+                                                       value="#{EnumTipoComposicaoProduto.ALL_VALUES}"/>
+                                        <p:ajax process="@this" update="prodCompostoPnl"/>
+                                    </p:selectOneMenu>
+                                </div>
+                            </div>
+                            <p:outputPanel id="prodCompostoPnl">
+                                <p:row rendered="#{produtoControle.produtoSelecionado.composto ne 'N'}">
+                                    <small>
+                                        <h:outputText value="Ao realizar uma venda com este produto os itens dentro do kit serão extraidos do mesmo, isto é, será incluido na venda os itens listados abaixo e não o kit."
+                                                      rendered="#{produtoControle.produtoSelecionado.composto eq 'K'}"/>
+                                    </small>
+                                    <p:dataTable value="#{produtoControle.produtoSelecionado.produtoComposicaoList}" var="item" id="tblProdutos"
+                                                 emptyMessage="Composição não cadastrada." styleClass="#{producaoControle.styleClass}">
+
+                                        <p:column headerText="Produto">
+                                            <p:selectOneMenu value="#{item.idProduto}" var="itemComposto" converter="#{genericConverter}"
+                                                             filter="true" filterMatchMode="contains"
+                                                             required="true" requiredMessage="Informe o produto para a composição">
+
+                                                <p:column>
+                                                    <h:outputText value="#{itemComposto.descricao}"/>
+                                                </p:column>
+
+                                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                <f:selectItems value="#{produtoControle.produtos}" var="itens" itemLabel="#{itens.descricao}"
+                                                               itemValue="#{itens}"/>
+
+                                                <p:ajax process="@this" update="tblProdutos, form:tab:preco" listener="#{produtoControle.updateValoresProduto}" />
+                                            </p:selectOneMenu>
+                                        </p:column>
+
+                                        <p:column headerText="Quantidade">
+                                            <p:inputNumber value="#{item.quantidade}" decimalPlaces="2" decimalSeparator="," thousandSeparator="."
+                                                           symbol=" #{item.idProduto eq null ? '' : item.idProduto.idUnidadeMedida.descricao}" symbolPosition="s"
+                                                           required="true" requiredMessage="Informe a quantidade do produto #{item.idProduto eq null ? '' : item.idProduto.descricao} na aba composição">
+                                                <p:ajax process="@this" update="tblProdutos, form:tab:preco"
+                                                        listener="#{produtoControle.updateValoresProduto}"/>
+                                            </p:inputNumber>
+                                        </p:column>
+
+                                        <p:column headerText="Preço de venda">
+                                            <p:inputNumber value="#{item.preco}" decimalPlaces="2" decimalSeparator="," thousandSeparator="." symbol="R$ "
+                                                           disabled="#{produtoControle.produtoSelecionado.composto eq 'K'}"
+                                                           required="true" requiredMessage="Informe o preço do produto #{item.idProduto eq null ? '' : item.idProduto.descricao} na aba composição">
+                                                <p:ajax process="@this" update="tblProdutos, form:tab:preco"
+                                                        listener="#{produtoControle.updateValoresProduto}"/>
+                                            </p:inputNumber>
+                                        </p:column>
+
+                                        <p:column headerText="Preço de custo">
+                                            <p:inputNumber value="#{item.custo}" decimalPlaces="2" decimalSeparator="," thousandSeparator="." symbol="R$ "
+                                                           disabled="#{produtoControle.produtoSelecionado.composto eq 'K'}"
+                                                           required="true" requiredMessage="Informe o custo do produto #{item.idProduto eq null ? '' : item.idProduto.descricao} na aba composição">
+                                                <p:ajax process="@this" update="tblProdutos, form:tab:preco"
+                                                        listener="#{produtoControle.updateValoresProduto}"/>
+                                            </p:inputNumber>
+                                        </p:column>
+
+                                        <p:column headerText="Lucratividade">
+                                            <h:outputText value="#{item.quantidade * (item.preco - item.custo)}">
+                                                <f:convertNumber locale="pt_BR" type="currency" />
+                                            </h:outputText>
+                                        </p:column>
+
+                                        <p:column headerText="" style="width: 30px;">
+                                            <p:commandLink title="Remover" styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                                           action="#{produtoControle.removeItemComposto()}" process="@this" update="tblProdutos">
+                                                <i class="fa fa-trash-o"></i>
+                                                <f:setPropertyActionListener value="#{item}" target="#{produtoControle.produtoComposicaoSelecionado}"/>
+                                            </p:commandLink>
+                                        </p:column>
+
+                                        <f:facet name="footer">
+                                            <p:commandButton value="Adicionar" action="#{produtoControle.adicionaItemComposto()}"
+                                                             process="@this" update="tblProdutos"/>
+                                            <p:commandButton value="Atualizar valores" action="#{produtoControle.atualizaValores()}"
+                                                             process="@this" update="tblProdutos, form:tab:preco" styleClass="ml-2"/>
+                                        </f:facet>
+                                    </p:dataTable>
+                                </p:row>
+                            </p:outputPanel>
+                        </p:tab>
+                        <p:tab title="Imagens">
+                            <p:outputPanel id="panelFoto" style="margin: -1rem;">
+                                <p:carousel value="#{produtoControle.listaAnexos}" var="img" id="carrossel" headerText="Imagens do produto">
+                                    <p:row rendered="#{img.conteudo eq null}">
+                                        <div onclick="PF('input').jq.find('input[type=file]').click();" class="text-blue-madison text-center" style="padding-top: 130px;cursor: pointer;">
+                                            <i class="fa fa-5x fa-plus-circle"></i>
+                                            <br/>
+                                            <div class="fa-2x" style="padding-top: 105px;">Adicionar</div>
+                                        </div>
+                                    </p:row>
+                                    <p:row rendered="#{img.conteudo ne null}">
+                                        <div style="display: table;width: 100%;">
+                                            <div class="img-container">
+                                                <img src="#{img.conteudo}" class="foto-container"/>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col file-name-container pr-0 pt-1 text-center">
+                                                #{img.nome}
+                                            </div>
+                                            <div class="col-2 remove-btn-container pl-0">
+                                                <p:commandButton icon="fa fa-fw fa-trash-o" action="#{produtoControle.removerAnexo(img)}"
+                                                                 update="carrossel"/>
+                                            </div>
+                                        </div>
+                                    </p:row>
+                                </p:carousel>
+                                <p:fileUpload fileUploadListener="#{produtoControle.setPart}" mode="advanced" widgetVar="input" style="display: none;" process="@this"
+                                              update="carrossel" auto="true" onstart="showUpload(`picture-o`);" oncomplete="hideUpload();"/>
+                            </p:outputPanel>
+                        </p:tab>
+                        <p:tab title="Compras">
+                            <p:dataTable value="#{produtoControle.compraProdutoList}" var="cp" emptyMessage="Nenhuma compra realizada até o momento"
+                                         style="margin: -1rem;" sortBy="#{cp.dadosProduto.idProduto.id}"
+                                         styleClass="ui-datatable-striped ui-datatable-sm ui-datatable-gridlines">
+                                <p:column headerText="Data da compra" width="110" style="text-align: center;">
+                                    <cc:convertDate value="#{cp.idCompra.dataCompra}"/>
+                                </p:column>
+                                <p:column headerText="Nº do documento" width="150">
+                                    <h:outputText value="#{cp.idCompra.numeroPedido}"/>
+                                </p:column>
+                                <p:column headerText="Fornecedor">
+                                    <h:outputText value="#{cp.idCompra.idFornecedor.razaoSocial}"/>
+                                </p:column>
+                                <p:column headerText="Quantidade" width="100" style="text-align: right;">
+                                    <cc:convertNumber value="#{cp.dadosProduto.quantidade}"/>
+                                </p:column>
+                                <p:column headerText="Valor unitário" width="120" style="text-align: right;">
+                                    <cc:convertMoney value="#{cp.dadosProduto.valor}"/>
+                                </p:column>
+                                <p:column headerText="Valor total" width="120" style="text-align: right;">
+                                    <cc:convertMoney value="#{cp.dadosProduto.valorTotal}"/>
+                                </p:column>
+                                <p:summaryRow>
+                                    <p:column colspan="4" style="text-align:right">
+                                        Custo médio
+                                    </p:column>
+                                    <p:column style="text-align: right;">
+                                        <cc:convertMoney value="#{produtoControle.custoMedio}"/>
+                                    </p:column>
+                                    <p:column/>
+                                </p:summaryRow>
+                            </p:dataTable>
+                        </p:tab>
+                        <p:tab title="Preço" id="tabPreco" >
+                            <p:outputPanel id="preco">
+                                <h5>Preço informado</h5>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label"><span class="required">* </span>Preço de custo</label>
+                                            <p:inputNumber value="#{produtoControle.produtoSelecionado.valorCusto}" id="vlrCusto"
+                                                           disabled="#{produtoControle.produtoSelecionado.composto eq 'K' or produtoControle.produtoSelecionado.usaPrecoCalculado eq 'S'}"
+                                                           required="true" requiredMessage="Informe o valor de custo"
+                                                           symbol="R$ " decimalSeparator=","
+                                                           thousandSeparator="." decimalPlaces="2">
+                                                <p:ajax process="@this"/>
+                                            </p:inputNumber>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label"><span class="required">* </span>Preço de venda</label>
+                                            <p:inputNumber value="#{produtoControle.produtoSelecionado.valorVenda}" required="true" id="vlrVenda"
+                                                           disabled="#{produtoControle.produtoSelecionado.composto eq 'K' or produtoControle.produtoSelecionado.usaPrecoCalculado eq 'S'}"
+                                                           requiredMessage="Informe o valor da venda" symbol="R$ " decimalSeparator=","
+                                                           thousandSeparator="." decimalPlaces="2">
+                                                <p:ajax process="@this"/>
+                                            </p:inputNumber>
+                                        </div>
+                                    </div>
+                                </div>
+                                <h5>Preço calculado</h5>
+                                <div class="row">
+                                    <div class="col-4">
+                                        <label class="control-label"><span class="required">* </span>Usa preço calculado?</label>
+                                        <h:outputLink id="fade" value="#">
+                                            <i class="fa fa-question-circle-o"></i>
+                                        </h:outputLink>
+                                        <p:tooltip id="toolTipFade" for="fade" escape="false" value="#{produtoControle.informacao}" position="top"/>
+                                        <p:selectOneMenu value="#{produtoControle.produtoSelecionado.usaPrecoCalculado}"  disabled="#{produtoControle.produtoSelecionado.composto eq 'K' }">
+                                            <f:selectItem itemLabel="Não" itemValue="N"/>
+                                            <f:selectItem itemLabel="Sim" itemValue="S"/>
+                                            <p:ajax process="@this" update="preco"/>
+                                        </p:selectOneMenu>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label"><span class="required">* </span>Custo variável</label>
+                                            <p:inputNumber value="#{produtoControle.produtoSelecionado.custoVariavel}" id="custoVariavel"
+                                                           disabled="#{produtoControle.produtoSelecionado.composto eq 'K' or produtoControle.produtoSelecionado.usaPrecoCalculado ne 'S'}"
+                                                           required="true" requiredMessage="Informe o custo variável"
+                                                           symbol="R$ " decimalSeparator=","
+                                                           thousandSeparator="." decimalPlaces="2">
+                                                <p:ajax process="@this"  update="preco"/>
+                                            </p:inputNumber>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label"><span class="required">* </span>Custo fixo</label>
+                                            <p:inputNumber value="#{produtoControle.produtoSelecionado.custoFixo}" required="true" id="custoFixo"
+                                                           disabled="#{produtoControle.produtoSelecionado.composto eq 'K'  or produtoControle.produtoSelecionado.usaPrecoCalculado ne 'S'}"
+                                                           requiredMessage="Informe o custo fixo" symbol="R$ " decimalSeparator=","
+                                                           thousandSeparator="." decimalPlaces="2">
+                                                <p:ajax process="@this"  update="preco"/>
+                                            </p:inputNumber>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label"><span class="required">* </span>Margem de lucro</label>
+                                            <p:inputNumber value="#{produtoControle.produtoSelecionado.markup}" required="true" id="markup"
+                                                           disabled="#{produtoControle.produtoSelecionado.composto eq 'K'  or produtoControle.produtoSelecionado.usaPrecoCalculado ne 'S'}"
+                                                           symbolPosition="suffix"
+                                                           requiredMessage="Informe o percetual de lucro a ser aplicado" symbol="%" decimalSeparator=","
+                                                           thousandSeparator="." decimalPlaces="2">
+                                                <p:ajax process="@this"  update="preco"/>
+                                            </p:inputNumber>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Preço de custo</label>
+                                            <p:inputNumber value="#{produtoControle.custoCalculado}"
+                                                           disabled="#{true}"
+                                                           symbol="R$ " decimalSeparator=","
+                                                           thousandSeparator="." decimalPlaces="2">
+                                                <p:ajax process="@this"/>
+                                            </p:inputNumber>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Preço de venda</label>
+                                            <p:inputNumber value="#{produtoControle.vendaCalculado}" required="true"
+                                                           disabled="#{true}"
+                                                           symbol="R$ " decimalSeparator=","
+                                                           thousandSeparator="." decimalPlaces="2">
+                                                <p:ajax process="@this"/>
+                                            </p:inputNumber>
+                                        </div>
+                                    </div>
+                                </div>
+                            </p:outputPanel>
+                        </p:tab>
+                    </p:tabView>
+                </div>
+            </div>
+            <style>
+                .ui-carousel img {
+                    max-width: 100%;
+                    max-height: 400px;
+                }
+                .ui-carousel-item {
+                    height: 347px;
+                }
+                .img-container {
+                    display: table-cell;
+                    vertical-align: middle;
+                    text-align: center;
+                    height: 320px;
+                    padding-top: 10px;
+                }
+                img.foto-container {
+                    max-height: 100%;
+                }
+                div.remove-btn-container {
+                    max-width: 45px;
+                }
+                .remove-btn-container button {
+                    width: 100%;
+                    height: 25px;
+                }
+                .remove-btn-container button.ui-button span.ui-button-text {
+                    padding: 3px 14px;
+                }
+            </style>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:sec="http://www.springframework.org/security/facelets/tags"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <f:metadata>
+        <f:event listener="#{contaReceberControle.iniciaFiltroPeriodo()}" type="preRenderView"/>
+        <f:event listener="#{contaReceberControle.preencherEstatisticaDTO()}" type="preRenderView"/>
+        <f:event listener="#{contaReceberControle.carregaGrafico()}" type="preRenderView"/>
+        <f:event listener="#{contaReceberControle.clearClienteSelecionado()}" type="preRenderView"/>
+    </f:metadata>
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Contas a receber"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Financeiro</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/contaReceber/listaContaReceber.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <sec:ifAnyGranted roles ="CONTA_RECEBER_GERENCIAR" >
+                <h:commandButton id="remoteAdd" action="#{contaReceberControle.doStartAdd()}"/>
+                <h:commandButton id="remoteImport" action="#{contaReceberControle.mudaSituacaoImportacao()}"/>
+            </sec:ifAnyGranted>
+        </ui:define>
+
+        <ui:define name="formButtons">
+            <sec:ifAnyGranted roles ="CONTA_RECEBER_GERENCIAR">
+                <p:commandButton value="Exportar planilha" ajax="false">
+                    <p:dataExporter type="xls" target="tbl" fileName="#{contaReceberControle.tipoConta eq EnumConta.RECEBER?'Contas a receber':'Contas a pagar'}"/>
+                </p:commandButton>
+                <p:commandButton action="#{contaReceberControle.doStartCharge()}" value="Gerar cobrança"/>
+                <p:commandButton action="#{contaReceberControle.agruparEmNota()}" ajax="false" value="Agrupar contas em uma nota"/>
+            </sec:ifAnyGranted>
+            <p:commandButton type="button" value="Limpar filtros" onclick="clearDataTableFilters('tbl');"/>
+            <p:commandButton id="toggler" type="button" value="Colunas"/>
+            <p:columnToggler datasource="tbl" trigger="toggler"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <ui:include src="../conta/listaConta.xhtml">
+                <ui:param name="controle" value="#{contaReceberControle}"/>
+            </ui:include>
+        </ui:define>
+
+    </ui:composition>
+</html>

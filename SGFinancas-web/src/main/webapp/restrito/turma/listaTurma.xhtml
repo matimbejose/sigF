@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:sec="http://www.springframework.org/security/facelets/tags"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Turma"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Escola</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/turma/listaTurma.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <sec:ifAnyGranted roles="TURMA_GERENCIAR">
+                <h:commandButton id="remoteAdd" action="#{turmaControle.doStartAdd()}"/>
+            </sec:ifAnyGranted>
+        </ui:define>
+
+        <ui:define name="formButtons">
+            <p:commandButton type="button" value="Limpar filtros" onclick="clearDataTableFilters('tbl');"/>
+            <p:commandButton id="toggler" type="button" value="Colunas"/>
+            <p:columnToggler datasource="tbl" trigger="toggler"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <p:dataTable value="#{turmaControle.model}" emptyMessage="Nenhum registro encontrado." var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+                <p:column headerText="#" width="55" sortBy="#{item.id}" visible="false">
+                    <h:outputText value="#{item.id}"/>
+                </p:column>
+
+                <p:column headerText="Descrição" sortBy="#{item.descricao}">
+                    <h:outputText value="#{item.descricao}"/>
+                </p:column>
+
+                <p:column headerText="Número" sortBy="#{item.numero}">
+                    <h:outputText value="#{item.numero}"/>
+                </p:column>
+
+                <p:column headerText="Curso" sortBy="#{idCurso.descricao}">
+                    <h:outputText value="#{item.idCurso.descricao}"/>
+                </p:column>
+
+                <p:column headerText="Professor" sortBy="#{idProfessor.nome}">
+                    <h:outputText value="#{item.idProfessor.nome}"/>
+                </p:column>
+
+                <p:column headerText="Cidade" sortBy="#{idCidade.descricao}">
+                    <h:outputText value="#{item.idCidade.descricao}/#{item.idCidade.idUF.descricao}"/>
+                </p:column>
+
+                <p:column headerText="Início" sortBy="#{item.dataInicial}">
+                    <h:outputText value="#{item.dataInicial}">
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Fim" sortBy="#{item.dataFinal}">
+                    <h:outputText value="#{item.dataFinal}">
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Horário" sortBy="#{item.horario}">
+                    <h:outputText value="#{item.horario}"/>
+                </p:column>
+
+                <p:column headerText="Situação" sortBy="#{item.situacao}">
+                    <h:outputText rendered="#{item.situacao eq 'A'}" value="Inscrições abertas" />
+                    <h:outputText rendered="#{item.situacao eq 'F'}" value="Inscrições finalizadas" />
+                </p:column>
+
+                <sec:ifAnyGranted roles ="TURMA_GERENCIAR" >
+
+                    <p:column width="170" headerText="Ações" >
+                        <div class="actions">
+                            <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                           rendered="#{item.situacao eq 'A'}" title="Alterar turma" action="#{turmaControle.doStartAlterar()}"  >
+                                <i class="fa fa-edit"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{turmaControle.turmaSelecionado}"/>
+                            </h:commandLink>
+
+                            <sec:ifAnyGranted roles ="ALUNO_GERENCIAR, ALUNO_VISUALIZAR" >
+                                <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                               title="Alunos" action="#{alunoControle.doStartListarAluno()}"  >
+                                    <i class="fa fa-user"></i>
+                                    <f:setPropertyActionListener value="#{item}" target="#{alunoControle.turmaSelecionada}"/>
+                                </h:commandLink>
+                            </sec:ifAnyGranted>
+
+                            <h:commandLink  styleClass="btn btn-circle btn-icon-only btn-default icones" title="Fechar turma"
+                                            rendered="#{turmaControle.verificarTurmaPossuiAlunos(item) and item.situacao eq 'A'}"
+                                            action="#{turmaControle.doFinalizarTurma()}"
+                                            onclick="return confirm('Tem certeza que deseja encerrar esta turma?');" >
+                                <i class="fa fa-check"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{turmaControle.turmaSelecionado}"/>
+                            </h:commandLink>
+
+                            <h:commandLink  styleClass="btn btn-circle btn-icon-only btn-default icones" title="Reabrir turma"
+                                            rendered="#{turmaControle.verificarTurmaPossuiAlunos(item) and item.situacao eq 'F'}"
+                                            action="#{turmaControle.doReabrirTurma()}"
+                                            onclick="return confirm('Tem certeza que deseja reabrir esta turma?');" >
+                                <i class="fa fa-refresh"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{turmaControle.turmaSelecionado}"/>
+                            </h:commandLink>
+
+                            <h:commandLink  styleClass="btn btn-circle btn-icon-only btn-default icones" title="Remover turma"
+                                            action="#{turmaControle.doFinishExcluir()}"
+                                            rendered="#{!turmaControle.verificarTurmaPossuiAlunos(item)}"
+                                            onclick="return confirm('Tem certeza que deseja excluir esta turma?');" >
+                                <i class="icon-trash"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{turmaControle.turmaSelecionado}"/>
+                            </h:commandLink>
+
+                            <h:commandLink  title="Auditoria" styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                            action="#{turmaControle.doShowAuditoria()}" >
+                                <i class="fa fa-history"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{turmaControle.turmaSelecionado}"/>
+                            </h:commandLink>
+
+                        </div>
+
+                    </p:column>
+                </sec:ifAnyGranted>
+
+            </p:dataTable>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

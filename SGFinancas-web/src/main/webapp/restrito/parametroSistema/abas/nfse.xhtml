@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <div class="form-body">
+        <div class="row align-items-end">
+            <div class="col">
+                <div class="form-group form-md-line-input">
+                    <label class="control-label"><span class="required">* </span> Envio de Nf-e (serviço)</label>
+                    <p:selectOneMenu  value="#{parametroSistemaControle.parametroSistemaSelecionado.envioNotaServico}"
+                                      required="true"
+                                      requiredMessage="Informe o ambiente de envio de sua nota">
+                        <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                        <f:selectItem itemLabel="Produção" itemValue="1" />
+                        <f:selectItem itemLabel="Homologação" itemValue="2" />
+                    </p:selectOneMenu >
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group form-md-line-input">
+                    <label>Nº da última NFS emitida fora do SGFinanças</label>
+                    <p:inputNumber value="#{parametroSistemaControle.parametroSistemaSelecionado.numNotaFiscalServico}"
+                                   maxValue="999999999" decimalPlaces="0" thousandSeparator=""/>
+
+                </div>
+            </div>
+        </div>
+        <div class="row align-items-end">
+            <div class="col-6">
+                <div class="form-group form-md-line-input">
+                    <label class="control-label">Categoria padrão na importação de serviço</label>
+                    <p:selectOneMenu value="#{parametroSistemaControle.parametroSistemaSelecionado.idCategoriaImportacaoServico}"
+                                     converter="#{genericConverter}">
+                        <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                        <f:selectItems value="#{parametroSistemaControle.categorias}"  var="categoria" itemLabel="#{categoria.descricao}" itemValue="#{categoria}"/>
+                    </p:selectOneMenu>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</html>

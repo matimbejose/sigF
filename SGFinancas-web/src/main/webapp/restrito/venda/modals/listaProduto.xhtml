@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:messages class="alertMessage" id="msgResultado" errorClass="alert alert-danger"/>
+    <div class="row">
+        <div class="col-md-12 ">
+            <!-- BEGIN SAMPLE FORM PORTLET-->
+            <div class="portlet light bordered">
+                <div class="portlet-body form">
+                    <h:form id="form" acceptcharset="ISO-8859-1" role="form" enctype="multipart/form-data">
+                        <div class="form-body">
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12">
+                                    <div class="portlet light bordered box">
+                                        <div class="portlet-title">
+                                            <div class="caption">
+                                                <i class="fa fa-cogs"></i>Produtos </div>
+                                            <div class="actions">
+                                                <p:commandLink action="#{vendaControle.doStartAddProduto()}" rendered="#{!vendaControle.existeParcelaPaga()}" class="btn btn-default btn-sm" update="tblProdutos, form:pnlFormaPagamento">
+                                                    <i class="fa fa-plus"></i> Adicionar
+                                                </p:commandLink>
+                                            </div>
+                                        </div>
+                                        <div class="portlet-body">
+                                            <div class="table-responsive">
+                                                <p:dataTable value="#{vendaControle.listVendaProduto}" emptyMessage="Nenhum registro encontrado." var="item" id="tblProdutos" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+                                                    <p:column headerText="Produto" style="text-align:left">
+                                                        <h:outputText value="#{item.idProduto.descricao}" rendered="#{item.idProduto ne null}"/>
+
+                                                        <p:selectOneMenu value="#{item.idProduto}"
+                                                                         id="somProduto"
+                                                                         panelStyle="width:180px" effect="fade"
+                                                                         var="t" style="width:160px"
+                                                                         filter="true" filterMatchMode="contains"
+                                                                         rendered="#{item.idProduto eq null}"
+                                                                         converter="#{genericConverter}">
+                                                            <p:column>
+                                                                <h:outputText value="#{t.descricao}"/>
+                                                            </p:column>
+
+                                                            <f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+                                                            <f:selectItems value="#{vendaControle.produtosDisponiveis}"  var="produto" itemLabel="#{produto.descricao}" itemValue="#{produto}"/>
+                                                            <p:ajax event="change" process="@this" global="false" update="tblProdutos" listener="#{vendaControle.carregarProduto(item)}"/>
+                                                        </p:selectOneMenu>
+                                                    </p:column>
+
+                                                    <p:column headerText="Quantidade" style="text-align: right">
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <p:inputText value="#{item.quantidade}">
+                                                                    <f:convertNumber locale="pt_BR" minFractionDigits="2"/>
+                                                                </p:inputText>
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputNumber value="#{item.quantidade}"
+                                                                               disabled="#{vendaControle.existeParcelaPaga()}"
+                                                                               thousandSeparator="." decimalSeparator="," decimalPlaces="2">
+                                                                    <p:ajax event="blur"
+                                                                            process="@this"
+                                                                            global="false"
+                                                                            listener="#{vendaControle.calcularValorTotalLimparFormaPagamento()}"
+                                                                            update="tblProdutos"/>
+                                                                </p:inputNumber>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+
+                                                    <p:column headerText="Valor unitário"  style="text-align:right" rendered="#{vendaControle.vendaSelecionada.statusNegociacao ne 'PO'}">
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <p:inputText value="#{item.valorVenda}">
+                                                                    <f:convertNumber type="currency" locale="pt_BR"/>
+                                                                </p:inputText>
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputNumber value="#{item.valorVenda}"
+                                                                               disabled="#{vendaControle.existeParcelaPaga()}"
+                                                                               symbol="R$ " thousandSeparator="." decimalSeparator="," decimalPlaces="2">
+                                                                    <p:ajax event="blur" process="@this" listener="#{vendaControle.calcularValorTotalLimparFormaPagamento()}"
+                                                                            global="false" update="tblProdutos"/>
+                                                                </p:inputNumber>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+
+                                                    <p:column headerText="Desconto"  style="text-align:right" rendered="#{vendaControle.vendaSelecionada.statusNegociacao ne 'PO'}">
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <p:inputText value="#{item.desconto}">
+                                                                    <f:convertNumber type="currency" locale="pt_BR"/>
+                                                                </p:inputText>
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputNumber value="#{item.desconto}" rendered="#{!vendaControle.existeParcelaPaga()}"
+                                                                               symbol="R$ " thousandSeparator="." decimalSeparator="," decimalPlaces="2">
+                                                                    <p:ajax event="blur" disabled="#{vendaControle.existeParcelaPaga()}" process="@this" global="false"
+                                                                            listener="#{vendaControle.calcularDescontoTotalLimparFormaPagamento()}"
+                                                                            update="tblProdutos"/>
+                                                                </p:inputNumber>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+
+                                                    <p:column headerText="Valor total" style="text-align:right" rendered="#{vendaControle.vendaSelecionada.statusNegociacao ne 'PO'}">
+                                                        <h:outputText value="#{item.valorTotal}">
+                                                            <f:convertNumber locale="pt_BR" type="currency"/>
+                                                        </h:outputText>
+                                                    </p:column>
+
+                                                    <p:column headerText="Pontos" width="100" style="text-align: right" rendered="#{vendaControle.vendaSelecionada.statusNegociacao eq 'PO'}">
+                                                        <h:outputText id="txtPontos" value="#{item.pontos}">
+                                                            <f:convertNumber locale="pt_BR" minFractionDigits="2"/>
+                                                        </h:outputText>
+                                                    </p:column>
+
+                                                    <p:column width="57" headerText="Ações" rendered="#{!vendaControle.existeParcelaPaga()}">
+                                                        <div class="actions">
+                                                            <p:commandLink  styleClass="btn btn-circle btn-icon-only btn-default icones" title="Remover produto" process="@this" action="#{vendaControle.removeProduto()}" update="tblProdutos, form:pnlTotais, form:pnlFormaPagamento, form:pnlParcelado">
+                                                                <i class="icon-trash"></i>
+                                                                <f:setPropertyActionListener value="#{item}" target="#{vendaControle.vendaProdutoSelecionado}"/>
+                                                            </p:commandLink>
+                                                        </div>
+                                                    </p:column>
+
+                                                    <ui:remove>
+                                                        <p:columnGroup type="footer">
+                                                            <p:row>
+                                                                <p:column colspan="4" footerText="Total" style="text-align:right; font-weight: bold"/>
+                                                                <p:column footerText="#{vendaControle.descontoTotal}" style="text-align:right; font-weight: bold"/>
+                                                                <p:column footerText="#{vendaControle.subTotal}" style="text-align:right; font-weight: bold"/>
+                                                                <p:column rendered="#{!vendaControle.existeParcelaPaga()}" footerText="" style="text-align:right"/>
+                                                            </p:row>
+                                                        </p:columnGroup>
+                                                    </ui:remove>
+
+                                                </p:dataTable>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <h:commandButton action="#{vendaControle.doSaveProd()}"  styleClass="btn blue " value="Salvar"/>
+                            <h:commandButton action="#{vendaControle.doDiscardProdChanges()}" styleClass="btn default" value="Cancelar"/>
+                        </div>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</html>

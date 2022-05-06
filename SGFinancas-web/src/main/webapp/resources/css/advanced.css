@@ -1,0 +1,97 @@
+.taskTip {
+    font-size : 11px;
+}
+
+.taskTip td {
+    width : 70px;
+}
+
+.tipHeader {
+    white-space : nowrap;
+}
+
+@-webkit-keyframes glow {
+    0% {
+        -webkit-box-shadow : 0 0 8px rgba(255, 0, 0, 1);
+    }
+    100% {
+        -webkit-box-shadow : 0;
+    }
+}
+
+.sch-gantt-critical-chain .sch-gantt-task-highlighted .sch-gantt-item,
+.sch-dependency-selected {
+    -webkit-animation-name            : glow;
+    -webkit-animation-iteration-count : infinite;
+    -webkit-animation-duration        : 0.8s;
+    -webkit-animation-direction       : alternate;
+    -webkit-animation-timing-function : ease-in-out;
+    -moz-box-shadow                   : 0 0 8px rgba(255, 0, 0, 1);
+}
+
+.id {
+    background-color : #F6F6F6 !important;
+    background-image : -moz-linear-gradient(left center, #F6F6F6, #E9E9E9) !important;
+    background-image : -webkit-linear-gradient(left, #F6F6F6, #E9E9E9) !important;
+    background-image : linear-gradient(left, #F6F6F6, #E9E9E9) !important;
+}
+
+.gnt-color-palette {
+    background-color : #E9F2FF;
+    border           : 1px solid #8EAACE;
+    position         : absolute;
+    height           : 95px;
+    width            : 152px;
+}
+
+.sch-ganttview tr:first-child .sch-gantt-labelct-left {
+    display : none;
+}
+
+.sch-ganttview .kickoff {
+    border-left : 2px dotted #00a000;
+}
+
+.line-text {
+    position         : absolute;
+    top              : 5px;
+    left             : -2px;
+    background-color : #00a000;
+    color            : #fff;
+    display          : block;
+    font-size        : 0.8em;
+    height           : 13px;
+    white-space      : nowrap;
+    width            : auto;
+    padding-left     : 3px;
+    padding-right    : 3px;
+}
+
+.sch-timeline {
+    overflow : visible;
+}
+
+.sch-rollup-wrap .sch-gantt-progress-bar span {
+    display : none;
+}
+
+.x-body {
+    font-family:"Open Sans", sans-serif !important;
+}
+
+element.style {
+    background:none !important;
+    
+}
+
+.resources-assigned 
+{
+    background:url(../images/user.png) no-repeat left center !important;
+    padding-left:20px;
+    display:block;
+}
+
+.sch-assignment-cell
+{
+    color:#666;
+}

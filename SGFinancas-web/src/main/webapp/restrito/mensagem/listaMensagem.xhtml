@@ -1,0 +1,189 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:define name="cssInicial">
+            <style>
+
+            </style>
+            <link href="#{facesContext.externalContext.requestContextPath}/resources/metronic/assets/admin/pages/css/inbox.css" rel="stylesheet" type="text/css"/>
+        </ui:define>
+
+        <ui:param name="title" value="Mensagem"/>
+        <ui:define name="title">#{title}</ui:define>
+        <ui:define name="viewname">
+            <li>##SECTION_NAME##</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/mensagem/listaMensagem.xhtml"> #{title}</p:link></li>
+        </ui:define>
+            
+
+        <ui:define name="content">
+            <h:form acceptcharset="ISO-8859-1">
+                <h:messages class="alertMessage" errorClass="alert alert-danger" infoClass="alert alert-success"/>
+
+                <div class="row inbox">
+ 
+                    <div class="col-md-3">
+                        <ul class="ver-inline-menu margin-bottom-10">
+                            <li class="#{mensagemControle.filtro.somentePrioritarias or mensagemControle.filtro.excluidas?'':'active'}">
+                                <h:commandLink action="#{controleMenu.doAcionarPagina('mensagem/listaMensagem.xhtml')}">
+                                    <i class="fa fa-inbox"></i> Caixa de entrada  (#{mensagemControle.qtdMensagensNaoLidas}) 
+                                    <f:setPropertyActionListener value="#{false}" target="#{mensagemControle.filtro.somentePrioritarias}" />
+                                    <f:setPropertyActionListener value="#{false}" target="#{mensagemControle.filtro.excluidas}" />
+                                </h:commandLink>
+                            </li>
+                            <li class="#{mensagemControle.filtro.somentePrioritarias and not mensagemControle.filtro.excluidas?'active':''}">
+                                <h:commandLink action="#{controleMenu.doAcionarPagina('mensagem/listaMensagem.xhtml')}">
+                                    <i class="fa fa-star"></i> Prioritárias  (#{mensagemControle.qtdMensagensPrioritarias}) 
+                                    <f:setPropertyActionListener value="#{true}" target="#{mensagemControle.filtro.somentePrioritarias}" />
+                                    <f:setPropertyActionListener value="#{false}" target="#{mensagemControle.filtro.excluidas}" />
+                                </h:commandLink>
+                            </li>
+                            <li class="#{mensagemControle.filtro.excluidas ?'active':''}">
+                                <h:commandLink action="#{controleMenu.doAcionarPagina('mensagem/listaMensagem.xhtml')}">
+                                    <i class="icon-trash"></i>  Lixo eletrônico
+                                    <f:setPropertyActionListener value="#{true}" target="#{mensagemControle.filtro.excluidas}" />
+                                </h:commandLink>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="col-md-9">
+
+                        <div class="inbox-header">
+                            <p:outputPanel rendered="#{not mensagemControle.filtro.excluidas}">
+                                <p:row rendered="#{not mensagemControle.filtro.somentePrioritarias}">
+                                    <h1 class="pull-left">Caixa de entrada</h1>
+                                </p:row>
+                                <p:row rendered="#{mensagemControle.filtro.somentePrioritarias}">
+                                    <h1 class="pull-left">Prioritárias</h1>
+                                </p:row>
+                            </p:outputPanel>
+                            <p:outputPanel rendered="#{mensagemControle.filtro.excluidas}">
+                                <h1 class="pull-left">Lixo eletrônico</h1>
+                            </p:outputPanel>
+                            <div class="pull-right">
+                                <div class="input-group input-medium">
+                                    <p:inputText value="#{mensagemControle.filtro.descricao}" placeholder="pesquisar..." />
+                                    <span class="input-group-btn">
+                                        <p:commandLink  title="Consultar" class="btn-sm" update="tbl" process="@form" >
+                                            <i class="fa fa-search text-info"></i>
+                                        </p:commandLink>  
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="inbox-content">
+                            <p:toolbar>
+                                <p:toolbarGroup align="left">
+                                    <div class="btn-group">
+                                        <a class="btn btn-sm blue" href="#" data-toggle="dropdown">
+                                            Mais <i class="fa fa-angle-down"></i>
+                                        </a>
+                                        <ul class="dropdown-menu">
+                                            <p:row rendered="#{not mensagemControle.filtro.excluidas}">
+                                                <li>
+                                                    <h:commandLink  action="#{mensagemControle.marcarLeituraList('S')}" >
+                                                        <i class="fa fa-envelope"></i> Marcar como lida(s)
+                                                    </h:commandLink>
+                                                </li>
+                                                <li>
+                                                    <h:commandLink  action="#{mensagemControle.marcarLeituraList('N')}" >
+                                                        <i class="fa fa-envelope-o"></i> Marcar não lida(s) 
+                                                    </h:commandLink>
+                                                </li>
+                                                <li class="divider"> </li>
+                                                <li>
+                                                    <h:commandLink  action="#{mensagemControle.marcarPrioridadeList('S')}" >
+                                                        <i class="fa fa-star"></i> Marcar como prioritárias(s)
+                                                    </h:commandLink>
+                                                </li>
+                                                <li>
+                                                    <h:commandLink  action="#{mensagemControle.marcarPrioridadeList('N')}" >
+                                                        <i class="fa fa-star-o"></i> Marcar como não prioritárias(s) 
+                                                    </h:commandLink>
+                                                </li>
+                                                <li class="divider"> </li>
+                                                <li>
+                                                    <h:commandLink  title="Apagar mensagem(s)"  action="#{mensagemControle.doFinishExcluir()}" onclick="return confirm('Tem certeza que deseja excluir este mensagens ?');">
+                                                        <i class="fa fa-trash-o"></i> Apagar 
+                                                    </h:commandLink>
+                                                </li>
+                                            </p:row>
+                                            <p:row rendered="#{mensagemControle.filtro.excluidas}">
+                                                <li>
+                                                    <h:commandLink  title="Apagar mensagem(s)"  action="#{mensagemControle.restaurarMensagens()}" >
+                                                        <i class="fa fa-trash-o"></i> Mover para entrada 
+                                                    </h:commandLink>
+                                                </li>
+                                            </p:row>
+                                        </ul>
+                                    </div>
+                                </p:toolbarGroup>
+                                <p:toolbarGroup align="right">
+                                    
+                                    <h:commandLink 
+                                        rendered="#{mensagemControle.perfilMasterRH or mensagemControle.perfilAdministrador or mensagemControle.perfilMasterConsignataria}" 
+                                        title="Nova mensagem" action="#{mensagemControle.doStartMensagemConsignatarias() }" styleClass="btn blue btn-sm" >
+                                        <i class="fa fa-plus"></i> Nova mensagem
+                                    </h:commandLink>
+                                
+                                    
+                                
+                                </p:toolbarGroup>
+                            </p:toolbar>
+
+                            <p:dataTable value="#{mensagemControle.model}" var="item" emptyMessage="Nenhuma mensagem na caixa de entrada." lazy="true" rows="10" paginator="true" paginatorPosition="bottom" selection="#{mensagemControle.mensagensDestinatarioSelecionadas}" rowKey="#{item.id}" rowSelectMode="checkbox" id="tbl" styleClass="card p-0">
+
+                                <p:column selectionMode="multiple" style="width:50px;text-align:center"/>
+
+                                <p:column style="width:50px;text-align:center">  
+                                    <f:facet name="header">
+                                        <i class="fa fa-star"></i>
+                                    </f:facet>
+                                    <p:outputPanel rendered="#{item.prioritaria eq 'N'}">
+                                        <i class="fa fa-star-o"></i>
+                                    </p:outputPanel>
+                                    <p:outputPanel rendered="#{item.prioritaria eq 'S'}">
+                                        <i class="fa fa-star"></i>
+                                    </p:outputPanel>
+                                </p:column>
+
+                                <p:column headerText="Enviado" >
+                                    <h:outputText rendered="#{item.dataLeitura eq null}" style="font-weight: bold" value="#{item.idMensagem.idUsuarioEnvio.nome}"/>
+                                    <h:outputText rendered="#{item.dataLeitura ne null}" value="#{item.idMensagem.idUsuarioEnvio.nome}"/>
+                                </p:column>
+
+                                <p:column headerText="Assunto" >
+                                    <h:outputText rendered="#{item.dataLeitura eq null}" style="font-weight: bold" value=" #{item.idMensagem.assunto}"/>
+                                    <h:outputText rendered="#{item.dataLeitura ne null}" value=" #{item.idMensagem.assunto}"/>
+                                </p:column>
+
+                                <p:column style="width:150px;text-align:center" headerText="Envio" >
+                                    <h:outputText rendered="#{item.dataLeitura eq null}" style="font-weight: bold" value="#{item.idMensagem.data}"><f:convertDateTime pattern="dd/MM/yy HH:mm"/></h:outputText>
+                                    <h:outputText rendered="#{item.dataLeitura ne null}" value="#{item.idMensagem.data}"><f:convertDateTime pattern="dd/MM/yy HH:mm"/></h:outputText>
+                                </p:column>
+
+                                <p:column style="width:50px;text-align: center">
+                                    <h:commandLink  class="btn btn-circle btn-icon-only btn-default icones" action="#{mensagemControle.doStartVisualizarMensagem()}">
+                                        <i class="fa fa-search"></i>
+                                        <f:setPropertyActionListener value="#{item}" target="#{mensagemControle.mensagemDestinatarioSelecionada}" />
+                                    </h:commandLink>
+                                </p:column>
+
+                            </p:dataTable>    
+                        </div>
+                    </div>
+                </div>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

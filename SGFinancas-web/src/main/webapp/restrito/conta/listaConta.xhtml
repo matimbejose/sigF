@@ -1,0 +1,531 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:cc="http://xmlns.jcp.org/jsf/composite/components"
+                xmlns:sec="http://www.springframework.org/security/facelets/tags">
+    <ui:include src="/WEB-INF/msgErro.xhtml"/>
+    <p:importEnum type="br.com.villefortconsulting.sgfinancas.controle.apoio.ContaControleBase$EnumConta" var="EnumConta"/>
+    <script src='https://d3js.org/d3.v4.min.js'></script>
+    <script src="#{facesContext.externalContext.requestContextPath}/resources/js/sun-burst.js"></script>
+    <style>
+        path {
+            stroke: #fff6;
+        }
+        #hoverLbl {
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: none;
+            text-shadow: 0 0 5px #fff, 0 0 5px #fff;
+            font-weight: bold;
+            pointer-events: none;
+            z-index: 999;
+        }
+        #svgBotton {
+            border-radius: 50%;
+        }
+        #svgBotton:hover + #hoverLbl {
+            display: block;
+        }
+        .table  {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        .table td:last-child {
+            text-align: right;
+        }
+        .table tr:not(:last-child) {
+            border-bottom: 1px #ccc solid;
+        }
+        .statistics-header {
+            text-transform: uppercase;
+        }
+        :root {
+            --cor: transparent;
+        }
+        .gradient {
+            box-shadow: 0 0 0 12px var(--cor), 0 0 0 24px var(--cor), 0 0 0 36px var(--cor);
+            width: 2px;
+            height: 2px;
+            position: absolute;
+            right: -2px;
+            top: -2px;
+            border-radius: 1px;
+        }
+        .card.overview-box {
+            overflow: hidden;
+        }
+        #legendTbl th:first-child {
+            text-align: left;
+        }
+        #legendTbl th:last-child {
+            text-align: right;
+        }
+    </style>
+
+    <p:outputPanel styleClass="layout-dashboard mb-3">
+        <div class="row">
+            <div class="col intro-text">
+                <span>
+                    Resumo de
+                    <p:calendar navigator="true" pattern="dd/MM/yyyy" styleClass="top-calendar m-0" value="#{controle.filtro.dataInicio}">
+                        <p:ajax event="dateSelect" update="estatistica, pnlGrafico" oncomplete="updateChart(PF(`chartData`).jq.val());PF('tbl').filter();"/>
+                    </p:calendar>
+                    até
+                    <p:calendar navigator="true" pattern="dd/MM/yyyy" styleClass="top-calendar m-0" value="#{controle.filtro.dataFim}">
+                        <p:ajax event="dateSelect" update="estatistica, pnlGrafico" oncomplete="updateChart(PF(`chartData`).jq.val());PF('tbl').filter();"/>
+                    </p:calendar>
+                </span>
+            </div>
+        </div>
+    </p:outputPanel>
+
+    <p:outputPanel id="estatistica" styleClass="layout-dashboard">
+        <p:inputText type="hidden" value="#{controle.listaAsJson}" widgetVar="chartData"/>
+        <div class="row">
+            <div class="ui-g-12 col-md-6 col-lg-3">
+                <h:commandLink action="#{controle.doMudarListagem()}">
+                    <div class="card overview-box" style="--cor: #3c946233;">
+                        <div class="gradient"></div>
+                        <div class="overview">
+                            <span class="overview-title">A #{controle.tipoConta.infinitivo}</span>
+                            <h3 class="statistics">
+                                <cc:convertMoney value="#{controle.cardReceber.valor}"/>
+                            </h3>
+                            <span>#{controle.cardReceber.quantidade} contas</span>
+                        </div>
+                        <span class="statistics-header"></span>
+                    </div>
+                    <f:setPropertyActionListener value="receber" target="#{controle.tipoListagem}"/>
+                </h:commandLink>
+            </div>
+            <div class="ui-g-12 col-md-6 col-lg-3">
+                <h:commandLink action="#{controle.doMudarListagem()}">
+                    <div class="card overview-box" style="--cor: #943c3c33;">
+                        <div class="gradient"></div>
+                        <div class="overview">
+                            <span class="overview-title">EM ATRASO</span>
+                            <h3 class="statistics">
+                                <cc:convertMoney value="#{controle.cardAtraso.valor}"/>
+                            </h3>
+                            <span>#{controle.cardAtraso.quantidade} contas</span>
+                        </div>
+                        <f:setPropertyActionListener value="atraso" target="#{controle.tipoListagem}"/>
+                    </div>
+                </h:commandLink>
+            </div>
+            <div class="ui-g-12 col-md-6 col-lg-3">
+                <h:commandLink action="#{controle.doMudarListagem()}">
+                    <div class="card overview-box" style="--cor: #3c946233;">
+                        <div class="gradient"></div>
+                        <div class="overview">
+                            <span class="overview-title">#{controle.tipoConta.cardPassado}</span>
+                            <h3 class="statistics">
+                                <cc:convertMoney value="#{controle.cardRecebido.valor}"/>
+                            </h3>
+                            <span>#{controle.cardRecebido.quantidade} contas</span>
+                        </div>
+                        <f:setPropertyActionListener value="recebido" target="#{controle.tipoListagem}"/>
+                    </div>
+                </h:commandLink>
+            </div>
+            <div class="ui-g-12 col-md-6 col-lg-3">
+                <h:commandLink action="#{controle.doMudarListagemParaListagemGeral()}">
+                    <div class="card overview-box" style="--cor: #88888833;">
+                        <div class="gradient"></div>
+                        <div class="overview">
+                            <span class="overview-title">TOTAL</span>
+                            <h3 class="statistics">
+                                <cc:convertMoney value="#{controle.cardTotal.valor}"/>
+                            </h3>
+                            <span>#{controle.cardTotal.quantidade} contas</span>
+                        </div>
+                        <f:setPropertyActionListener value="total" target="#{controle.tipoListagem}"/>
+                    </div>
+                </h:commandLink>
+            </div>
+        </div>
+    </p:outputPanel>
+    <div class="clearfix"></div>
+
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <p:dataTable value="#{controle.model}" emptyMessage="Nenhum registro encontrado." var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow" sortMode="multiple">
+
+                <f:facet name="header"> 
+                    <span>
+                        <h:outputText value="Parcelas a #{controle.tipoConta.infinitivo}" rendered="#{controle.tipoListagem eq 'receber'}"/>
+                        <h:outputText value="Parcelas a #{controle.tipoConta.infinitivo} em atraso" rendered="#{controle.tipoListagem eq 'atraso'}"/>
+                        <h:outputText value="Parcelas #{controle.tipoConta.indicativoPassado}s" rendered="#{controle.tipoListagem eq 'recebido'}"/>
+                        <h:outputText value="Parcelas a #{controle.tipoConta.infinitivo} hoje" rendered="#{controle.tipoListagem eq 'hoje'}"/>
+                        <h:outputText value="Parcelas a #{controle.tipoConta.infinitivo} em geral" rendered="#{controle.tipoListagem eq 'total'}"/>
+                        <h:outputText value="Parcelas a #{controle.tipoConta.infinitivo} em geral" rendered="#{controle.tipoListagem eq null}"/>
+                    </span>
+                </f:facet>
+
+                <p:ajax event="page" listener="#{controle.onPageChange}" />
+
+                <p:ajax event="filter" update="form:estatistica" oncomplete="updateChart(PF(`chartData`).jq.val());"/>
+
+                <p:column headerText="#" sortBy="#{item.id}" visible="false" width="60" filterBy="#{item.id}">
+                    <f:facet name="filter">
+                        <p:inputNumber value="#{controle.filtro.id}" onchange="PF('tbl').filter()"
+                                       decimalPlaces="0" thousandSeparator=""/>
+                    </f:facet>
+                    <h:outputText value="#{item.id}"/>
+                </p:column>
+
+                <p:column headerText="Plano de conta" sortBy="#{idConta.idPlanoConta.descricao}" filterBy="#{item.idConta.idPlanoConta.descricao}">
+                    <f:facet name="filter">
+                        <p:selectOneMenu panelStyle="width: 500px" effect="fade" var="t" filter="true" filterMatchMode="contains"
+                                         value="#{controle.filtro.planoConta}" converter="#{genericConverter}" onchange="PF('tbl').filter()">
+                            <p:column>
+                                <h:outputText value="#{t.codigo}" />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{t.descricao}" />
+                            </p:column>
+
+                            <f:selectItem itemLabel="Todos" noSelectionOption="true"/>
+                            <f:selectItems value="#{controle.getPlanoConta()}" var="pc" itemLabel="#{pc.descricao}" itemValue="#{pc}"
+                                           itemDisabled="#{pc.tipoIndicador ne 'S' or pc.idContaPai.bloqueiaFilhoContaReceber eq 'S'}"
+                                           itemDescription="#{planoContaControle.obterNomesDosPais(pc)}">
+                            </f:selectItems>
+                        </p:selectOneMenu>
+                    </f:facet>
+
+                    <h:outputText value="#{item.idConta.idPlanoConta.descricao} (#{item.numParcela}/#{item.idConta.numeroParcelas})"/>
+                </p:column>
+
+                <p:column headerText="Obs." filterBy="#{idConta.observacao}">
+                    <f:facet name="filter">
+                        <p:inputText value="#{controle.filtro.observacao}" onchange="PF('tbl').filter()"/>
+                    </f:facet>
+                    <h:outputText value="#{controle.trataObservacao(item)}"/>
+                </p:column>
+
+                <p:column headerText="Nº do documento">
+                    <h:outputText value="#{item.numNf ne null ? item.numNf : ''}"/>
+                </p:column>
+
+                <p:column headerText="Conta bancária" sortBy="#{item.idContaBancaria.descricao}" filterBy="#{item.idContaBancaria.descricao}">
+                    <f:facet name="filter">
+                        <p:selectOneMenu panelStyle="width: 500px" effect="fade" var="t" filter="true" filterMatchMode="contains"
+                                         value="#{controle.filtro.contaBancaria}"
+                                         converter="#{genericConverter}" onchange="PF('tbl').filter()">
+                            <p:column>
+                                <h:outputText value="#{t.descricao}" />
+                            </p:column>
+
+                            <f:selectItem itemLabel="Todos" noSelectionOption="true"/>
+                            <f:selectItems value="#{contaBancariaControle.contaBancarias}" var="cb"
+                                           itemLabel="#{cb.descricao}" itemValue="#{cb}"/>
+                        </p:selectOneMenu>
+                    </f:facet>
+                    <h:outputText value="#{item.idContaBancaria.descricao}"/>
+                </p:column>
+
+                <p:column headerText="Cliente" sortBy="#{idConta.idCliente.nome}" filterBy="#{item.idConta.idCliente}"
+                          rendered="#{controle.tipoConta eq EnumConta.RECEBER}">
+                    <f:facet name="filter">
+                        <p:selectOneMenu onchange="PF('tbl').filter()" filter="true" filterMatchMode="contains"
+                                         value="#{controle.filtro.cliente}" converter="#{genericConverter}">
+                            <f:selectItem itemLabel="Todos" noSelectionOption="true"/>
+                            <f:selectItems value="#{clienteControle.clientes}" var="cliente"
+                                           itemLabel="#{cliente.nome}" itemValue="#{cliente}"/>
+                        </p:selectOneMenu>
+                    </f:facet>
+
+                    <h:outputText value="#{item.idConta.idCliente.nome}"/>
+                </p:column>
+
+                <p:column headerText="Fornecedor" sortBy="#{idConta.idFornecedor.razaoSocial}" filterBy="#{item.idConta.idFornecedor.razaoSocial}"
+                          rendered="#{controle.tipoConta eq EnumConta.PAGAR}">
+                    <f:facet name="filter">
+                        <p:selectOneMenu onchange="PF('tbl').filter()" filter="true" filterMatchMode="contains"
+                                         value="#{controle.filtro.fornecedor}" converter="#{genericConverter}">
+                            <f:selectItem itemLabel="Todos" noSelectionOption="true"/>
+                            <f:selectItems value="#{fornecedorControle.fornecedores}" var="fornecedor"
+                                           itemLabel="#{fornecedor.razaoSocial}" itemValue="#{fornecedor}"/>
+                        </p:selectOneMenu>
+                    </f:facet>
+
+                    <h:outputText value="#{item.idConta.idFornecedor.razaoSocial}"/>
+                </p:column>
+
+                <p:column headerText="Data Emissão" width="95" sortBy="#{item.idConta.dataEmissao}" visible="#{controle.tipoConta eq EnumConta.PAGAR}">
+                    <h:outputText value="#{item.dataEmissao}">
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Origem" sortBy="#{item.idConta.tipoConta}" filterBy="#{item.idConta.tipoConta}" visible="false">
+                    <p:importEnum type="br.com.villefortconsulting.sgfinancas.util.EnumTipoConta"/>
+                    <f:facet name="filter">
+                        <p:selectOneMenu panelStyle="width: 500px" effect="fade" onchange="PF('tbl').filter()"
+                                         value="#{controle.filtro.origem}" filter="true" filterMatchMode="contains">
+                            <f:selectItem itemLabel="Todos" noSelectionOption="true"/>
+                            <f:selectItems value="#{EnumTipoConta.ALL_VALUES}" var="enum"
+                                           itemLabel="#{enum.descricao}" itemValue="#{enum.tipo}"/>
+                        </p:selectOneMenu>
+                    </f:facet>
+
+                    <h:outputText value="#{controle.mostraOrigem(item.idConta)}"/>
+                </p:column>
+
+                <p:column headerText="Vencimento" width="95" sortBy="#{item.dataVencimento}">
+                    <h:outputText value="#{item.dataVencimento}">
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Pagamento" width="95" sortBy="#{item.dataPagamento}" visible="#{controle.tipoConta eq EnumConta.PAGAR}">
+                    <h:outputText value="#{item.dataPagamento}">
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Valor bruto" sortBy="#{item.valor}" style="text-align: right" filterBy="#{item.valor}" visible="false">
+                    <f:facet name="filter">
+                        <p:inputNumber decimalPlaces="2" decimalSeparator="," thousandSeparator="." onchange="PF('tbl').filter()"
+                                       value="#{controle.filtro.valor}"/>
+                    </f:facet>
+
+                    <h:outputText value="#{item.valor}">
+                        <f:convertNumber currencySymbol="R$" type="currency"/>
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Valor total" sortBy="#{item.valorTotal}" style="text-align: right" filterBy="#{item.valorTotal}">
+                    <f:facet name="filter">
+                        <p:inputNumber decimalPlaces="2" decimalSeparator="," thousandSeparator="." onchange="PF('tbl').filter()"
+                                       value="#{controle.filtro.valorTotal}"/>
+                    </f:facet>
+                    <h:outputText value="#{item.valorTotal}">
+                        <f:convertNumber currencySymbol="R$" type="currency"/>
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Valor pago" sortBy="#{item.valorPago}" style="text-align: right" visible="#{controle.tipoConta eq EnumConta.PAGAR}" filterBy="#{item.valorPago}">
+                    <f:facet name="filter">
+                        <p:inputNumber decimalPlaces="2" decimalSeparator="," thousandSeparator="." onchange="PF('tbl').filter()"
+                                       value="#{controle.filtro.valorPago}"/>
+                    </f:facet>
+
+                    <h:outputText value="#{item.valorPago}">
+                        <f:convertNumber currencySymbol="R$" type="currency"/>
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Forma de pagamento" filterBy="#{item.idFormaPagamento.descricao}" visible="#{controle.tipoConta eq EnumConta.RECEBER}">
+                    <f:facet name="filter">
+                        <p:selectOneMenu onchange="PF('tbl').filter()" filter="true" filterMatchMode="contains"
+                                         value="#{controle.filtro.formaPagamento}" converter="#{genericConverter}">
+                            <f:selectItem itemLabel="Todos" noSelectionOption="true"/>
+                            <f:selectItems value="#{formaPagamentoControle.formasPagamento}" var="fp"
+                                           itemLabel="#{fp.descricao}" itemValue="#{fp}"/>
+                        </p:selectOneMenu>
+                    </f:facet>
+
+                    <h:outputText value="#{item.idFormaPagamento.descricao}"/>
+                </p:column>
+
+                <p:column rendered="#{item.situacao ne 'CC'}" headerText="Situação" sortBy="#{item.situacao}" filterBy="#{item.situacao}">
+                    <p:importEnum type="br.com.villefortconsulting.sgfinancas.util.EnumSituacaoConta"/>
+                    <f:facet name="filter">
+                        <p:selectOneMenu onchange="PF('tbl').filter()" filter="true" filterMatchMode="contains"
+                                         value="#{controle.filtro.situacao}">
+                            <f:selectItem itemLabel="Todos (exceto canceladas)" noSelectionOption="true"/>
+                            <f:selectItems value="#{EnumSituacaoConta.ALL_VALUES}" var="enum"
+                                           itemLabel="#{controle.tipoConta eq EnumConta.PAGAR ? enum.descricaoSituacao : enum.descricaoSituacaoReceber}"
+                                           itemValue="#{enum.situacao}"/>
+                        </p:selectOneMenu>
+                    </f:facet>
+                    <h:outputText value="#{controle.buscarSituacao(item.situacao)}"/>
+                </p:column>
+
+                <p:column rendered="#{item.situacao eq 'CC'}" headerText="Situação" sortBy="#{item.situacao}">
+                    <h:outputText styleClass="font-red-haze" value="Cancelado"/>
+                </p:column>
+
+                <p:column headerText="Última parcela paga" visible="#{false}">
+                    <h:outputText value="#{controle.ultimaParcelaPaga(item.idConta)}"/>
+                </p:column>
+
+                <sec:ifAnyGranted roles="#{controle.tipoConta eq EnumConta.RECEBER ? 'CONTA_RECEBER_GERENCIAR' : 'CONTA_PAGAR_GERENCIAR'}">
+                    <p:column width="107" headerText="Ações" exportable="false">
+                        <div class="actions">
+                            <p:row rendered="#{item.fechada eq 'S'}">
+                                <i class="fa fa-fw fa-exclamation-triangle text-warning p-1" title="Parcela fechada"
+                                   style="text-shadow: 0 0 2px #000;"></i>
+                            </p:row>
+
+                            <h:commandLink rendered="#{item.idConta.situacao ne 'CC' and item.fechada eq 'N'}"
+                                           styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                           title="Alterar parcela" action="#{controle.alterarContaPorListagem()}">
+                                <i class="fa fa-edit"></i>
+                                <f:setPropertyActionListener value="#{item.idConta}" target="#{controle.contaSelecionada}"/>
+                                <f:setPropertyActionListener value="#{item}" target="#{controle.contaParcelaSelecionada}"/>
+                            </h:commandLink>
+
+                            <p:commandLink title="Download arquivo" ajax="false" class="btn btn-circle btn-icon-only btn-default icones" rendered="#{item.idConta.idDocumento ne null}">
+                                <i class="fa fa-arrow-down"></i>
+                                <p:fileDownload value="#{documentoControle.downloadAnexo(item.idConta.idDocumento)}"/>
+                            </p:commandLink>
+
+                            <ui:remove>
+                                <sec:ifAnyGranted roles ="EMITIR_BOLETO">
+                                    <p:commandLink rendered="#{item.situacao eq 'NP' and item.idBoleto eq null and item.fechada eq 'N' and controle.tipoConta eq EnumConta.RECEBER}" ajax="false"
+                                                   styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                                   title="Imprimir boleto">
+                                        <i class="fa fa-barcode"></i>
+                                        <f:setPropertyActionListener value="#{item}" target="#{controle.contaParcelaSelecionada}"/>
+                                        <p:fileDownload value="#{controle.emitirBoleto()}"/>
+                                    </p:commandLink>
+
+                                    <p:commandLink rendered="#{item.situacao eq 'NP' and item.idBoleto ne null and item.fechada eq 'N' and controle.tipoConta eq EnumConta.RECEBER}" ajax="false" styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                                   title="Download boleto">
+                                        <i class="fa fa-arrow-circle-o-down"></i>
+                                        <f:setPropertyActionListener value="#{item}" target="#{controle.contaParcelaSelecionada}"/>
+                                        <p:fileDownload value="#{controle.downloadBoleto()}"/>
+                                    </p:commandLink>
+
+                                    <p:commandLink rendered="#{item.situacao eq 'NP' and item.idBoleto ne null and item.fechada eq 'N' and controle.tipoConta eq EnumConta.RECEBER}" ajax="false"
+                                                   styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                                   title="Segunda via boleto">
+                                        <i class="fa fa-files-o"></i>
+                                        <f:setPropertyActionListener value="#{item}" target="#{controle.contaParcelaSelecionada}"/>
+                                        <p:fileDownload value="#{controle.emitirBoleto()}"/>
+                                    </p:commandLink>
+                                </sec:ifAnyGranted>
+
+
+                                <p:commandLink title="Cancelar baixa"
+                                               styleClass="btn btn-circle btn-icon-only btn-default icones scroll-top"
+                                               rendered="#{item.situacao eq 'PG' and item.situacao ne 'CC' and item.fechada eq 'N'}"
+                                               update="form:msgResultado, tbl"
+                                               action="#{controle.desfazerBaixa()}">
+
+                                    <i class="fa fa-undo"></i>
+                                    <f:setPropertyActionListener value="#{item}" target="#{controle.contaParcelaSelecionada}"/>
+                                </p:commandLink>
+                            </ui:remove>
+                            <h:commandLink title="#{controle.tipoConta.infinitivo} parcela" styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                           rendered="#{item.situacao ne 'PG' and item.situacao ne 'CC' and item.fechada eq 'N'}"
+                                           action="#{controle.doStartAddParcela()}">
+                                <f:setPropertyActionListener value="#{item}" target="#{controle.contaParcelaSelecionada}"/>
+                                <i class="fa fa-usd"></i>
+                            </h:commandLink>
+
+                            <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Remover conta"
+                                           rendered="#{item.idConta.tipoConta eq 'N' and item.idConta.situacao eq 'NP' and item.fechada eq 'N'}"
+                                           action="#{controle.doFinishExcluir()}"
+                                           onclick="return confirm('Tem certeza que deseja excluir esta conta?');">
+                                <i class="icon-trash"></i>
+                                <f:setPropertyActionListener value="#{item.idConta}" target="#{controle.contaSelecionada}"/>
+                            </h:commandLink>
+
+                            <h:commandLink title="Cancelar parcela" styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                           rendered="#{(item.idConta.tipoConta eq 'N' or item.idConta.tipoConta eq 'K'
+                                                       or item.idConta.tipoConta eq 'F')and item.situacao eq 'NP' and item.fechada eq 'N'}"
+                                           action="#{controle.doStartCancelarParcela()}">
+                                <i class="fa fa-times"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{controle.contaParcelaSelecionada}"/>
+                            </h:commandLink>
+
+                            <p:commandLink title="Reativar parcela" styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                           rendered="#{(item.idConta.tipoConta eq 'N' or item.idConta.tipoConta eq 'K'
+                                                       or item.idConta.tipoConta eq 'F')and item.situacao eq 'CC' and item.fechada eq 'N'}"
+                                           action="#{controle.doFinishReativarParcela()}" update="@form">
+                                <i class="fa fa-reply-all"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{controle.contaParcelaSelecionada}"/>
+                            </p:commandLink>
+
+                            <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Emitir nota fiscal de serviço"
+                                           action="#{notaFiscalServicoControle.doStartAdd()}"
+                                           rendered="#{item.idNFS eq null and item.advemContrato eq 'S' and item.fechada eq 'N' and controle.tipoConta eq EnumConta.RECEBER}">
+                                <i class="fa fa-file-text-o"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{notaFiscalServicoControle.parcelaSelecionada}"/>
+                            </h:commandLink>
+
+                            <h:commandLink title="Histórico" styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                           action="#{controle.doShowHistorico()}">
+                                <i class="fa fa-book"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{controle.contaParcelaSelecionada}"/>
+                            </h:commandLink>
+
+                            <h:commandLink title="Auditoria" styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                           action="#{controle.doShowAuditoria()}">
+                                <i class="fa fa-history"></i>
+                                <f:setPropertyActionListener value="#{item.idConta}" target="#{controle.contaSelecionada}"/>
+                            </h:commandLink>
+                        </div>
+                    </p:column>
+                </sec:ifAnyGranted>
+
+            </p:dataTable>
+        </div>
+    </div>
+
+    <div class="card simple-advanced">
+        <div class="card-header">
+            Distribuição de #{controle.tipoConta.genitivo}
+            <p:menuButton value="Tipo de gráfico" styleClass="pull-right">
+                <p:menuitem value="Simples" onclick="updateTipoGrafico('S');"/>
+                <p:menuitem value="Avançado" onclick="updateTipoGrafico('A');"/>
+            </p:menuButton>
+        </div>
+        <div class="row simple">
+            <div class="col">
+                <p:outputPanel id="pnlGrafico">
+                    <p:chart type="bar" rendered="#{controle.lista ne null and controle.lista.size() > 0}"
+                             model="#{controle.barModel}" style="height:#{controle.obterTamanhoGrafico()}" widgetVar="bar"/>
+                    <p:chart type="pie" model="#{controle.pieModel2}" style="width:400px;height:300px"/>
+                </p:outputPanel>
+            </div>
+        </div>
+        <div class="row advanced">
+            <div class="col-12 col-md-auto pr-0">
+                <svg id="svgBotton"></svg>
+                <span id="hoverLbl"></span>
+            </div>
+            <div class="col m-0 px-2">
+                <div>
+                    <p:panel header="Distribuição">
+                        <table id="legendTbl" class="table"></table>
+                    </p:panel>
+                    <span>Clique em um plano de contas para abrir o drill-down do plano selecionado.</span>
+                    <br/>
+                    <span>Com o drill-down aberto, clique no círculo central para voltar ao início.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // <![CDATA[
+        function gambiarra() {
+            this.cfg.highlighter = {
+                show: true,
+                tooltipAxes: 'x',
+                useAxesFormatters: false,
+                tooltipFormatString: '%.2f'};
+        }
+        function updateChart(data) {
+            const lista = {
+                name: "Distribuição de #{controle.tipoConta.genitivo}",
+                children: JSON.parse(data)
+            };
+            sunBurst.setHoverLbl(hoverLbl);
+            sunBurst.setLegendTbl(legendTbl);
+            sunBurst.start(lista, "#svgBotton");
+        }
+        $(document).ready(() => {
+            updateChart(PF('chartData').getJQ().val());
+            loadTipoGrafico();
+        });
+        // ]]>
+    </script>
+
+</ui:composition>

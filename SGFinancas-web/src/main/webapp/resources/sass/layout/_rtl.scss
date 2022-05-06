@@ -1,0 +1,686 @@
+.layout-wrapper {
+    &.layout-rtl {
+        #layout-right-panel {
+            left: -300px;
+            direction: rtl;
+            transition: left $transitionDuration;
+
+            &.layout-right-panel-active {
+                left: 0;
+            }
+
+            .submenu-content {
+                padding: 8px 14px;
+        
+                &.messages {
+                    ul {
+                        li {
+                            span {
+                                &.message-text {
+                                    float: right;
+                                }
+
+                                &.time-stamp {
+                                    margin-right: 5px;
+                                }
+                            }
+
+                            img {
+                                float: right;
+                                margin-left: 6px;
+                            }
+
+                            .message-actions {
+                                left: 0;
+                                right: auto;
+        
+                                i {
+                                    margin-left: 6px;
+                                    margin-right: 0;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                &.settings {
+                    .status-box {
+                        text-align: right;
+
+                        .icon-details {
+                            float: left;
+                            transform: rotate(180deg);
+                        }
+
+                        .status {
+                            text-align: right;
+                        }
+                    }
+                }
+
+                &.notes {
+                    ul {
+                        li {
+                            span {
+                                text-align: right;
+            
+                                &.note-reminder {
+                                    text-align: right;
+            
+                                    span {
+                                        text-align: right;
+                                    }
+                                }
+                            }
+
+                            button {
+                                margin-left: 12px;
+                                margin-right: 0;
+                            }
+
+                            i {
+                                margin-left: 6px;
+                            } 
+                        }
+                    }
+                }
+            }
+        }
+
+        .layout-sidebar {
+            right: 0;
+            left: auto;
+            direction: rtl;
+
+            .layout-menu {
+                >li {
+                    >a {
+                        .layout-submenu-toggler {
+                            float: left;
+                            right: auto;
+                            margin-left: 0;
+                        }
+                    }
+
+                    ul {
+                        li {
+                            a {
+                                .layout-submenu-toggler {
+                                    float: left;
+                                    right: auto;
+                                    margin-left: 0;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        .layout-main{
+            margin-right: 224px;
+            margin-left: 0;
+        }
+
+        .layout-topbar {
+            right: 0;
+
+            .logo-container {
+                padding-right: 0;
+                float: right;
+    
+                .app-name {
+                    margin-right: 12px;
+                    float: left;
+                    position: relative;
+                    top: 5px;
+                }
+            }
+
+            .topbar-content {
+                float: right;
+
+                #topbar-sidebar-button {
+                    float: right;
+                    margin-left: 16px;
+                    margin-right: 0;
+                }
+
+                .search-input {
+                    float: right;
+                    direction: rtl;
+                    text-align: right;
+        
+                    .icon-search {
+                        right: 10px;
+                        left: auto;
+                    }
+        
+                    input {
+                        text-align: right;
+                        padding: 6px;
+                        padding-right: 28px;
+                    }
+                }
+
+                .topbar-icons {
+                    ul {
+                        li {
+                            a {
+                                i {
+                                    text-align: right;
+                                }
+                            }
+                        }
+
+                        .layout-quickmenu-tooltip {
+                            right: -37px;
+
+                            .layout-quickmenu-tooltip-arrow {
+                                right: 50%;
+                            }
+                        }
+                    }
+                }
+
+                #topbar-profile-menu-button {    
+                    float: left;
+                    
+
+                    span {
+                        text-align: right;
+                        margin-right: 10px;
+                        float: left;
+                        position: relative;
+                        top: 10px;
+                    }
+                }
+
+                #topbar-right-panel-button {
+                    float: left;
+                }
+
+                #topbar-profile-menu {
+                    text-align: right;
+                    direction: rtl;
+                    left: 27px;
+
+                    li {
+                        > a {        
+                            i {
+                                margin-left: 8px;
+                            }
+                        }
+                        ul {
+                            li {
+                                a {
+                                    padding-right: 15px;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        .route-bar {
+            direction: rtl;
+
+            .route-bar-menu {
+                float: left;
+                direction: rtl;
+
+                li {
+                    a {
+                        i {
+                            margin-left: 6px;
+                            margin-right: 0;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: $breakpoint) {
+    .layout-wrapper {
+        &.layout-rtl {
+            .layout-sidebar {
+                right: -224px;
+                @include transition(right .3s);
+
+                .layout-menu {
+                    >li {
+                        >a {
+                            i {
+                                &:first-child {
+                                    margin-left: 8px;
+                                    margin-right: 0;
+                                }
+                            }
+                        }
+
+                        ul {
+                            li {
+                                a {
+                                    padding-right: 24px;
+                                    padding-left: 12px;
+
+                                    i {
+                                        &:first-child {
+                                            margin-left: 8px;
+                                            margin-right: 0;
+                                        }
+                                    }
+                                }
+
+                                ul {
+                                    li {
+                                        a {
+                                            padding-right: 40px;
+                                        }
+
+                                        ul {
+                                            li {
+                                                a {
+                                                    padding-right: 56px;
+                                                }
+
+                                                ul {
+                                                    li {
+                                                        a {
+                                                            padding-right: 72px;
+                                                        }
+                                                    }
+
+                                                    ul {
+                                                        li {
+                                                            a {
+                                                                padding-right: 88px;
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            .layout-main {
+                margin-right: 0;
+                margin-left: 0;
+            }
+
+            &.layout-menu-mobile-active {
+                .layout-sidebar {
+                    right: 0px;
+                    left: auto;
+                }
+            }
+
+            &.layout-menu-mobile-active,
+            &.topbar-icons-active {
+                .layout-mask {
+                    right: 0;
+                    left: auto;
+                }
+            }  
+            
+            .layout-topbar {
+                .logo-container {
+                    float: none;
+                }
+
+                .topbar-content {
+                    .topbar-icons {
+                        text-align: right;
+                        right: 0;
+                        left: auto;
+                    }
+
+                    #topbar-sidebar-button {
+                        right: 0;
+                        left: auto;
+                    }
+
+                    .search-input {
+                        text-align: right;
+                        right: 12px;
+                        left: auto;
+                    }
+
+                    #topbar-quickmenu-button {
+                        left: 24px;
+                        right: auto;
+                    }
+
+                    #topbar-profile-menu-button {  
+                        left: 64px;
+                        right: auto;
+                    }
+
+                    #topbar-right-panel-button {
+                        left: 0;
+                        right: auto;
+                    }
+                }
+            }
+
+            &.topbar-icons-active {
+                .layout-topbar {
+                    .topbar-content {
+                        .topbar-icons {
+                            direction: rtl;
+
+                            ul {
+                                li {
+                                    a {
+                                        text-align: right;
+            
+                                        i {
+                                            margin-left: 20px;
+                                            margin-right: 0;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            .route-bar {
+                .route-bar-menu {
+                    li {
+                        a {
+                            i {
+                                margin-left: 0px;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media (min-width: $breakpoint + 1) {
+    .layout-wrapper {
+        &.layout-rtl {
+
+            &.layout-menu-static,
+            &.layout-menu-overlay {
+                #topbar-sidebar-button {
+                    margin-left: 16px;
+                    margin-right: 0;
+                }
+
+                .layout-sidebar {
+                    @include transition(right .3s);
+
+                    .layout-menu {
+                        >li {
+                            >a {
+                                i {
+                                    &:first-child {
+                                        margin-left: 8px;
+                                        margin-right: 0;
+                                    }
+                                }
+                            }
+
+                            ul {
+                                li {
+                                    a {
+                                        padding-right: 24px;
+                                        padding-left: 12px;
+        
+                                        i {
+                                            &:first-child {
+                                                margin-left: 8px;
+                                                margin-right: 0;
+                                            }
+                                        }
+                                    }
+
+                                    ul {
+                                        li {
+                                            a {
+                                                padding-right: 40px;
+                                            }
+        
+                                            ul {
+                                                li {
+                                                    a {
+                                                        padding-right: 56px;
+                                                    }
+        
+                                                    ul {
+                                                        li {
+                                                            a {
+                                                                padding-right: 72px;
+                                                            }
+                                                        }
+        
+                                                        ul {
+                                                            li {
+                                                                a {
+                                                                    padding-right: 88px;
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            &.layout-menu-static {
+                .layout-sidebar {
+                    right: 0;
+                    left: auto;
+                }
+        
+                .layout-main {
+                    @include transition(margin-right .3s);
+                    margin-right: 224px;
+                    margin-left: 0;
+                }
+        
+                &.layout-menu-static-inactive {
+                    .layout-sidebar {
+                        right: -224px;
+                    }
+        
+                    .layout-main {
+                        margin-right: 0;
+                    }
+                }
+            }
+
+            &.layout-menu-overlay {
+                .layout-sidebar {
+                    right: -224px;
+                }
+        
+                .layout-main {
+                    margin-right: 0;
+                }
+        
+                &.layout-menu-overlay-active {
+                    .layout-sidebar {
+                        right: 0px;
+                        left: auto;
+                    }
+                } 
+            }
+
+            &.layout-menu-slim {
+                .layout-sidebar {
+                    .layout-menu {
+                        > li {    
+                            > ul {
+                                right: 64px;
+                                left: auto;
+
+                                a {    
+                                    i {
+                                        &:first-child {
+                                            margin-left: 8px;
+                                            margin-right: 0;
+                                        }
+                                    }
+                                }
+
+                                > li {
+                                    > a {
+                                        padding-right: 8px;
+                                        padding-left: 8px;
+                                    }
+        
+                                    li {
+                                        a {
+                                            padding-right: 24px;
+                                            padding-left: 8px;
+                                        }
+            
+                                        li {
+                                            a {
+                                                padding-right: 40px;
+                                                padding-left: 8px;
+                                            }
+            
+                                            li {
+                                                a {
+                                                    padding-right: 56px;
+                                                    padding-left: 8px;
+                                                }
+            
+                                                li {
+                                                    a {
+                                                        padding-right: 72px;
+                                                        padding-left: 8px;
+                                                    }
+            
+                                                    li {
+                                                        a {
+                                                            padding-right: 88px;
+                                                            padding-left: 8px;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        .layout-menu-tooltip {
+                            right: 64px;
+                            left: auto;
+
+                            .layout-menu-tooltip-arrow {
+                                right: 0;
+                                left: auto;
+                                border-width: 5px 5px 5px 0;
+                                transform: rotate(180deg);
+                            }
+                        }
+                    }
+                }
+
+                .layout-main {
+                    margin-right: 64px;
+                    margin-left: 0;
+                }
+            }
+
+            &.layout-menu-horizontal {    
+                .layout-sidebar {
+                    right: 0;
+                    left: auto;
+
+                    .layout-menu {
+                        > li {
+                            float: right;
+        
+                            > a {
+                                i {
+                                    margin-left: 8px;
+                                    margin-right: 0;
+                                    left: auto;
+
+                                    &:last-child {
+                                        margin-left: 0;
+                                        margin-right: 8px;
+                                    }
+
+                                    &.layout-submenu-toggler {
+                                        float: none;
+                                        margin-left: 0;
+                                    }
+                                }
+                            }
+
+                            > ul {
+                                right: 0;
+                                left: auto;
+
+                                li {
+                                    a {
+                                        i {
+                                            margin-left: 8px;
+                                            margin-right: 0;
+
+                                            &:last-child {
+                                                float: left;
+                                                margin-right: 8px;
+                                                margin-left: 0px;
+                                            }
+                                        }
+                                    }
+
+                                    ul {
+                                        li {
+                                            a {
+                                                padding-right: 20px;
+                                                padding-left: 8px;
+                                            }
+
+                                            ul {
+                                                li {
+                                                    a {
+                                                        padding-right: 40px;
+                                                        padding-left: 0;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }                    
+                    }
+                }
+
+                .layout-main {
+                    margin-right: 0;
+                    margin-left: 0;
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite/components"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Cancelar parcela"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Financeiro</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/contaReceber/listaContaReceber.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteSave" action="#{contaReceberControle.doFinishCancelarParcela()}"/>
+            <h:commandButton id="remoteCancel" action="listaContaReceber.xhtml" immediate="true"/>
+            <h:commandButton id="remoteHelp" rendered="false" action="#{contaReceberControle.mostrarAjudaCancelamento()}" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <div class="card card-w-title">
+                <h5>CANCELAR PARCELA - #{contaReceberControle.contaParcelaSelecionada.idConta.idPlanoConta.descricao} (#{contaReceberControle.contaParcelaSelecionada.numParcela}/#{contaReceberControle.contaParcelaSelecionada.idConta.numeroParcelas})</h5>
+                <div class="form-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <cc:addButton label="Motivo do cancelamento" required="true" entityName="motivoCancelamentoConta">
+                                    <p:selectOneMenu value="#{contaReceberControle.contaParcelaSelecionada.idMotivoCancelamentoConta}" style="width:160px"
+                                                     panelStyle="width:180px" effect="fade" var="t" filter="true" filterMatchMode="startsWith"
+                                                     required="true" requiredMessage="Informe o motivo de cancelamento da parcela"
+                                                     converter="#{genericConverter}">
+                                        <p:column>
+                                            <h:outputText value="#{t.descricao}"/>
+                                        </p:column>
+
+                                        <f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+                                        <f:selectItems value="#{motivoCancelamentoContaControle.motivosCancelamento}" var="motivo"
+                                                       itemLabel="#{motivo.descricao}" itemValue="#{motivo}"/>
+                                    </p:selectOneMenu>
+                                </cc:addButton>
+                            </div>
+                        </div>
+                        <p:row rendered="#{contaReceberControle.possuiOutrasParcelasEmAberto()}">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="control-label"><span class="required">* </span>Cancelar outras parcelas?</label>
+                                    <p:selectOneMenu  value="#{contaReceberControle.contaParcelaSelecionada.responsavelCancelamento}"
+                                                      required="true"
+                                                      requiredMessage="Informe se deseja cancelar outras parcelas" >
+                                        <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                        <f:selectItem itemLabel="Sim" itemValue="S" />
+                                        <f:selectItem itemLabel="Não" itemValue="N" />
+                                        <p:ajax update="pnlParcela" event="change" process="@this" listener="#{contaReceberControle.preencherParcelasEmAberto()}" />
+                                    </p:selectOneMenu >
+                                </div>
+                            </div>
+                        </p:row>
+                    </div>
+
+                    <p:outputPanel id="pnlParcela">
+                        <p:row id="rowParcela" rendered="#{contaReceberControle.contaParcelaSelecionada.responsavelCancelamento eq 'S'}">
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12">
+                                    <div class="portlet light bordered box">
+                                        <div class="portlet-title">
+                                            <div class="caption">
+                                                <i class="fa fa-cogs"></i>Parcelas em aberto </div>
+                                        </div>
+                                        <div class="portlet-body">
+                                            <div class="table-responsive">
+                                                <p:dataTable value="#{contaReceberControle.parcelasEmAberto}" var="item" emptyMessage="Nenhuma parcela encontrada."
+                                                             selection="#{contaReceberControle.parcelasAtribuidas}" rowKey="#{item.id}"
+                                                             class="table table-striped table-bordered table-hover table-striped table-condensed flip-content" id="tblParcela">
+
+                                                    <p:column selectionMode="multiple" style="width:45px;text-align:center"/>
+
+                                                    <p:column headerText="Descrição" >
+                                                        <h:outputText value="#{item.idConta.idPlanoConta.descricao} (#{item.numParcela}/#{item.idConta.numeroParcelas})"/>
+                                                    </p:column>
+
+                                                    <p:column headerText="Observação" >
+                                                        <h:outputText value="#{item.observacao}"/>
+                                                    </p:column>
+
+                                                    <p:column headerText="Cliente" >
+                                                        <h:outputText value="#{item.idConta.idCliente.nome}"/>
+                                                    </p:column>
+
+                                                    <p:column headerText="Vencimento" width="150">
+                                                        <h:outputText value="#{item.dataVencimento}">
+                                                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                        </h:outputText>
+                                                    </p:column>
+
+                                                    <p:column headerText="Valor parcela" style="text-align: right" width="150">
+                                                        <h:outputText value="#{item.valor}">
+                                                            <f:convertNumber locale="pt_BR" type="currency" />
+                                                        </h:outputText>
+                                                    </p:column>
+                                                </p:dataTable>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </p:row>
+                    </p:outputPanel>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+</html>

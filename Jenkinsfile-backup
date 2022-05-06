@@ -1,0 +1,42 @@
+pipeline {
+    
+  agent { label 'sgfinancas-backup'}
+
+  options {
+        buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '2')
+        timeout(time: 90, unit: 'MINUTES')
+  }
+
+  stages {
+ 
+        stage('Build'){
+            steps {
+                sh "mvn clean -Dmaven.test.skip=true"
+                sh "mvn compile -Dmaven.test.skip=true"
+                sh "mvn package -Dmaven.test.skip=true"
+            }
+        }
+        stage('SGFinancas-Backup Image Build'){
+            steps {
+                sh "docker build -t sgfinancas-backup -f Dockerfile-prod . "
+                sh "docker tag sgfinancas-backup 192.168.0.52:8082/sgfinancas-backup:latest"
+                sh "docker push 192.168.0.52:8082/sgfinancas-backup:latest"
+            }
+        }     
+        stage('SGFinancas-Backup Publish'){
+            steps {
+				sh "cp .env-producao .env"
+                sh "docker pull 192.168.0.52:8082/sgfinancas-backup:latest"
+            }
+        }
+   }
+   post {
+    success { 
+      slackSend (color: '#00FF00', message: "Publicação de Backup realizada com sucesso: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+    }
+
+    failure {
+      slackSend (color: '#FF0000', message: "Falha na publicação de Backup: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+    }
+  }   
+}

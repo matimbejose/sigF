@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Extrato conta corrente"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Financeiro</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/extrato/listaExtratoContaCorrente.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="content">
+            <ui:include src="/WEB-INF/msgErro.xhtml"/>
+            <div class="row">
+                <div class="col-6 mx-auto" style="min-width: 800px;">
+                    <div class="card">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label class="control-label"> <span class="required"> * </span>Início do periodo</label>
+                                    <p:calendar navigator="true" value="#{extratoContaCorrenteControle.filtro.data.min}" pattern="dd/MM/yyyy" mask="true"
+                                                required="true" requiredMessage="Favor informar uma data para início do período."/>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label class="control-label"> <span class="required"> * </span>Fim do periodo</label>
+                                    <p:calendar navigator="true" value="#{extratoContaCorrenteControle.filtro.data.max}" pattern="dd/MM/yyyy" mask="true"/>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group form-md-line-input">
+                                    <label class="control-label">Conta bancária</label>
+                                    <p:selectOneMenu value="#{extratoContaCorrenteControle.filtro.contaBancaria}" effect="fade" var="t" filter="true"
+                                                     filterMatchMode="contains" converter="#{genericConverter}"
+                                                     rendered="true" requiredMessage="Informe a conta bancária">
+                                        <p:column>
+                                            <h:outputText value="#{t.descricao}" />
+                                        </p:column>
+
+                                        <f:selectItem itemLabel="Todas contas bancárias" noSelectionOption="true"/>
+                                        <f:selectItems value="#{contaBancariaControle.contaBancarias}"  var="contaBancaria" itemLabel="#{contaBancaria.descricao}" itemValue="#{contaBancaria}"/>
+
+                                    </p:selectOneMenu>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p:commandButton action="#{extratoContaCorrenteControle.relatorioAnalitico}" value="Gerar Relatório" ajax="false"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </ui:define>
+
+    </ui:composition>
+
+</html>

@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite/components"
+      lang="pt-br">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+        <ui:param name="title" value="Venda"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Venda</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/venda/listaVenda.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteSave" action="#{vendaControle.doFinishAdd()}"/>
+            <h:commandButton id="remoteCancel" action="listaVenda.xhtml" immediate="true"/>
+            <h:commandButton id="remoteHelp" rendered="false" action="#{contaReceberControle.mostrarAjuda()}" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <script>
+                const NF = Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL'});
+                function updatePreco() {
+                    let qte = parseFloat(document.querySelector("#form\\:qteToAdd_hinput").value) || 1;
+                    let vlr = parseFloat(document.querySelector("#form\\:vlrToAdd_hinput").value) || 0;
+                    let desc = parseFloat(document.querySelector("#form\\:vlrToSub_hinput").value) || 0;
+                    let total = document.querySelector("#form\\:vlrTotal_input");
+                    total.value = NF.format(qte * vlr - desc);
+                }
+            </script>
+            <div class="card">
+                <div class="row">
+                    <div class="col-3">
+                        <div class="form-group form-md-line-input">
+                            <cc:addButton label="Cliente" required="true" entityName="cliente" disabled="#{vendaControle.vendaSelecionada.id ne null}">
+                                <p:selectOneMenu value="#{vendaControle.vendaSelecionada.idCliente}" panelStyle="width:180px" effect="fade"
+                                                 converter="#{genericConverter}" var="t" filter="true" filterMatchMode="startsWith"
+                                                 required="true" requiredMessage="Informe ao menos um cliente"
+                                                 disabled="#{vendaControle.vendaSelecionada.id ne null}">
+                                    <p:column>
+                                        <h:outputText value="#{t.nome}"/>
+                                    </p:column>
+
+                                    <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                    <f:selectItems value="#{clienteControle.clientes}" var="cliente" itemLabel="#{cliente.nome}" itemValue="#{cliente}" />
+                                    <p:ajax event="change" process="@this" update="form:pnlRepresantante, form:pnlTelefoneCliente"
+                                            listener="#{vendaControle.addCelular}"/>
+                                </p:selectOneMenu>
+                            </cc:addButton>
+                        </div>
+                    </div>
+                    <p:row rendered="#{empresaControle.empresaLogada.idCategoriaEmpresa.descricao eq 'Oficina mecânica'}">
+                        <div class="col-3">
+                            <div class="form-group form-md-line-input">
+                                <cc:addButton label="Vendedor" required="true" entityName="funcionario">
+                                    <p:selectOneMenu value="#{vendaControle.vendaSelecionada.idUsuarioVendedor}" panelStyle="width:180px"
+                                                     effect="fade" converter="#{genericConverter}" var="t"
+                                                     filter="true" filterMatchMode="startsWith" required="true" requiredMessage="Informe o vendedor">
+                                        <p:column>
+                                            <h:outputText value="#{t.nome}"/>
+                                        </p:column>
+
+                                        <f:selectItem itemLabel="#{usuarioControle.usuarioLogado.nome}" itemValue="#{usuarioControle.usuarioLogado}"/>
+                                        <f:selectItems value="#{usuarioControle.listaUsuarioVendedorPorEmpresaLogada()}"  var="vendedor" itemLabel="#{vendedor.nome}" itemValue="#{vendedor}"/>
+                                    </p:selectOneMenu>
+                                </cc:addButton>
+                            </div>
+                        </div>
+                    </p:row>
+
+                    <div class="col-2">
+                        <p:outputPanel id="pnlTelefoneCliente">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label">Telefone celular</label>
+                                <p:inputMask value="#{vendaControle.vendaSelecionada.telefoneCliente}" mask="(99) 99999-9999" styleClass="telefone" required="#{vendaControle.linkPagamento}" requiredMessage="Informe o telefone celular do cliente">
+                                    <p:ajax process="@this"/>
+                                </p:inputMask>
+                            </div>
+                        </p:outputPanel>
+                    </div>
+                    <div class="col">
+                        <div class="form-group form-md-line-input">
+                            <label class="control-label">Observação</label>
+                            <p:inputTextarea value="#{vendaControle.vendaSelecionada.observacao}" styleClass="form-control"/>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row">
+                    <p:outputPanel id="pnlRepresantante" styleClass="col-4">
+                        <p:row rendered="#{vendaControle.vendaSelecionada.idCliente.tipo eq 'PJ'}">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label">Representante</label>
+                                <p:inputText value="#{vendaControle.vendaSelecionada.representanteEmpresa}"/>
+                            </div>
+                        </p:row>
+                    </p:outputPanel>
+                </div>
+            </div>
+            <div class="card card-w-title">
+                <h5>
+                    Itens da venda
+                    <div class="pull-right">
+                        <p:commandButton value="Definir desconto" onclick="PF('pnlDesconto').show();return true;"
+                                         action="#{vendaControle.limpaDesconto}" process="@this" update="form:dadosDesconto"/>
+                        <p:spacer width="10"/>
+                        <p:commandButton value="Adicionar" onclick="PF('pnlItens').show();return true;"
+                                         action="#{vendaControle.limpaControle}" process="@this" update="dadosProd"/>
+                    </div>
+                </h5>
+                <p:dataTable value="#{vendaControle.itensVendaSelecionados}" var="item" emptyMessage="Nenhum item informado." id="tblItens"
+                             styleClass="#{vendaControle.styleClass}">
+
+                    <p:column headerText="#{empresaControle.enumTipoUsoSistema.produtoServicoTitleLabel}" style="text-align:left">
+                        <h:outputText value="#{item.idProdutoServico.descricao}"/>
+                    </p:column>
+
+                    <p:column headerText="Quantidade" style="text-align: right">
+                        <h:outputText value="#{item.quantidade}">
+                            <f:convertNumber locale="pt_BR" minFractionDigits="2"/>
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Valor unitário" style="text-align: right">
+                        <h:outputText value="#{item.valor}">
+                            <f:convertNumber locale="pt_BR" minFractionDigits="2" type="currency"/>
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Desconto" style="text-align: right">
+                        <h:outputText value="#{item.desconto}">
+                            <f:convertNumber locale="pt_BR" minFractionDigits="2" type="currency"/>
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Valor total" style="text-align: right">
+                        <h:outputText value="#{item.quantidade * item.valor - item.desconto}">
+                            <f:convertNumber locale="pt_BR" minFractionDigits="2" type="currency"/>
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Observação" style="text-align: right">
+                        <h:outputText value="#{item.observacao}"/>
+                    </p:column>
+
+                    <p:column width="77" headerText="Ações" rendered="#{!vendaControle.existeParcelaPaga()}">
+                        <div class="actions">
+                            <p:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Editar item"
+                                           process="@this" action="#{vendaControle.editItem(item)}" update="form:dadosProd"
+                                           onclick="PF('pnlItens').show();">
+                                <i class="fa fa-pencil"></i>
+                            </p:commandLink>
+
+                            <p:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Remover item"
+                                           process="@this" actionListener="#{vendaControle.removeItem(item)}" action="#{vendaControle.preencherFormaPagamento()}"
+                                           update="form:dadosProd, tblItens, form:pnlParcelado, form:pnlTotais ">
+                                <i class="fa fa-trash-o"></i>
+                            </p:commandLink>
+                        </div>
+                    </p:column>
+
+                </p:dataTable>
+            </div>
+
+            <p:row rendered="#{vendaControle.vendaSelecionada.statusNegociacao eq 'VD'}">
+                <div class="card card-w-title">
+                    <h5>Informações de pagamento</h5>
+                    <p:outputPanel id="pnlTotais">
+                        <p:outputPanel rendered="#{vendaControle.vendaSelecionada.statusNegociacao eq 'VD'}">
+                            <h5>Totais</h5>
+                            <div class="mx-3 mb-3" style="display: table; text-align: right;">
+                                Subtotal: #{vendaControle.subTotal}
+                                <br/>
+                                Desconto: #{vendaControle.descontoTotal}
+                                <br/>
+                                Total: #{vendaControle.valorTotal}
+                            </div>
+                        </p:outputPanel>
+                    </p:outputPanel>
+                    <h5>Pagamento</h5>
+                    <div class="mx-3 mb-3">
+                        <div class="row">
+                            <ui:remove>
+                                <div class="col-md-3">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label"><span class="required"> * </span>Conta bancária</label>
+                                        <div class="input-group">
+                                            <p:selectOneMenu id="auto6" value="#{vendaControle.vendaSelecionada.idContaBancaria}" var="t"
+                                                             panelStyle="width:180px" effect="fade" converter="#{genericConverter}"
+                                                             style="width: calc(100% - 30px) !important" filter="true" filterMatchMode="startsWith"
+                                                             required="true" requiredMessage="Informe a conta bancária">
+                                                <p:column>
+                                                    <h:outputText value="#{t.descricao}"/>
+                                                </p:column>
+
+                                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                <f:selectItems value="#{contaBancariaControle.contaBancarias}"  var="contaBancaria" itemLabel="#{contaBancaria.descricao}" itemValue="#{contaBancaria}"/>
+                                            </p:selectOneMenu>
+                                            <p:remoteCommand name="updateContaBancaria" update="@previous" immediate="true"/>
+                                            <p:commandLink title="Atualizar" onclick="updateContaBancaria();" styleClass="btn btn-sm">
+                                                <i class="fa fa-refresh"></i>
+                                            </p:commandLink>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ui:remove>
+                            <div class="col-md-3 pagamento">
+                                <div class="form-group form-md-line-input">
+                                    <label class="control-label"><span class="required"> * </span>Data da venda</label>
+                                    <p:calendar navigator="true" value="#{vendaControle.vendaSelecionada.dataVenda}" pattern="dd/MM/yyyy"
+                                                mask="true" maxdate="#{vendaControle.dataHoje()}"
+                                                required="#{!vendaControle.linkPagamento}"
+                                                requiredMessage="Informe a data de venda">
+                                        <f:passThroughAttribute name="autocomplete" value="off"/>
+                                    </p:calendar>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-group form-md-line-input">
+                                    <label class="control-label"><span class="required"> * </span>Data de vencimento</label>
+                                    <p:calendar navigator="true" id="inpDataVencimento" value="#{vendaControle.vendaSelecionada.dataVencimento}"
+                                                pattern="dd/MM/yyyy" mask="true" required="true"
+                                                requiredMessage="Informe a data de vencimento">
+                                        <p:ajax event="dateSelect" process="@this, pnlFormaPagamento" update="form:pnlFormaPagamento, form:pnlParcelado"
+                                                listener="#{vendaControle.preencherFormaPagamento()}" disabled="#{vendaControle.linkPagamento}"/>
+                                        <f:passThroughAttribute name="autocomplete" value="off"/>
+                                    </p:calendar>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <p:outputPanel id="pnlFormaPagamento" styleClass="pagamento">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label"><span class="required"> * </span>Tipo de Pagamento</label>
+                                        <p:selectOneMenu  id="somFormaPagamento" value="#{vendaControle.vendaSelecionada.formaPagamento}"
+                                                          required="#{!vendaControle.linkPagamento}"
+                                                          requiredMessage="Informe a forma de pagamento">
+                                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                            <f:selectItems value="#{vendaControle.formasPagamento}" var="formaPagamento" itemLabel="#{formaPagamento.descricao}" itemValue="#{formaPagamento.forma}" itemDisabled="#{vendaControle.formaDePagamentoDisponiveis(formaPagamento)}"/>
+                                            <p:ajax event="change" update="valorPago, pnlParcelado, pnlTotais"  process="@this, inpDataVencimento" listener="#{vendaControle.preencherFormaPagamento()}"/>
+                                        </p:selectOneMenu>
+                                    </div>
+                                </p:outputPanel>
+                            </div>
+                        </div>
+                        <p:outputPanel id="valorPago">
+                            <div class="row pagamento">
+                                <div class="col-md-3">
+                                    <cc:addButton label="Forma de pagamento" required="true" entityName="formaPagamento">
+                                        <p:selectOneMenu value="#{vendaControle.vendaSelecionada.idFormaPagamento}" converter="#{genericConverter}"
+                                                         required="true" requiredMessage="Informe o meio de pagamento" var="fp">
+                                            <p:column>
+                                                <h:outputText value="#{fp.descricao}"/>
+                                            </p:column>
+                                            <p:column rendered="#{false}">
+                                                <p:row rendered="#{fp.enumNfe.permiteLinkPagamento}">
+                                                    <i class="fa fa-link font-green-jungle" title="Permite envio de link de pagamento"></i>
+                                                </p:row>
+                                                <p:row rendered="#{not fp.enumNfe.permiteLinkPagamento}">
+                                                    <i class="fa fa-chain-broken font-red-mint" title="Não permite envio de link de pagamento"></i>
+                                                </p:row>
+                                            </p:column>
+                                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                            <f:selectItems value="#{formaPagamentoControle.formasPagamento}" var="meiodepagamento"
+                                                           itemLabel="#{meiodepagamento.descricao}" itemValue="#{meiodepagamento}"/>
+                                            <p:ajax event="change" update="form:linkPagamento"  process="@this" />
+                                        </p:selectOneMenu>
+                                    </cc:addButton>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label">Comissão Vendedor</label>
+                                        <p:inputNumber id="inpComissaoVendedor" value="#{vendaControle.vendaSelecionada.comissaoVendedor}"
+                                                       symbol="R$ " thousandSeparator="." decimalSeparator="," decimalPlaces="2"/>
+                                    </div>
+                                </div>
+                                <p:row  rendered="#{vendaControle.ehAVista()}">
+                                    <div class="col-md-2">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Valor pago</label>
+                                            <p:inputNumber id="inpValorPago" value="#{vendaControle.valorT}" disabled="true"
+                                                           symbol="R$ " thousandSeparator="." decimalSeparator="," decimalPlaces="2"/>
+                                            #{contaReceberControle.buscarSituacao(vendaControle.vendaSelecionada.idConta)}
+                                        </div>
+                                    </div>
+                                </p:row>
+                                <p:row rendered="#{vendaControle.vendaSelecionada.statusNegociacao ne 'PO' and vendaControle.ehAVista()
+                                                   and !vendaControle.estaPago(vendaControle.vendaSelecionada.idConta)}" styleClass="row col-10">
+                                    <div class="col-md-2">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Baixa automática</label>
+                                            <p:selectOneMenu value="#{vendaControle.darBaixa}">
+                                                <f:selectItem itemLabel="Sim" itemValue="S"/>
+                                                <f:selectItem itemLabel="Não" itemValue="N"/>
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+                                    <p:row rendered="#{false and vendaControle.podeEmitirNFCE}">
+                                        <div class="col-md-2">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label">Emitir NF-e e NFC-e</label>
+                                                <p:selectOneMenu value="#{vendaControle.emitirNFCe}">
+                                                    <f:selectItem itemLabel="Sim" itemValue="S"/>
+                                                    <f:selectItem itemLabel="Não" itemValue="N"/>
+                                                </p:selectOneMenu>
+                                            </div>
+                                        </div>
+                                    </p:row>
+                                </p:row>
+                                <div class="col-md-2">
+                                    <p:outputPanel id="linkPagamento">
+                                        <p:row rendered="#{false and vendaControle.vendaSelecionada.idFormaPagamento.enumNfe.permiteLinkPagamento}">
+                                            <div class="form-group form-md-line-input" >
+                                                <p:outputLabel  for="@next" value="Enviar link de pagamento" />
+                                                <p:selectOneMenu value="#{vendaControle.linkPagamento}" id="toggle">
+                                                    <f:selectItem itemLabel="Sim" itemValue="#{true}"/>
+                                                    <f:selectItem itemLabel="Não" itemValue="#{false}"/>
+                                                </p:selectOneMenu>
+                                            </div>
+                                        </p:row>
+                                    </p:outputPanel>
+                                </div>
+                            </div>
+                        </p:outputPanel>
+                    </div>
+                    <p:outputPanel id="pnlParcelado">
+                        <p:outputPanel rendered="#{vendaControle.vendaSelecionada.statusNegociacao eq 'VD'}">
+                            <h5>Parcelamento</h5>
+                            <div class="row mx-0">
+                                <div class="col-md-12">
+                                    <p:row rendered="#{vendaControle.vendaSelecionada.condicaoPagamento ne 'C'}">
+                                        Sem parcelas - necessário informar a data de vencimento e ao menos um #{empresaControle.enumTipoUsoSistema.produtoServicoLabel}.
+                                    </p:row>
+                                    <p:row rendered="#{vendaControle.vendaSelecionada.condicaoPagamento eq 'C'}">
+                                        <p:dataTable value="#{vendaControle.vendaSelecionada.listParcelaDTO}" var="item" emptyMessage="Nenhuma parcela informada."  editable="true" editMode="cell"
+                                                     class="table table-striped table-bordered table-hover table-striped table-condensed flip-content" id="tblParcela">
+
+                                            <p:column headerText="Parcela" width="10%">
+                                                <h:outputText value="#{item.numParcela}"/>
+                                            </p:column>
+
+                                            <p:column headerText="Valor bruto">
+                                                <p:cellEditor>
+                                                    <f:facet name="output">
+                                                        <p:inputText value="#{item.valor}" disabled="true">
+                                                            <f:convertNumber type="currency" locale="pt_BR"/>
+                                                        </p:inputText>
+                                                    </f:facet>
+                                                    <f:facet name="input">
+                                                        <p:inputNumber value="#{item.valor}" symbol="R$ " thousandSeparator="." decimalSeparator="," decimalPlaces="2">
+                                                            <p:ajax event="blur" process="@this, tblParcela" listener="#{vendaControle.calcularValorTotal()}" update="form:pnlTotais" disabled="true"/>
+                                                        </p:inputNumber>
+                                                    </f:facet>
+                                                </p:cellEditor>
+                                            </p:column>
+
+                                            <p:column headerText="Desconto">
+                                                <p:cellEditor>
+                                                    <f:facet name="output">
+                                                        <p:inputText value="#{item.desconto}" disabled="#{item.dataPagamento ne null}">
+                                                            <f:convertNumber type="currency" locale="pt_BR"/>
+                                                        </p:inputText>
+                                                    </f:facet>
+                                                    <f:facet name="input">
+                                                        <p:inputNumber value="#{item.desconto}" symbol="R$ " thousandSeparator="." decimalSeparator="," disabled="#{item.dataPagamento ne null}">
+                                                            <p:ajax event="blur" process="@this, tblParcela" listener="#{vendaControle.calcularDescontoTotal()}" update="form:pnlTotais" />
+                                                        </p:inputNumber>
+                                                    </f:facet>
+                                                </p:cellEditor>
+                                            </p:column>
+
+                                            <p:column headerText="Valor Pago">
+                                                <h:outputText value="#{item.valorPago}">
+                                                    <f:convertNumber currencySymbol="R$" type="currency"/>
+                                                </h:outputText>
+                                            </p:column>
+
+                                            <p:column headerText="Data vencimento">
+                                                <p:cellEditor>
+                                                    <f:facet name="output">
+                                                        <p:inputText value="#{item.dataVencimento}" disabled="#{item.dataPagamento ne null}">
+                                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                                        </p:inputText>
+                                                    </f:facet>
+                                                    <f:facet name="input">
+                                                        <p:calendar navigator="true" value="#{item.dataVencimento}" pattern="dd/MM/yyyy" mask="true" disabled="#{item.dataPagamento ne null}"/>
+                                                    </f:facet>
+                                                </p:cellEditor>
+                                            </p:column>
+
+                                            <p:column headerText="Situação" width="15%">
+                                                <h:outputText value="Pago" rendered="#{item.dataPagamento ne null and item.valorPago eq item.valor}"/>
+                                                <h:outputText value="Pago Parcialmente" rendered="#{item.dataPagamento ne null and item.valorPago ne item.valor}"/>
+                                                <h:outputText value="Não pago" rendered="#{item.dataPagamento eq null}"/>
+                                            </p:column>
+
+                                        </p:dataTable>
+                                    </p:row>
+                                </div>
+                            </div>
+                        </p:outputPanel>
+                    </p:outputPanel>
+                </div>
+            </p:row>
+
+            <div class="card card-w-title">
+                <h5>Termos e Condições</h5>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group form-md-line-input">
+                            <p:inputTextarea value="#{vendaControle.vendaSelecionada.termosCondicoes}" styleClass="form-control" maxlength="300"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <style>
+                .name {
+                    text-align: right;
+                }
+            </style>
+            <p:dialog id="pnlItens" widgetVar="pnlItens" width="1000">
+                <p:outputPanel id="dadosProd" rendered="#{!vendaControle.existeParcelaPaga()}">
+                    <div class="row">
+                        <div class="col-md-10">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label">#{empresaControle.enumTipoUsoSistema.produtoServicoTitleLabel}</label>
+                                <div class="input-group">
+                                    <p:selectOneMenu value="#{vendaControle.itemVendaSelecionado.idProdutoServico}" panelStyle="width:180px" effect="fade"
+                                                     style="width: calc(100% - 30px) !important"
+                                                     var="itemVenda" filter="true" filterMatchMode="contains" converter="#{produtoServicoDTOConverter}"
+                                                     disabled="#{vendaControle.itemVendaSelecionado.controle ne null || vendaControle.adicionaProduto}" id="produto">
+
+                                        <p:column>
+                                            <p:row rendered="#{itemVenda.tipoProduto eq 'C'}">
+                                                <i class="fa fa-fw fa-object-group" title="Produto composto"></i>
+                                                Produto composto
+                                            </p:row>
+                                            <p:row rendered="#{itemVenda.tipoProduto eq 'K'}">
+                                                <i class="fa fa-fw fa-archive" title="Kit de produto"></i>
+                                                Kit de produto
+                                            </p:row>
+                                            <h:outputText value="#{itemVenda.tipo.observacao}" rendered="#{itemVenda.tipoProduto eq 'N'}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <h:outputText value="#{itemVenda.codigo}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <h:outputText value="#{itemVenda.descricao}"/>
+                                        </p:column>
+                                        <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                        <f:selectItems value="#{vendaControle.itensVendaDisponiveis}" var="itens"
+                                                       itemLabel="#{itens.tipo.observacao} - #{itens.codigo} - #{itens.descricao}" itemValue="#{itens}"/>
+                                        <p:ajax event="change" listener="#{vendaControle.loadItem}" process="@this" update="dadosProd"/>
+                                    </p:selectOneMenu>
+
+                                    <p:commandLink action="#{vendaControle.adicionarProduto()}" styleClass="btn btn-default btn-sm"
+                                                   update="pnlAdicionarProduto, dadosProd" process="@this"  >
+                                        <i class="fa fa-plus"></i>
+                                    </p:commandLink>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="control-label">Estoque</label>
+                            <p:inputNumber value="#{vendaControle.estoqueProdutoSelecinado}"
+                                           decimalPlaces="2" decimalSeparator="," thousandSeparator="." disabled="true" />
+                        </div>
+                    </div>
+                    <p:outputPanel id="pnlAdicionarProduto">
+                        <p:row rendered="#{vendaControle.adicionaProduto}">
+                            <div class="row">
+                                <div class="col-3">
+                                    <label class="control-label"><span class="required">* </span>Produto/Serviço</label>
+                                    <p:selectOneMenu value="#{vendaControle.ehProduto}" required="true" requiredMessage="Informe se deseja inserir um produto ou serviço">
+                                        <f:selectItem itemLabel="Produto" itemValue="true" />
+                                        <f:selectItem itemLabel="Serviço" itemValue="false" />
+                                        <p:ajax process="@this" update="pnlAdicionarProduto"/>
+                                    </p:selectOneMenu>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label"><span class="required">* </span>Descrição do #{vendaControle.ehProduto? "produto":"serviço"}</label>
+                                        <p:inputText value="#{vendaControle.addDescricao}" required="true"
+                                                     requiredMessage="Informe a descrição do #{vendaControle.ehProduto? 'produto':'serviço'}" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+
+                                <div class="col">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label"><span class="required">* </span>#{vendaControle.ehProduto? 'Preço de Custo':'Custo de Serviço'}</label>
+                                        <p:inputNumber value="#{vendaControle.precoCusto}" id="vlrCusto"
+                                                       required="true" requiredMessage="Informe o valor de custo"
+                                                       symbol="R$ " decimalSeparator=","
+                                                       thousandSeparator="." decimalPlaces="2">
+                                            <p:ajax process="@this"/>
+                                        </p:inputNumber>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label"><span class="required">* </span>Valor de #{vendaControle.ehProduto? 'venda': 'execução'}</label>
+                                        <p:inputNumber value="#{vendaControle.precoVenda}" required="true" id="vlrVenda"
+                                                       requiredMessage="Informe o valor da venda" symbol="R$ " decimalSeparator=","
+                                                       thousandSeparator="." decimalPlaces="2" widgetVar="vlrUnitCad" onkeyup="atualizaPrecoUnit(this)">
+                                            <p:ajax process="@this"/>
+                                        </p:inputNumber>
+                                    </div>
+                                </div>
+                                <p:row rendered="#{vendaControle.ehProduto}">
+                                    <div class="col">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label"><span class="required">* </span>Estoque inicial</label>
+                                            <p:inputNumber value="#{vendaControle.estoqueInicial}" id="estInicial"
+                                                           required="true" requiredMessage="Informe o estoque inicial"
+                                                           decimalSeparator=","
+                                                           thousandSeparator="." decimalPlaces="2">
+                                                <p:ajax process="@this"/>
+                                            </p:inputNumber>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label"><span class="required">* </span>Unidade de medida</label>
+                                            <p:selectOneMenu value="#{vendaControle.addUnidade}"
+                                                             required="true" requiredMessage="Informe a unidade medida"
+                                                             converter="#{genericConverter}">
+                                                <f:selectItems value="#{unidadeMedidaControle.unidadeMedidas}" var="unidadeMedida"
+                                                               itemLabel="#{unidadeMedida.descricao}" itemValue="#{unidadeMedida}" />
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+                                </p:row>
+                            </div>
+                            <script>
+                                function atualizaPrecoUnit(vlrVenda) {
+                                    let valorUnitario = document.querySelector("#form\\:vlrVenda_hinput").value
+                                    document.querySelector("#form\\:vlrToAdd_input").value = NF.format(valorUnitario)
+                                    document.querySelector("#form\\:vlrToAdd_hinput").value = valorUnitario
+                                    updatePreco()
+                                }
+                            </script>
+                        </p:row>
+                    </p:outputPanel>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label">Quantidade</label>
+                                <p:inputNumber id="qteToAdd" value="#{vendaControle.itemVendaSelecionado.quantidade}"
+                                               decimalPlaces="2" decimalSeparator="," thousandSeparator="." onchange="updatePreco();"/>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label">Valor unitário</label>
+                                <p:inputNumber id="vlrToAdd" value="#{vendaControle.itemVendaSelecionado.valor}" symbol="R$ " symbolPosition="p"
+                                               decimalPlaces="2" decimalSeparator="," thousandSeparator="." onchange="updatePreco();"
+                                               disabled="#{usuarioControle.usuarioLogado.podeMudarPrecoUnitarioVenda ne 'S'}"/>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label">Desconto</label>
+                                <p:inputNumber id="vlrToSub" value="#{vendaControle.itemVendaSelecionado.desconto}"
+                                               decimalPlaces="2" decimalSeparator="," thousandSeparator="."
+                                               symbol="R$ " symbolPosition="p" onchange="updatePreco();"/>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label">Valor total</label>
+                                <p:inputNumber id="vlrTotal" value="#{vendaControle.itemVendaSelecionado.valorTotal}"
+                                               decimalPlaces="2" decimalSeparator="," thousandSeparator="."
+                                               symbol="R$ " symbolPosition="p" disabled="true"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label">Observação</label>
+                                <p:inputText value="#{vendaControle.itemVendaSelecionado.observacao}" styleClass="form-control"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <p:row rendered="#{!vendaControle.existeParcelaPaga()}">
+                            <div class="col-md-2">
+                                <p:commandButton actionListener="#{vendaControle.addItem}" action="#{vendaControle.preencherFormaPagamento()}"
+                                                 value="#{vendaControle.controleEdicao eq null ? vendaControle.adicionaProduto? 'Salvar e Adicionar': 'Adicionar' : 'Alterar'}"
+                                                 onclick="PF('pnlItens').hide();"
+                                                 process="@this, dadosProd, pnlTotais"
+                                                 update="dadosProd, tblItens, pnlTotais, pnlParcelado, valorPago"/>
+                            </div>
+                        </p:row>
+                    </div>
+                </p:outputPanel>
+            </p:dialog>
+            <p:dialog id="pnlDesconto" widgetVar="pnlDesconto" width="650">
+                <p:outputPanel id="dadosDesconto">
+                    <div class="row">
+                        <div class="col form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Aplicar desconto a:"/>
+                            <p:selectOneMenu value="#{vendaControle.tipoDesconto}">
+                                <f:selectItem itemLabel="Produtos e serviços" itemValue="PS"/>
+                                <f:selectItem itemLabel="Produtos" itemValue="P"/>
+                                <f:selectItem itemLabel="Serviços" itemValue="S"/>
+                            </p:selectOneMenu>
+                        </div>
+                        <div class="col form-group form-md-line-input d-none">
+                            <p:outputLabel for="@next">
+                                Sobreescrever desconto?
+                                <i class="fa fa-info-circle info-msg" data-toggle="tooltip" data-placement="top"
+                                   title="Se sim o sistema vai remover os descontos já dados e depois ratear o novo valor entre os itens. Se não o sistema manter o valor atual e ratear o desconto adicionado entre os itens."/>
+                            </p:outputLabel>
+                            <p:selectOneMenu value="#{vendaControle.sobreescreverDesconto}">
+                                <f:selectItem itemLabel="Sim" itemValue="#{true}"/>
+                                <f:selectItem itemLabel="Não" itemValue="#{false}"/>
+                            </p:selectOneMenu>
+                        </div>
+                        <div class="col form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Valor do desconto"/>
+                            <p:inputNumber value="#{vendaControle.valorDesconto}" symbol="R$ " symbolPosition="p"
+                                           decimalPlaces="2" decimalSeparator="," thousandSeparator="."/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <p:row rendered="#{!vendaControle.existeParcelaPaga()}">
+                            <div class="pull-right">
+                                <div class="col-auto">
+                                    <p:commandButton action="#{vendaControle.addDesconto}" onclick="PF('pnlDesconto').hide();" value="Definir desconto"
+                                                     process="dadosDesconto" update="dadosDesconto, form:tblItens, form:pnlTotais, form:tblParcela"/>
+                                </div>
+                            </div>
+
+                            <div class="clearfix"></div>
+                        </p:row>
+                    </div>
+                </p:outputPanel>
+            </p:dialog>
+        </ui:define>
+
+    </ui:composition>
+</html>

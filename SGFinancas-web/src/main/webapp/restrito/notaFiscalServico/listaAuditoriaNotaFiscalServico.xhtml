@@ -1,0 +1,33 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite/components">
+
+    <ui:composition template="/restrito/generic/auditoria.xhtml">
+        <ui:define name="remotes">
+            <h:commandButton id="remoteBack" action="listaNotaFiscalServico.xhtml"/>
+        </ui:define>
+
+        <ui:param name="title" value="Nota fiscal serviço"/>
+        <ui:param name="descricaoMenu" value="Venda"/>
+        <ui:param name="caminhoAuditoria" value="/restrito/notaFiscalServico/listaAuditoriaNotaFiscalServico.xhtml"/>
+        <ui:param name="objetoSelecionado" value="#{notaFiscalServicoControle.nfsSelecionado.descricaoServico}"/>
+
+        <ui:param name="model" value="#{notaFiscalServicoControle.dadosAuditoria}"/>
+
+        <ui:define name="colunas">
+
+            <p:column headerText="Descrição" sortBy="#{item[0].descricaoServico}">  
+                <h:outputText value="#{item[0].descricaoServico}"/>
+            </p:column>
+            <p:column headerText="Valor Bruto" sortBy="#{item[0].valorTotal}">  
+                <cc:convertMoney value="#{item[0].valorTotal}"/>
+            </p:column>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Plano de contas"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Cadastro</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/planoConta/listaPlanoConta.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes"/>
+
+        <ui:define name="formButtons">
+            <p:commandButton type="button" value="Limpar filtros" onclick="clearDataTableFilters('tbl');"/>
+            <p:commandButton id="toggler" type="button" value="Colunas"/>
+            <p:columnToggler datasource="tbl" trigger="toggler"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <p:dataTable value="#{planoContaControle.model}" sortBy="#{item.codigo}" emptyMessage="Nenhum registro encontrado." 
+                         var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" 
+                         paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
+                         currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+                <p:column headerText="#" width="55" sortBy="#{item.id}" visible="false">
+                    <h:outputText value="#{item.id}"/>
+                </p:column>
+
+                <p:column headerText="Código" filterBy="#{item.codigo}">
+                    <f:facet name="filter">
+                        <p:inputText value="#{planoContaControle.filtro.codigo}" onchange="PF('tbl').filter()"/>
+                    </f:facet>
+                    <h:outputText value="#{item.codigo}"/>
+                </p:column>
+
+                <p:column headerText="Descrição" filterBy="#{item.descricao}">
+                    <f:facet name="filter">
+                        <p:inputText value="#{planoContaControle.filtro.descricao}" onchange="PF('tbl').filter()"/>
+                    </f:facet>
+                    <h:outputText value="#{item.descricao}"/>
+                </p:column>
+
+                <p:column headerText="Tipo" filterBy="#{item.tipo}" visible="false">
+                    <f:facet name="filter">
+                        <p:selectOneMenu onchange="PF('tbl').filter()" styleClass="custom-filter" value="#{planoContaControle.filtro.tipo}">
+                            <f:selectItem itemLabel="Todos" noSelectionOption="true"/>
+                            <f:selectItem itemLabel="Crédito" itemValue="C"/>
+                            <f:selectItem itemLabel="Débito" itemValue="D"/>
+                        </p:selectOneMenu>
+                    </f:facet>
+
+                    <h:outputText rendered="#{item.tipo eq 'C'}" value="Credito"/>
+                    <h:outputText rendered="#{item.tipo eq 'D'}" value="Débito"/>
+                </p:column>
+
+                <p:column headerText="Tipo balanço" style = "width:13%" filterBy="#{item.tipoBalanco}" visible="false">
+                    <f:facet name="filter">
+                        <p:selectOneMenu onchange="PF('tbl').filter()" styleClass="custom-filter" value="#{planoContaControle.filtro.tipoBalanco}">
+                            <f:selectItem itemLabel="Todos" noSelectionOption="true"/>
+                            <f:selectItem itemLabel="Patrimônio" itemValue="P"/>
+                            <f:selectItem itemLabel="Resultado" itemValue="R"/>
+                        </p:selectOneMenu>
+                    </f:facet>
+
+                    <h:outputText  value="Patrimônio" rendered="#{item.tipoBalanco eq 'P'}"/>
+                    <h:outputText  value="Resultado" rendered="#{item.tipoBalanco eq 'R'}"/>
+                </p:column>
+
+                <p:column headerText="Padrão?" style = "width:10%" filterBy="#{item.registroPadrao}" visible="false">
+                    <f:facet name="filter">
+                        <p:selectOneMenu onchange="PF('tbl').filter()" styleClass="custom-filter" value="#{planoContaControle.filtro.padrao}">
+                            <f:selectItem itemLabel="Todos" noSelectionOption="true"/>
+                            <f:selectItem itemLabel="Sim" itemValue="S"/>
+                            <f:selectItem itemLabel="Não" itemValue="N"/>
+                        </p:selectOneMenu>
+                    </f:facet>
+
+                    <h:outputText  value="Sim" rendered="#{item.registroPadrao eq 'S'}"/>
+                    <h:outputText  value="Não" rendered="#{item.registroPadrao eq 'N'}"/>
+                </p:column>
+
+                <p:column headerText="Mostra tela inicial" style = "width:15%" filterBy="#{item.mostraTelaInicial}" visible="false">
+                    <f:facet name="filter">
+                        <p:selectOneMenu onchange="PF('tbl').filter()" styleClass="custom-filter" value="#{planoContaControle.filtro.mostraNaTelaInicial}">
+                            <f:selectItem itemLabel="Todos" noSelectionOption="true"/>
+                            <f:selectItem itemLabel="Sim" itemValue="S"/>
+                            <f:selectItem itemLabel="Não" itemValue="N"/>
+                        </p:selectOneMenu>
+                    </f:facet>
+
+                    <h:outputText  value="Sim" rendered="#{item.mostraTelaInicial eq 'S'}"/>
+                    <h:outputText  value="Não" rendered="#{item.mostraTelaInicial eq 'N'}"/>
+                </p:column>
+
+                <p:column headerText="Grupo contábil" filterBy="#{item.grupoContabilidade}">
+                    <f:facet name="filter">
+                        <p:selectOneMenu onchange="PF('tbl').filter()" styleClass="custom-filter" value="#{planoContaControle.filtro.grupoContabil}">
+                            <f:selectItem itemLabel="Todos" noSelectionOption="true"/>
+                            <f:selectItem itemLabel="Ativo" itemValue="1"/>
+                            <f:selectItem itemLabel="Passivo" itemValue="2"/>
+                            <f:selectItem itemLabel="Despesa" itemValue="#{planoContaControle.codigoDespesa}"/>
+                            <f:selectItem itemLabel="Receita" itemValue="#{planoContaControle.codigoReceita}"/>
+                        </p:selectOneMenu>
+                    </f:facet>
+
+                    <h:outputText value="Ativo" rendered="#{item.grupoContabilidade eq '1'}"/>
+                    <h:outputText value="Passivo" rendered="#{item.grupoContabilidade eq '2'}"/>
+                    <h:outputText value="Despesa" rendered="#{item.grupoContabilidade eq planoContaControle.codigoDespesa}"/>
+                    <h:outputText value="Receita" rendered="#{item.grupoContabilidade eq planoContaControle.codigoReceita}"/>
+                </p:column>
+
+                <p:column width="117" headerText="Ações" >
+                    <div class="actions">
+                        <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Adicionar item ao plano de contas" rendered="#{item.podeTerFilho eq 'S'}" action="#{planoContaControle.doStartAdd()}"  >
+                            <i class="fa fa-plus"></i>
+                            <f:setPropertyActionListener value="#{item}" target="#{planoContaControle.planoContaPaiSelecionado}"/>
+                        </h:commandLink>
+
+                        <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Alterar item do plano de contas" action="#{planoContaControle.doStartAlterar()}"  >
+                            <i class="fa fa-edit"></i>
+                            <f:setPropertyActionListener value="#{item}" target="#{planoContaControle.planoContaSelecionado}"/>
+                        </h:commandLink>
+
+                        <h:commandLink  styleClass="btn btn-circle btn-icon-only btn-default icones" rendered="#{item.registroPadrao eq 'N' or item.tipoIndicador eq 'S'}" title="Remover item"
+                                        action="#{planoContaControle.doFinishExcluir()}" onclick="return confirm('Tem certeza que deseja excluir este item?');" >
+                            <i class="icon-trash"></i>
+                            <f:setPropertyActionListener value="#{item}" target="#{planoContaControle.planoContaSelecionado}"/>
+                        </h:commandLink>
+
+                        <h:commandLink  title="Auditoria"  styleClass="btn btn-circle btn-icon-only btn-default icones" action="#{planoContaControle.doShowAuditoria()}" >
+                            <i class="fa fa-history"></i>
+                            <f:setPropertyActionListener value="#{item}" target="#{planoContaControle.planoContaSelecionado}"/>
+                        </h:commandLink>
+                    </div>
+                </p:column>
+
+            </p:dataTable>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

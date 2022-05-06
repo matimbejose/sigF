@@ -1,0 +1,513 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:cc="http://xmlns.jcp.org/jsf/composite/components"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <p:importEnum type="br.com.villefortconsulting.sgfinancas.controle.apoio.ContaControleBase$EnumConta" var="EnumConta"/>
+    <div class="form-body" data-intro="Ajuda rápida para o contas a #{controle.tipoConta.infinitivo}">
+        <div class="row">
+            <div class="col-md-12 col-sm-12">
+                <div class="card card-w-title mb-3">
+                    <h4>
+                        Boleto
+                        <p:commandLink action="#{controle.doInformarCodigoBarra()}" immediate="true" process="@this"
+                                       update="pnlCodigoBarra, msgResultado" class="btn btn-default btn-sm pull-right">
+                            <f:passThroughAttribute name="data-intro" value="Caso tenha o número de um boleto, pode-se clicar aqui para digitá-lo e preencher alguns dados da conta automaticamente."/>
+                            Conta por código de barras
+                        </p:commandLink>
+                    </h4>
+                    <p:outputPanel id="pnlCodigoBarra">
+                        <div class="row">
+                            <p:row rendered="#{controle.informarCodigoBarra ne 'S'}">
+                                <div class="col-md-12 pb-3">
+                                    Sem preenchimento da conta por código de barras.
+                                </div>
+                            </p:row>
+                            <p:row rendered="#{controle.informarCodigoBarra eq 'S'}">
+                                <div class="col-md-5">
+                                    <div class="form-group form-md-line-input" style="padding-top: 10px; margin-bottom: 2px">
+                                        <p:outputLabel for="@next" value="Tipo de boleto"/>
+                                        <p:selectOneMenu value="#{controle.tipoBoleto}" required="true" requiredMessage="Informe o tipo de boleto">
+                                            <f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+                                            <f:selectItem itemLabel="Boleto de convênio " itemValue="BC"/>
+                                            <f:selectItem itemLabel="Boleto de serviço" itemValue="BS"/>
+                                            <p:ajax event="change" process="@this"/>
+                                        </p:selectOneMenu>
+                                    </div>
+                                </div>
+                                <div class="col-md-7">
+                                    <div class="form-group form-md-line-input" style="padding-top: 10px; margin-bottom: 2px">
+                                        <p:outputLabel for="@next" value="Código de barras"/>
+                                        <p:inputText value="#{controle.codigoDeBarrasLeitora}" required="true" requiredMessage="Favor informar o código de barras.">
+                                            <p:ajax event="blur" listener="#{controle.doAlteraContaPorCodigo()}" process="@this"
+                                                    immediate="false" update="pnlCustos, pnlDataVencimento, msgResultado"/>
+                                        </p:inputText>
+                                    </div>
+                                </div>
+                            </p:row>
+                        </div>
+                    </p:outputPanel>
+                </div>
+            </div>
+            <div class="col-md-12 col-sm-12">
+                <div class="card card-w-title mb-3">
+                    <h4>Detalhes</h4>
+                    <p:outputPanel id="pnlDataVencimento" styleClass=" row">
+                        <div class="col-3">
+                            <div class="form-group form-md-line-input" style="padding-top: 10px; margin-bottom: 2px">
+                                <p:row rendered="#{controle.tipoConta eq EnumConta.PAGAR}">
+                                    <cc:addButton label="Fornecedor" entityName="fornecedor">
+                                        <p:selectOneMenu value="#{controle.contaSelecionada.idFornecedor}" panelStyle="width:180px" effect="fade"
+                                                         var="t" filter="true" filterMatchMode="startsWith" converter="#{genericConverter}">
+                                            <p:column>
+                                                <h:outputText value="#{t.razaoSocial}"/>
+                                            </p:column>
+
+                                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                            <f:selectItems value="#{fornecedorControle.fornecedores}" var="fornecedor"
+                                                           itemLabel="#{fornecedor.razaoSocial}" itemValue="#{fornecedor}"/>
+                                        </p:selectOneMenu>
+                                    </cc:addButton>
+                                </p:row>
+                                <p:row rendered="#{controle.tipoConta eq EnumConta.RECEBER}">
+                                    <cc:addButton label="Cliente" entityName="cliente">
+                                        <p:selectOneMenu value="#{controle.contaSelecionada.idCliente}" panelStyle="width:180px" effect="fade"
+                                                         var="t" filter="true" filterMatchMode="startsWith" converter="#{genericConverter}">
+                                            <p:column>
+                                                <h:outputText value="#{t.nome}"/>
+                                            </p:column>
+
+                                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                            <f:selectItems value="#{clienteControle.clientes}" var="cliente"
+                                                           itemLabel="#{cliente.nome}" itemValue="#{cliente}"/>
+                                        </p:selectOneMenu>
+                                    </cc:addButton>
+                                </p:row>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="form-group form-md-line-input" style="padding-top: 10px; margin-bottom: 2px">
+                                <p:outputLabel for="@next" value="Data de vencimento"/>
+                                <p:calendar navigator="true" required="true" requiredMessage="Informe a data de vencimento"
+                                            value="#{controle.contaSelecionada.dataVencimento}" pattern="dd/MM/yyyy" mask="true">
+                                    <p:ajax event="dateSelect" process="@this" update="form:pnlPagamento, form:pnlPagamentoParcial"/>
+                                </p:calendar>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="form-group form-md-line-input" style="padding-top: 10px; margin-bottom: 2px">
+                                <p:outputLabel for="@next" value="Data de emissão"/>
+                                <p:calendar navigator="true" value="#{controle.contaSelecionada.dataEmissao}" pattern="dd/MM/yyyy" mask="true"/>
+                            </div>
+                        </div>
+                    </p:outputPanel>
+
+                    <p:outputPanel id="pnlCustos">
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-6 col-md-3">
+                                <div class="form-group form-md-line-input" style="padding-top: 10px; margin-bottom: 2px">
+                                    <p:outputLabel for="@next" value="Valor"/>
+                                    <p:inputNumber value="#{controle.contaSelecionada.valor}" symbol="R$ " decimalSeparator="," thousandSeparator="." decimalPlaces="2"
+                                                   required ="true" requiredMessage="Informe o valor." widgetVar="valorTotal">
+                                        <p:ajax process="@this" update="form:pnlPagamento, form:pnlPagamentoParcial"/>
+                                    </p:inputNumber>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-sm-6 col-md-3">
+                                <div class="form-group form-md-line-input" style="padding-top: 10px; margin-bottom: 2px">
+                                    <p:outputLabel for="@next" value="Desconto"/>
+                                    <p:inputNumber value="#{controle.contaSelecionada.desconto}" symbol="R$ " decimalSeparator="," thousandSeparator="." decimalPlaces="2"/>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-sm-6 col-md-3">
+                                <div class="form-group form-md-line-input" style="padding-top: 10px; margin-bottom: 2px">
+                                    <p:outputLabel for="@next" value="Juros"/>
+                                    <p:inputNumber value="#{controle.contaSelecionada.juros}" symbol="R$ " decimalSeparator="," thousandSeparator="." decimalPlaces="2"/>
+                                </div>
+                            </div>
+
+                            <div style="padding-top: 31px;">
+                                <p:commandLink action="#{controle.abrirOutrosCustos()}" styleClass="btn btn-default btn-sm" update="pnlOutrosCustos, @this" process="@this">
+                                    <f:passThroughAttribute name="data-intro" value="Se você precisar de inserir multas, encargos e informações de imposto mais completas clique aqui para preencher."/>
+                                    <i class="fa fa-#{controle.outrosCustos ? 'minus' : 'plus'}"></i> Outros custos
+                                </p:commandLink>
+                            </div>
+
+                        </div>
+                        <p:outputPanel id="pnlOutrosCustos">
+                            <p:row rendered="#{controle.outrosCustos}">
+                                <div class="row">
+                                    <div class="col-3">
+                                        <div class="form-group form-md-line-input" style="padding-top: 10px; margin-bottom: 2px">
+                                            <p:outputLabel for="@next" value="Multa por atraso"/>
+                                            <p:inputNumber value="#{controle.contaSelecionada.multa}" symbol="R$ " decimalSeparator="," thousandSeparator="." decimalPlaces="2"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group form-md-line-input" style="padding-top: 10px; margin-bottom: 2px">
+                                            <p:outputLabel for="@next" value="Encargos"/>
+                                            <p:inputNumber value="#{controle.contaSelecionada.encargos}" symbol="R$ " decimalSeparator="," thousandSeparator="." decimalPlaces="2"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group form-md-line-input" style="padding-top: 10px; margin-bottom: 2px">
+                                            <p:outputLabel for="@next" value="Outros custos"/>
+                                            <p:inputNumber value="#{controle.contaSelecionada.outrosCustos}" symbol="R$ " decimalSeparator="," thousandSeparator="." decimalPlaces="2"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group form-md-line-input" style="padding-top: 10px; margin-bottom: 2px">
+                                            <p:outputLabel for="@next" value="IR"/>
+                                            <p:inputNumber value="#{controle.contaSelecionada.valorIR}" symbol="R$ " decimalSeparator="," thousandSeparator="." decimalPlaces="2"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-3">
+                                        <div class="form-group form-md-line-input" style="padding-top: 10px; margin-bottom: 2px">
+                                            <p:outputLabel for="@next" value="PIS"/>
+                                            <p:inputNumber value="#{controle.contaSelecionada.valorPIS}" symbol="R$ " decimalSeparator="," thousandSeparator="." decimalPlaces="2"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group form-md-line-input" style="padding-top: 10px; margin-bottom: 2px">
+                                            <p:outputLabel for="@next" value="CSLL"/>
+                                            <p:inputNumber value="#{controle.contaSelecionada.valorCSLL}" symbol="R$ " decimalSeparator="," thousandSeparator="." decimalPlaces="2"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group form-md-line-input" style="padding-top: 10px; margin-bottom: 2px">
+                                            <p:outputLabel for="@next" value="INSS"/>
+                                            <p:inputNumber value="#{controle.contaSelecionada.valorINSS}" symbol="R$ " decimalSeparator="," thousandSeparator="." decimalPlaces="2"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group form-md-line-input" style="padding-top: 10px; margin-bottom: 2px">
+                                            <p:outputLabel for="@next" value="COFINS"/>
+                                            <p:inputNumber value="#{controle.contaSelecionada.valorCOFINS}" symbol="R$ " decimalSeparator="," thousandSeparator="." decimalPlaces="2"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-3">
+                                        <div class="form-group form-md-line-input" style="padding-top: 10px; margin-bottom: 2px">
+                                            <p:outputLabel for="@next" value="ISS"/>
+                                            <p:inputNumber value="#{controle.contaSelecionada.valorISS}" symbol="R$ " decimalSeparator="," thousandSeparator="." decimalPlaces="2"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group form-md-line-input" style="padding-top: 10px; margin-bottom: 2px">
+                                            <p:outputLabel for="@next" value="ICMS"/>
+                                            <p:inputNumber value="#{controle.contaSelecionada.valorICMS}" symbol="R$ " decimalSeparator="," thousandSeparator="." decimalPlaces="2"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group form-md-line-input" style="padding-top: 10px; margin-bottom: 2px">
+                                            <p:outputLabel for="@next" value="Tarifa"/>
+                                            <p:inputNumber value="#{controle.contaSelecionada.tarifa}" symbol="R$ " decimalSeparator="," thousandSeparator="." decimalPlaces="2"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </p:row>
+                        </p:outputPanel>
+                    </p:outputPanel>
+
+                    <p:outputPanel id="pnlDetalhes">
+                        <div class="row">
+                            <div class="col-3">
+                                <div class="form-group form-md-line-input" style="padding-top: 10px; margin-bottom: 2px">
+                                    <cc:addButton label="Plano de conta" entityName="planoConta" required="true"
+                                                  disabled="#{pc.tipoIndicador ne 'S' or pc.idContaPai.bloqueiaFilhoContaReceber eq 'S'}"
+                                                  context="#{controle.tipoConta eq EnumConta.PAGAR ? 'compra' : 'venda'}">
+                                        <p:selectOneMenu value="#{controle.contaSelecionada.idPlanoConta}" panelStyle="width:180px" effect="fade"
+                                                         var="t" style="width:160px" filter="true" filterMatchMode="contains" converter="#{genericConverter}"
+                                                         required="true" requiredMessage="Informe um item do plano de conta">
+                                            <p:column>
+                                                <h:outputText value="#{t.codigo}"/>
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{t.descricao}"/>
+                                            </p:column>
+
+                                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                            <f:selectItems value="#{controle.getPlanoConta()}" var="pc" itemLabel="#{pc.descricao}" itemValue="#{pc}"
+                                                           itemDisabled="#{pc.tipoIndicador ne 'S' or pc.idContaPai.bloqueiaFilhoContaReceber eq 'S'}"
+                                                           itemDescription="#{planoContaControle.obterNomesDosPais(pc)}">
+                                            </f:selectItems>
+                                            <p:ajax process="@this" update="form:pnlPagamento, form:pnlPagamentoParcial"/>
+                                        </p:selectOneMenu>
+                                    </cc:addButton>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="form-group form-md-line-input" style="padding-top: 10px; margin-bottom: 2px">
+                                    <cc:addButton label="Conta Bancaria" entityName="contaBancaria" required="true">
+                                        <p:selectOneMenu value="#{controle.contaSelecionada.idContaBancaria}" filter="true" filterMatchMode="contains" var="t"
+                                                         required="true" requiredMessage="Informe a conta bancária" effect="fade" converter="#{genericConverter}">
+                                            <p:column>
+                                                <h:outputText value="#{t.descricao}"/>
+                                            </p:column>
+
+                                            <f:selectItem itemLabel="" noSelectionOption="true"/>
+                                            <f:selectItems value="#{contaBancariaControle.contaBancarias}"  var="contaBancaria" itemLabel="#{contaBancaria.descricao}" itemValue="#{contaBancaria}"/>
+                                            <p:ajax process="@this" update="form:pnlPagamento, form:pnlPagamentoParcial"/>
+                                        </p:selectOneMenu>
+                                    </cc:addButton>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="form-group form-md-line-input" style="padding-top: 10px;">
+                                    <cc:addButton label="Centro de custo" entityName="centroCusto">
+                                        <p:selectOneMenu value="#{controle.contaSelecionada.idCentroCusto}" panelStyle="width:180px" effect="fade"
+                                                         var="t" filter="true" filterMatchMode="startsWith" converter="#{genericConverter}">
+                                            <p:column>
+                                                <h:outputText value="#{t.descricao}"/>
+                                            </p:column>
+
+                                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                            <f:selectItems value="#{centroCustoControle.centroCustos}" var="centroCusto"
+                                                           itemLabel="#{centroCusto.descricao}" itemValue="#{centroCusto}"/>
+                                        </p:selectOneMenu>
+                                    </cc:addButton>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group form-md-line-input">
+                                    <p:outputLabel for="@next" value="Observação"/>
+                                    <p:inputText value="#{controle.contaSelecionada.observacao}" styleClass="form-control"/>
+                                </div>
+                            </div>
+                        </div>
+                    </p:outputPanel>
+                </div>
+            </div>
+            <div class="col-md-12 col-sm-12">
+                <p:row rendered="#{controle.contaSelecionada.id eq null}">
+                    <div class="card card-w-title mb-3" data-intro="Após preencher as informações da seção 'Detalhes' é necessário preencher algumas informações de pagamento.">
+                        <h4>Pagamento</h4>
+                        <p:outputPanel id="pnlPagamento">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group form-md-line-input" style="padding-top: 10px; margin-bottom: 2px">
+                                        <cc:addButton label="Forma de pagamento" entityName="formaPagamento" disabled="#{controle.campoPagamentoDisabled}">
+                                            <p:selectOneMenu value="#{controle.contaSelecionada.formaPagamento}" panelStyle="width:180px" effect="fade"
+                                                             var="t" filter="true" filterMatchMode="contains"
+                                                             disabled="#{controle.campoPagamentoDisabled}" converter="#{genericConverter}">
+                                                <p:column>
+                                                    <h:outputText value="#{t.descricao}"/>
+                                                </p:column>
+
+                                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                <f:selectItems value="#{formaPagamentoControle.formasPagamento}" var="formaPagamento"
+                                                               itemLabel="#{formaPagamento.descricao}" itemValue="#{formaPagamento}"/>
+                                            </p:selectOneMenu>
+                                        </cc:addButton>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group form-md-line-input" style="padding-top: 10px; margin-bottom: 2px">
+                                        <cc:addButton label="Tipo de pagamento" required="true" entityName="tipoPagamento" disabled="#{controle.campoPagamentoDisabled}">
+                                            <p:selectOneMenu value="#{controle.contaSelecionada.idTipoPagamento}"
+                                                             disabled="#{controle.campoPagamentoDisabled}"
+                                                             required="true" requiredMessage="Informe o pagamento" converter="#{genericConverter}">
+                                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                <f:selectItems value="#{tipoPagamentoControle.tipoPagamentos}" var="tipo"
+                                                               itemLabel="#{tipo.descricao}" itemValue="#{tipo}"/>
+                                                <p:ajax update="form:pnlPagamentoParcial, form:pnlPagamento, form:pnlRepetir" process="form:pnlDataVencimento, form:pnlCustos, form:pnlDetalhes, form:pnlPagamento"
+                                                        listener="#{controle.updateQteParcelas}"/>
+                                            </p:selectOneMenu>
+                                        </cc:addButton>
+                                    </div>
+                                </div>
+                            </div>
+                        </p:outputPanel>
+                        <p:outputPanel id="pnlPagamentoParcial">
+                            <div class="row align-items-end">
+                                <div class="col">
+                                    <div class="form-group form-md-line-input" style="padding-top: 10px; margin-bottom: 2px">
+                                        <p:outputLabel for="@next" value="Quantidade de parcelas"/>
+                                        <p:inputNumber value="#{controle.contaSelecionada.numeroParcelas}"
+                                                       decimalPlaces="0" thousandSeparator="." inputStyleClass="form-control"
+                                                       required="true" requiredMessage="Informe a quantidade de parcelas"
+                                                       disabled="#{( controle.contaSelecionada.naoPodeSelecionarQteParcelas) or  controle.contaSelecionada.idTipoPagamento eq null}">
+                                            <p:ajax update="pnlPagamentoParcial" process="@this" listener="#{controle.updateListaParcelas}"/>
+                                        </p:inputNumber>
+                                    </div>
+                                </div>
+                                <div class="col" data-intro="O tipo de repetição define o intervalo de tempo entre cada parcela gerada.">
+                                    <div class="form-group form-md-line-input" style="padding-top: 10px; margin-bottom: 2px">
+                                        <p:outputLabel for="@next" value="Tipo de repetição"/>
+                                        <p:selectOneMenu disabled="#{( controle.contaSelecionada.naoPodeSelecionarQteParcelas) or controle.contaSelecionada.numeroParcelas ne 1 or controle.contaSelecionada.idTipoPagamento eq null}"
+                                                         value="#{controle.contaSelecionada.tipoRepeticaoParcelas}" styleClass="form-control">
+                                            <f:selectItem itemLabel="Mensal" itemValue="M"/>
+                                            <f:selectItem itemLabel="Quinzenal" itemValue="Q"/>
+                                            <f:selectItem itemLabel="Semanal" itemValue="S"/>
+                                            <p:ajax update="pnlPagamentoParcial" process="@this" listener="#{controle.updateListaParcelas}"/>
+                                        </p:selectOneMenu>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="row" data-intro="Caso queira dar baixa automaticamente nas parcelas geradas basta informar a data e o valor pago. O valor pago irá dar baixa nas parcelas sequencialmente, isto é, caso a conta possua 6 parcelas de R$ 20,00 e o valor pago seja de R$ 55,00 as duas primeiras parcelas serão macadas como pagas e a terceira como paga parcialmente.">
+                                        <div class="col">
+                                            <div class="form-group form-md-line-input" style="padding-top: 10px; margin-bottom: 2px">
+                                                <p:outputLabel for="@next" value="Data de pagamento"/>
+                                                <p:calendar navigator="true" mask="true" value="#{controle.dataPagamento}" pattern="dd/MM/yyyy" disabled="#{controle.campoPagamentoDisabled}"/>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-group form-md-line-input" style="padding-top: 10px; margin-bottom: 2px">
+                                                <p:outputLabel for="@next" value="Valor pago"/>
+                                                <p:inputNumber value="#{controle.valorRecebido}" symbol="R$ " decimalSeparator="," disabled="#{controle.campoPagamentoDisabled}"
+                                                               thousandSeparator="." decimalPlaces="2" title="Deixe em branco para pagamento integral"/>
+                                                <p:tooltip for="@previous" value="Deixe em branco para pagamento integral"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <p:dataTable rendered="#{controle.contaSelecionada.numeroParcelas gt 1}" var="item" widgetVar="tblParcelas"
+                                                 rows="#{controle.contaSelecionada.numeroParcelas}" value="#{controle.contaSelecionada.listaValorParcela}"
+                                                 styleClass="card p-0 mt-3 ui-datatable-striped ui-datatable-sm ui-datatable-gridlines">
+                                        <p:column headerText="#" width="60">
+                                            <h:outputText value="#{item.numero}"/>
+                                        </p:column>
+                                        <p:column headerText="Valor da parcela">
+                                            <p:inputNumber decimalPlaces="2" decimalSeparator="," thousandSeparator="." symbol="R$ " symbolPosition="p"
+                                                           value="#{item.valor}" onchange="babyMode();" inputStyleClass="inp"/>
+                                        </p:column>
+                                        <p:column headerText="Data de vencimento" width="120">
+                                            <h:outputText value="#{item.vencimento}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                            </h:outputText>
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                        </p:outputPanel>
+                    </div>
+                </p:row>
+            </div>
+            <div class="col-md-12 col-sm-12">
+                <p:outputPanel id="pnlRepetir">
+                    <p:row rendered="#{controle.contaSelecionada.id eq null and controle.contaSelecionada.naoPodeSelecionarQteParcelas }">
+                        <div class="card card-w-title pb-0 mb-3">
+                            <p:outputPanel id="outputRepetir">
+                                <h4>Repetição</h4>
+                                <div class="row">
+                                    <div class="col-4">
+                                        <div class="form-group form-md-line-input" style="padding-top: 10px; margin-bottom: 2px">
+                                            <p:outputLabel for="@next" value="Deseja repetir este conta?"/>
+                                            <p:selectOneMenu  value="#{controle.contaSelecionada.repetirConta}"
+                                                              required="true"
+                                                              requiredMessage="Informe se deseja repetir ou não">
+                                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                <f:selectItem itemLabel="Sim" itemValue="S"/>
+                                                <f:selectItem itemLabel="Não" itemValue="N"/>
+                                                <p:ajax update="outputRepetir" event="change" process="@this"/>
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+                                    <p:row rendered="#{controle.contaSelecionada.repetirConta eq 'S'}">
+                                        <div class="col">
+                                            <div class="form-group form-md-line-input" style="padding-top: 10px; margin-bottom: 2px">
+                                                <p:outputLabel for="@next" value="Intervalo de repetição"/>
+                                                <p:inputText value="" disabled="true" readonly="true" styleClass="form-control"
+                                                             rendered="#{controle.contaSelecionada.repetirConta eq null or controle.contaSelecionada.repetirConta eq 'N'}"/>
+
+                                                <p:selectOneMenu rendered="#{controle.contaSelecionada.repetirConta eq 'S'}"
+                                                                 required="true" requiredMessage="Informe a periodicidade que deja repetir"
+                                                                 value="#{controle.contaSelecionada.tipoRepeticao}">
+                                                    <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                    <f:selectItem itemLabel="Mensal" itemValue="M"/>
+                                                    <f:selectItem itemLabel="Quinzenal" itemValue="Q"/>
+                                                    <f:selectItem itemLabel="Semanal" itemValue="S"/>
+                                                </p:selectOneMenu>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-group form-md-line-input" style="padding-top: 10px; margin-bottom: 2px">
+                                                <p:outputLabel for="@next" value="Quantidade de repetições"/>
+                                                <p:inputText value="" disabled="true" readonly="true" styleClass="form-control"
+                                                             rendered="#{controle.contaSelecionada.repetirConta eq null or controle.contaSelecionada.repetirConta eq 'N'}"/>
+
+                                                <p:inputNumber value="#{controle.contaSelecionada.qtdRepeticao}" decimalPlaces="0"
+                                                               rendered="#{controle.contaSelecionada.repetirConta eq 'S'}"
+                                                               required="true" requiredMessage="Informe a quantidade de repetições"/>
+                                            </div>
+                                        </div>
+                                    </p:row>
+                                </div>
+                            </p:outputPanel>
+                        </div>
+                    </p:row>
+                </p:outputPanel>
+            </div>
+            <div class="col-md-12 col-sm-12">
+                <div class="card card-w-title mb-3">
+                    <h4>Anexos</h4>
+                    <p:fileUpload fileUploadListener="#{controle.setPart}" mode="advanced" id="fileUpload"
+                                  multiple="true" style="display: none;" auto="true" process="@this" update="fileList"/>
+                    <p:dataTable value="#{controle.listaAnexos}" var="arquivo" id="fileList" emptyMessage="Nenhum arquivo enviado."
+                                 styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+                        <f:facet name="header">
+                            Arquivos
+                            <p:commandButton onclick="Array.from(document.querySelectorAll('.ui-fileupload'))/* Busca os widgets p:fileUpload */
+                                        .filter(element => element.id.indexOf(':fileUpload') >= 0)[0]/* Pega o que tiver o ID correto */
+                                        .querySelector('input[type=file]')/* Busca o input nele e dispara um clique */
+                                        .click();
+                                    return false;" value="Adicionar" class="pull-right" rendered="#{!inativo}"/>
+                            <div class="clearfix"></div>
+                        </f:facet>
+                        <p:column headerText="Nome do arquivo">
+                            <h:outputText value="#{arquivo.nome}" title="#{arquivo.nome}"/>
+                        </p:column>
+                        <p:column headerText="Data do upload">
+                            <h:outputText value="#{arquivo.dataEnvio}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="Usuário">
+                            <h:outputText value="#{arquivo.nomeUsuarioEnvio}" title="#{arquivo.nomeUsuarioEnvio}"/>
+                        </p:column>
+                        <p:column headerText="" style="width: 16px;text-align: center;">
+                            <f:facet name="header">
+                                <i class="fa fa-arrow-down" title="Baixar arquivos"></i>
+                            </f:facet>
+                            <p:commandLink title="Baixar arquivo" ajax="false" class="btn btn-circle btn-icon-only btn-default icones" immediate="true">
+                                <i class="fa fa-arrow-down"></i>
+                                <p:fileDownload value="#{documentoControle.downloadAnexo(arquivo)}"/>
+                            </p:commandLink>
+                        </p:column>
+                        <p:column headerText="" style="width: 16px;" rendered="#{!inativo}">
+                            <f:facet name="header">
+                                <p:commandLink action="#{controle.removerArquivos()}" title="Remover todos os arquivos" class="btn btn-circle btn-default btn-xs"
+                                               update="fileList" style="padding: 0;" immediate="true">
+                                    <i class="icon-trash"></i>
+                                </p:commandLink>
+                            </f:facet>
+                            <p:commandLink action="#{controle.removerArquivo(arquivo)}" title="Remover arquivo" class="btn btn-circle btn-default btn-xs"
+                                           update="fileList" style="padding: 0;" immediate="true">
+                                <i class="icon-trash"></i>
+                            </p:commandLink>
+                        </p:column>
+                    </p:dataTable>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function babyMode() {
+            const tot = Array.from(PF('tblParcelas').getJQ().find('.inp'))
+                .map(m => m.value.substring(3).replace('.', '').replace(',', '.'))
+                .map(parseFloat)
+                .reduce((a, b) => a + b, 0);
+            PF('valorTotal').disable();
+            PF('valorTotal').setValue(tot);
+        }
+    </script>
+</ui:composition>

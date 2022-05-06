@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Importação do XML da Nota fiscal - Produtos não localizados"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Venda/Compra</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/compra/listaProdutoNaoLocalizado.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteImport" action="#{compraControle.podeContinuarProcessamento()}"/>
+            <h:commandButton id="remoteCancel" action="listaCompra.xhtml" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <h5>Localizamos alguns produtos na sua NF-e que ainda não estão cadastrados.</h5>
+            <div class="form-body">
+
+                <p:dataTable value="#{compraControle.listCompraProduto}" emptyMessage="Nenhum registro encontrado." var="item" id="tblProdutos" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+                    <p:column headerText="Descrição no XML"  style="text-align:left">
+                        <h:outputText rendered="#{item.dadosProduto.idProduto eq null}" value="* #{item.descricaoProdutoXML}"  style="color: red"/>
+                        <h:outputText rendered="#{item.dadosProduto.idProduto ne null}" value="#{item.descricaoProdutoXML}" />
+                    </p:column>
+
+                    <p:column headerText="Produto vinculado"  style="text-align:left">
+                        <h:outputText value="#{item.dadosProduto.idProduto.descricao}" rendered="#{item.dadosProduto.idProduto ne null}"/>
+                    </p:column>
+
+                    <p:column headerText="Valor unitário" width="150" style="text-align:right">
+                        <h:outputText value="#{item.dadosProduto.valor}">
+                            <f:convertNumber locale="pt_BR" type="currency" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Quantidade" width="100" style="text-align:right">
+                        <h:outputText value="#{item.dadosProduto.quantidade}"/>
+                    </p:column>
+
+
+                    <p:column headerText="Desconto" width="150" style="text-align:right">
+                        <h:outputText value="#{item.dadosProduto.desconto}">
+                            <f:convertNumber locale="pt_BR" type="currency" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Valor total" width="150" style="text-align:right">
+                        <h:outputText value="#{item.dadosProduto.valorTotal}">
+                            <f:convertNumber locale="pt_BR" type="currency" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column width="77" headerText="Ações" >
+                        <div class="actions">
+                            <p:row rendered="#{item.dadosProduto.idProduto eq null}">
+                                <p:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Cadastrar produto" immediate="true" process="@this" update="form:tblProdutos" action="#{compraControle.cadastrarProduto()}"  >
+                                    <i class="fa fa-plus"></i>
+                                    <f:setPropertyActionListener value="#{item}" target="#{compraControle.compraProdutoNaoLocalizadoSelecionado}"/>
+                                    <f:setPropertyActionListener value="#{item.dadosProduto.idProduto}" target="#{compraControle.produtoSelecionado}"/>
+                                </p:commandLink>
+                                <p:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Localizar produto" immediate="true" process="@this" update="form:pnlTblProduto" >
+                                    <i class="fa fa-eye"></i>
+                                    <f:setPropertyActionListener value="#{item}" target="#{compraControle.compraProdutoNaoLocalizadoSelecionado}"/>
+                                    <f:setPropertyActionListener value="#{item.dadosProduto.idProduto}" target="#{compraControle.produtoSelecionado}"/>
+
+                                </p:commandLink>
+                            </p:row>
+
+                        </div>
+                    </p:column>
+
+                </p:dataTable>
+
+                <p:outputPanel id="pnlTblProduto" styleClass="mt-3">
+                    <p:outputPanel rendered="#{compraControle.compraProdutoNaoLocalizadoSelecionado ne null}">
+                        <div class="card">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label">Produto selecionado</label>
+                                        <p:inputText value=" #{compraControle.compraProdutoNaoLocalizadoSelecionado.descricaoProdutoXML}" disabled="true"/>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label">Produtos</label>
+                                        <p:selectOneMenu value="#{compraControle.produtoSelecionado}" panelStyle="width:180px" effect="fade" var="t"
+                                                         filter="true" filterMatchMode="startsWith" converter="#{genericConverter}">
+                                            <p:column>
+                                                <h:outputText value="#{t.descricao}" />
+                                            </p:column>
+
+                                            <f:selectItem itemLabel="-- Selecione --" noSelectionOption="true" />
+                                            <f:selectItems value="#{compraControle.produtos}"  var="produto" itemLabel="#{produto.descricao}" itemValue="#{produto}"/>
+                                        </p:selectOneMenu>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group form-md-line-input">
+                                        <p:commandButton action="#{compraControle.doStartVincular()}" value="Vincular" update="form"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </p:outputPanel>
+                </p:outputPanel>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+</html>

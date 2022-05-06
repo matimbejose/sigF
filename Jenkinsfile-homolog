@@ -1,0 +1,45 @@
+pipeline {
+    
+  agent { label 'servidor-homologação'}
+
+  options {
+        buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '2')
+        timeout(time: 90, unit: 'MINUTES')
+  }
+
+  stages {
+ 
+        stage('Build'){
+            steps {
+                sh "mvn clean -Dmaven.test.skip=true"
+                sh "mvn compile -U -Dmaven.test.skip=true"
+                sh "mvn package -Dmaven.test.skip=true"
+            }
+        }
+        stage('Image Build'){
+            steps {
+                sh "docker build -t sgfinancas-homolog -f Dockerfile-homolog . "
+                sh "docker tag sgfinancas-homolog 192.168.0.52:8082/sgfinancas-homolog:latest"
+                sh "docker push 192.168.0.52:8082/sgfinancas-homolog:latest"
+            }
+        }
+        stage('Publish'){
+            steps {
+			    sh "cp .env-homolog .env"
+                sh "docker pull 192.168.0.52:8082/sgfinancas-homolog:latest"
+                sh "docker-compose -f docker-compose-homolog.yml stop"
+                sh "docker-compose -f docker-compose-homolog.yml up -d --build"
+            }
+        }
+   }
+   post {
+    success { 
+      slackSend (color: '#00FF00', message: "Publicação realizada com sucesso: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+
+    }
+
+    failure {
+      slackSend (color: '#FF0000', message: "Falha na publicação: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+    }
+  }   
+}

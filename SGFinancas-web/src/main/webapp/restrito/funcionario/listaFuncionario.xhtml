@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:sec="http://www.springframework.org/security/facelets/tags"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Funcionário"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Pessoal</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/funcionario/listaFuncionario.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <sec:ifAnyGranted roles ="FUNCIONARIO_GERENCIAR" >
+                <h:commandButton id="remoteAdd" action="#{funcionarioControle.doStartAdd()}"/>
+                <h:commandButton id="remoteImport" action="#{funcionarioControle.mudaSituacaoImportacao()}" />
+            </sec:ifAnyGranted>
+        </ui:define>
+
+        <ui:define name="formButtons">
+            <p:commandButton type="button" value="Limpar filtros" onclick="clearDataTableFilters('tbl');"/>
+            <p:commandButton id="toggler" type="button" value="Colunas"/>
+            <p:columnToggler datasource="tbl" trigger="toggler"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <p:dataTable value="#{funcionarioControle.model}" emptyMessage="Nenhum registro encontrado." var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+                <p:column headerText="#" width="55" sortBy="#{item.id}" visible="false">
+                    <h:outputText value="#{item.id}"/>
+                </p:column>
+
+                <p:column headerText="Nome" sortBy="#{item.nome}" filterBy="#{item.nome}">
+                    <f:facet name="filter">
+                        <p:inputText value="#{funcionarioControle.filtro.descricao}" onchange="PF('tbl').filter()"/>
+                    </f:facet>
+                    <h:outputText value="#{item.nome}"/>
+                </p:column>
+
+                <p:column headerText="CPF" width="200" sortBy="#{item.cpf}" filterBy="#{item.cpf}">
+                    <f:facet name="filter">
+                        <p:inputText value="#{funcionarioControle.filtro.cpf}" onchange="PF('tbl').filter()"/>
+                    </f:facet>
+                    <h:outputText value="#{item.cpf}"/>
+                </p:column>
+
+                <p:column headerText="Matrícula" sortBy="#{item.matricula}" filterBy="#{item.matricula}">
+                    <f:facet name="filter">
+                        <p:inputText value="#{funcionarioControle.filtro.matricula}" onchange="PF('tbl').filter()"/>
+                    </f:facet>
+                    <h:outputText value="#{item.matricula}"/>
+                </p:column>
+
+                <p:column headerText="Cargo" sortBy="#{item.cargo}" filterBy="#{item.cargo}">
+                    <f:facet name="filter">
+                        <p:inputText value="#{funcionarioControle.filtro.cargo}" onchange="PF('tbl').filter()"/>
+                    </f:facet>
+                    <h:outputText value="#{item.cargo}"/>
+                </p:column>
+
+                <p:column headerText="Tipo de contratação" width="180" sortBy="#{item.tipoContratacao}" filterBy="#{item.tipoContratacao}">
+                    <f:facet name="filter">
+                        <p:selectCheckboxMenu onchange="PF('tbl').filter()" value="#{funcionarioControle.filtro.tipoContratacao}"
+                                              emptyLabel="Todos" updateLabel="true">
+                            <f:selectItem itemLabel="Funcionário" itemValue="F"/>
+                            <f:selectItem itemLabel="Estagiário" itemValue="E"/>
+                            <f:selectItem itemLabel="Contratado" itemValue="C"/>
+                            <f:selectItem itemLabel="Demitido" itemValue="D"/>
+                            <f:selectItem itemLabel="Menor aprendiz" itemValue="M"/>
+                            <f:selectItem itemLabel="Gestão pessoa" itemValue="G"/>
+                        </p:selectCheckboxMenu>
+                    </f:facet>
+                    <h:outputText rendered="#{item.tipoContratacao eq 'F'}" value="Funcionário"/>
+                    <h:outputText rendered="#{item.tipoContratacao eq 'E'}" value="Estagiário"/>
+                    <h:outputText rendered="#{item.tipoContratacao eq 'C'}" value="Contratado"/>
+                    <h:outputText rendered="#{item.tipoContratacao eq 'D'}" value="Demitido"/>
+                    <h:outputText rendered="#{item.tipoContratacao eq 'M'}" value="Menor aprendiz"/>
+                    <h:outputText rendered="#{item.tipoContratacao eq 'G'}" value="Gestão pessoa"/>
+                </p:column>
+
+                <p:column headerText="Data Nascimento" sortBy="#{item.dataNascimento}">
+                    <h:outputText value="#{item.dataNascimento}">
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Ativo" sortBy="#{item.ativo}" width="100" filterBy="#{item.ativo}">
+                    <f:facet name="filter">
+                        <p:selectOneMenu onchange="PF('tbl').filter()" styleClass="custom-filter" value="#{funcionarioControle.filtro.ativo}">
+                            <f:selectItem itemLabel="Todos" noSelectionOption="true"/>
+                            <f:selectItem itemLabel="Sim" itemValue="S"/>
+                            <f:selectItem itemLabel="Não" itemValue="N"/>
+                        </p:selectOneMenu>
+                    </f:facet>
+
+                    <h:outputText value="Sim" rendered="#{item.ativo eq 'S'}"/>
+                    <h:outputText value="Não" rendered="#{item.ativo eq 'N'}"/>
+                </p:column>
+
+                <sec:ifAnyGranted roles ="FUNCIONARIO_GERENCIAR" >
+                    <p:column width="140" headerText="Ações" >
+
+                        <div class="actions">
+                            <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Alterar funcionário" action="#{funcionarioControle.doStartAlterar()}"  >
+                                <i class="fa fa-edit"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{funcionarioControle.funcionarioSelecionado}"/>
+                            </h:commandLink>
+
+                            <h:commandLink  styleClass="btn btn-circle btn-icon-only btn-default icones" title="Desativar funcionário"
+                                            action="#{funcionarioControle.doFinishExcluir()}"
+                                            onclick="return confirm('Tem certeza que deseja desativar este funcionário ?');"
+                                            rendered="#{item.ativo eq 'S'}">
+                                <i class="fa fa-minus-square"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{funcionarioControle.funcionarioSelecionado}"/>
+                            </h:commandLink>
+
+                            <h:commandLink  styleClass="btn btn-circle btn-icon-only btn-default icones" title="Reativar funcionário" action="#{funcionarioControle.reativarFuncionario()}"
+                                            rendered="#{item.ativo eq 'N'}">
+                                <i class="fa fa-check-square"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{funcionarioControle.funcionarioSelecionado}"/>
+                            </h:commandLink>
+
+                            <h:commandLink  styleClass="btn btn-circle btn-icon-only btn-default icones" title="Alterar senha do ponto" action="#{funcionarioControle.doStartAlterarSenha()}"
+                                            rendered="#{item.senha ne null}">
+                                <i class="fa fa-key"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{funcionarioControle.funcionarioSelecionado}"/>
+                            </h:commandLink>
+
+                            <h:commandLink  styleClass="btn btn-circle btn-icon-only btn-default icones" title="Criar senha do ponto" action="#{funcionarioControle.doStartCriaSenha()}"
+                                            rendered="#{item.senha eq null}">
+                                <i class="fa fa-shield"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{funcionarioControle.funcionarioSelecionado}"/>
+                            </h:commandLink>
+
+                            <h:commandLink  title="Auditoria"  styleClass="btn btn-circle btn-icon-only btn-default icones" action="#{funcionarioControle.doShowAuditoria()}" >
+                                <i class="fa fa-history"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{funcionarioControle.funcionarioSelecionado}"/>
+                            </h:commandLink>
+
+                        </div>
+                    </p:column>
+                </sec:ifAnyGranted>
+
+            </p:dataTable>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

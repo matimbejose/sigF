@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite/components"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/restrito/generic/auditoria.xhtml">
+        <ui:define name="remotes">
+            <h:commandButton id="remoteBack" action="listaAvaria.xhtml"/>
+        </ui:define>
+
+        <ui:param name="title" value="Avaria"/>
+        <ui:param name="descricaoMenu" value="Avaria"/>
+        <ui:param name="caminhoAuditoria" value="/restrito/avaria/listaAuditoriaAvaria.xhtml"/>
+        <ui:param name="objetoSelecionado" value="#{avariaControle.avariaSelecionada.descricao}"/>
+
+        <ui:param name="model" value="#{avariaControle.dadosAuditoria}"/>
+        <ui:define name="colunas">
+            <p:column headerText="Descrição" sortBy="#{item[0].descricao}">
+                <h:outputText value="#{item[0].descricao}">
+                </h:outputText>
+            </p:column>
+
+            <p:column headerText="Código" sortBy="#{item[0].codigo}">
+                <cc:convertNumber value="#{item[0].codigo}"/>
+            </p:column>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

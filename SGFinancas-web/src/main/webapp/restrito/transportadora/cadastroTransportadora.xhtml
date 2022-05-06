@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Transportadora"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Nota fiscal</li>
+            <li>/</li>
+            <li>Apoio</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/transportadora/listaTransportadora.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteSave" action="#{transportadoraControle.doFinishAdd()}"/>
+            <h:commandButton id="remoteCancel" action="listaTransportadora.xhtml" immediate="true"/>
+            <h:commandButton id="remoteHelp" rendered="false" action="#{transportadoraControle.mostrarAjuda}" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-6 col-sm-12">
+                        <div class="card card-w-title">
+                            <h5>Detalhes</h5>
+                            <div class="row">
+                                <div class="col form-group form-md-line-input">
+                                    <p:outputLabel for="@next" value="Descrição"/>
+                                    <p:inputText value="#{transportadoraControle.transportadoraSelecionado.descricao}"
+                                                 required="true" requiredMessage="Informe a descrição"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col form-group form-md-line-input">
+                                    <p:outputLabel for="@next" value="CNPJ"/>
+                                    <p:inputMask value="#{transportadoraControle.transportadoraSelecionado.cnpj}"
+                                                 required="true" requiredMessage="Informe o CNPJ"
+                                                 mask="99.999.999/9999-99"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col form-group form-md-line-input">
+                                    <p:outputLabel for="@next" value="Isento ICMS?"/>
+                                    <p:selectOneMenu  value="#{transportadoraControle.transportadoraSelecionado.isentoIcms}"
+                                                      required="true" requiredMessage="Informe isenção ICMS">
+                                        <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                        <f:selectItem itemLabel="Sim" itemValue="S" />
+                                        <f:selectItem itemLabel="Não" itemValue="N" />
+                                    </p:selectOneMenu >
+                                </div>
+                                <div class="col form-group form-md-line-input">
+                                    <p:outputLabel for="@next" value="Valor do frete"/>
+                                    <p:inputNumber value="#{transportadoraControle.transportadoraSelecionado.valorFrete}" symbol="R$ " thousandSeparator="." decimalSeparator="," decimalPlaces="2" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col form-group form-md-line-input">
+                                    <p:outputLabel for="@next" value="Inscrição municipal"/>
+                                    <p:inputText value="#{transportadoraControle.transportadoraSelecionado.inscricaoMunicipal}"/>
+                                </div>
+                                <div class="col form-group form-md-line-input">
+                                    <p:outputLabel for="@next" value="Inscrição estadual"/>
+                                    <p:inputText value="#{transportadoraControle.transportadoraSelecionado.inscricaoEstadual}"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col form-group form-md-line-input">
+                                    <p:outputLabel for="@next" value="Observação"/>
+                                    <p:inputText  value="#{transportadoraControle.transportadoraSelecionado.observacao}" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                        <div class="card card-w-title">
+                            <h5>Endereço/Contato</h5>
+                            <p:outputPanel id="pnlEndereco1">
+                                <div class="row">
+
+                                    <div class="col-auto pr-5" style="width: 160px;">
+                                        <div class="form-group form-md-line-input">
+                                            <p:outputLabel for="@next" value="CEP"/>
+                                            <div class="input-group">
+                                                <div class="input-group-append">
+                                                    <p:inputMask value="#{transportadoraControle.transportadoraSelecionado.cep}"
+                                                                 mask="99.999-999" id="inpCep">
+                                                    </p:inputMask>
+                                                    <span class="input-group-btn">
+                                                        <p:commandLink action="#{transportadoraControle.buscarEnderecoPorCep()}" process="@this, inpCep"
+                                                                       styleClass="btn blue btn-outline sbold" update="pnlEndereco1, pnlEndereco2">
+                                                            <i class="fa fa-search"></i>
+                                                        </p:commandLink>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col form-group form-md-line-input">
+                                        <p:outputLabel for="@next" value="Logradouro"/>
+                                        <p:inputText value="#{transportadoraControle.transportadoraSelecionado.endereco}"/>
+                                    </div>
+                                </div>
+                            </p:outputPanel>
+                            <p:outputPanel id="pnlEndereco2">
+                                <div class="row">
+                                    <div class="col form-group form-md-line-input">
+                                        <p:outputLabel for="@next" value="Número"/>
+                                        <p:inputMask value="#{transportadoraControle.transportadoraSelecionado.numero}"
+                                                     mask="9?9999999"/>
+                                    </div>
+                                    <div class="col form-group form-md-line-input">
+                                        <p:outputLabel for="@next" value="Complemento"/>
+                                        <p:inputText value="#{transportadoraControle.transportadoraSelecionado.complemento}"/>
+                                    </div>
+                                    <div class="col form-group form-md-line-input">
+                                        <p:outputLabel for="@next" value="Bairro"/>
+                                        <p:inputText value="#{transportadoraControle.transportadoraSelecionado.bairro}"/>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col form-group form-md-line-input">
+                                        <p:outputLabel for="@next" value="UF"/>
+                                        <p:selectOneMenu id="uf" value="#{transportadoraControle.ufSelecionado}" converter="#{genericConverter}">
+                                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                            <f:selectItems value="#{transportadoraControle.UFs}"  var="uf" itemLabel="#{uf.descricao}" itemValue="#{uf}"/>
+                                            <p:ajax event="change" process="@this" update="uf, cidade" />
+                                        </p:selectOneMenu>
+                                    </div>
+                                    <div class="col form-group form-md-line-input">
+                                        <p:outputLabel for="@next" value="Cidade"/>
+                                        <p:selectOneMenu id="cidade" value="#{transportadoraControle.transportadoraSelecionado.idCidade}"
+                                                         panelStyle="width:180px" effect="fade"
+                                                         var="t" filter="true" filterMatchMode="contains"
+                                                         converter="#{genericConverter}">
+                                            <p:column>
+                                                <h:outputText value="#{t.descricao}" />
+                                            </p:column>
+
+                                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                            <f:selectItems value="#{transportadoraControle.cidades}"  var="cidade" itemLabel="#{cidade.descricao}" itemValue="#{cidade}"/>
+                                        </p:selectOneMenu>
+                                    </div>
+                                </div>
+                            </p:outputPanel>
+                            <div class="row">
+                                <div class="col form-group form-md-line-input">
+                                    <p:outputLabel for="@next" value="Contato"/>
+                                    <p:inputText value="#{transportadoraControle.transportadoraSelecionado.contato}"/>
+                                </div>
+                                <div class="col form-group form-md-line-input">
+                                    <p:outputLabel for="@next" value="Email"/>
+                                    <p:inputText value="#{transportadoraControle.transportadoraSelecionado.email}">
+                                        <p:ajax event="blur" process="@this" update="msgResultado" listener="#{transportadoraControle.validarEmail()}" />
+                                    </p:inputText>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col form-group form-md-line-input">
+                                    <p:outputLabel for="@next" value="Telefone celular"/>
+                                    <p:inputMask value="#{transportadoraControle.transportadoraSelecionado.celular}" mask="(99) 99999-9999" styleClass="telefone"/>
+                                </div>
+                                <div class="col form-group form-md-line-input">
+                                    <p:outputLabel for="@next" value="Telefone comercial"/>
+                                    <p:inputMask value="#{transportadoraControle.transportadoraSelecionado.foneComercial}" mask="(99) 9999-9999?9" styleClass="telefone" />
+                                </div>
+                                <div class="col form-group form-md-line-input">
+                                    <p:outputLabel for="@next" value="Telefone residencial"/>
+                                    <p:inputMask value="#{transportadoraControle.transportadoraSelecionado.foneResidencial}" mask="(99) 9999-9999?9" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

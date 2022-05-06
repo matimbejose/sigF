@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:sec="http://www.springframework.org/security/facelets/tags"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Lancamento"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Contábil</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/contabil/listaLancamento.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <sec:ifAnyGranted roles ="LANCAMENTO_VISUALIZAR" >
+                <h:commandButton id="remoteAdd" action="#{planoContaLancamentoControle.doStartAdd()}"/>
+            </sec:ifAnyGranted>
+        </ui:define>
+
+        <ui:define name="formButtons">
+            <p:commandButton type="button" value="Limpar filtros" onclick="clearDataTableFilters('tbl');"/>
+            <p:commandButton id="toggler" type="button" value="Colunas"/>
+            <p:columnToggler datasource="tbl" trigger="toggler"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <ui:include src="/WEB-INF/msgErro.xhtml"/>
+            <h:messages class="alertMessage" errorClass="alert alert-danger" infoClass="alert alert-success"/>
+            <p:dataTable value="#{planoContaLancamentoControle.model}" emptyMessage="Nenhum registro encontrado." var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+                <p:column headerText="#" width="55" sortBy="#{item.id}" visible="false">
+                    <h:outputText value="#{item.id}"/>
+                </p:column>
+
+                <p:column headerText="Data" sortBy="#{item.data}" width="110"  style="text-align: right">
+                    <h:outputText value="#{item.data}">
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Conta de crédito" width="110"  style="text-align: right">
+                    <h:outputText value="#{item.idPlanoContaCredito.descricao}" />
+                </p:column>
+
+                <p:column headerText="Conta de débito" width="110"  style="text-align: right">
+                    <h:outputText value="#{item.idPlanoContaDebito.descricao}"/>
+                </p:column>
+
+                <p:column headerText="Conta bancária" width="110"  style="text-align: right">
+                    <h:outputText value="#{item.idContaBancaria.descricao}"/>
+                </p:column>
+
+                <p:column headerText="Data." sortBy="#{item.data}" width="95">
+                    <h:outputText value="#{item.data}">
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Valor" sortBy="#{item.valor}" width="110"  style="text-align: right">
+                    <h:outputText value="#{item.valor}">
+                        <f:convertNumber locale="pt_BR" type="currency" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Situação" sortBy="#{item.situacao}" width="110">
+                    <h:outputText rendered="#{item.situacao eq 'A'}" value="Ativa"/>
+                    <h:outputText rendered="#{item.situacao eq 'C'}" value="Cancelada"/>
+                </p:column>
+
+                <sec:ifAnyGranted roles ="LANCAMENTO_VISUALIZAR" >
+                    <p:column width="65" headerText="Ações" >
+
+                        <div class="actions">
+
+                            <h:commandLink  title="Auditoria" styleClass="btn btn-circle btn-icon-only btn-default icones" action="#{planoContaLancamentoControle.doShowAuditoria()}" >
+                                <i class="fa fa-history"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{planoContaLancamentoControle.planoContaLancamentoContabilSelecionado}"/>
+                            </h:commandLink>
+
+                        </div>
+
+                    </p:column>
+                </sec:ifAnyGranted>
+
+            </p:dataTable>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

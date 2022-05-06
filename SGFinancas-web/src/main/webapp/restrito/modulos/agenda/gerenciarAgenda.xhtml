@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Gerenciar agenda"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Módulos</li>
+            <li>/</li>
+            <li>Agenda</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/modulos/agenda/gerenciarAgenda.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteRefresh" action="#{agendamentoControle.resetModel()}"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <div class="row">
+                <div class="col pb-3">
+                    <div class="card p-0 pt-3">
+                        <p:schedule id="calendar" widgetVar="schedule" timeZone="GMT-3" draggable="false" value="#{agendamentoControle.modelGerencia}"
+                                    rightHeaderTemplate="" leftHeaderTemplate="" displayEventEnd="true" allDaySlot="false">
+                            <p:ajax event="eventSelect" listener="#{agendamentoControle.seeEvent}" update="eventDetails"/>
+                        </p:schedule>
+                    </div>
+                    <p:dialog widgetVar="eventDialog" header="Dados do agendamento" width="700" modal="true">
+                        <p:outputPanel id="eventDetails" style="margin: -20px -15px -15px -15px;">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group form-md-line-input">
+                                        <p:outputLabel for="@next" value="Cliente"/>
+                                        <p:inputText value="#{agendamentoControle.vendaSelecionada.idCliente.nome}" disabled="true" styleClass="form-control"/>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group form-md-line-input">
+                                        <p:outputLabel for="@next" value="Atendente"/>
+                                        <p:inputText value="#{agendamentoControle.vendaSelecionada.idUsuarioVendedor.nome}" disabled="true" styleClass="form-control"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group form-md-line-input">
+                                        <p:outputLabel for="@next" value="Horário de atendimento"/>
+                                        <p:calendar navigator="true" value="#{agendamentoControle.vendaSelecionada.dataVencimento}" disabled="true"
+                                                    inputStyleClass="form-control" pattern="dd/MM/yyyy HH:mm:ss"/>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group form-md-line-input">
+                                        <p:outputLabel for="@next" value="Valor total"/>
+                                        <p:inputNumber value="#{agendamentoControle.vendaSelecionada.valor}" disabled="true" inputStyleClass="form-control"
+                                                       symbol="R$ " symbolPosition="p" thousandSeparator="." decimalSeparator="," decimalPlaces="2"/>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group form-md-line-input">
+                                        <p:outputLabel for="@next" value="Status"/>
+                                        <p:inputText value="#{agendamentoControle.vendaSelecionada.statusOrcamento}" disabled="true" styleClass="form-control"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <p:dataTable value="#{agendamentoControle.vendaServicoList}" var="vs" emptyMessage="Nenhum serviço encontrado"
+                                                 rows="#{agendamentoControle.vendaServicoList.size()}"
+                                                 styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+                                        <p:column headerText="Serviço">
+                                            #{vs.idServico.descricao}
+                                        </p:column>
+                                        <p:column headerText="Valor">
+                                            <h:outputText value="#{vs.valorVenda}">
+                                                <f:convertNumber currencyCode="BRL" type="currency"/>
+                                            </h:outputText>
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                        </p:outputPanel>
+                    </p:dialog>
+                </div>
+            </div>
+            <style>
+                .fc-scroller.fc-day-grid-container {
+                    height: calc(100vh - 280px) !important;
+                }
+                .layout-menu-horizontal .fc-scroller.fc-day-grid-container {
+                    height: calc(100vh - 324px) !important;
+                }
+                .loading .fc-event {
+                    display: none;
+                }
+                body .ui-dialog .ui-dialog-content {
+                    overflow-x: hidden;
+                }
+            </style>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

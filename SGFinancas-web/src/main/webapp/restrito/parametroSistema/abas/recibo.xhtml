@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:p="http://primefaces.org/ui">
+
+    <div class="form-body">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group form-md-line-input">
+                    <label class="control-label">Título do recibo</label>
+                    <p:inputTextarea value="#{parametroSistemaControle.parametroSistemaSelecionado.tituloRecibo}" style="height: 160px;"/>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group form-md-line-input">
+                    <label class="control-label">Número do último recibo emitido</label>
+                    <p:inputNumber value="#{parametroSistemaControle.parametroSistemaSelecionado.numeroRecibo}" decimalPlaces="0"/>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</html>

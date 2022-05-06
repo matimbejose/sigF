@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<f:metadata>
+    <f:event listener="#{administracaoControle.criaListaVazia() }" type="preRenderView" />
+</f:metadata>
+
+<ui:composition template="/WEB-INF/template.xhtml">
+
+    <ui:param name="title" value="Associar usuário a prefeituras" />
+
+    <ui:define name="title">#{title}</ui:define>
+
+    <ui:define name="viewname">
+        <li>Segurança</li>
+        <li>/</li>
+        <li>Administração</li>
+        <li>/</li>
+        <li>
+            <p:link outcome="/restrito/administracao/concedeAcessoEmpresa.xhtml"> #{title}</p:link>
+        </li>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:messages class="alertMessage" errorClass="alert alert-danger" infoClass="alert alert-success" />
+
+        <div class="notification">
+            <div class="notification-title">
+                Atenção!
+            </div>
+            Certifique-se de estar em uma das empresas onde o usuário já possua acesso.
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 ">
+                <!-- BEGIN SAMPLE FORM PORTLET-->
+                <div class="card card-w-title">
+                    <h1>Cópia de perfil entre empresas.</h1>
+                    <div class="form-body">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label class="control-label"><span class="required">*</span>Usuário</label>
+                                    <div>
+                                        <p:autoComplete value="#{administracaoControle.usuario}"
+                                            completeMethod="#{administracaoControle.getUsuariosPorNome}"
+                                            minQueryLength="3" var="usuarioSelecionado"
+                                            itemLabel="#{usuarioSelecionado.nome}" itemValue="#{usuarioSelecionado}"
+                                            converter="#{genericConverter}" scrollHeight="300"
+                                            requiredMessage="Informe o usuário." style="width: 100%;">
+                                            <p:column>
+                                                <b>Nome </b>
+                                                <h:outputText value="#{usuarioSelecionado.nome}" /><br />
+                                            </p:column>
+                                            <p:ajax update="acessoUsuario, listaPrefeituras"
+                                                listener="#{administracaoControle.getTodasPrefiturasDoUsuario()}"
+                                                event="itemSelect" />
+                                        </p:autoComplete>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="form-group ">
+                                    <label class="control-label"><span class="required">* </span>Prefeitura onde já
+                                        possui acesso</label>
+                                    <p:selectOneMenu id="acessoUsuario"
+                                        value="#{administracaoControle.prefeituraAcessoDTOOrigem}"
+                                        converter="#{genericConverter}"
+                                        requiredMessage="Selecione a prefeitura onde o usuário já tenha acesso"
+                                        required="true">
+                                        <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true" />
+                                        <f:selectItems value="#{administracaoControle.prefeiturasAcessoUsuario}"
+                                            var="prefeitura" itemLabel="#{prefeitura.descricao}"
+                                            itemValue="#{prefeitura}" />
+                                    </p:selectOneMenu>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="form-group ">
+                            <label class="control-label">Selecione os novos acessos</label>
+                            <p:pickList value="#{administracaoControle.prefeituras}" id="listaPrefeituras"
+                                var="prefeitura" itemLabel="#{prefeitura.descricao}" itemValue="#{prefeitura}"
+                                converter="#{genericConverter}" />
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <p:commandButton action="#{administracaoControle.concedeAcesso()}" value="Copiar" />
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+
+</ui:composition>
+
+</html>

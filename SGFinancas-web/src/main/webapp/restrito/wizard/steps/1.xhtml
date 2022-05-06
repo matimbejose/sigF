@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <div class="row">
+        <div class="col my-4 mx-4">
+            <div class="balao">
+                <p>...Agora vamos completar o cadastro da sua empresa...</p>
+                <p>...Primeiro confira as informações de endereço e contato, caso estejam desatualizadas, digite o CEP e clique na lupa ao lado...</p>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h4>Minha empresa</h4>
+            <h5>Logomarca</h5>
+            <div class="row">
+                <div class="col-auto" style="width: 400px;">
+                    <p:fileUpload mode="advanced" auto="true" process="@this" update="msgResultado, img" skinSimple="true"
+                                  fileUploadListener="#{wizardControle.setPart}" />
+                </div>
+                <div class="col">
+                    <p:outputPanel id="img">
+                        <p:row rendered="#{wizardControle.tela1Logomarca ne null}">
+                            <img src="#{wizardControle.logo64}" style="height: 150px;"/>
+                        </p:row>
+                    </p:outputPanel>
+                </div>
+            </div>
+            <h5>Informações da empresa (Endereço/Contato)</h5>
+            <p:outputPanel id="pnlEndereco">
+                <div class="row">
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="inpCep" value="CEP"/>
+                        <div class="input-group">
+                            <div class="input-group-append">
+                                <p:inputMask value="#{wizardControle.tela1Endereco.cep}" mask="99.999-999" id="inpCep"
+                                             required="true" requiredMessage="Informe o CEP"/>
+                                <span class="input-group-btn">
+                                    <p:commandLink action="#{wizardControle.buscarEnderecoPorCep()}" process="@this, inpCep"
+                                                   styleClass="btn blue btn-outline sbold" update="pnlEndereco">
+                                        <i class="fa fa-search"></i>
+                                    </p:commandLink>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-3 form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Logradouro"/>
+                        <p:inputText value="#{wizardControle.tela1Endereco.endereco}"
+                                     required="true" requiredMessage="Informe o logradouro"/>
+                    </div>
+                    <div class="col-1 form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Número"/>
+                        <p:inputMask value="#{wizardControle.tela1Endereco.numero}" mask="9?9999999"
+                                     required="true" requiredMessage="Informe o número"/>
+                    </div>
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Complemento"/>
+                        <p:inputText value="#{wizardControle.tela1Endereco.complemento}"/>
+                    </div>
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Bairro"/>
+                        <p:inputText value="#{wizardControle.tela1Endereco.bairro}"
+                                     required="true" requiredMessage="Informe o bairro"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Estado"/>
+                        <p:selectOneMenu value="#{wizardControle.tela1UfSelecionado}" converter="#{genericConverter}"
+                                         required="true" requiredMessage="Informe o estado">
+                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                            <f:selectItems value="#{empresaControle.UFs}" var="uf"
+                                           itemLabel="#{uf.descricao}" itemValue="#{uf}"/>
+                            <p:ajax event="change" process="@this" update="@this, cidade"/>
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Cidade"/>
+                        <p:selectOneMenu id="cidade" value="#{wizardControle.tela1Endereco.idCidade}"
+                                         required="true" requiredMessage="Informe a cidade"
+                                         panelStyle="width:180px" effect="fade" var="t" converter="#{genericConverter}"
+                                         filter="true" filterMatchMode="contains">
+                            <p:column>
+                                <h:outputText value="#{t.descricao}"/>
+                            </p:column>
+
+                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                            <f:selectItems value="#{wizardControle.cidades}" var="cidade"
+                                           itemLabel="#{cidade.descricao}" itemValue="#{cidade}"/>
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Telefone"/>
+                        <p:inputMask mask="(99) 9999-9999?9" value="#{wizardControle.tela1Fone}"
+                                     styleClass="telefone" required="true"/>
+                    </div>
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Email"/>
+                        <p:inputText value="#{wizardControle.tela1Email}" required="true"/>
+                    </div>
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Ramo de Atividade"/>
+                        <p:selectOneMenu value="#{wizardControle.tela1RamoAtividade}" required="true"
+                                         requiredMessage="Informe o ramo de atividade da empresa" 
+                                         editable="true" placeholder="Outros (Digite o ramo da empresa)">
+                            <f:selectItems value="#{empresaControle.ramoEmpresa}" var="ramo" itemLabel="#{ramo}" itemValue="#{ramo}" />
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+            </p:outputPanel>
+        </div>
+    </div>
+</html>

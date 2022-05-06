@@ -1,0 +1,33 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:cc="http://xmlns.jcp.org/jsf/composite/components"
+                xmlns:sec="http://www.springframework.org/security/facelets/tags"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <p:row rendered="#{empresaControle.empresaLogada.cadastroIncompleto}">
+        <div class="row">
+            <div class="col-auto mx-auto" style="max-width: 600px;min-width: 300px;width: 100%;user-select: none;">
+                <div class="card text-light bg-danger mb-3">
+                    <h5>Complete o seu cadastro</h5>
+                    <small>
+                        Atenção, para liberar todas as funcionalidades do sistema, complete o seu cadastro clicando
+                        <p:commandLink value="aqui" action="#{empresaControle.doStartAlterarEmpresaLogada}" ajax="false"/>.
+                    </small>
+                </div>
+            </div>
+        </div>
+        <script>
+            $(document).ready(() => $("div.remotes").html("").next().html(""));
+        </script>
+        <style>
+            td[role=gridcell] > .actions > a {
+                color: lightgray;
+                user-select: none;
+                pointer-events: none;
+            }
+        </style>
+    </p:row>
+
+</ui:composition>

@@ -1,0 +1,167 @@
+
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:sec="http://www.springframework.org/security/facelets/tags"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <f:metadata >
+        <f:event listener="#{usuarioControle.controleMenu.setPermissoes('AJUSTE_CONTRATO_VISUALIZAR', 'AJUSTE_CONTRATO_GERENCIAR', 'contratoAjusteFornecedorControle.doShowAuditoria()')}" type="preRenderView"/>
+    </f:metadata>
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:define name="cssInicial">
+            <link href="#{facesContext.externalContext.requestContextPath}/resources/metronic/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.css" rel="stylesheet" type="text/css"/>
+            <link href="#{facesContext.externalContext.requestContextPath}/resources/metronic/assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css" rel="stylesheet" type="text/css" />
+            <link href="#{facesContext.externalContext.requestContextPath}/resources/metronic/assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css" rel="stylesheet" type="text/css" />
+            <link href="#{facesContext.externalContext.requestContextPath}/resources/metronic/assets/global/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" />
+
+        </ui:define>
+
+        <ui:param name="title" value="Ajuste de contrato"/>
+        <ui:define name="title">#{title}</ui:define>
+        <ui:define name="viewname">
+            <li>##SECTION_NAME##</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/contratoAjusteFornecedor/listaContratoAjusteFornecedor.xhtml"> #{title}</p:link></li>
+        </ui:define>
+        <ui:define name="funcaoLateral">
+            <h:form acceptcharset="ISO-8859-1" id="formFiltro" prependId="false">
+
+                <div id="reportrange" class="pull-right tooltips btn btn-sm" data-container="body" data-placement="bottom" data-original-title="Período de compra">
+                    <i class="icon-calendar"></i>
+                    <span class="thin uppercase hidden-xs"></span>
+                    <i class="fa fa-angle-down"></i>
+                </div>
+                <p:inputText class="dataIni" type="hidden" value="#{contratoAjusteFornecedorControle.filtro.dataInicio}" />
+                <p:inputText class="dataFim" type="hidden" value="#{contratoAjusteFornecedorControle.filtro.dataFim}"/>
+
+                <p:remoteCommand name="rc" update=":formPrincipal:tabelaDados"  />
+                <p:remoteCommand name="painel" />
+            </h:form>
+        </ui:define>
+
+        <ui:define name="content">
+
+            <h:messages class="alertMessage" errorClass="alert alert-danger" infoClass="alert alert-success"/>
+            <h:form acceptcharset="ISO-8859-1"  prependId="false" id="formPrincipal">
+                <div class="row">
+                    <div class="col-md-12">
+                        <!-- BEGIN EXAMPLE TABLE PORTLET-->
+                        <div class="portlet light bordered">
+
+                            <div class="portlet-title">
+
+                                <div class="row">
+                                    <sec:ifAnyGranted roles ="AJUSTE_CONTRATO_GERENCIAR" >
+                                        <div class="col-md-6">
+                                            <div class="btn-group" >
+                                                <h:commandLink action="#{contratoAjusteFornecedorControle.doStartAdd() }"  title="Novo ajuste" class="btn btn-circle default blue-stripe">
+                                                    <i class="fa fa-plus"></i> Informar novo ajuste</h:commandLink>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="input-group">
+                                                <p:inputText value="#{contratoAjusteFornecedorControle.filtro.descricao}" placeholder="Pesquisar..." />
+                                                <span class="input-group-btn">
+                                                    <div class="btn-group">
+                                                        <div class="form-group form-md-line-input">
+                                                            <p:commandLink  title="Consultar" styleClass="btn blue btn-outline sbold" update=":formPrincipal:tabelaDados" >
+                                                                <i class="fa fa-search"></i>
+                                                            </p:commandLink>
+                                                        </div>
+
+                                                    </div>
+                                                </span>
+
+                                            </div>
+                                        </div>
+                                    </sec:ifAnyGranted>
+                                </div>
+                            </div>
+
+                            <div class="portlet-body">
+
+                                <div class="portlet-body flip-scroll">
+                                    <p:dataTable value="#{contratoAjusteFornecedorControle.model}" emptyMessage="Nenhum registro encontrado." var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+                                        <p:column headerText="Fornecedor" sortBy="#{idContrato.idFornecedor.razaoSocial}">
+                                            <h:outputText value="#{item.idContrato.idFornecedor.razaoSocial}"/>
+                                        </p:column>
+
+                                        <p:column headerText="Plano de conta" sortBy="#{idContrato.idPlanoConta.descricao}">
+                                            <h:outputText value="#{item.idContrato.idPlanoConta.descricao}"/>
+                                        </p:column>
+
+                                        <p:column headerText="Início do contrato" sortBy="#{idContrato.dataInicio}">
+                                            <h:outputText value="#{item.idContrato.dataInicio}" >
+                                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                            </h:outputText>
+                                        </p:column>
+
+                                        <p:column headerText="Fim do contrato" sortBy="#{idContrato.dataFim}">
+                                            <h:outputText value="#{item.idContrato.dataFim}" >
+                                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                            </h:outputText>
+                                        </p:column>
+
+                                        <p:column headerText="Data de ajuste" sortBy="#{item.data}">
+                                            <h:outputText value="#{item.data}" >
+                                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                            </h:outputText>
+                                        </p:column>
+
+                                        <p:column headerText="Número de parcelas ajustadas"  style="text-align: right" sortBy="#{item.numParcelas}">
+                                            <h:outputText value="#{item.numParcelas}"/>
+                                        </p:column>
+
+                                        <p:column headerText="Taxa de ajuste" style="text-align: right" sortBy="#{item.taxa}">
+                                            <h:outputText value="#{item.taxa / 100}">
+                                                <f:convertNumber type="percent" minFractionDigits="2" />
+                                            </h:outputText>
+                                        </p:column>
+
+                                        <sec:ifAnyGranted roles ="AJUSTE_CONTRATO_GERENCIAR" >
+                                            <p:column width="120" headerText="Ações" >
+
+                                                <div class="actions">
+                                                    <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Alterar ajuste de contrato" action="#{contratoAjusteFornecedorControle.doStartAlterar()}"  >
+                                                        <i class="fa fa-edit"></i>
+                                                        <f:setPropertyActionListener value="#{item}" target="#{contratoAjusteFornecedorControle.contratoAjusteSelecionado}"/>
+                                                    </h:commandLink>
+
+                                                    <h:commandLink  title="Auditoria" styleClass="btn btn-circle btn-icon-only btn-default icones" action="#{contratoAjusteFornecedorControle.doShowAuditoria()}" >
+                                                        <i class="fa fa-history"></i>
+                                                        <f:setPropertyActionListener value="#{item}" target="#{contratoAjusteFornecedorControle.contratoAjusteSelecionado}"/>
+                                                    </h:commandLink>
+
+                                                </div>
+
+                                            </p:column>
+                                        </sec:ifAnyGranted>
+
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </h:form>
+        </ui:define>
+
+        <ui:define name="script">
+            <script src="#{facesContext.externalContext.requestContextPath}/resources/metronic/assets/global/plugins/moment.min.js" type="text/javascript"></script>
+            <script src="#{facesContext.externalContext.requestContextPath}/resources/metronic/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.js" type="text/javascript"></script>
+
+            <script src="#{facesContext.externalContext.requestContextPath}/resources/metronic/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js" type="text/javascript"></script>
+            <script src="#{facesContext.externalContext.requestContextPath}/resources/metronic/assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.js" type="text/javascript"></script>
+            <script src="#{facesContext.externalContext.requestContextPath}/resources/metronic/assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js" type="text/javascript"></script>
+            <script src="#{facesContext.externalContext.requestContextPath}/resources/metronic/assets/pages/scripts/components-date-time-pickers.js"  charset="utf-8" type="text/javascript"></script>
+        </ui:define>
+    </ui:composition>
+
+</html>

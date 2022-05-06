@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Ponto de Venda"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Cadastro</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/pontoVenda/listaPontoVenda.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <!--sec:ifAnyGranted roles ="EMPRESA_GERENCIAR" -->
+            <h:commandButton id="remoteAdd" action="#{pontoVendaControle.doStartAdd()}"/>
+            <!--/sec:ifAnyGranted-->
+        </ui:define>
+
+        <ui:define name="content">
+            
+        </ui:define>
+
+    </ui:composition>
+
+</html>
+

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:sec="http://www.springframework.org/security/facelets/tags"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Fechamento contábil"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Contábil</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/fechamentoContabil/listaFechamentoContabil.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes"/>
+
+        <ui:define name="formButtons">
+            <p:commandButton type="button" value="Limpar filtros" onclick="clearDataTableFilters('tbl');"/>
+            <p:commandButton id="toggler" type="button" value="Colunas"/>
+            <p:columnToggler datasource="tbl" trigger="toggler"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <ui:include src="/WEB-INF/msgErro.xhtml"/>
+            <div class="layout-dashboard mb-3">
+                <div class="row">
+                    <div class="col intro-text">
+                        <span>
+                            Fechamentos de
+                            <p:calendar navigator="true" pattern="dd/MM/yyyy" styleClass="top-calendar m-0" value="#{fechamentoContabilControle.dataInicio}"
+                                        placeholder="#{fechamentoContabilControle.primeiraDataDeFechamento}">
+                                <p:ajax event="dateSelect" update="tbl"/>
+                            </p:calendar>
+                            até
+                            <p:calendar navigator="true" pattern="dd/MM/yyyy" styleClass="top-calendar m-0" value="#{fechamentoContabilControle.dataFim}"
+                                        placeholder="hoje">
+                                <p:ajax event="dateSelect" update="tbl"/>
+                            </p:calendar>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+
+            <p:dataTable value="#{fechamentoContabilControle.listarFechamentoContabil()}" emptyMessage="Nenhum registro encontrado." var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+                <p:column headerText="Competência">
+                    <h:outputText value="#{fechamentoContabilControle.buscarMes(item.mesCompetencia)} de #{item.anoCompetencia}" />
+                </p:column>
+
+                <p:column headerText="Quantidade de parcelas"  style="text-align: right">
+                    <h:outputText value="#{item.quantidadeParcelas}" />
+                </p:column>
+
+                <p:column headerText="Situação">
+                    <h:outputText rendered="#{item.fechada eq 'S'}" style="color: red" value="Fechada"/>
+                    <h:outputText rendered="#{item.fechada ne 'S'}" style="color: blue" value="Aberta"/>
+                </p:column>
+
+                <sec:ifAnyGranted roles ="FECHAMENTO_CONTABIL_GERENCIAR" >
+                    <p:column width="150" headerText="Ações"  >
+                        <div class="actions">
+                            <h:commandLink  title="Listar parcelas" styleClass="btn btn-circle btn-icon-only btn-default icones" action="#{fechamentoContabilControle.doStartFecharParcela()}" >
+                                <i class="fa fa-list"></i>
+
+                                <f:setPropertyActionListener value="#{item.mesCompetencia}" target="#{fechamentoContabilControle.mes}"/>
+                                <f:setPropertyActionListener value="#{item.anoCompetencia}" target="#{fechamentoContabilControle.ano}"/>
+                                <f:setPropertyActionListener value="#{item.fechada}" target="#{fechamentoContabilControle.fechada}"/>
+                            </h:commandLink>
+                        </div>
+                    </p:column>
+                </sec:ifAnyGranted>
+
+            </p:dataTable>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

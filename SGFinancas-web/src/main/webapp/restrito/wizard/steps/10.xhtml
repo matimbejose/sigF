@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <div class="row">
+        <div class="col my-4 mx-4">
+            <div class="balao">
+                <p>
+                    <i class="fa fa-2x fa-thumbs-up"></i>
+                    ...Se caso você pretenda editar ou cadastrar novos produtos, acesse na lateral esquerda do SG Finanças MENU->CADASTRO->PRODUTO/SERVIÇO->PRODUTO->BOTÃO NOVO (PARA NOVO CADASTRO) OU BOTÃO ALTERAR PRODUTO (PARA EDITAR PRODUTO CADASTRADO)...
+                </p>
+                <p>...Agora vamos cadastrar um serviço...</p>
+                <p>...Caso você não trabalhe com prestação de serviços, clique no botão PULAR...</p>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h4>Cadastro de serviços</h4>
+            <div class="row">
+                <div class="col form-group form-md-line-input">
+                    <label class="control-label"><span class="required">* </span>Descrição do serviço</label>
+                    <p:inputText value="#{wizardControle.tela10Servico.descricao}"
+                                 required="true" requiredMessage="Informe a descrição do servico"/>
+                </div>
+                <div class="col form-group form-md-line-input">
+                    <label class="control-label">Valor de venda</label>
+                    <p:inputNumber value="#{wizardControle.tela10Servico.valorVenda}"
+                                   symbol="R$ " decimalSeparator="," thousandSeparator="." decimalPlaces="2" />
+                </div>
+                <div class="col form-group form-md-line-input">
+                    <label class="control-label">Tempo de execução</label>
+                    <br/>
+                    <p:datePicker timeOnly="true" pattern="HH:mm" value="#{wizardControle.tela10Servico.tempoExecucao}" style="width: 100%;"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</html>

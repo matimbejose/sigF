@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Visão geral"/>
+        <ui:define name="title">#{title}</ui:define>
+        <ui:define name="viewname">
+            <li><p:link outcome="/restrito/cadastro/visaoGeral.xhtml"> #{title}</p:link></li>
+        </ui:define>
+        <ui:define name="content">
+            <p:importEnum type="br.com.villefortconsulting.sgfinancas.util.EnumStatusCadastro"/>
+            <h3 style="margin-top: 0;">Algumas funcionalidades do sistema dependem dos cadastros abaixo.</h3>
+            <h5>Preencha os campos de cadastros marcados com <span class="#{EnumStatusCadastro.OBRIGATORIO_VAZIO.getIcone()}"></span>
+                (#{EnumStatusCadastro.OBRIGATORIO_VAZIO.getDescricao()})</h5>
+
+            <div class="card p-0">
+                <div class="grid">
+                    <p:repeat value="#{cadastroControle.listaCadastro}" var="status">
+                        <div class="content-grid">
+                            <label class="control-label">
+                                #{status.nome}
+                            </label>
+                            <i class="#{status.status.icone} pull-right icon-status" title="#{status.status.descricao}"></i>
+                            <div>
+                                <h:commandLink action="#{cadastroControle.invokeStatusMethod(status)}" value="Ir á pagina de cadastro"
+                                               style="color: #578ebe;" rendered="#{status.callBack ne null}"/>
+                                <br/>
+                                <h:commandLink action="#{cadastroControle.doStartImport(status)}" value="Ir á pagina de importação"
+                                               style="color: #578ebe;" rendered="#{status.classeDto ne null and status.importador ne null}"/>
+                                <h:commandLink action="#{cadastroControle.doStartExport(status)}" value="Ir á pagina de exportação"
+                                               style="color: #578ebe;" rendered="#{false}"/>
+                                <p:row rendered="#{status.possuiDependencias}">
+                                    <ul>
+                                        <ui:repeat value="#{status.dependencias}" var="dep">
+                                            <li>#{dep}</li>
+                                        </ui:repeat>
+                                    </ul>
+                                </p:row>
+                            </div>
+                        </div>
+                    </p:repeat>
+                    <p:repeat value="#{cadastroControle.listaCadastroFiller}" var="v">
+                        <div class="my-0"></div>
+                    </p:repeat>
+                </div>
+            </div>
+            <style>
+                .icon-status {
+                    font-size: 22px;
+                    margin-top: 50%;
+                    text-align: center;
+                    vertical-align: middle;
+                    transform: translateY(-50%);
+                }
+                .grid {
+                    border: 1px solid #ccc;
+                    display: flex;
+                    flex-wrap: wrap;
+                    justify-content: center;
+                    padding: 5px;
+                }
+                .grid > div {
+                    margin: 5px;
+                    width: 250px;
+                }
+                .grid > .filler {
+                    margin: 0 5px;
+                }
+                .content-grid {
+                    display: grid;
+                    grid-template-areas: "title icon"
+                        "content icon";
+                    grid-template-columns: 1fr 40px;
+                    grid-template-rows: 25px auto;
+                    border: 1px solid #adadad;
+                    padding: 10px;
+                }
+                .content-grid > label {
+                    grid-area: title;
+                }
+                .content-grid > i {
+                    grid-area: icon;
+                }
+                .content-grid > div {
+                    grid-area: content;
+                }
+            </style>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

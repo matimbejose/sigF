@@ -1,0 +1,129 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:sec="http://www.springframework.org/security/facelets/tags"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Carta de correção"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Nota fiscal</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/notaFiscalProduto/listaNotaFiscalProdutoCorrecao.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteBack" action="listaNotaFiscalProduto.xhtml" immediate="true"/>
+            <h:commandButton id="remoteAdd" action="#{notaFiscalProdutoControle.doStartAddCorrecao()}" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="formButtons">
+            <p:commandButton type="button" value="Limpar filtros" onclick="clearDataTableFilters('tbl');"/>
+            <p:commandButton id="toggler" type="button" value="Colunas"/>
+            <p:columnToggler datasource="tbl" trigger="toggler"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- BEGIN EXAMPLE TABLE PORTLET-->
+                    <div class="card card-w-title p-0">
+                        <div class="card-body">
+                            <h1>
+                                Correção da nota fiscal Nº #{notaFiscalProdutoControle.nfSelecionado.numeroNotaFiscal} no valor de
+                                <h:outputText value="#{notaFiscalProdutoControle.nfSelecionado.valorNota}">
+                                    <f:convertNumber type="currency" currencySymbol="R$ "/>
+                                </h:outputText>
+                                para #{notaFiscalProdutoControle.nfSelecionado.objTNFe.infNFe.dest.XNome}
+                            </h1>
+
+                            <p:dataTable value="#{notaFiscalProdutoControle.nfSelecionado.nfCorrecaoList}" emptyMessage="Nenhum registro encontrado." var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+                                <p:column headerText="#" width="55" sortBy="#{item.id}" visible="false">
+                                    <h:outputText value="#{item.id}"/>
+                                </p:column>
+
+                                <p:column headerText="Nº sequência" sortBy="#{item.nroSequencia}" width="140">
+                                    <h:outputText value="#{item.nroSequencia}"/>
+                                </p:column>
+
+                                <p:column headerText="Correção"  sortBy="#{item.descricaoCorrecao}" >
+                                    <h:outputText value="#{item.descricaoCorrecao}"/>
+                                </p:column>
+
+                                <p:column headerText="Data evento" sortBy="#{item.data}" width="140" >
+                                    <h:outputText value="#{item.data}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                                    </h:outputText>
+                                </p:column>
+
+                                <p:column headerText="Situação" sortBy="#{item.situacao}" width="100">
+                                    <h:outputText value="Transmitida" rendered="#{item.situacao eq 'E'}" style="color: blue"/>
+                                    <h:outputText value="Rascunho" rendered="#{item.situacao eq 'R'}"/>
+                                    <h:outputText value="Cancelada" rendered="#{item.situacao eq 'C'}" style="color: red"/>
+                                    <h:outputText value="Rejeitada" rendered="#{item.situacao eq 'J'}" style="color: red"/>
+                                </p:column>
+
+                                <sec:ifAnyGranted roles ="NOTA_FISCAL_PRODUTO_GERENCIAR" >
+                                    <p:column width="120" headerText="Ações" >
+
+                                        <div class="actions">
+
+                                            <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" rendered="#{item.situacao ne 'E' and item.situacao ne 'C' }"
+                                                           title="Alterar correção" action="#{notaFiscalProdutoControle.doStartAlterarCorrecao()}"  >
+                                                <i class="fa fa-edit"></i>
+                                                <f:setPropertyActionListener value="#{item}" target="#{notaFiscalProdutoControle.nfCorrecaoSelecionado}"/>
+                                            </h:commandLink>
+
+                                            <ui:remove>
+                                                <p:commandLink title="Transmitir correção" rendered="#{item.situacao ne 'E' and item.situacao ne 'C' }" ajax="false"
+                                                               class="btn btn-circle btn-icon-only btn-default icones" action="#{notaFiscalProdutoControle.doFinishAddCorrecao()}"  >
+                                                    <i class="fa fa-send-o"></i>
+                                                    <f:setPropertyActionListener value="#{item}" target="#{notaFiscalProdutoControle.nfCorrecaoSelecionado}"/>
+                                                </p:commandLink>
+                                            </ui:remove>
+
+                                            <h:commandLink  styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                                            rendered="#{item.situacao ne 'E' and item.situacao ne 'C' }"
+                                                            title="Remover correção" action="#{notaFiscalProdutoControle.doFinishExcluirCorrecao()}" onclick="return confirm('Tem certeza que deseja excluir esta correção?');" >
+                                                <i class="icon-trash"></i>
+                                                <f:setPropertyActionListener value="#{item}" target="#{notaFiscalProdutoControle.nfCorrecaoSelecionado}"/>
+                                            </h:commandLink>
+
+                                            <h:commandLink  title="Auditoria" styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                                            action="#{notaFiscalProdutoControle.doShowAuditoriaCorrecao()}" >
+                                                <i class="fa fa-history"></i>
+                                                <f:setPropertyActionListener value="#{item}" target="#{notaFiscalProdutoControle.nfCorrecaoSelecionado}"/>
+                                            </h:commandLink>
+                                        </div>
+
+                                    </p:column>
+                                </sec:ifAnyGranted>
+
+                            </p:dataTable>
+                        </div>
+                        <div class="card-footer">
+                            <strong>Condições de uso da Carta de Correção</strong><br/>
+                            A Carta de Correção e disciplinada pelo paragrafo 1ºA do art.<br/>
+                            7º do Convenio S/N, de 15 de dezembro de 1970 e pode ser utilizada para regularização de erro ocorrido na emissão de documento fiscal, desde que o erro não esteja relacionado com:<br/>
+                            I - as variáveis que determinam o valor do imposto tais como: base de calculo, alíquota, diferença de preço, quantidade, valor da operação ou da prestação;<br/>
+                            II - a correção de dados cadastrais que implique mudança do remetente ou do destinatário;<br/>
+                            III - a data de emissão ou de saída.<br/>
+                            <br/>
+                            <strong>Sobre o uso da Carta de Correção</strong><br/>
+                            Apenas a última carta é considerada.<br/>
+                            É permitido o envio de somente 20 cartas de correção para uma NFe.<br/>
+                            É permitido o envio até 30 dias após a emissão da NFe.<br/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

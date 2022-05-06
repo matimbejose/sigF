@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Síndico"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Condomínio</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/modulos/condominio/sindico/listaSindico.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteHelp" rendered="false" immediate="true" action="#{sindicoControle.mostrarAjuda()}"/>
+            <h:commandButton id="remoteSave" action="#{sindicoControle.doFinishAdd()}"/>
+            <h:commandButton id="remoteCancel" action="listaSindico.xhtml" immediate="true"/>
+        </ui:define>
+
+
+        <ui:define name="content">
+            <div class="card">
+                <div class="row">
+                    <div class="col form-group form-md-line-input">
+                        <label class="control-label"><span class="required">* </span>Pessoa</label>
+                        <p:selectOneMenu value="#{sindicoControle.sindicoSelecionada.idSindico}" panelStyle="width:180px" effect="fade" var="t"
+                                         style="width:160px" filter="true" filterMatchMode="startsWith" converter="#{genericConverter}"
+                                         required ="true" requiredMessage="Informe o síndico"
+                                         disabled="#{sindicoControle.sindicoSelecionada.dataFim ne null}">
+                            <p:column>
+                                <h:outputText value="#{t.nome}" />
+                            </p:column>
+
+                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                            <f:selectItems value="#{clienteControle.clientes}"  var="cliente" itemLabel="#{cliente.nome}" itemValue="#{cliente}"/>
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="col-3 form-group form-md-line-input">
+                        <label class="control-label"><span class="required">* </span>Data de início</label>
+                        <p:calendar navigator="true" value="#{sindicoControle.sindicoSelecionada.dataInicio}" pattern="dd/MM/yyyy"
+                                    disabled="#{sindicoControle.sindicoSelecionada.dataFim ne null}" mask="true"
+                                    required="true" requiredMessage="Informe a data do início do mandato"/>
+                    </div>
+                    <div class="col-3 form-group form-md-line-input">
+                        <label class="control-label">Data de fim</label>
+                        <p:calendar navigator="true" value="#{sindicoControle.sindicoSelecionada.dataFim}" pattern="dd/MM/yyyy" mask="true"
+                                    disabled="#{sindicoControle.sindicoSelecionada.dataFim ne null}"/>
+                    </div>
+                </div>
+
+
+                <p:fieldset legend="Conselheiros" style="margin-bottom:20px" toggleable="true" toggleSpeed="500"  >
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label">Pessoa</label>
+                                <br/>
+                                <p:autoComplete value="#{sindicoControle.conselheiroSelecionado}" completeMethod="#{sindicoControle.buscarConselheiros}" minQueryLength="3"
+                                                var="cliente" itemLabel="#{cliente.nome}" itemValue="#{cliente}" converter="#{genericConverter}" scrollHeight="300">
+                                    <p:column>
+                                        <h:outputText value="#{cliente.nome}" /><br/>
+                                    </p:column>
+                                    <p:ajax update="inpDescricao, inpCpfCnpj" event="itemSelect"/>
+                                </p:autoComplete>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <p:outputPanel id="pnlFornecedor">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="control-label"><span class="required">* </span>Nome</label>
+                                    <p:inputText id="inpDescricao" value="#{sindicoControle.conselheiroSelecionado.nome}"
+                                                 disabled="true" readonly="true" styleClass="form-control" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="control-label"><span class="required">* </span>CPF</label>
+                                    <p:inputText id="inpCpfCnpj" value="#{sindicoControle.conselheiroSelecionado.cpfCNPJ}"
+                                                 disabled="true" readonly="true" styleClass="form-control" />
+
+                                </div>
+                            </div>
+                        </div>
+                    </p:outputPanel>
+
+                    <p:outputPanel id="pnlTblFornecedor">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p:dataTable value="#{sindicoControle.sindicoSelecionada.sindicoConselhoList}" var="item" id="tblFornecedor"
+                                             emptyMessage="Nenhum conselheiro encontrado."
+                                             class="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+                                    <p:column headerText="Descricao" sortBy="#{item.idPessoaConselho}">
+                                        <h:outputText value="#{item.idPessoaConselho.nome}"/>
+                                    </p:column>
+
+                                    <p:column headerText="CPF/CNPJ" sortBy="#{item.idPessoaConselho}">
+                                        <h:outputText value="#{item.idPessoaConselho.cpfCNPJ}"/>
+                                    </p:column>
+
+                                    <p:column width="77" headerText="Ações" >
+
+                                        <div class="actions">
+
+                                            <p:commandLink  styleClass="btn btn-circle btn-icon-only btn-default icones" title="Remover conselheiro" process="@this" action="#{sindicoControle.removeSindicoConselho()}" update="tblFornecedor" >
+                                                <i class="icon-trash"></i>
+                                                <f:setPropertyActionListener value="#{item}" target="#{sindicoControle.sindicoConselhoSelecionado}"/>
+                                            </p:commandLink>
+                                        </div>
+
+                                    </p:column>
+
+                                    <f:facet name="footer">
+                                        <p:commandLink action="#{sindicoControle.addConselheiro()}" class="btn default btn-circle btn-sm"
+                                                       update="tblFornecedor, form:pnlFornecedor" process="@this, form:pnlFornecedor">
+                                            <i class="fa fa-plus"></i> Adicionar
+                                        </p:commandLink>
+                                    </f:facet>
+                                </p:dataTable>
+                            </div>
+                        </div>
+                    </p:outputPanel>
+
+                </p:fieldset>
+
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

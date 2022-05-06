@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:sec="http://www.springframework.org/security/facelets/tags"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite/components">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Producao"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Estoque</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/producao/listaProducao.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <sec:ifAnyGranted roles ="PRODUCAO_GERENCIAR" >
+                <h:commandButton id="remoteAdd" action="#{producaoControle.doStartAdd()}"/>
+            </sec:ifAnyGranted>
+        </ui:define>
+
+        <ui:define name="formButtons">
+            <p:commandButton type="button" value="Limpar filtros" onclick="clearDataTableFilters('tbl');"/>
+            <p:commandButton id="toggler" type="button" value="Colunas"/>
+            <p:columnToggler datasource="tbl" trigger="toggler"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <ui:include src="/WEB-INF/msgErro.xhtml"/>
+            <div class="layout-dashboard mb-3">
+                <div class="row">
+                    <div class="col intro-text">
+                        <span>
+                            Pedidos de
+                            <p:calendar navigator="true" pattern="dd/MM/yyyy" styleClass="top-calendar m-0" value="#{producaoControle.filtro.dataPedido.min}">
+                                <p:ajax event="dateSelect" update="tbl" />
+                            </p:calendar>
+                            até
+                            <p:calendar navigator="true" pattern="dd/MM/yyyy" styleClass="top-calendar m-0" value="#{producaoControle.filtro.dataPedido.max}">
+                                <p:ajax event="dateSelect" update="tbl" />
+                            </p:calendar>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <p:dataTable value="#{producaoControle.model}" emptyMessage="Nenhum registro encontrado." var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+                <p:column headerText="#" width="55" sortBy="#{item.id}" visible="false">
+                    <h:outputText value="#{item.id}"/>
+                </p:column>
+
+                <p:column headerText="#" width="55" sortBy="#{item.numero}" filterBy="#{item.numero}">
+                    <f:facet name="filter">
+                        <p:inputNumber value="#{producaoControle.filtro.numero}" decimalPlaces="0" thousandSeparator="." onchange="PF('tbl').filter()"/>
+                    </f:facet>
+                    <h:outputText value="#{item.numero}"/>
+                </p:column>
+
+                <p:column headerText="Data do pedido" width="140" sortBy="#{item.dataPedido}" visible="true">
+                    <cc:convertDateTime value="#{item.dataPedido}"/>
+                </p:column>
+
+                <p:column headerText="Data de produção" width="140" sortBy="#{item.dataProducao}" visible="true">
+                    <cc:convertDateTime value="#{item.dataProducao}"/>
+                </p:column>
+
+                <p:column headerText="Data limite" width="140" sortBy="#{item.dataLimite}" visible="true">
+                    <cc:convertDateTime value="#{item.dataLimite}"/>
+                </p:column>
+
+                <p:column headerText="Data de cancelamento" width="140" sortBy="#{item.dataProducao}" visible="true">
+                    <cc:convertDateTime value="#{item.dataCancelamento}"/>
+                </p:column>
+
+                <p:column headerText="Status" width="55" sortBy="#{item.status}" filterBy="#{item.status}">
+                    <f:facet name="filter">
+                        <p:importEnum type="br.com.villefortconsulting.sgfinancas.util.EnumStatusProducao"/>
+                        <p:selectCheckboxMenu onchange="PF('tbl').filter()" value="#{producaoControle.filtro.status}"
+                                              emptyLabel="Todos" updateLabel="true">
+                            <f:selectItems value="#{EnumStatusProducao.ALL_VALUES}" var="enum"
+                                           itemLabel="#{enum.descricao}" itemValue="#{enum.tipo}"/>
+                        </p:selectCheckboxMenu>
+                    </f:facet>
+                    <h:outputText value="#{item.statusName}"/>
+                </p:column>
+
+                <sec:ifAnyGranted roles ="PRODUCAO_GERENCIAR" >
+                    <p:column width="77" headerText="Ações" >
+                        <div class="actions">
+                            <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Editar"
+                                           action="#{producaoControle.doStartAlterar()}" rendered="#{!item.finalizado}">
+                                <i class="fa fa-pencil-square-o"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{producaoControle.producaoSelecionado}"/>
+                            </h:commandLink>
+                            <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Visualizar"
+                                           action="#{producaoControle.doStartAlterar()}" rendered="#{item.finalizado}">
+                                <i class="fa fa-eye"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{producaoControle.producaoSelecionado}"/>
+                            </h:commandLink>
+                            <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Gerar produção"
+                                           action="#{producaoControle.gerarProducao()}"  rendered="#{!item.finalizado}">
+                                <i class="fa fa-cog"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{producaoControle.producaoSelecionado}"/>
+                            </h:commandLink>
+                            <h:commandLink title="Auditoria" styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                           action="#{producaoControle.doShowAuditoria()}">
+                                <i class="fa fa-history"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{producaoControle.producaoSelecionado}"/>
+                            </h:commandLink>
+                        </div>
+                    </p:column>
+                </sec:ifAnyGranted>
+
+            </p:dataTable>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

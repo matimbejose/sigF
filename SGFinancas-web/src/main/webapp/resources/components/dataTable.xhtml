@@ -1,0 +1,65 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:composite="http://xmlns.jcp.org/jsf/composite"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:sec="http://www.springframework.org/security/facelets/tags">
+
+    <composite:interface>
+        <composite:attribute name="model" required="true"
+                             shortDescription="Model to load the data from."/>
+        <composite:attribute name="emptyMessage" required="false" default="Nenhum registro encontrado."
+                             shortDescription="Default message to be displayed in case of an empty model."/>
+        <composite:attribute name="editMode" required="false" default=""
+                             shortDescription="Defines edit mode, valid values are row and cell."/>
+        <composite:attribute name="actionsPermission" required="false" default=""
+                             shortDescription="Permission the user must have in order to render the actions column."/>
+        <composite:facet name="headerText" displayName="Header text"
+                         shortDescription="Table header text."/>
+        <composite:facet name="headerButtons" displayName="Header buttons"
+                         shortDescription="Buttons that will be prepended to the table header."/>
+        <composite:facet name="actions" displayName="Actions column"
+                         shortDescription="Column containing the row actions."/>
+    </composite:interface>
+
+    <composite:implementation>
+        <p:dataTable value="#{cc.attrs.model}" var="item" emptyMessage="#{cc.attrs.emptyMessage}" rowsPerPageTemplate="10,20,30" lazy="true" rows="10"
+                     paginator="true" paginatorPosition="bottom" id="tbl" widgetVar="tbl" editable="#{cc.attrs.editMode ne ''}" editMode="#{cc.attrs.editMode}"
+                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                     currentPageReportTemplate="Total de registros: {totalRecords}"
+                     styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+            <f:facet name="header">
+                <composite:renderFacet name="headerText"/>
+                <div class="pull-right">
+                    <composite:renderFacet name="headerButtons"/>
+                    <p:commandLink ajax="false" styleClass="btn btn-outline-success b-0" type="button" value="Filtros" onclick="PF('tblFilterDialog').show();"/>
+                    <p:commandLink ajax="false" styleClass="btn btn-outline-success b-0" type="button" value="Colunas"/>
+                    <p:columnToggler datasource="tbl" trigger="@previous"/>
+                </div>
+                <div class="clearfix"></div>
+            </f:facet>
+
+            <composite:insertChildren/>
+
+            <p:column rendered="#{not empty cc.facets.actions and cc.attrs.actionsPermission ne '' and sec:ifAnyGranted(cc.attrs.actionsPermission)}"
+                      headerText="Ações" width="120">
+                <p:column width="117" headerText="Ações">
+                    <div class="actions">
+                        <composite:renderFacet name="actions"/>
+                    </div>
+                </p:column>
+            </p:column>
+        </p:dataTable>
+        <p:dialog widgetVar="tblFilterDialog" header="Filtros">
+            <div style="min-width: 600px">
+                <p:outputPanel id="pnlFilter">
+                    <composite:renderFacet name="filter"/>
+                </p:outputPanel>
+                <hr/>
+                <p:commandButton value="Aplicar" styleClass="mr-3" oncomplete="PF('tblFilterDialog').hide();PF('tbl').filter();"/>
+                <p:commandButton value="Cancelar" update="pnlFilter" immediate="true" process="@this" oncomplete="PF('tblFilterDialog').hide();"/>
+            </div>
+        </p:dialog>
+    </composite:implementation>
+</html>

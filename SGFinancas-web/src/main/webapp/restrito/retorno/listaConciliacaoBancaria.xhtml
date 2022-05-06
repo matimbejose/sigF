@@ -1,0 +1,103 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:sec="http://www.springframework.org/security/facelets/tags"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+
+        <ui:param name="title" value="Concliação bancária"/>
+        <ui:define name="title">#{title}</ui:define>
+        <ui:define name="viewname">
+            <li>Financeiro</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/retorno/listaConciliacaoBancaria.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+
+        <ui:define name="content">
+
+            <h:messages class="alertMessage" id="msgResultado" errorClass="alert alert-danger" infoClass="alert alert-success"/>
+            <h:form acceptcharset="ISO-8859-1">
+                <div class="row">
+                    <div class="col-md-12">
+                        <!-- BEGIN EXAMPLE TABLE PORTLET-->
+                        <div class="portlet light bordered">
+                            <div class="portlet-title">
+                                <div class="caption">
+                                    <i class="fa fa-retweet"></i>
+                                    Conciliação bancária
+                                </div>
+                                <div class="actions">
+                                </div>
+                            </div>
+
+                            <div class="portlet-body">
+
+                                <div class="portlet-body flip-scroll">
+                                    <p:dataTable value="#{retornoControle.listaConciliacaoDTO}" emptyMessage="Nenhum registro encontrado." var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+                                        <p:column headerText="Nosso número" sortBy="#{item.nossoNumero}">
+                                            <h:outputText value="#{item.nossoNumero}" />
+                                        </p:column>
+
+                                        <p:column headerText="Plano de conta" sortBy="#{boleto.idContaParcela.idConta.idPlanoConta.descricao}">
+                                            <h:outputText value="#{item.boleto.idContaParcela.idConta.idPlanoConta.descricao} (#{item.boleto.idContaParcela.numParcela}/#{item.boleto.idContaParcela.idConta.numeroParcelas})"/>
+                                        </p:column>
+
+                                        <p:column headerText="Obs." sortBy="#{idConta.boleto.idContaParcela.observacao}">
+                                            <h:outputText value="#{item.boleto.idContaParcela.idConta.observacao}"/>
+                                        </p:column>
+
+                                        <p:column headerText="Conta bancária" sortBy="#{boleto.idContaParcela.idContaBancaria.descricao}" >
+                                            <h:outputText value="#{item.boleto.idContaParcela.idContaBancaria.descricao}"/>
+                                        </p:column>
+
+                                        <p:column headerText="Venc." sortBy="#{boleto.idContaParcela.dataVencimento}" width="95">
+                                            <h:outputText value="#{item.boleto.idContaParcela.dataVencimento}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                                            </h:outputText>
+                                        </p:column>
+
+                                        <p:column headerText="Valor bruto"  sortBy="#{boleto.idContaParcela.valor}" sortFunction="#{contaReceberControle.sortDoubleValue}" style="text-align: right">
+                                            <h:outputText value="#{item.boleto.idContaParcela.valor}">
+                                                <f:convertNumber currencySymbol="R$" type="currency" />
+                                            </h:outputText>
+                                        </p:column>
+
+                                        <p:column headerText="Valor líquido" sortBy="#{item.boleto.idContaParcela.valorTotal}" style="text-align: right">
+                                            <h:outputText value="#{item.boleto.idContaParcela.valorTotal}">
+                                                <f:convertNumber currencySymbol="R$" type="currency" />
+                                            </h:outputText>
+                                        </p:column>
+
+                                        <p:column headerText="Situação" sortBy="#{boleto.idContaParcela.situacao}">
+                                            <h:outputText value="#{contaPagarControle.buscarSituacao(item.boleto.idContaParcela.situacao)}"/>
+                                        </p:column>
+
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <h:commandButton immediate="true"
+                                                 action="#{retornoControle.doFinishConciliacaoBancaria()}"
+                                                 styleClass="btn blue " value="Baixar parcelas" />
+
+                                <p:spacer width="10" height="10" />
+
+                                <h:commandButton action="listaRetorno.xhtml" immediate="true" styleClass="btn default" value="Voltar" />
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </h:form>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

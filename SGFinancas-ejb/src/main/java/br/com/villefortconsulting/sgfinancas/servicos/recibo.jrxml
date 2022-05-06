@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="recibo" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="28aff43f-ff98-419b-bd3d-793073c4a11a">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<parameter name="nome" class="java.lang.String"/>
+	<parameter name="valor" class="java.lang.String"/>
+	<parameter name="header" class="java.lang.String">
+		<defaultValueExpression><![CDATA["AUG. E RESP⁂ LOJ⁂ ACÁCIA DE SANTA MÔNICA\r\n(Jurisdicionada à M⁂ R⁂ G⁂ L⁂ M⁂ G⁂)\r\nReuniões às 4ª feiras - 20:00 horas\r\nCNPJ 02.248.319/0001-66 - Belo Horizonte - MG"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="logo" class="java.lang.Object"/>
+	<parameter name="numero" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="nomePlanoConta" class="java.lang.String"/>
+	<field name="valorStr" class="java.lang.String"/>
+	<title>
+		<band height="119" splitType="Stretch">
+			<image>
+				<reportElement x="0" y="0" width="80" height="80" uuid="cd08b38d-748f-40c0-a3d5-42cbb31d5256"/>
+				<imageExpression><![CDATA[$P{logo}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="0" y="80" width="80" height="20" uuid="67de96b7-ff7b-4839-900a-deb0c39a19d2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<text><![CDATA[Nome: ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="80" y="80" width="470" height="20" uuid="fbcb5d7c-37d0-4611-8168-b188d8340d33"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{nome}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="40" y="100" width="40" height="18" uuid="4d912900-073a-4450-a806-2c68a9d3ba29"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<text><![CDATA[Data: ]]></text>
+			</staticText>
+			<textField pattern="d &apos;de&apos; MMMM &apos;de&apos; yyyy">
+				<reportElement x="80" y="100" width="320" height="18" uuid="73958584-e431-417e-a580-eb7abc774cd6"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("MM/dd/yyyy").format(new java.util.Date())]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="80" y="0" width="470" height="80" uuid="3e33fb09-dbe8-4700-b3da-3b6b88311b35"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{header}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="400" y="100" width="40" height="18" uuid="5d5a2a2b-d85a-4e46-ad62-ffe81ed01a03"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<text><![CDATA[N: ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="440" y="100" width="110" height="18" uuid="989e7ce7-2127-4ec1-814b-23b7af29fe39"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{numero}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band height="21" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="450" height="20" uuid="ef7daed4-690c-4fde-affd-ea0010f7a8d4"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{nomePlanoConta}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="450" y="0" width="100" height="20" uuid="2a992f3a-8fea-4df6-8e0d-5ee9235b91d2"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{valorStr}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="20" width="549" height="1" uuid="25ae1a20-396f-44fc-b7fe-f962109af96b"/>
+			</line>
+		</band>
+	</detail>
+	<summary>
+		<band height="18">
+			<staticText>
+				<reportElement x="400" y="0" width="50" height="18" uuid="1d031a71-302e-4460-9c8a-0452700e8625"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<text><![CDATA[Total: ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="450" y="0" width="100" height="18" uuid="472ccfcf-b0a9-40d4-8699-32489513e388"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{valor}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

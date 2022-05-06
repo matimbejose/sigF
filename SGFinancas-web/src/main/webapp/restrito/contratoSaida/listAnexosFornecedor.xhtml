@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Selecionar anexos para baixar"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Contrato</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/contratoSaida/listaContratoFornecedor.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteBack" action="#{contratoFornecedorControle.retornarTela()}"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <div class="row">
+                <div class="col">
+                    <div class="card card-w-title">
+                        <h1 class="mb-0">
+                            <i class="fa fa-download"></i>
+                            Baixar anexos
+                        </h1>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="card card-w-title">
+                        <h1>Arquivos anexados</h1>
+                        <p:dataTable value="#{contratoFornecedorControle.listaAnexos}"
+                                     lazy="true" emptyMessage="Nenhum arquivo encontrado." id="tabelaArquivos" var="item">
+                            <p:column headerText="Nome">
+                                <h:outputText value="#{item.nome}"/>
+                            </p:column>
+                            <p:column headerText="Data do envio" style="width: 120px;">
+                                <h:outputText value="#{item.dataEnvio}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Enviado por">
+                                <h:outputText value="#{item.nomeUsuarioEnvio}"/>
+                            </p:column>
+                            <p:column headerText="Baixar" style="width: 65px;text-align: center;">
+                                <p:commandLink title="Download arquivo" ajax="false" class="btn btn-circle btn-icon-only btn-default icones">
+                                    <i class="fa fa-arrow-down"></i>
+                                    <p:fileDownload value="#{documentoControle.downloadAnexo(item)}"/>
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+    </ui:composition>
+</html>

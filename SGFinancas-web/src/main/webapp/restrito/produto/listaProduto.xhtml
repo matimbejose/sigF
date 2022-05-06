@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:sec="http://www.springframework.org/security/facelets/tags"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Produto"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Cadastro</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/produto/listaProduto.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <sec:ifAnyGranted roles ="PRODUTO_GERENCIAR" >
+                <h:commandButton id="remoteAdd" action="#{produtoControle.doStartAdd()}"/>
+                <h:commandButton id="remoteImport" action="#{produtoControle.mudaSituacaoImportacao()}"/>
+            </sec:ifAnyGranted>
+        </ui:define>
+
+        <ui:define name="formButtons">
+            <p:commandButton type="button" value="Limpar filtros" onclick="clearDataTableFilters('tbl');"/>
+            <p:commandButton id="toggler" type="button" value="Colunas"/>
+            <p:columnToggler datasource="tbl" trigger="toggler"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <p:dataTable value="#{produtoControle.model}" emptyMessage="Nenhum registro encontrado." var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow" rowStyleClass="#{item.composto ne 'N' ? 'font-blue-steel' : null}">
+
+                <p:column headerText="#" width="55" sortBy="#{item.id}" visible="false">
+                    <h:outputText value="#{item.id}"/>
+                </p:column>
+
+                <p:column headerText="Descrição" sortBy="#{item.descricao}" filterBy="#{item.descricao}">
+                    <f:facet name="filter">
+                        <p:inputText onchange="PF('tbl').filter()" value="#{produtoControle.filtro.descricao}"/>
+                    </f:facet>
+                    <p:row rendered="#{item.composto eq 'C'}">
+                        <i class="fa fa-fw fa-object-group" title="Produto composto"></i>
+                    </p:row>
+                    <p:row rendered="#{item.composto eq 'K'}">
+                        <i class="fa fa-fw fa-archive" title="Kit de produto"></i>
+                    </p:row>
+                    <h:outputText value="#{item.descricao} - (NÃO ATUALIZADO)" rendered="#{item.idPlanoConta eq null}"/>
+                    <h:outputText value="#{item.descricao}" rendered="#{item.idPlanoConta ne null}"/>
+                </p:column>
+
+                <p:column headerText="Categoria" sortBy="#{item.idProdutoCategoria.descricao}" filterBy="#{item.idProdutoCategoria.descricao}">
+                    <f:facet name="filter">
+                        <p:selectOneMenu onchange="PF('tbl').filter()" styleClass="custom-filter" filter="true" filterMatchMode="contains"
+                                         value="#{produtoControle.filtro.idProdutoCategoria}" converter="#{genericConverter}">
+                            <f:selectItem itemLabel="Todos" noSelectionOption="true"/>
+                            <f:selectItems value="#{produtoControle.produtosCategoria}" var="produtoCategoria"
+                                           itemLabel="#{produtoCategoria.descricao}" itemValue="#{produtoCategoria}"/>
+                        </p:selectOneMenu>
+                    </f:facet>
+
+                    <h:outputText value="#{item.idProdutoCategoria.descricao}"/>
+                </p:column>
+
+                <p:column headerText="Unidade medida" sortBy="#{item.idUnidadeMedida}" filterBy="#{item.idUnidadeMedida.descricao}">
+                    <f:facet name="filter">
+                        <p:selectOneMenu onchange="PF('tbl').filter()" styleClass="custom-filter" filter="true" filterMatchMode="contains"
+                                         value="#{produtoControle.filtro.idUnidadeMedida}" converter="#{genericConverter}">
+                            <f:selectItem itemLabel="Todos" noSelectionOption="true"/>
+                            <f:selectItems value="#{unidadeMedidaControle.unidadeMedidas}" var="un"
+                                           itemLabel="#{un.descricao}" itemValue="#{un}"/>
+                        </p:selectOneMenu>
+                    </f:facet>
+
+                    <h:outputText value="#{item.idUnidadeMedida.descricao}"/>
+                </p:column>
+
+                <ui:remove>
+                    <p:column headerText="Pontos"  width="80" style="text-align: right">
+                        <h:outputText value="#{item.pontos}">
+                            <f:convertNumber locale="pt_BR" minFractionDigits="2" />
+                        </h:outputText>
+                    </p:column>
+                </ui:remove>
+
+                <p:column headerText="Código" width="120" sortBy="#{item.codigo}" filterBy="#{item.codigo}">
+                    <f:facet name="filter">
+                        <p:inputText onchange="PF('tbl').filter()" value="#{produtoControle.filtro.codigo}"/>
+                    </f:facet>
+                    <h:outputText value="#{item.codigo}"/>
+                </p:column>
+
+                <p:column headerText="Tipo" sortBy="#{item.composto}" width="100" filterBy="#{item.composto}">
+                    <f:facet name="filter">
+                        <p:selectCheckboxMenu onchange="PF('tbl').filter()" value="#{produtoControle.filtro.tipoComposicao}"
+                                              emptyLabel="Todos" updateLabel="true">
+                            <f:selectItem itemLabel="Compostos" itemValue="C"/>
+                            <f:selectItem itemLabel="Kits de produto" itemValue="K"/>
+                            <f:selectItem itemLabel="Normais e insumos" itemValue="N"/>
+                        </p:selectCheckboxMenu>
+                    </f:facet>
+
+                    <h:outputText value="Composto" rendered="#{item.composto eq 'C'}"/>
+                    <h:outputText value="Kit" rendered="#{item.composto eq 'K'}"/>
+                    <h:outputText value="Normal" rendered="#{item.composto eq 'N'}"/>
+                </p:column>
+
+                <p:column headerText="Ativo" sortBy="#{item.ativo}" width="100" filterBy="#{item.ativo}">
+                    <f:facet name="filter">
+                        <p:selectOneMenu onchange="PF('tbl').filter()" styleClass="custom-filter" value="#{produtoControle.filtro.ativo}">
+                            <f:selectItem itemLabel="Todos" noSelectionOption="true"/>
+                            <f:selectItem itemLabel="Sim" itemValue="S"/>
+                            <f:selectItem itemLabel="Não" itemValue="N"/>
+                        </p:selectOneMenu>
+                    </f:facet>
+
+                    <h:outputText value="Sim" rendered="#{item.ativo eq 'S'}"/>
+                    <h:outputText value="Não" rendered="#{item.ativo eq 'N'}"/>
+                </p:column>
+
+                <sec:ifAnyGranted roles ="PRODUTO_GERENCIAR" >
+                    <p:column width="117" headerText="Ações" >
+
+                        <div class="actions">
+                            <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Alterar produto"
+                                           action="#{produtoControle.doStartAlterar()}">
+                                <i class="fa fa-edit"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{produtoControle.produtoSelecionado}"/>
+                            </h:commandLink>
+
+                            <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Desativar produto"
+                                           action="#{produtoControle.doFinishExcluir()}" rendered="#{item.ativo eq 'S'}"
+                                           onclick="const estoque = #{item.estoqueDisponivel};
+                                                   let msgEstoque = '';
+                                                   if (estoque > 0) {
+                                                       msgEstoque = '\\nEste produto ainda tem ' + estoque + ' #{item.idUnidadeMedida.descricao}(s) em estoque.';
+                                                   }
+                                                   return confirm('Tem certeza que deseja desativar este produto?' + msgEstoque);">
+                                <i class="fa fa-minus-circle"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{produtoControle.produtoSelecionado}"/>
+                            </h:commandLink>
+
+                            <p:commandLink title="Exibir histórico do estoque" styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                           action="#{produtoControle.doShowHistoricoEstoque()}" ajax="true">
+                                <i class="fa fa-envira"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{estoqueControle.produtoSelecionado}"/>
+                            </p:commandLink>
+
+
+                            <h:commandLink  title="Auditoria"  styleClass="btn btn-circle btn-icon-only btn-default icones" action="#{produtoControle.doShowAuditoria()}" >
+                                <i class="fa fa-history"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{produtoControle.produtoSelecionado}"/>
+                            </h:commandLink>
+
+                        </div>
+
+                    </p:column>
+                </sec:ifAnyGranted>
+
+            </p:dataTable>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

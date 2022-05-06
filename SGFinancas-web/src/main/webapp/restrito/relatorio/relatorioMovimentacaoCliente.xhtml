@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <f:metadata>
+        <f:event listener="#{saldoClienteControle.preencherData()}" type="preRenderView"/>
+    </f:metadata>
+
+    <ui:composition template="/WEB-INF/templateReport.xhtml">
+
+        <ui:param name="title" value="Relatório movimentações de cliente"/>
+
+        <ui:param name="link" value="/restrito/relatorio/relatorioMovimentacaoCliente.xhtml"/>
+
+        <ui:param name="fileDownload" value="#{saldoClienteControle.gerarRelatorioSaldoSintetico()}"/>
+
+        <ui:define name="config">
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <p:outputLabel for="@next" value="Início do periodo"/>
+                        <p:calendar navigator="true" value="#{saldoClienteControle.data.min}" pattern="dd/MM/yyyy" mask="true"
+                                    required="true" requiredMessage="Favor informar uma data para início do período."/>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <p:outputLabel for="@next" value="Fim do periodo"/>
+                        <p:calendar navigator="true" value="#{saldoClienteControle.data.max}" pattern="dd/MM/yyyy" mask="true"
+                                    required="true" requiredMessage="Favor informar uma data para final do período."/>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <div class="form-group">
+                        <p:outputLabel for="@next" value="Cliente"/>
+                        <p:selectOneMenu value="#{saldoClienteControle.clienteSelecionado}" panelStyle="width:180px" effect="fade"
+                                         converter="#{genericConverter}" var="t" filter="true" filterMatchMode="startsWith">
+                            <p:column>
+                                <h:outputText value="#{t.nome}"/>
+                            </p:column>
+
+                            <f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+                            <f:selectItems value="#{clienteControle.clientes}" var="cliente" itemLabel="#{cliente.nome}" itemValue="#{cliente}"/>
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group form-md-line-input">
+                        <label class="control-label">Centro de custo</label>
+                        <p:selectOneMenu value="#{saldoClienteControle.centroSelecionado}"
+                                         panelStyle="width:180px" effect="fade"
+                                         var="t" style="width:160px" filter="true" filterMatchMode="startsWith"
+                                         converter="#{genericConverter}">
+                            <p:column>
+                                <h:outputText value="#{t.descricao}" />
+                            </p:column>
+
+                            <f:selectItem itemLabel="Todos centro de custo" noSelectionOption="true"/>
+                            <f:selectItems value="#{centroCustoControle.centroCustos}"  var="centroCusto" itemLabel="#{centroCusto.descricao}" itemValue="#{centroCusto}"/>
+
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <div class="form-group">
+                        <p:outputLabel for="@next" value="Tipo de relatório"/>
+                        <p:selectOneMenu value="#{saldoClienteControle.tipoRelatorio}">
+                            <f:selectItem itemValue="ANALITICO_PDF" itemLabel="Analítico (PDF)"/>
+                            <f:selectItem itemValue="ANALITICO_EXCEL" itemLabel="Analítico (EXCEL)"/>
+                            <f:selectItem itemValue="SINTETICO" itemLabel="Sintético"/>
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

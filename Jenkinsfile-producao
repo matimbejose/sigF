@@ -1,0 +1,44 @@
+pipeline {
+    
+  agent { label 'sgfinancas-producao'}
+
+  options {
+        buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '2')
+        timeout(time: 90, unit: 'MINUTES')
+  }
+
+  stages {
+ 
+        stage('Build'){
+            steps {
+                sh "mvn clean -Dmaven.test.skip=true"
+                sh "mvn compile -U -Dmaven.test.skip=true"
+                sh "mvn package -U -Dmaven.test.skip=true"
+            }
+        }
+        stage('SGFinancas Image Build'){
+            steps {
+                sh "docker build -t sgfinancas -f Dockerfile-prod . "
+                sh "docker tag sgfinancas 192.168.0.52:8082/sgfinancas:latest"
+                sh "docker push 192.168.0.52:8082/sgfinancas:latest"
+            }
+        }     
+        stage('SGFinancas Publish'){
+            steps {
+			    sh "cp .env-producao .env"
+                sh "docker pull 192.168.0.52:8082/sgfinancas:latest"
+                sh "docker-compose -f docker-compose-producao.yml stop"
+                sh "docker-compose -f docker-compose-producao.yml up -d --build"
+            }
+        }
+   }
+   post {
+    success { 
+      slackSend (color: '#00FF00', message: "Publicação em produção realizada com sucesso: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+    }
+
+    failure {
+      slackSend (color: '#FF0000', message: "Falha na publicação em produção: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+    }
+  }   
+}

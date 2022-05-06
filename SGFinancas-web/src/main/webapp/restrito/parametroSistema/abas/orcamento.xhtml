@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <div class="form-body">
+        <ui:remove>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group form-md-line-input">
+                        <label class="control-label">Gera conta unificada a partir de orçamento</label>
+                        <p:selectOneMenu value="#{parametroSistemaControle.parametroSistemaSelecionado.geraContaUnicaEmOrcamento}"
+                                         panelStyle="width:180px" effect="fade" var="t" style="width:160px"
+                                         required="true" requiredMessage="Informe orçamentos geram contas unificadas">
+                            <p:column>
+                                <h:outputText value="#{t eq 'S' ? 'Sim' : 'Não'}"/>
+                            </p:column>
+
+                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                            <f:selectItem itemLabel="Sim" itemValue="S"/>
+                            <f:selectItem itemLabel="Não" itemValue="N"/>
+                        </p:selectOneMenu>
+                        <small>Orçamentos com produtos ou serviços e que tenham também itens de OS irão gerar apenas uma conta (sim)
+                            ou será gerada uma conta para os produtos e serviços e outra para os itens de OS (não)</small>
+                    </div>
+                </div>
+                <ui:remove>
+                    <div class="col-md-6">
+                        <div class="form-group form-md-line-input">
+                            <label class="control-label">Status para ordens de serviço geradas a partir de um orçamento</label>
+                            <p:selectOneMenu value="#{parametroSistemaControle.parametroSistemaSelecionado.statusOSGeradaPorOrcamento}"
+                                             panelStyle="width:180px" effect="fade" var="s" style="width:160px"
+                                             required="true" requiredMessage="Informe o status da ordem de serviço gerada por um orçamento">
+                                <p:column>
+                                    <h:outputText value="#{parametroSistemaControle.getStatusOSDesc(s)}"/>
+                                </p:column>
+
+                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                <f:selectItems value="#{parametroSistemaControle.listStatusOS}" var="status"
+                                               itemLabel="#{status.descricao}" itemValue="#{status.codigo}"/>
+                            </p:selectOneMenu>
+                        </div>
+                    </div>
+                </ui:remove>
+            </div>
+        </ui:remove>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group form-md-line-input">
+                    <label class="control-label">Observação padrão para impressão do orçamento</label>
+                    <p:inputTextarea value="#{parametroSistemaControle.parametroSistemaSelecionado.observacaoImpressaoOrcamento}"
+                                     style="min-height: 150px;overflow: auto;"/>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</html>

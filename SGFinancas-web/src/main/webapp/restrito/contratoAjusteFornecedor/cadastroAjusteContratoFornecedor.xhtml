@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Ajuste contrato de cliente"/>
+        <ui:define name="title">#{title}</ui:define>
+        <ui:define name="viewname">
+            <li>##SECTION_NAME##</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/contratoSaida/listaContratoFornecedor.xhtml"> #{title}</p:link></li>
+        </ui:define>
+        <ui:define name="content">
+            <h:messages class="alertMessage" id="msgResultado" errorClass="alert alert-danger" />
+            <div class="row">
+                <div class="col-md-12 ">
+                    <!-- BEGIN SAMPLE FORM PORTLET-->
+                    <div class="portlet light bordered">
+                        <div class="portlet-title">
+                            <div class="actions">
+                                <h:form>
+                                    <h:commandLink styleClass="btn blue btn-circle btn-outline sbold" immediate="true" action="#{contratoAjusteFornecedorControle.mostrarAjuda()}">
+                                        <i class="icon-question"></i>
+                                    </h:commandLink>
+                                </h:form>
+                            </div>
+                            <div class="tools">
+                            </div>
+                        </div>
+                        <div class="portlet-body form">
+                            <h:form acceptcharset="ISO-8859-1" role="form" enctype="multipart/form-data">
+                                <div class="form-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label"><span class="required"> * </span>Contrato</label>
+                                                <p:selectOneMenu  value="#{contratoAjusteFornecedorControle.contratoAjusteSelecionado.idContrato}"
+                                                                  panelStyle="width:180px" effect="fade"
+                                                                  var="t" style="width:160px" filter="true" filterMatchMode="startsWith"
+                                                                  converter="#{genericConverter}"
+                                                                  required="true"
+                                                                  title="Somente para contratos com atualização automática"
+                                                                  disabled="#{contratoAjusteFornecedorControle.contratoAjusteSelecionado.id ne null}"
+                                                                  requiredMessage="Informe um contrato">
+                                                    <p:column>
+                                                        <h:outputText value="#{t.idPlanoConta.descricao}" />
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{t.idFornecedor.razaoSocial}" />
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{t.observacao}" />
+                                                    </p:column>
+
+                                                    <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                    <f:selectItems value="#{contratoAjusteFornecedorControle.listContratoFornecedor}"  var="contrato" itemLabel="#{contratoAjusteFornecedorControle.preencheLabelContratoFornecedor(contrato)}" itemValue="#{contrato}"/>
+                                                    <p:ajax event="change" process="@this" update="tblParcelas" listener="#{contratoAjusteFornecedorControle.preencheListParcela()}"/>
+                                                </p:selectOneMenu>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label"><span class="required"> * </span>Taxa de ajuste</label>
+                                                <p:inputNumber value="#{contratoAjusteFornecedorControle.contratoAjusteSelecionado.taxa}"
+                                                               symbol=" %" decimalSeparator=","
+                                                               symbolPosition="left" thousandSeparator="."
+                                                               decimalPlaces="2" required="true"
+                                                               requiredMessage="Favor informar o percentual da taxa de ajuste">
+                                                    <p:ajax event="change" process="@this" update="tblParcelas" listener="#{contratoAjusteFornecedorControle.preencheListParcela()}"/>
+                                                </p:inputNumber>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label">Observação</label>
+                                                <p:inputText value="#{contratoAjusteFornecedorControle.contratoAjusteSelecionado.observacao}"  styleClass="form-control" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="table-responsive">
+                                            <p:dataTable value="#{contratoAjusteFornecedorControle.listParcelas}" var="item" emptyMessage="Nenhuma parcela encontrada."
+                                                         class="table table-striped table-bordered table-hover table-striped table-condensed flip-content" id="tblParcelas">
+
+                                                <p:column headerText="Plano de conta" sortBy="#{item.planoConta}">
+                                                    <h:outputText value="#{item.planoConta}"/>
+                                                </p:column>
+
+                                                <p:column headerText="Fornecedor"  sortBy="#{item.fornecedor}" >
+                                                    <h:outputText value="#{item.fornecedor}"/>
+                                                </p:column>
+
+                                                <p:column headerText="Observação"  sortBy="#{item.observacao}" >
+                                                    <h:outputText value="#{item.observacao}"/>
+                                                </p:column>
+
+                                                <p:column headerText="Venc." sortBy="#{item.dataVencimento}" width="95">
+                                                    <h:outputText value="#{item.dataVencimento}">
+                                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                    </h:outputText>
+                                                </p:column>
+
+                                                <p:column headerText="Valor original"  sortBy="#{item.valorOriginal}" style="text-align: right">
+                                                    <h:outputText value="#{item.valorOriginal}">
+                                                        <f:convertNumber currencySymbol="R$" type="currency" />
+                                                    </h:outputText>
+                                                </p:column>
+
+                                                <p:column headerText="Valor ajustado"  sortBy="#{item.valorCorrigido}" style="text-align: right">
+                                                    <h:outputText value="#{item.valorCorrigido}">
+                                                        <f:convertNumber currencySymbol="R$" type="currency" />
+                                                    </h:outputText>
+                                                </p:column>
+
+                                                <p:column headerText="Valor total" sortBy="#{item.valorTotal}" style="text-align: right">
+                                                    <h:outputText value="#{item.valorTotal}">
+                                                        <f:convertNumber currencySymbol="R$" type="currency" />
+                                                    </h:outputText>
+                                                </p:column>
+
+                                            </p:dataTable>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-actions">
+                                    <h:commandButton action="#{contratoAjusteFornecedorControle.doFinishAdd()}"  styleClass="btn blue " value="Salvar" />
+                                    <h:commandButton action="listaContratoAjusteFornecedor.xhtml" immediate="true" styleClass="btn default" value="Cancelar" />
+                                </div>
+                            </h:form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

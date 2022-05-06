@@ -1,0 +1,70 @@
+/* IE8 hacks */
+
+.x-ie8 .my-toolbar .x-btn-icon-el {
+    background-image : none !important;
+}
+
+.icon-right {
+    filter     : "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='resources/images/arrow-right.png', sizingMethod='scale')";
+    -ms-filter : "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='resources/images/arrow-right.png', sizingMethod='scale')";
+}
+
+.icon-left {
+    filter     : "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='resources/images/arrow-left.png', sizingMethod='scale')";
+    -ms-filter : "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='resources/images/arrow-left.png', sizingMethod='scale')";
+}
+
+.icon-zoomin {
+    filter     : "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='resources/images/zoom-in.png', sizingMethod='scale')";
+    -ms-filter : "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='resources/images/zoom-in.png', sizingMethod='scale')";
+}
+
+.icon-zoomout {
+    filter     : "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='resources/images/zoom-out.png', sizingMethod='scale')";
+    -ms-filter : "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='resources/images/zoom-out.png', sizingMethod='scale')";
+}
+
+.icon-zoomfit {
+    filter     : "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='resources/images/move.png', sizingMethod='scale')";
+    -ms-filter : "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='resources/images/move.png', sizingMethod='scale')";
+}
+
+.icon-fullscreen {
+    filter     : "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='resources/images/fullscreen-enter.png', sizingMethod='scale')";
+    -ms-filter : "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='resources/images/fullscreen-enter.png', sizingMethod='scale')";
+}
+
+.icon-collapseall {
+    filter     : "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='resources/images/collapse.png', sizingMethod='scale')";
+    -ms-filter : "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='resources/images/collapse.png', sizingMethod='scale')";
+}
+
+.icon-expandall {
+    filter     : "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='resources/images/expand.png', sizingMethod='scale')";
+    -ms-filter : "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='resources/images/expand.png', sizingMethod='scale')";
+}
+
+.icon-criticalpath {
+    filter     : "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='resources/images/hot.png', sizingMethod='scale')";
+    -ms-filter : "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='resources/images/hot.png', sizingMethod='scale')";
+}
+
+.icon-add {
+    filter     : "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='resources/images/add.png', sizingMethod='scale')";
+    -ms-filter : "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='resources/images/add.png', sizingMethod='scale')";
+}
+
+.icon-delete {
+    filter     : "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='resources/images/delete.png', sizingMethod='scale')";
+    -ms-filter : "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='resources/images/delete.png', sizingMethod='scale')";
+}
+
+.icon-indent {
+    filter     : "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='resources/images/indent.png', sizingMethod='scale')";
+    -ms-filter : "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='resources/images/indent.png', sizingMethod='scale')";
+}
+
+.icon-outdent {
+    filter     : "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='resources/images/outdent.png', sizingMethod='scale')";
+    -ms-filter : "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='resources/images/outdent.png', sizingMethod='scale')";
+}

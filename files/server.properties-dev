@@ -1,0 +1,36 @@
+ambiente=HOMOLOGACAO
+
+#defaults Padrões do sistema
+defaults.freeAccessTime=90
+defaults.getnetProxy.url.homologacao=http://pagamento:8090/v1/public/
+defaults.getnetProxy.url.producao=http://pagamento:7771/v1/public/
+defaults.getnetTaxa=1
+defaults.linkPagamento=http://homolog-sgfinancas.com.br/link/pagamento.xhtml?id=
+defaults.pathTermoAdesao=/termos/Termos_de_uso_SGFinancas.pdf
+defaults.pathTermoAbapav=/termos/REGULAMENTO_2022_ABAPAV.pdf
+defaults.pathPoliticaPrivacidade=/termos/Politica_Privacidade.pdf
+defaults.log.sql.noresultexception=OFF
+defaults.pathUserFiles=/opt/jboss/wildfly/arquivos/
+defaults.urlCallBackIUGU=http://homolog-sgfinancas.com/RESTful/v1/private/callback/iugu
+
+#sec Configurações que possuem senha
+sec.email.host=webmail.villefortconsulting.com
+sec.email.user=aplicacao@villefortconsulting.com
+sec.email.pass=Admville@@00
+sec.email.port=587
+sec.getnet.credencial=villefort:ville@@00
+sec.getnet.param.username=villefort
+sec.getnet.param.password=ville@@00
+sec.getnet.param.grant_type=password
+sec.getnet.param.termUrl=http://homolog-sgfinancas.com.br/pagamento/linkRetornoDebito.xhtml
+sec.fitpag.email=christopher@villefortconsulting.com
+sec.fitpag.token=d7924270000d7b008c27edf34c24c187672291fb803cd69400a2900c859cb98f5c4034ddaaa4ccdc3bfd33691548128f12aca9f9350708d57c8c7de150798e6e
+sec.fitpag.env=prod
+sec.fitpag.notificationUrl=http://homolog.sgfinancas.com/
+
+microsservico.url.email=http://192.168.0.65:7779/
+microsservico.url.nfe=http://192.168.0.65:7778/
+microsservico.url.sms=http://192.168.0.65:7777/
+microsservico.url.getnet=http://192.168.0.54:7771/
+microsservico.url.busca_cpf_cnpj=http://192.168.0.65:7776/v1/
+microsservico.url.iugu=http://192.168.0.54:7775/

@@ -1,0 +1,519 @@
+.landing-body {
+    .landing-wrapper {
+        #header {
+            background: url("\#{resource['harmony-layout:images/landing/asset-hero-image.jpg']}");
+            height: 630px;
+            padding: 21px 145px;
+            background-size: cover;
+            
+            .header-top {                
+                .logo {
+                    height: 64px;
+                    color: $topbarLogoColor;
+                    padding-top: 12px;
+                    padding-left: 12px;
+                    width: 225px;
+                    float: left;
+
+                    img {
+                        height: 40px;
+                        width: auto;
+                        vertical-align: middle;
+                    }
+                
+                    .app-name {
+                        font-weight: bold;
+                        font-size: 24px;
+                        vertical-align: middle;
+                        margin-left: 12px;
+                    }
+                }
+
+                .menu-button-mobile {
+                    display: none;
+                }
+
+                #landing-menu {
+                    padding: 0;
+                    list-style-type: none;
+                    float: right;
+
+                    li {
+                        display: inline-block;
+
+                        a {
+                            font-size: 14px;
+                            font-weight: 600;
+                            color: #ffffff;
+                            margin-right: 42px;
+
+                            &:hover {
+                                color: #ffb900;
+                            }
+                        }
+
+                        i {
+                            display: none;
+                        }
+                    }
+                }
+            }
+
+            .header-content {
+                padding: 115px 0;
+                width: 50%;
+
+                h1 {
+                    font-size: 28px;
+                    font-weight: 600;
+                    text-align: left;
+                    color: #ffffff;
+                }
+
+                h2 {
+                    font-size: 17px;
+                    text-align: left;
+                    font-weight: 400;
+                    color: #ffffff;
+                }
+
+                button {
+                    margin-top: 36px;
+                    color: #333333;
+                    background-color: #ffb900;
+                    border-color: #ffb900;
+                }
+            }
+        }
+
+        #features {
+            padding: 72px 140px;
+            background-color: #ffffff;
+
+            .features-content {
+                text-align: center;
+                padding: 24px 15px;
+                background-color: #ffffff;
+                @include transition(transform $transitionDuration);
+                @include shadow(0 1px 3px 0 rgba(0, 0, 0, 0.16));
+
+                h3 {
+                    font-size: 21px;
+                    font-weight: 600;
+                    color: #3c4161;
+                }
+
+                p {
+                    font-size: 15px;
+                    color: #333333;
+                }
+
+                &:hover {
+                    @include scale(1.1);
+                }
+            }
+        }
+
+        #news {
+            @include background-gradient-left2right(#fad961, #f76b1c);
+            padding: 53px 340px;
+
+            .news-content {
+                text-align: center;
+
+                h2 {
+                    font-size: 28px;
+                    font-weight: normal;
+                    color: #212121;
+                }
+
+                p {
+                    opacity: 0.9;
+                    font-size: 17px;
+                    color: #212121;
+                }
+
+                button {
+                    @include background-gradient-left2right(#4b7ecf, #8e70ee);
+                }
+            }
+        }
+
+        #pricing {
+            background-color: #ffffff;
+            padding: 72px 142px;
+
+            .price-type {
+                @include shadow(0 1px 3px 0 rgba(0, 0, 0, 0.16));
+
+                .price-header {
+                    @include background-gradient-left2right(#4b7ecf, #8e70ee);
+                    font-size: 21px;
+                    padding: 11px 32px;
+                    font-weight: 600;
+                    text-align: left;
+                    color: #ffffff;
+
+                    h3 {
+                        margin: 0;
+                        font-weight: normal;
+                    }
+
+                    .price-for {
+                        opacity: 0.9;
+                        font-weight: 400;
+                        font-size: 15px;
+                        text-align: left;
+                        color: #ffffff;
+                    }
+                }
+
+                .pricing-bottom {
+                    padding: 27px 32px;
+                    min-height: 383px;
+                    text-align: center;
+                    position: relative;
+
+                    ul {
+                        list-style-type: none;
+                        padding: 0;
+                        text-align: left;
+
+                        li {
+                            font-size: 17px;
+                            color: #333333;
+                            padding-bottom: 12px;
+                            
+                            i {
+                                font-size: 17px;
+                                color: #00b395;
+                                margin-right: 12px;
+                            }
+                        }
+                    }
+
+                    button {
+                        border-color: #ffb900;
+                        background-color: #ffb900;
+                        position: absolute;
+                        bottom: 20px;
+                        width: 120px;
+                        left: 50%;
+                        margin-left: -60px;
+
+                        .ui-button-text {
+                            font-size: 14px;
+                            font-weight: 600;
+                            text-align: center;
+                            color: #333333;
+                        }
+                    }
+                }
+            }
+        }
+
+        #multimedia {
+            padding: 36px 0 67px 0;
+            text-align: center;
+            @include background-gradient-left2right(#ee71e9, #8e64f7);
+
+            .video-header {
+                margin-bottom: 70px;
+
+                h2 {
+                    font-size: 28px;
+                    text-align: center;
+                    color: #ffffff;
+                    font-weight: normal;
+                }
+    
+                span {
+                    opacity: 0.9;
+                    font-size: 17px;
+                    text-align: center;
+                    color: #ffffff;
+                }
+            }
+
+            .video-container {
+                iframe {
+                    width: 580px;
+                    height: 330px;
+                }
+            }
+        }
+
+        #footer {
+            background-color: #333333;
+            padding: 71px 146px;
+
+            .logo {
+                height: 64px;
+                color: $topbarLogoColor;
+                padding-top: 12px;
+                padding-left: 12px;
+                width: 225px;
+                float: left;
+
+                img {
+                    height: 40px;
+                    width: auto;
+                    vertical-align: middle;
+                }
+            
+                .app-name {
+                    font-weight: bold;
+                    font-size: 24px;
+                    vertical-align: middle;
+                    margin-left: 12px;
+                }
+            }
+
+            span {
+                font-size: 14px;
+                text-align: left;
+                color: #ffffff;
+            }
+
+            #landing-menu {
+                .landing-box {
+                    text-align: left;
+
+                    span {
+                        font-size: 16px;
+                        font-weight: 600;
+                        text-align: left;
+                        color: #c8c8c8;
+                        display: block; 
+                    }
+    
+                    a {
+                        margin-top: 8px;
+                        display: block;
+                        color: #ffffff;
+    
+                        >a {
+                            opacity: 0.9;
+                            font-size: 14px;
+                            text-align: left;
+                            color: #ffffff;
+                        }
+                    }
+    
+                    .icon-link {
+                        display: inline-block;
+                        margin-top: 30px;
+    
+                        .icon {
+                            color: #ffffff;
+                            font-size: 22px;
+                            margin-right: 32px;
+                        }
+                    }
+                }               
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .landing-body {
+        .landing-wrapper {
+            #header {   
+                padding: 42px 25px;         
+
+                .header-top { 
+                    .logo-container {
+                        text-align: center;
+
+                        .logo {
+                            float: none;
+                            padding-top: 12px;
+                            padding-left: 12px;
+                            text-align: center;
+
+                            img {
+                                height: 40px;
+                                display: inline-block;
+                                width: auto;
+                                vertical-align: middle;
+                            }
+                        
+                            .app-name {
+                                font-weight: bold;
+                                color: $topbarLogoColor;
+                                font-size: 24px;
+                                display: inline-block;
+                                vertical-align: middle;
+                                margin-left: 12px;
+                            }
+                        } 
+                    }               
+
+                    .menu-button-mobile {
+                        display: block;
+                        text-align: center;
+                        padding: 17px;
+
+                        i {
+                            display: inline-block;
+                            font-size: 24px;
+                            color: #ffffff;
+                        }
+                    }
+                    
+                    #landing-menu {
+                        display: none;
+                        position: relative;
+
+                        &.landing-menu-active {
+                            margin: 0;
+                            display: block;
+                            position: absolute;
+                            top: 120px;
+                            left: 0;
+                            width: 100%;
+                            background-color: #212121;
+                            z-index: 100;
+
+                            > li {
+                                display: block;
+                                padding: 24px;
+
+                                a {
+                                    display: inline-block;
+                                    color: #c8c8c8;
+                                }
+
+                                i {
+                                    display: inline-block;
+                                    float: right;
+                                    color: #c8c8c8;
+                                }
+
+                                &:hover {
+                                    a {
+                                        color: #ffb900;
+                                    }
+
+                                    i {
+                                        color: #ffb900;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                .header-content {
+                    padding: 115px 0;
+                    width: 100%;
+                    text-align: center;
+
+                    h1 {
+                        text-align: center;
+                    }
+
+                    h2 {
+                        text-align: center;
+                    }
+                }
+            }
+
+            #features {
+                padding: 72px 52px;
+
+                .features-content {
+                    margin-bottom: 50px;
+                }
+            }
+
+            #news {
+                padding: 61px 36px;
+            }
+
+            #pricing {
+                padding: 72px 52px;
+
+                .price-type {
+                    margin-bottom: 70px;
+                }
+            }
+
+            #multimedia {
+                padding: 36px 14px;
+
+                .video-container {
+                    width: 100%;
+
+                    iframe {
+                        width: 350px;
+                        height: 220px;
+                    }
+                }
+            }
+
+            #footer {
+                padding: 71px 47px;
+
+                .footer {
+                    padding: 0;
+
+                    .logo {
+                        float: none;
+                        width: 100%;
+                        text-align: center;
+                    }
+
+                    span {
+                        text-align: center;
+                    }
+                }     
+                
+                .landing-menu {
+                    .landing-box {
+                        text-align: center;
+
+                        span {
+                            text-align: center;
+                        }
+                        a {
+                            text-align: center;
+                            display: block;
+
+                            &:last-child {
+                                margin-bottom: 50px;
+                            }
+                        }
+    
+                        .landing-box {
+                            text-align: center;
+                            margin-bottom: 50px;
+                        }
+    
+                        .icon-link {
+                            text-align: center;
+                        }
+                    }
+                }
+            }
+        }
+
+        .layout-mask {
+            position: fixed;
+            top: 120px;
+            left: 0;
+            z-index: 99;
+            display: block;
+            width: 100%;
+            height: 100%;
+            background-color: #212121;
+            @include opacity(.7);
+        }
+
+        &.landing-masked {
+            overflow: hidden;
+        }
+    }
+}
+

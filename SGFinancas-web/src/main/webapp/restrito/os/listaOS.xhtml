@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:sec="http://www.springframework.org/security/facelets/tags"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Ordem de Serviço"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Ordem de Serviço</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/os/listaOS.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <sec:ifAnyGranted roles ="OS_GERENCIAR,ORDEM_SERVICO_GERENCIAR" >
+                <h:commandButton id="remoteAdd" action="#{osControle.addOS()}"/>
+            </sec:ifAnyGranted>
+        </ui:define>
+
+        <ui:define name="formButtons">
+            <p:commandButton type="button" value="Limpar filtros" onclick="clearDataTableFilters('tbl');"/>
+            <p:commandButton id="toggler" type="button" value="Colunas"/>
+            <p:columnToggler datasource="tbl" trigger="toggler"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <script src="https://unpkg.com/vanilla-masker@1.1.1/build/vanilla-masker.min.js"></script>
+             <script>
+                //<![CDATA[
+                function aplicaFiltroPlaca() {
+                    const mercosul = 'AAA9A99', padrao = 'AAA-9999';
+                    const elem = PF('placa').getJQ();
+                    if (elem.attr('mascarado') == 'true'){
+                        return;
+                    }
+                    elem.attr('mascarado','true');
+                    elem.on('input', () => {
+                        const val = elem.val().toUpperCase().replace(/[^\dA-Z-]/g, '');
+                        let tipoPadrao = val.indexOf('-') !== -1 || (val.length > 4 && !isNaN(parseInt(val.charAt(4))));
+                        elem.val(VMasker.toPattern(val, tipoPadrao ? padrao : mercosul));
+                    });
+                }
+                //]]>
+            </script>
+            <ui:include src="/WEB-INF/msgErro.xhtml"/>
+            <p:importEnum type="br.com.villefortconsulting.sgfinancas.util.EnumStatusOS"/>
+            <div class="layout-dashboard mb-3">
+                <div class="row">
+                    <div class="col intro-text">
+                        <span>
+                            Período de
+                            <p:calendar navigator="true" pattern="dd/MM/yyyy" styleClass="top-calendar m-0" value="#{osControle.filtro.data.min}">
+                                <p:ajax event="dateSelect" update="tbl"/>
+                            </p:calendar>
+                            até
+                            <p:calendar navigator="true" pattern="dd/MM/yyyy" styleClass="top-calendar m-0" value="#{osControle.filtro.data.max}">
+                                <p:ajax event="dateSelect" update="tbl"/>
+                            </p:calendar>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+            <p:dataTable value="#{osControle.model}" emptyMessage="Nenhum registro encontrado." var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow" sortBy="#{item.dataVenda}" sortOrder="descending">
+
+                <p:column headerText="#" sortBy="#{item.id}" style="width: 90px;" filterBy="#{item.id}">
+                    <f:facet name="filter">
+                        <p:inputText value="#{osControle.filtro.id}" onchange="PF('tbl').filter()"/>
+                    </f:facet>
+                    <h:outputText value="#{osControle.getNumeroOrcamento(item)}"/>
+                </p:column>
+
+                <p:column headerText="Descrição" filterBy="#{item.descricao}">
+                    <f:facet name="filter">
+                        <p:inputText value="#{osControle.filtro.descricao}" onchange="PF('tbl').filter()"/>
+                    </f:facet>
+                    <h:outputText value="#{item.idPlanoConta.descricao}"/>
+                </p:column>
+
+                <p:column headerText="Cliente" sortBy="#{item.idCliente}" filterBy="#{item.cliente}">
+                    <f:facet name="filter">
+                        <p:selectOneMenu onchange="PF('tbl').filter()" styleClass="custom-filter" filter="true" filterMatchMode="contains"
+                                         value="#{osControle.filtro.cliente}" converter="#{genericConverter}">
+                            <f:selectItem itemLabel="Todos" noSelectionOption="true"/>
+                            <f:selectItems value="#{clienteControle.clientes}" var="cliente"
+                                           itemLabel="#{cliente.nome}" itemValue="#{cliente}"/>
+                        </p:selectOneMenu>
+                    </f:facet>
+                    <h:outputText value="#{item.idCliente.nome}"/>
+                </p:column>
+
+                <p:column headerText="Data autorização" sortBy="#{item.dataVenda}" width="95">
+                    <h:outputText value="#{item.dataVenda}">
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Valor" width="110" style="text-align: right" sortBy="#{item.valor}" filterBy="#{item.valor}">
+                    <f:facet name="filter">
+                        <p:inputNumber decimalPlaces="2" decimalSeparator="," thousandSeparator="." onchange="PF('tbl').filter()" value="#{osControle.filtro.valor}"/>
+                    </f:facet>
+                    <h:outputText value="#{item.valor}">
+                        <f:convertNumber locale="pt_BR" type="currency"/>
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Formas de pagamento" filterBy="#{item.formaPagamento}">
+                    <f:facet name="filter">
+                        <p:selectOneMenu onchange="PF('tbl').filter()" styleClass="custom-filter" filter="true" filterMatchMode="contains"
+                                         value="#{osControle.filtro.idFormaPagamento}" converter="#{genericConverter}">
+                            <f:selectItem itemLabel="Todos" noSelectionOption="true"/>
+                            <f:selectItems value="#{formaPagamentoControle.formasPagamento}" var="fp"
+                                           itemLabel="#{fp.descricao}" itemValue="#{fp}"/>
+                        </p:selectOneMenu>
+                    </f:facet>
+                    <h:outputText value="#{osControle.getFormasDePagamentoAssociadas(item)}"/>
+                </p:column>
+
+                <p:column headerText="Placa" width="120" rendered="#{empresaControle.empresaLogada.idCategoriaEmpresa.descricao eq 'Oficina mecânica'}" filterBy="#{item.placa}">
+                    <f:facet name="filter">
+                        <p:inputText value="#{osControle.filtro.placa}" onchange="PF('tbl').filter()" widgetVar="placa" onfocus="aplicaFiltroPlaca();"/>
+                    </f:facet>
+                    <h:outputText value="#{item.idClienteVeiculo.placa}"/>
+                </p:column>
+
+                <p:column headerText="Status" width="90" filterBy="#{item.statusOS}">
+                    <f:facet name="filter">
+                        <p:selectOneMenu onchange="PF('tbl').filter()" styleClass="custom-filter" filter="true" filterMatchMode="contains"
+                                         value="#{osControle.filtro.tipo}" converter="#{genericConverter}">
+                            <f:selectItem itemLabel="Todos" noSelectionOption="true"/>
+                            <f:selectItems value="#{EnumStatusOS.ALL_VALUES}" var="tipo"
+                                           itemLabel="#{tipo.descricao}" itemValue="#{tipo}"/>
+                        </p:selectOneMenu>
+                    </f:facet>
+                    <h:outputText value="#{osControle.nomearStatusOS(item.statusOS)}"/>
+                </p:column>
+
+                <sec:ifAnyGranted roles ="OS_GERENCIAR,ORDEM_SERVICO_GERENCIAR" >
+                    <p:column width="110" headerText="Ações" >
+
+                        <div class="actions">
+                            <h:commandLink rendered="#{item.statusOS eq 'F'}"
+                                           styleClass="btn icones" title="Ver ordem de serviço" action="#{osControle.doStartView}">
+                                <i class="fa fa-eye"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{osControle.vendaSelecionada}"/>
+                            </h:commandLink>
+
+                            <h:commandLink rendered="#{item.situacao eq 'A' and item.statusNegociacao eq 'OS' and item.statusOS ne 'F' and item.statusOS ne 'CC'}" styleClass="btn icones"
+                                           title="Alterar ordem de serviço" action="#{osControle.doStartAlterar}">
+                                <i class="fa fa-edit"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{osControle.vendaSelecionada}"/>
+                            </h:commandLink>
+
+                            <h:commandLink rendered="#{item.idDocumento ne null and item.idDocumento.documentoAnexoList.size()gt 0}"
+                                           styleClass="btn icones" title="Baixar imagens da ordem de serviço">
+                                <i class="fa fa-5x fa-cloud-download"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{osControle.vendaSelecionada}"/>
+                                <p:fileDownload value="#{osControle.baixarImagens()}"/>
+                            </h:commandLink>
+
+                            <p:commandLink title="Imprimir" class="btn icones" action="#{osControle.doShowPrintModal}">
+                                <i class="fa fa-print"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{osControle.vendaSelecionada}"/>
+                            </p:commandLink>
+
+                            <h:commandLink rendered="#{item.situacao eq 'A' and item.statusNegociacao eq 'OS' and item.statusOS eq 'AE'}"
+                                           styleClass="btn icones"
+                                           title="Iniciar execução"
+                                           action="#{osControle.doStartOS()}"  >
+                                <i class="fa fa-check"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{osControle.vendaSelecionada}"/>
+                            </h:commandLink>
+
+                            <p:commandLink title="Reabrir OS" class="btn icones" update="@form" action="#{osControle.reabrirOS()}"
+                                           rendered="#{osControle.podeReabrirOS(item)}">
+                                <i class="fa fa-refresh"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{osControle.vendaSelecionada}"/>
+                            </p:commandLink>
+
+                            <p:commandLink styleClass="btn icones" title="Cancelar OS" action="#{osControle.doStartCancelarOS()}"
+                                           rendered="#{item.situacao eq 'A' and item.statusOS eq 'AE' or item.statusOS eq 'EE'}">
+                                <i class="fa fa-times"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{osControle.vendaSelecionada}"/>
+                            </p:commandLink>
+
+                            <h:commandLink title="Auditoria" styleClass="btn icones" action="#{osControle.doShowAuditoria()}">
+                                <i class="fa fa-history"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{osControle.vendaSelecionada}"/>
+                            </h:commandLink>
+
+                        </div>
+
+                    </p:column>
+                </sec:ifAnyGranted>
+
+            </p:dataTable>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

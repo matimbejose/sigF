@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Nota fiscal de serviço"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Nota fiscal</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/notaFiscalServico/listaNotaFiscalServico.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteBack" action="/restrito/notaFiscalServico/listaNotaFiscalServico.xhtml" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="formButtons">
+            <p:row rendered="#{notaFiscalServicoControle.cancNota eq 'N'}">
+                <p:commandButton value="Gerar NFS" ajax="false" icon="fa fa-newspaper-o">
+                    <p:fileDownload  value="#{notaFiscalServicoControle.gerarNotaServico()}" />
+                </p:commandButton>
+
+                <p:commandButton id="btnEnviaXml" value="Enviar xml por email" update="msgResultado" icon="fa fa-envelope"
+                                 action="#{notaFiscalServicoControle.enviarXmlPorEmail()}"/>
+                <p:tooltip for="btnEnviaXml" value="#{notaFiscalServicoControle.nfsSelecionado.idCliente.email eq null or notaFiscalServicoControle.nfsSelecionado.idCliente.email eq ''? 'Email não informado para o cliente' : notaFiscalServicoControle.nfsSelecionado.idCliente.email}" position="top"/>
+            </p:row>
+        </ui:define>
+
+        <ui:define name="content">
+            <div class="row invoice-logo">
+                <div class="col-6">
+                    <p:row rendered="#{notaFiscalServicoControle.nfsSelecionado.situacao eq 'E'}">
+                        <p style="font-size: 18px">
+                            <span class="muted"> Número da nota fiscal serviço <strong>#{notaFiscalServicoControle.chaveFormatada()}</strong></span>
+                        </p>
+                    </p:row>
+
+                    <p:row rendered="#{notaFiscalServicoControle.nfsSelecionado.situacao eq 'C'}">
+                        <p style="font-size: 18px; color: red"><strong id="chaveAcesso"> #{notaFiscalServicoControle.chaveFormatada()}</strong>
+                            <span class="muted" style="color: red"> SEM VALIDADE - CANCELADA </span>
+                        </p>
+                    </p:row>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-4">
+                    <div class="card pb-2 h-100">
+                        <h5>Cliente</h5>
+                        <ul class="list-unstyled" >
+                            <li>
+                                <strong>Nome:</strong> #{notaFiscalServicoControle.nfsSelecionado.nomeCliente}
+                            </li>
+                            <li>
+                                <strong>CNPJ:</strong> #{notaFiscalServicoControle.nfsSelecionado.cpfCnpjCliente}
+                            </li>
+                            <li>
+                                <strong>Endereço:</strong> #{notaFiscalServicoControle.nfsSelecionado.enderecoCliente},  #{notaFiscalServicoControle.nfsSelecionado.numeroCliente}
+                            </li>
+                            <li>
+                                <strong>Bairro:</strong> #{notaFiscalServicoControle.nfsSelecionado.bairroCliente}
+                            </li>
+                            <li>
+                                <strong>Cidade:</strong> #{notaFiscalServicoControle.nfsSelecionado.cidadeCliente}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-4 invoice-payment">
+                    <div class="card pb-2 h-100">
+                        <h5>Dados da NFS</h5>
+                        <ul class="list-unstyled">
+                            <li>
+                                <strong>Número cliente:</strong> #{notaFiscalServicoControle.nfsSelecionado.numeroCliente}
+                            </li>
+                            <li>
+                                <strong>Situação:</strong> #{notaFiscalServicoControle.buscarSituacaoNota(notaFiscalServicoControle.nfsSelecionado)}
+                            </li>
+                            <li>
+                                <strong>Emissão:</strong>
+                                <h:outputText value="#{notaFiscalServicoControle.nfsSelecionado.dataEmissao}">
+                                    <f:convertDateTime pattern="dd/MM/yy HH:mm"/>
+                                </h:outputText>
+                            </li>
+                            <li>
+                                <strong>Competência:</strong>
+                                <h:outputText value="#{notaFiscalServicoControle.nfsSelecionado.competencia}">
+                                    <f:convertDateTime pattern="MM/yyyy"/>
+                                </h:outputText>
+                            </li>
+                            <li>
+                                <strong>Protocolo:</strong> #{notaFiscalServicoControle.nfsSelecionado.protocolo}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="card pb-2 h-100">
+                        <h5>Impostos NFS</h5>
+                        <ul class="list-unstyled">
+                            <li>
+                                <strong>Valor dos serviços:</strong>
+                                <h:outputText value="#{notaFiscalServicoControle.nfsSelecionado.valorTotal}">
+                                    <f:convertNumber currencySymbol="" type="currency" />
+                                </h:outputText>
+                            </li>
+                            <li>
+                                <strong>Valor do ISS retido:</strong>
+                                <h:outputText value="#{notaFiscalServicoControle.nfsSelecionado.valorIssRetido}">
+                                    <f:convertNumber currencySymbol="" type="currency" />
+                                </h:outputText>
+                            </li>
+                            <li>
+                                <strong>Valor do PIS:</strong>
+                                <h:outputText value="#{notaFiscalServicoControle.nfsSelecionado.valorPis}">
+                                    <f:convertNumber currencySymbol="" type="currency" />
+                                </h:outputText>
+                            </li>
+                            <li>
+                                <strong>Valor do INSS:</strong>
+                                <h:outputText value="#{notaFiscalServicoControle.nfsSelecionado.valorInss}">
+                                    <f:convertNumber currencySymbol="" type="currency" />
+                                </h:outputText>
+                            </li>
+                            <li>
+                                <strong>Valor do COFINS:</strong>
+                                <h:outputText value="#{notaFiscalServicoControle.nfsSelecionado.valorCofins}">
+                                    <f:convertNumber currencySymbol="" type="currency" />
+                                </h:outputText>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card my-3">
+                        <h5>Descrição</h5>
+                        <h:outputText value="#{notaFiscalServicoControle.nfsSelecionado.descricaoServico}"/>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <div class="card">
+                        <address>
+                            <strong>#{notaFiscalServicoControle.nfsSelecionado.idCliente.razaoSocial}</strong>
+                            <strong>#{notaFiscalServicoControle.nfsSelecionado.idCliente.nome}</strong>
+                            <br/> #{notaFiscalServicoControle.nfsSelecionado.idCliente.endereco.endereco} #{notaFiscalServicoControle.nfsSelecionado.idCliente.endereco.complemento}, #{notaFiscalServicoControle.nfsSelecionado.idCliente.endereco.numero}. #{notaFiscalServicoControle.nfsSelecionado.idCliente.endereco.bairro}
+                            <br/> #{notaFiscalServicoControle.nfsSelecionado.idCidadeCliente.descricao} / #{notaFiscalServicoControle.nfsSelecionado.idUFCliente.descricao}
+                            <br/> <strong>Telefone:</strong> <a href="mailto:#"> #{notaFiscalServicoControle.nfsSelecionado.idCliente.telefoneResidencial} </a>
+                            <br/> <strong>Email:</strong> <a href="mailto:#"> #{notaFiscalServicoControle.nfsSelecionado.idCliente.email} </a>
+                        </address>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="card" style="background-color: white !important;">
+                        <h5>
+                            <div style="padding-bottom: 5px">
+                                Subtotal:
+                                <b>
+                                    <h:outputText value="#{notaFiscalServicoControle.nfsSelecionado.valorTotal}">
+                                        <f:convertNumber currencySymbol="R$" type="currency" />
+                                    </h:outputText>
+                                </b>
+                            </div>
+
+                            <div style="padding-bottom: 5px">
+                                Desconto:
+                                <b>
+                                    <h:outputText value="#{notaFiscalServicoControle.nfsSelecionado.descontoCondicionado eq null ? 0 : notaFiscalServicoControle.nfsSelecionado.descontoCondicionado}">
+                                        <f:convertNumber currencySymbol="%" type="currency" />
+                                    </h:outputText>
+                                </b>
+                                <br/>
+                            </div>
+
+                            <div style="padding-bottom: 5px">
+                                Valor da nota:
+                                <b>
+                                    <h:outputText value="#{notaFiscalServicoControle.nfsSelecionado.valorTotal}">
+                                        <f:convertNumber currencySymbol="R$" type="currency" />
+                                    </h:outputText>
+                                </b>
+                            </div>
+                        </h5>
+                    </div>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-8">
+                    <p:outputPanel rendererType="true" rendered="#{notaFiscalServicoControle.cancNota eq 'S'}">
+                        <div class="card my-3">
+                            <h5>Cancelamento de NFSe</h5>
+                            <div class="row">
+                                <div class="col form-group form-md-line-input">
+                                    <p:selectOneMenu value="#{notaFiscalServicoControle.nfsSelecionado.codigoCancelamento}" styleClass="form-control"
+                                                     required="true" requiredMessage="Informe o motivo do cancelamento">
+                                        <f:selectItem itemLabel="-- Selecione o motivo do cancelamento --" noSelectionOption="true"/>
+                                        <f:selectItem itemLabel="Erro na emissão " itemValue="1" />
+                                        <f:selectItem itemLabel="Serviço não concluído" itemValue="2" />
+                                    </p:selectOneMenu>
+                                </div>
+                                <div class="col form-group form-md-line-input">
+                                    <p:selectOneMenu value="#{notaFiscalServicoControle.nfsSelecionado.cancelarParcelas}" styleClass="form-control">
+                                        <f:selectItem itemLabel="Cancelar parcelas vinculadas à conta" itemValue="S" />
+                                        <f:selectItem itemLabel="Desvincular parcelas da conta" itemValue="N" />
+                                    </p:selectOneMenu>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col"></div>
+                                <div class="col-auto">
+                                    <h:commandLink styleClass="btn btn-md" action="#{notaFiscalServicoControle.doFinishCancelar()}"
+                                                   value="Cancelar nota" onclick="return confirm('Tem certeza que deseja CANCELAR esta nota?');">
+                                        <i class="fa fa-ban"></i>
+                                    </h:commandLink>
+                                </div>
+                            </div>
+                        </div>
+                    </p:outputPanel>
+                </div>
+            </div>
+
+            <script type="text/javascript">
+                // <![CDATA[
+                chaveAcesso.innerHTML = chaveAcesso.innerHTML.split(' ').join('<div style="width: 5px;display: inline-block;"></div>');
+                chaveAcesso.addEventListener('click', evt => selectText(evt.target));
+                function selectText(containerid) {
+                    if (document.selection) { // IE
+                        var range = document.body.createTextRange();
+                        range.moveToElementText(containerid);
+                        range.select();
+                    } else if (window.getSelection) {
+                        var range = document.createRange();
+                        range.selectNode(containerid);
+                        window.getSelection().removeAllRanges();
+                        window.getSelection().addRange(range);
+                    }
+                }
+                // ]]>
+            </script>
+            <style>
+                ul {
+                    list-style: none;
+                    padding: 0 0 0 10px;
+                }
+            </style>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:sec="http://www.springframework.org/security/facelets/tags"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Compra"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Compra</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/compra/listaCompra.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <sec:ifAnyGranted roles ="COMPRA_GERENCIAR" >
+                <h:commandButton id="remoteAdd" action="#{compraControle.doStartAdd()}"/>
+                <h:commandButton id="remoteImport" action="#{compraControle.doStartImportarXML()}"/>
+            </sec:ifAnyGranted>
+        </ui:define>
+
+        <ui:define name="formButtons">
+            <p:commandButton type="button" value="Limpar filtros" onclick="clearDataTableFilters('tbl');"/>
+            <p:commandButton id="toggler" type="button" value="Colunas"/>
+            <p:columnToggler datasource="tbl" trigger="toggler"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <ui:include src="/WEB-INF/msgErro.xhtml"/>
+            <div class="layout-dashboard mb-3">
+                <div class="row">
+                    <div class="col intro-text">
+                        <span>
+                            Período de
+                            <p:calendar navigator="true" pattern="dd/MM/yyyy" styleClass="top-calendar m-0" value="#{compraControle.filtro.data.min}">
+                                <p:ajax event="dateSelect" update="tbl"/>
+                            </p:calendar>
+                            até
+                            <p:calendar navigator="true" pattern="dd/MM/yyyy" styleClass="top-calendar m-0" value="#{compraControle.filtro.data.max}">
+                                <p:ajax event="dateSelect" update="tbl"/>
+                            </p:calendar>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+            <p:dataTable value="#{compraControle.model}" emptyMessage="Nenhum registro encontrado." var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow" sortBy="#{item.prazoRecebimento}" sortOrder="descending">
+
+                <p:ajax event="page" listener="#{vendaControle.onPageChange}"/>
+
+                <p:column headerText="#" width="55" sortBy="#{item.id}" visible="false">
+                    <h:outputText value="#{item.id}"/>
+                </p:column>
+
+                <p:column headerText="Descrição" filterBy="#{item.descricao}">
+                    <f:facet name="filter">
+                        <p:inputText value="#{compraControle.filtro.descricao}" onchange="PF('tbl').filter()"/>
+                    </f:facet>
+                    <h:outputText value="#{item.idPlanoConta.descricao}"/>
+                </p:column>
+
+                <p:column headerText="Fornecedor" sortBy="#{item.idFornecedor.razaoSocial}" filterBy="#{item.fornecedor}">
+                    <f:facet name="filter">
+                        <p:selectOneMenu onchange="PF('tbl').filter()" styleClass="custom-filter" filter="true" filterMatchMode="contains"
+                                         value="#{compraControle.filtro.fornecedor}" converter="#{genericConverter}">
+                            <f:selectItem itemLabel="Todos" noSelectionOption="true"/>
+                            <f:selectItems value="#{fornecedorControle.fornecedores}" var="fornecedor"
+                                           itemLabel="#{fornecedor.razaoSocial}" itemValue="#{fornecedor}"/>
+                        </p:selectOneMenu>
+                    </f:facet>
+
+                    <h:outputText value="#{item.idFornecedor.razaoSocial}"/>
+                </p:column>
+
+                <p:column headerText="Parc."  width="100" style="text-align: right" filterBy="#{item.parcelas}">
+                    <f:facet name="filter">
+                        <p:inputNumber decimalPlaces="0" decimalSeparator="," thousandSeparator="." onchange="PF('tbl').filter()"
+                                       value="#{compraControle.filtro.parcelas}"/>
+                    </f:facet>
+                    <h:outputText value="#{item.numParcela}"/>
+                </p:column>
+
+                <p:column headerText="Valor" width="100" style="text-align: right" sortBy="#{item.valor}" filterBy="#{item.valor}">
+                    <f:facet name="filter">
+                        <p:inputNumber decimalPlaces="2" decimalSeparator="," thousandSeparator="." onchange="PF('tbl').filter()"
+                                       value="#{compraControle.filtro.valor}"/>
+                    </f:facet>
+                    <h:outputText value="#{item.valorTotal}">
+                        <f:convertNumber locale="pt_BR" type="currency"/>
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Pago" width="100" style="text-align: right" sortBy="#{item.idConta.valorPago}" >
+                    <h:outputText value="#{item.idConta.valorPago}">
+                        <f:convertNumber currencySymbol="R$" type="currency" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Venc." sortBy="#{item.prazoRecebimento}" width="100">
+                    <h:outputText value="#{item.prazoRecebimento}">
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Ativo" sortBy="#{item.situacao}" filterBy="#{item.ativo}" width="100">
+                    <f:facet name="filter">
+                        <p:selectOneMenu onchange="PF('tbl').filter()" styleClass="custom-filter"
+                                         value="#{compraControle.filtro.ativo}">
+                            <f:selectItem itemLabel="Todos" noSelectionOption="true"/>
+                            <f:selectItem itemLabel="Sim" itemValue="S"/>
+                            <f:selectItem itemLabel="Não" itemValue="N"/>
+                        </p:selectOneMenu>
+                    </f:facet>
+
+                    <h:outputText value="Sim" rendered="#{item.situacao eq 'A'}"/>
+                    <h:outputText value="Não" rendered="#{item.situacao eq 'C'}"/>
+                </p:column>
+
+                <p:column headerText="Situação" sortBy="#{item.situacao}" width="100">
+                    <h:outputText value="#{contaPagarControle.buscarSituacao(item.idConta.situacao)}"/>
+                </p:column>
+
+                <sec:ifAnyGranted roles ="COMPRA_GERENCIAR" >
+                    <p:column width="147" headerText="Ações" >
+
+                        <div class="actions">
+                            <h:commandLink rendered="#{item.situacao eq 'A'}" styleClass="btn btn-circle btn-icon-only btn-default icones" title="Alterar compra" action="#{compraControle.doStartAlterar()}"  >
+                                <i class="fa fa-edit"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{compraControle.compraSelecionado}"/>
+                            </h:commandLink>
+
+                            <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Emitir nota fiscal de devolução"
+                                           action="#{notaFiscalProdutoControle.doStartAdd()}"
+                                           rendered="#{!compraControle.compraPossuiNF(item) and item.NReferencia ne null and item.NReferencia ne ''}">
+                                <i class="fa fa-file-text"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{notaFiscalProdutoControle.compraSelecionada}"/>
+                            </h:commandLink>
+
+                            <ui:remove>
+                                <h:commandLink  styleClass="btn btn-circle btn-icon-only btn-default icones" title="Remover compra" action="#{compraControle.doFinishExcluir()}" onclick="return confirm('Tem certeza que deseja excluir esta compra?');" >
+                                    <i class="icon-trash"></i>
+                                    <f:setPropertyActionListener value="#{item}" target="#{compraControle.compraSelecionado}"/>
+                                </h:commandLink>
+                            </ui:remove>
+
+                            <h:commandLink  title="Cancelar compra" styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                            rendered="#{!compraControle.existeParcelaPaga(item) and item.situacao ne 'C'}" onclick="return confirm('Tem certeza que deseja cancelar esta compra?');"
+                                            action="#{compraControle.cancelarCompra()}" >
+                                <i class="fa fa-times"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{compraControle.compraSelecionado}"/>
+                            </h:commandLink>
+
+                            <ui:remove>
+                                <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Listar conta a pagar" action="#{controleMenu.doAcionarPagina('contaPagar/listaContaPagar.xhtml')}">
+                                    <i class="fa fa-upload"></i>
+                                    <f:setPropertyActionListener value="#{item}" target="#{contaPagarControle.filtro.compra}"/>
+                                </h:commandLink>
+                            </ui:remove>
+
+                            <h:commandLink  title="Auditoria" styleClass="btn btn-circle btn-icon-only btn-default icones" action="#{compraControle.doShowAuditoria()}" >
+                                <i class="fa fa-history"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{compraControle.compraSelecionado}"/>
+                            </h:commandLink>
+
+                        </div>
+
+                    </p:column>
+                </sec:ifAnyGranted>
+
+            </p:dataTable>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Inventário"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Estoque</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/estoque/listaEstoque.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteProcess" action="#{estoqueControle.doStartProcessamento()}"/>
+            <h:commandButton id="remoteBack" action="listaEstoque.xhtml" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <h1>Selecione o arquivo CSV com as informações atualizadas dos produtos</h1>
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <p:fileUpload value="#{estoqueControle.file}" mode="simple" required="true" requiredMessage="Informe o arquivo."
+                                          invalidFileMessage="Informe um arquivo csv" skinSimple="true" label="Selecionar arqquivo CSV" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+</html>

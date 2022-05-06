@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <f:metadata>
+        <f:event listener="#{fluxoCaixaControle.init()}" type="preRenderView"/>
+    </f:metadata>
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Fluxo de Caixa"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Contábil</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/fluxoCaixa/listaFluxoCaixa.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes"/>
+
+        <ui:define name="content">
+            <ui:include src="/WEB-INF/msgErro.xhtml"/>
+            <style>
+                .money.empty {
+                    text-align: center;
+                }
+                .ui-treetable.ui-widget > table > tbody td {
+                    padding: 3px 9px;
+                    border: 1px solid rgba(0, 0, 0, 0.08);
+                }
+                .table.table-light > tbody > tr > td  {
+                    font-size: 11px !important;
+                }
+                table {
+                    width: 100%;
+                }
+                td {
+                    text-align: center;
+                    color: black;
+                }
+                th {
+                    text-align: center;
+                    color: white;
+                }
+                tr.uppercase.azul > th {
+                    background-color: #305496;
+                }
+                table > tbody > tr > td:first-child {
+                    background-color: #3598DC;
+                    color: white;
+                    font-weight: bold;
+                }
+                table > tbody > tr > td:not(:first-child) {
+                    background-color: #ECF0F1;
+                }
+                tr.uppercase.azul > th {
+                    width: calc(100% / 16);
+                }
+                tr.uppercase.azul > th:first-child {
+                    width: calc(100% / 16 * 3);
+                }
+                table.table th, table.table td {
+                    padding: 15px 5px;
+                }
+                .ui-treetable td {
+                    font-size: 10px;
+                }
+                .ui-treetable td.header {
+                    text-align: left;
+                }
+                .ui-treetable tbody > tr > th:not(.show-arrow) > span {
+                    display: none;
+                }
+                .ui-treetable-toggler:before {
+                    color: white;
+                }
+                .ui-treetable.ui-widget {
+                    width: auto;
+                }
+                table[role=treegrid] > thead th {
+                    width: 46px;
+                    text-align: center;
+                }
+                table[role=treegrid] > thead th:first-child {
+                    width: 300px;
+                }
+                table[role=treegrid] > tbody > tr > td.number {
+                    padding: 3px 0;
+                }
+                table[role=treegrid] > tbody > tr.row-d > td {
+                    background-color: #E7505A;
+                }
+                table[role=treegrid] > tbody > tr.row-d > td:not(:first-child) {
+                    background-color: #E7505A66;
+                }
+                table[role=treegrid] > tbody > tr.row-r > td {
+                    background-color: #32C5D2;
+                }
+                table[role=treegrid] > tbody > tr.row-r > td:not(:first-child) {
+                    background-color: #32C5D266;
+                }
+                body .ui-treetable .ui-treetable-data > tr > td .ui-treetable-toggler:hover {
+                    background: transparent;
+                    box-shadow: 0px 0px 0 2.5px #F0F3F666 inset;
+                }
+                body .ui-treetable .ui-treetable-data > tr > td > a {
+                    color: black;
+                    font-size: 10px;
+                    text-decoration: underline;
+                }
+            </style>
+            <div class="card">
+                <div class="row mb-3">
+                    <div class="col">
+                        <p:spinner id="minMax" value="#{fluxoCaixaControle.filtro.ano}" min="1900" max="3000"/>
+                    </div>
+                    <div class="col md-4">
+                        <div class="form-group form-md-line-input">
+                            <p:selectOneMenu value="#{fluxoCaixaControle.centroCustoSelecionado}" panelStyle="width:180px" effect="fade"
+                                             var="t" filter="true" filterMatchMode="startsWith" converter="#{genericConverter}">
+                                <p:column>
+                                    <h:outputText value="#{t.descricao}"/>
+                                </p:column>
+
+                                <f:selectItem itemLabel="-- Todos os centros de custo -- " noSelectionOption="true"/>
+                                <f:selectItems value="#{centroCustoControle.centroCustos}" var="centroCusto"
+                                               itemLabel="#{centroCusto.descricao}" itemValue="#{centroCusto}"/>
+                            </p:selectOneMenu>
+                        </div>
+                    </div>
+                    <div class="col ml-auto">
+                        <div class="row justify-content-end pr-3">
+                            <p:commandButton  value="Atualizar" update="tabela, tabela1, @next" action="#{fluxoCaixaControle.obterFluxoCaixa()}"/>
+                            <p:commandButton value="Gerar relatório" ajax="false" styleClass="ml-2" rendered="false">
+                                <p:fileDownload value="#{fluxoCaixaControle.gerarRelatorioFluxoCaixa()}"/>
+                            </p:commandButton>
+                            <p:commandButton value="Gerar relatório" ajax="false" styleClass="ml-2">
+                                <p:fileDownload value="#{fluxoCaixaControle.gerarRelatorioFluxoCaixaExcel()}"/>
+                            </p:commandButton>
+                        </div>
+                    </div>
+                </div>
+
+                <p:treeTable value="#{fluxoCaixaControle.fluxoCaixa}" var="fc" styleClass="card p-0" id="tabela" rowStyleClass="row-#{fc.type}" style="overflow-x: scroll;">
+                    <p:columns value="#{fluxoCaixaControle.headerText}" var="i" headerText="#{i}" columnIndexVar="c" styleClass="#{fc.items[c].style}">
+                        <h:outputText value="#{fc.items[c].value}" rendered="#{(fc.type ne 'r' and fc.type ne 'd') or c eq 0 or c eq 13 or fc.planoConta eq '' or fc.items[c].value eq '-'}"/>
+                        <p:row rendered="#{c ne 0 and c ne 13 and fc.planoConta ne '' and fc.items[c].value ne '-'}">
+                            <p:commandLink value="#{fc.items[c].value}" rendered="#{fc.type eq 'r'}" ajax="false">
+                                <p:fileDownload value="#{relatorioAnaliseRecebimentoControle.baixarExcel(fluxoCaixaControle.filtro.ano, c, fc.planoConta, fluxoCaixaControle.centroCustoSelecionado)}"/>
+                            </p:commandLink>
+                            <p:commandLink value="#{fc.items[c].value}" rendered="#{fc.type eq 'd'}" ajax="false">
+                                <p:fileDownload value="#{relatorioAnalisePagamentoControle.baixarExcel(fluxoCaixaControle.filtro.ano, c, fc.planoConta,  fluxoCaixaControle.centroCustoSelecionado)}"/>
+                            </p:commandLink>
+                        </p:row>
+                    </p:columns>
+                </p:treeTable>
+            </div>
+            <div class="card card-w-title">
+                <h5>Análise de conta a pagar / receber  e sua necessidade de caixa para cada mês</h5>
+                <p:outputPanel id="tabela1">
+                    <div class="table-scrollable table-scrollable-borderless">
+                        <table class="table table-light">
+                            <thead>
+                                <tr class="uppercase azul">
+                                    <th>CONTAS</th>
+                                    <th>Jan</th>
+                                    <th>Fev</th>
+                                    <th>Mar</th>
+                                    <th>Abr</th>
+                                    <th>Mai</th>
+                                    <th>Jun</th>
+                                    <th>Jul</th>
+                                    <th>Ago</th>
+                                    <th>Set</th>
+                                    <th>Out</th>
+                                    <th>Nov</th>
+                                    <th>Dez</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tr>
+                                <td style="background-color:#32C5D2 ;">A receber (R$)</td>
+                                <p:repeat value="#{fluxoCaixaControle.meses}" var="i">
+                                    <td>#{fluxoCaixaControle.obtervalorCaixa("r", i)}</td>
+                                </p:repeat>
+                            </tr>
+                            <tr>
+                                <td style="background-color: #E7505A;">A pagar (R$)</td>
+                                <p:repeat value="#{fluxoCaixaControle.meses}" var="i">
+                                    <td>#{fluxoCaixaControle.obtervalorCaixa("d", i)}</td>
+                                </p:repeat>
+                            </tr>
+                            <tr>
+                                <td>Necessidade de caixa (R$)</td>
+                                <p:repeat value="#{fluxoCaixaControle.meses}" var="i">
+                                    <td style='background-color: #ECF0F1; color:black;'>
+                                        #{fluxoCaixaControle.obtervalorCaixa("c", i)}
+                                    </td>
+                                </p:repeat>
+                            </tr>
+
+                        </table>
+                    </div>
+
+                </p:outputPanel>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/templateModal.xhtml">
+
+        <ui:define name="title">Selecione a forma de pagamento para imprimir o orçamento</ui:define>
+
+        <ui:define name="content">
+            <div class="row mb-3">
+                <div class="col">
+                    <p:outputLabel value="Número da NFS"/>
+                    <div class="input-group">
+                        <div class="input-group-append">
+                            <p:inputText value="#{contaReceberControle.contaParcelaSelecionada.idNFS.numeroNotaFiscal}" id="numero"/>
+                            <p:commandButton actionListener="#{contaReceberControle.loadNFS()}" icon="fa fa-search" process="@this, numero" update="dadosNFS"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p:outputPanel id="dadosNFS">
+                <div class="row mb-3">
+                    <div class="col">
+                        <p:outputLabel value="Cliente"/>
+                        <p:inputText value="#{contaReceberControle.contaParcelaSelecionada.idNFS.idCliente.nome}" disabled="true"/>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <p:outputLabel value="Descricao"/>
+                        <p:inputTextarea value="#{contaReceberControle.contaParcelaSelecionada.idNFS.descricaoServico}" disabled="true"/>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <p:outputLabel value="Data"/>
+                        <p:calendar navigator="true" value="#{contaReceberControle.contaParcelaSelecionada.idNFS.competencia}" disabled="true"/>
+                    </div>
+                    <div class="col">
+                        <p:outputLabel value="Valor"/>
+                        <p:inputNumber value="#{contaReceberControle.contaParcelaSelecionada.idNFS.valorTotal}" disabled="true"
+                                       thousandSeparator="." decimalSeparator="," decimalPlaces="2"/>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col text-right">
+                        <p:commandButton value="Salvar" action="#{contaReceberControle.saveBond()}" process="@this" update="msgResultado"/>
+                        <p:spacer width="10"/>
+                        <p:commandButton value="Cancelar" action="#{contaReceberControle.cancelBond()}" process="@this"/>
+                    </div>
+                </div>
+            </p:outputPanel>
+        </ui:define>
+
+    </ui:composition>
+</html>

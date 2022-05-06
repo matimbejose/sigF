@@ -1,0 +1,113 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Curso interesse"/>
+        <ui:define name="title">#{title}</ui:define>
+        <ui:define name="viewname">
+            <li>##SECTION_NAME##</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/solicitanteHistorico/listaSolicitanteHistorico.xhtml"> #{title}</p:link></li>
+        </ui:define>
+            
+
+        <ui:define name="content">
+
+
+            <h:messages class="alertMessage" id="msgResultado" errorClass="alert alert-danger" />
+            <div class="row">
+                <div class="col-md-12 ">
+                    <!-- BEGIN SAMPLE FORM PORTLET-->
+                    <div class="portlet light bordered">
+                        <div class="portlet-title">
+                            <div class="actions">
+                            </div> 
+                            <div class="tools">
+                            </div>
+                        </div>
+                        <h:form id="form" acceptcharset="ISO-8859-1" role="form">
+                            <div class="portlet-body form">
+                                <div class="form-body">
+                                    <div class="row">
+                                        <div class="col-md-12 col-sm-12">
+                                            <div class="portlet light bordered box portlet-h6">
+                                                <div class="portlet-title">
+                                                    <div class="caption">
+                                                        <i class="fa fa-cogs"></i>Solicitante: #{solicitanteHistoricoControle.solicitanteSelecionado.nome} </div>
+                                                </div>
+                                                <div class="portlet-body">
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="form-group form-md-line-input">
+                                                                <label class="control-label">Turma</label>
+                                                                <p:selectOneMenu id="somTurma" value="#{solicitanteHistoricoControle.solicitanteHistoricoSelecionado.idTurma}" 
+                                                                                 panelStyle="width:180px" effect="fade" styleClass="prime-min-width"
+                                                                                 var="t" style="width:160px;" filter="true" filterMatchMode="contains"
+                                                                                 converter="#{genericConverter}">
+                                                                    <p:column>
+                                                                        <h:outputText value="#{t.descricao}" />
+                                                                    </p:column>
+
+                                                                    <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                                    <f:selectItems value="#{solicitanteHistoricoControle.turmas}"  var="t" itemLabel="#{t.descricao}" itemValue="#{t}"/>
+                                                                </p:selectOneMenu>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group form-md-line-input">
+                                                                <label class="control-label"><span class="required">* </span> Status</label>
+                                                                <p:selectOneMenu  value="#{solicitanteHistoricoControle.solicitanteHistoricoSelecionado.situacaoSolicitante}" 
+                                                                                  required="true" 
+                                                                                  requiredMessage="Informe o status do solicitante">
+                                                                    <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                                    <f:selectItem itemLabel="Solicitante" itemValue="S" />
+                                                                    <f:selectItem itemLabel="Interessado" itemValue="I" />
+                                                                    <f:selectItem itemLabel="Interessado a confirmar" itemValue="C" />
+                                                                    <f:selectItem itemLabel="Interessadíssimo" itemValue="D" />
+                                                                    <f:selectItem itemLabel="Não tem interesse" itemValue="N" />
+                                                                    <f:selectItem itemLabel="Matrícula efetivada" itemValue="M" />
+                                                                </p:selectOneMenu >
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="form-group form-md-line-input">
+                                                                <label class="control-label"><span class="required">* </span>Data do contato</label>
+                                                                <p:calendar navigator="true" required="true" requiredMessage="Informe a data do contato" mask="true" 
+                                                                            maxdate="#{solicitanteHistoricoControle.hoje}" value="#{solicitanteHistoricoControle.solicitanteHistoricoSelecionado.data}" pattern="dd/MM/yyyy"/>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group form-md-line-input">
+                                                                <label class="control-label"><span class="required">* </span> Comentário</label>
+                                                                <p:inputText value="#{solicitanteHistoricoControle.solicitanteHistoricoSelecionado.comentario}"
+                                                                             styleClass="form-control" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <h:commandButton action="#{solicitanteHistoricoControle.doFinishAdd()}"  styleClass="btn blue " value="Salvar" />
+                                <h:commandButton action="listaSolicitanteHistorico.xhtml" immediate="true" styleClass="btn default" value="Cancelar" />
+                            </div>
+                        </h:form>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

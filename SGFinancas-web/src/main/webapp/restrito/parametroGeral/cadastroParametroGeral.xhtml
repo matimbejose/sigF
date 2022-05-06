@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Parâmetros gerais"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Cadastro</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/parametroGeral/cadastroParametroGeral.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteSave" action="#{parametroGeralControle.doFinishAdd()}"/>
+            <h:commandButton id="remoteCancel" action="#{parametroGeralControle.doDiscartChanges()}"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <div class="card p-0">
+                <p:tabView>
+                    <p:tab title="Geral">
+                        <div class="row">
+                            <div class="col-4 form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Prazo de uso sem comprar o sistema"/>
+                                <p:inputNumber value="#{parametroGeralControle.parametroGeralSelecionado.prazoUsarSemComprar}" decimalPlaces="0"/>
+                            </div>
+                        </div>
+                    </p:tab>
+                    <p:tab title="Pagamento">
+                        <p:outputLabel for="@next" value="Serviço de pagamento padrão"/>
+                        <p:selectOneMenu value="#{parametroGeralControle.parametroGeralSelecionado.meioPagamentoPadrao}">
+                            <f:selectItem itemLabel="Getnet" itemValue="getnet"/>
+                            <f:selectItem itemLabel="Fitpag" itemValue="fitpag"/>
+                        </p:selectOneMenu>
+                        <hr/>
+                        <div class="row">
+                            <div class="col">
+                                <h5>Getnet</h5>
+                                <div class="row">
+                                    <div class="col-12 form-group form-md-line-input mb-4">
+                                        <p:outputLabel for="@next" value="URL pagamento produção"/>
+                                        <p:inputText value="#{parametroGeralControle.parametroGeralSelecionado.callbackProducao}"/>
+                                    </div>
+                                    <div class="col-12 form-group form-md-line-input mb-4">
+                                        <p:outputLabel for="@next" value="URL pagamento homologação"/>
+                                        <p:inputText value="#{parametroGeralControle.parametroGeralSelecionado.callbackHomologacao}"/>
+                                    </div>
+                                    <div class="col-4 form-group form-md-line-input">
+                                        <p:outputLabel for="@next" value="Taxa Getnet"/>
+                                        <p:inputNumber value="#{parametroGeralControle.parametroGeralSelecionado.taxaGetnet}" symbol="%" symbolPosition="s"
+                                                       thousandSeparator="." decimalSeparator="," decimalPlaces="2"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <h5>Fitpag</h5>
+                                <small>Configurações da Fitpag no server.properties</small>
+                            </div>
+                        </div>
+                    </p:tab>
+                    <p:tab title="Email de cadastro">
+                        <div class="row">
+                            <div class="col form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Corpo do email"/>
+                                <p:textEditor value="#{parametroGeralControle.parametroGeralSelecionado.corpoEmailCadastro}" allowImages="false" height="300"/>
+                            </div>
+                            <div class="col-4 form-group form-md-line-input">
+                                <p:dataTable value="#{parametroGeralControle.variaveisEmail}" var="ve"
+                                             styleClass="card p-0 ui-datatable-striped ui-datatable-sm ui-datatable-gridlines">
+                                    <p:column headerText="Variável">
+                                        #{ve.name}
+                                    </p:column>
+                                    <p:column headerText="Conteúdo">
+                                        #{ve.value}
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <p:fileUpload fileUploadListener="#{parametroGeralControle.setPart}" mode="advanced" id="fileUpload"
+                                              multiple="true" style="display: none;" auto="true" process="@this" update="fileList"/>
+                                <p:dataTable value="#{parametroGeralControle.listaAnexos}" var="arquivo" id="fileList" emptyMessage="Nenhum arquivo enviado."
+                                             styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+                                    <f:facet name="header">
+                                        Anexos que serão enviados junto com o email de cadastro
+                                        <p:commandButton onclick="Array.from(document.querySelectorAll('.ui-fileupload'))/* Busca os widgets p:fileUpload */
+                                                    .filter(element => element.id.indexOf(':fileUpload') >= 0)[0]/* Pega o que tiver o ID correto */
+                                                    .querySelector('input[type=file]')/* Busca o input nele e dispara um clique */
+                                                    .click();
+                                                return false;" value="Adicionar" class="pull-right" rendered="#{!inativo}"/>
+                                        <div class="clearfix"></div>
+                                    </f:facet>
+                                    <p:column headerText="Nome do arquivo">
+                                        <h:outputText value="#{arquivo.nome}" title="#{arquivo.nome}"/>
+                                    </p:column>
+                                    <p:column headerText="Data do upload">
+                                        <h:outputText value="#{arquivo.dataEnvio}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column headerText="Usuário">
+                                        <h:outputText value="#{arquivo.nomeUsuarioEnvio}" title="#{arquivo.nomeUsuarioEnvio}"/>
+                                    </p:column>
+                                    <p:column headerText="" style="width: 16px;text-align: center;">
+                                        <f:facet name="header">
+                                            <i class="fa fa-arrow-down" title="Baixar arquivos"></i>
+                                        </f:facet>
+                                        <p:commandLink title="Baixar arquivo" ajax="false" class="btn btn-circle btn-icon-only btn-default icones" immediate="true">
+                                            <i class="fa fa-arrow-down"></i>
+                                            <p:fileDownload value="#{documentoControle.downloadAnexo(arquivo)}"/>
+                                        </p:commandLink>
+                                    </p:column>
+                                    <p:column headerText="" style="width: 16px;" rendered="#{!inativo}">
+                                        <f:facet name="header">
+                                            <p:commandLink action="#{parametroGeralControle.removerArquivos()}" title="Remover todos os arquivos" class="btn btn-circle btn-default btn-xs"
+                                                           update="fileList" style="padding: 0;" immediate="true">
+                                                <i class="icon-trash"></i>
+                                            </p:commandLink>
+                                        </f:facet>
+                                        <p:commandLink action="#{parametroGeralControle.removerArquivo(arquivo)}" title="Remover arquivo" class="btn btn-circle btn-default btn-xs"
+                                                       update="fileList" style="padding: 0;" immediate="true">
+                                            <i class="icon-trash"></i>
+                                        </p:commandLink>
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                        </div>
+                    </p:tab>
+                    <p:tab title="server.properties">
+                        <p:dataTable value="#{parametroGeralControle.listaServerProperties}" var="item" emptyMessage="Nenhum parâmetro registrado."
+                                     rows="#{parametroGeralControle.listaServerProperties.size()}" id="tbl" widgetVar="tbl" style="margin: -1rem;"
+                                     styleClass="ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+                            <f:facet name="header">
+                                <div class="pull-right">
+                                    <p:commandButton action="#{parametroGeralControle.updateList()}" value="Atualizar listagem" update="tbl"/>
+                                </div>
+                                <div class="clearfix"></div>
+                            </f:facet>
+
+                            <p:column headerText="Chave">
+                                <h:outputText value="#{item.name}"/>
+                            </p:column>
+
+                            <p:column headerText="Valor">
+                                <h:outputText value="#{item.value}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
+                </p:tabView>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

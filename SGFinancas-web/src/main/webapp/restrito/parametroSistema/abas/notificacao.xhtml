@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <div class="form-body">
+        <div class="row align-items-end">
+            <div class="col-12">
+                <div class="form-group form-md-line-input">
+                    <label class="control-label">Notificações por email (Tecle enter para adicionar outro email)</label>
+                    <p:chips value="#{parametroSistemaControle.emails}"/>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="form-group form-md-line-input">
+                    <label class="control-label">Notificações por SMS (Tecle enter para adicionar outro número)</label>
+                    <p:chips value="#{parametroSistemaControle.notificacaoSmsNumeros}"/>
+                </div>
+            </div>
+        </div>
+        <hr/>
+        <div class="row">
+            <div class="col-6">
+                <p:tabView>
+                    <p:tab title="Contas vencendo">
+                        <div class="row align-items-end">
+                            <div class="col-4">
+                                <div class="form-group form-md-line-input">
+                                    <label class="control-label">Prazo de notificação</label>
+                                    <p:selectOneMenu value="#{parametroSistemaControle.parametroSistemaSelecionado.prazoNotificacao}">
+                                        <f:selectItem itemLabel="15 dias" itemValue="15"/>
+                                        <f:selectItem itemLabel="10 dias" itemValue="10"/>
+                                        <f:selectItem itemLabel="5 dias" itemValue="5"/>
+                                        <f:selectItem itemLabel="2 dias" itemValue="2"/>
+                                        <f:selectItem itemLabel="1 dias" itemValue="1"/>
+                                    </p:selectOneMenu>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="form-group form-md-line-input">
+                                    <label class="control-label">Enviar notificação por email</label>
+                                    <p:selectOneMenu value="#{parametroSistemaControle.parametroSistemaSelecionado.enviaNotificacaoContas}">
+                                        <f:selectItem itemLabel="Sim" itemValue="S"/>
+                                        <f:selectItem itemLabel="Não" itemValue="N"/>
+                                    </p:selectOneMenu>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="form-group form-md-line-input">
+                                    <label class="control-label">Enviar notificação por SMS</label>
+                                    <p:selectOneMenu value="#{parametroSistemaControle.parametroSistemaSelecionado.notificacaoSmsEnviar}">
+                                        <f:selectItem itemLabel="Sim" itemValue="S"/>
+                                        <f:selectItem itemLabel="Não" itemValue="N"/>
+                                    </p:selectOneMenu>
+                                </div>
+                            </div>
+                        </div>
+                    </p:tab>
+                </p:tabView>
+            </div>
+        </div>
+    </div>
+
+</html>

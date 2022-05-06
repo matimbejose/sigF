@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <f:metadata >
+        <f:event listener="#{usuarioControle.controleMenu.setMenuRotinaAgenda()}" type="preRenderView" />
+    </f:metadata>
+    
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Calendário"/>
+        <ui:define name="title">#{title}</ui:define>
+        <ui:define name="viewname">
+            <li>##SECTION_NAME##</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/seguranca/listaPerfil.xhtml"> #{title}</p:link></li>
+        </ui:define>
+            
+
+        <ui:define name="content">
+
+            <h:form>
+                <div class="row">
+                    <div class="col-md-12">
+                        <!-- BEGIN EXAMPLE TABLE PORTLET-->
+                        <div class="portlet light bordered">
+                            <div class="portlet-title">
+
+                                <div class="caption">
+                                    <i class="fa fa-calendar"></i>Meus compromissos
+                                </div>
+                                <div class="actions">
+
+                                    <a href=""  title="Novo evento" class="btn btn-default btn-sm">
+                                        <i class="fa fa-plus"></i> Novo </a>                    
+                                </div>
+                            </div>
+
+                            <div class="portlet-body form">
+                                <div class="form-body">
+
+                                    <div class="row">
+                                        <div class="col-md-12">
+
+                                            <p:schedule id="schedule"  value="#{calendarioControle.eventModel}" timeZone="GMT-3">
+
+                                                <!--
+                                                <p:ajax event="dateSelect" listener="#{scheduleView.onDateSelect}" update="eventDetails" oncomplete="PF('eventDialog').show();" />
+                                                <p:ajax event="eventSelect" listener="#{scheduleView.onEventSelect}" update="eventDetails" oncomplete="PF('eventDialog').show();" />
+                                                <p:ajax event="eventMove" listener="#{scheduleView.onEventMove}" update="messages" />
+                                                <p:ajax event="eventResize" listener="#{scheduleView.onEventResize}" update="messages" />
+                                                -->
+                                            </p:schedule>
+
+
+
+                                        </div>
+                                    </div>
+
+                                </div>                            
+                            </div>                            
+
+                        </div>
+                    </div>
+                </div>
+            </h:form>
+
+        </ui:define>
+
+    </ui:composition>
+</html>
+

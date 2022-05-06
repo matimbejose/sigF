@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Transferência"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Financeiro</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/transferenciaConta/listaTransferenciaConta.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteSave" action="#{transferenciaControle.doFinishAdd()}"/>
+            <h:commandButton id="remoteCancel" action="listaTransferenciaConta.xhtml" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <h1>Cadastro</h1>
+            <div class="form-body">
+                <div class="card">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label"><span class="required"> * </span>Conta bancária de origem</label>
+                                <p:selectOneMenu  id="contaOrigem" value="#{transferenciaControle.idContaBancariaOrigem}"
+                                                  panelStyle="width:180px" effect="fade"
+                                                  var="t" style="width:160px" filter="true" filterMatchMode="startsWith"
+                                                  required = "true"
+                                                  requiredMessage="Favor informar uma conta bancária de origem"
+                                                  converter="#{genericConverter}">
+                                    <p:column>
+                                        <h:outputText value="#{t.descricao}" />
+                                    </p:column>
+
+                                    <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                    <f:selectItems value="#{transferenciaControle.listContaOrigem}"  var="contaBancaria" itemLabel="#{contaBancaria.descricao}" itemValue="#{contaBancaria}">
+                                    </f:selectItems>
+                                    <p:ajax event="change" process="@this" update="contaDestino"/>
+                                </p:selectOneMenu>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label"><span class="required"> * </span>Conta bancária de destino</label>
+                                <p:selectOneMenu  id = "contaDestino" value="#{transferenciaControle.idContaBancariaDestino}"
+                                                  panelStyle="width:180px" effect="fade"
+                                                  var="t" style="width:160px" filter="true" filterMatchMode="startsWith"
+                                                  disabled="#{transferenciaControle.idContaBancariaOrigem eq null}"
+                                                  required = "true"
+                                                  requiredMessage="Favor informar uma conta bancária de destino"
+                                                  converter="#{genericConverter}">
+                                    <p:column>
+                                        <h:outputText value="#{t.descricao}" />
+                                    </p:column>
+
+                                    <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                    <f:selectItems value="#{transferenciaControle.listDestinoPreenchida}"  var="contaBancaria" itemLabel="#{contaBancaria.descricao}" itemValue="#{contaBancaria}">
+                                    </f:selectItems>
+                                    <p:ajax event="change" process="@this" update="contaOrigem"/>
+                                </p:selectOneMenu>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label"><span class="required">* </span>Valor de transferência</label>
+                                <p:inputNumber value="#{transferenciaControle.transferenciaSelecionada.valorTransferencia}"
+                                               required="true" requiredMessage="Informe o valor de transferência"
+                                               symbol="R$ " decimalSeparator="," thousandSeparator="." decimalPlaces="2" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label"> <span class="required"> * </span>Data da transferência</label>
+                                <p:calendar navigator="true" id="dataInicio" value="#{transferenciaControle.transferenciaSelecionada.dataTransferencia}" pattern="dd/MM/yyyy" mask="true"
+                                            required="true" maxdate="#{transferenciaControle.dataHoje}" requiredMessage="Informe a data da transferência."/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label">Observação</label>
+                                <p:inputText value="#{transferenciaControle.transferenciaSelecionada.observacao}"  styleClass="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

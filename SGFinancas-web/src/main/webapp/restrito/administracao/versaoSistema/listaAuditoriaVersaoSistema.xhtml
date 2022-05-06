@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite/components"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/restrito/generic/auditoria.xhtml">
+        <ui:define name="remotes">
+            <h:commandButton id="remoteBack" action="listaVersaoSistema.xhtml"/>
+        </ui:define>
+
+        <ui:param name="title" value="Versão do sistema"/>
+        <ui:param name="descricaoMenu" value="Versão do sistema"/>
+        <ui:param name="caminhoAuditoria" value="/restrito/adminsitracao/versaoSistema/listaAuditoriaVersaoSistema.xhtml"/>
+        <ui:param name="objetoSelecionado" value="#{versaoSistemaControle.versaoSistemaSelecionado.versao}"/>
+
+        <ui:param name="model" value="#{versaoSistemaControle.dadosAuditoria}"/>
+        <ui:define name="colunas">
+            <p:column headerText="Versão" sortBy="#{item[0].versao}">
+                <h:outputText value="#{item[0].versao}">
+                </h:outputText>
+            </p:column>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

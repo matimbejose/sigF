@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <f:metadata>
+        <f:event listener="#{vendaClienteControle.preecherData() }" type="preRenderView" />
+    </f:metadata>
+
+    <ui:composition template="/WEB-INF/templateReport.xhtml">
+
+        <ui:param name="title" value="Relatório de produtos por cliente"/>
+
+        <ui:param name="link" value="/restrito/relatorio/listaVendaCliente.xhtml"/>
+
+        <ui:param name="fileDownload" value="#{vendaClienteControle.gerarRelatorioVendasPorCliente()}"/>
+
+        <ui:define name="config">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group form-md-line-input">
+                        <label class="control-label">Cliente</label>
+                        <p:selectOneMenu id="auto4" value="#{vendaClienteControle.clienteSelecionado}"
+                                         panelStyle="width:180px" effect="fade"
+                                         var="t" style="width:160px" filter="true" filterMatchMode="startsWith"
+                                         converter="#{genericConverter}">
+                            <p:column>
+                                <h:outputText value="#{t.nome}" />
+                            </p:column>
+                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                            <f:selectItems value="#{clienteControle.clientes}"  var="cliente" itemLabel="#{cliente.nome}" itemValue="#{cliente}"/>
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="control-label"> <span class="required"> * </span>Início do periodo</label>
+                        <p:calendar navigator="true" value="#{vendaClienteControle.dataInicio}" pattern="dd/MM/yyyy"
+                                    required="true"
+                                    requiredMessage="Favor informar uma data para início do período."/>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="control-label"> <span class="required"> * </span>Fim do periodo</label>
+                        <p:calendar navigator="true" value="#{vendaClienteControle.dataFim}" pattern="dd/MM/yyyy"
+                                    required="true"
+                                    requiredMessage="Favor informar uma data para final do período."/>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

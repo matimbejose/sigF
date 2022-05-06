@@ -1,0 +1,40 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/restrito/generic/auditoria.xhtml">
+        <ui:define name="remotes">
+            <h:commandButton id="remoteBack" action="listaContratoFornecedor.xhtml"/>
+        </ui:define>
+
+        <ui:param name="title" value="Contrato"/>
+        <ui:param name="descricaoMenu" value="Compra"/>
+        <ui:param name="caminhoAuditoria" value="/restrito/contratoSaida/listaAuditoriaContratoFornecedor.xhtml"/>
+        <ui:param name="objetoSelecionado" value="Contrato"/>
+
+        <ui:param name="model" value="#{contratoFornecedorControle.dadosAuditoria}"/>
+
+        <ui:define name="colunas">
+
+            <p:column headerText="Data de início do contrato" style="text-align: right">
+                <h:outputText value="#{item[0].dataInicio}" >
+                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                </h:outputText>
+            </p:column>
+
+            <p:column headerText="Data de fim do contrato" style="text-align: right">
+                <h:outputText value="#{item[0].dataFim}" >
+                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                </h:outputText>
+            </p:column>
+
+        </ui:define>
+
+    </ui:composition>
+
+
+</html>

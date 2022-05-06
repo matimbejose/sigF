@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition template="/WEB-INF/templateClean.xhtml">
+
+        <ui:define name="title">SG Finanças - Acesso negado</ui:define>
+
+        <ui:define name="content">
+            <div class="row">
+                <div class="col">
+                    <div class="login-content" style="min-height: 300px;">
+                        <h1>Acesso negado!</h1>
+                        <span>Você não tem permissão para acessar essa página.</span>
+                        <div class="row mt-2" style="position: absolute;bottom: 0; width: 100%;">
+                            <div class="col">
+                                <button class="btn btn-md btn-link" type="button" onclick="location.href = '/restrito/index.xhtml';return false;">
+                                    Início
+                                </button>
+                                <button class="btn btn-md btn-link" type="button" onclick="location.href = '/login.xhtml';return false;">
+                                    Logar novamente
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+</html>

@@ -1,0 +1,179 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core" >
+
+
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Mensalidade"/>
+        <ui:define name="title">#{title}</ui:define>
+        <ui:define name="viewname">
+            <li>##SECTION_NAME##</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/mensalidade/listaMensalidade.xhtml"> #{title}</p:link></li>
+        </ui:define>
+        <ui:define name="content">
+            <h:messages class="alertMessage" id="msgResultado" errorClass="alert alert-danger" />
+            <div class="row">
+                <div class="col-md-12 ">
+                    <!-- BEGIN SAMPLE FORM PORTLET-->
+                    <div class="portlet light bordered">
+                        <div class="portlet-title">
+                            <div class="actions">
+                                <h:form>
+                                    <h:commandLink styleClass="btn blue btn-circle btn-outline sbold" immediate="true" action="#{mensalidadeControle.mostrarAjuda()}">
+                                        <i class="icon-question"></i>
+                                    </h:commandLink>
+                                </h:form>
+                            </div>
+                            <div class="tools">
+                            </div>
+                        </div>
+                        <div class="portlet-body form">
+                            <h:form acceptcharset="ISO-8859-1" role="form" enctype="multipart/form-data">
+                                <div class="form-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label"><span class="required">* </span>Descrição</label>
+                                                <p:inputText value="#{mensalidadeControle.mensalidadeSelecionada.descricao}"
+                                                             required="true"
+                                                             requiredMessage="Informe a descrição"
+                                                             styleClass="form-control" />
+                                            </div>
+                                        </div>
+                                        <p:outputPanel rendered="#{mensalidadeControle.mensalidadeSelecionada.id eq null}">
+                                        <div class="col-md-6">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label"><span class="required">* </span>Valor</label>
+                                                <p:inputNumber value="#{mensalidadeControle.mensalidadeSelecionada.valor}"
+                                                               required="true" requiredMessage="Informe o valor da conta"
+                                                               symbol="R$ " decimalSeparator="," thousandSeparator="." decimalPlaces="2"  />
+                                            </div>
+                                        </div>
+                                        </p:outputPanel>
+
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                             <div class="form-group form-md-line-input">
+                                                <label class="control-label"><span class="required"> * </span>Plano de conta</label>
+                                                <p:selectOneMenu id="auto2" value="#{mensalidadeControle.mensalidadeSelecionada.idPlanoConta}"
+                                                                 panelStyle="width:180px" effect="fade"
+                                                                 var="t" style="width:160px" filter="true" filterMatchMode="startsWith"
+                                                                 converter="#{genericConverter}"
+                                                                 required="true"
+                                                                 requiredMessage="Informe um item do plano de conta">
+                                                    <p:column>
+                                                        <h:outputText value="#{t.codigo}" />
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{t.descricao}" />
+                                                    </p:column>
+
+                                                    <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                    <f:selectItems value="#{planoContaControle.planoContasFilho}"  var="planoConta" itemLabel="#{planoConta.descricao}" itemValue="#{planoConta}"/>
+
+                                                </p:selectOneMenu>
+                                            </div>
+                                        </div>
+                                         <div class="col-md-6">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label"><span class="required">* </span>Conta bancária</label>
+                                                <p:selectOneMenu id="auto4" value="#{mensalidadeControle.mensalidadeSelecionada.idContaBancaria}"
+                                                                 required="true"
+                                                                 requiredMessage="Informe a conta bancária"
+                                                                 panelStyle="width:180px" effect="fade"
+                                                                 var="t" style="width:160px" filter="true" filterMatchMode="startsWith"
+                                                                 converter="#{genericConverter}">
+                                                    <p:column>
+                                                        <h:outputText value="#{t.descricao}" />
+                                                    </p:column>
+
+                                                    <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                    <f:selectItems value="#{contaBancariaControle.contaBancarias}"  var="contaBancaria" itemLabel="#{contaBancaria.descricao}" itemValue="#{contaBancaria}"/>
+
+                                                </p:selectOneMenu>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label class="control-label">Observação</label>
+
+                                                <p:inputText  value="#{mensalidadeControle.mensalidadeSelecionada.observacaoContasRecebidas}"
+                                                                 styleClass="form-control" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <p:fieldset legend="Unidades" style="margin-bottom:20px"  toggleable="true" toggleSpeed="500" >
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="input-group">
+                                                <label class="control-label"><span class="required">* </span>Data de vencimento</label>
+                                                <p:calendar navigator="true" id="inpDataVencimento" value="#{mensalidadeControle.mensalidadeSelecionada.dataVencimento}"
+                                                            pattern="MM/yyyy" mask="true"
+                                                            required="true"
+                                                            requiredMessage="Informe a data de vencimento" />
+                                                <span class="input-group-btn">
+                                                    <div class="btn-group" style="padding-top: 26px">
+                                                        <div class="form-group form-md-line-input">
+                                                            <p:commandLink  action="#{mensalidadeControle.selecionarDataVencimento()}" process="@this, inpDataVencimento" title="Consultar"  styleClass="btn blue btn-outline sbold" update="msgResultado, tbl"  >
+                                                                <i class="fa fa-search"></i>
+                                                            </p:commandLink>
+                                                        </div>
+                                                    </div>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <p:outputPanel id="pnlTblContato">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <p:dataTable value="#{mensalidadeControle.unidades}" var="item" emptyMessage="Nenhum registro encontrado."
+                                                             class="table table-striped table-bordered table-hover table-striped table-condensed flip-content" id="tbl">
+
+                                                    <p:column headerText="Unidade">
+                                                        <h:outputText value="#{item.idUnidade.descricao}"/>
+                                                    </p:column>
+
+                                                    <p:column headerText="Situação da unidade">
+                                                        <h:outputText rendered="#{item.idUnidade.situacao eq 'A'}" value="Alugada"/>
+                                                        <h:outputText rendered="#{item.idUnidade.situacao eq 'C'}" value="Cedida"/>
+                                                        <h:outputText rendered="#{item.idUnidade.situacao eq 'P'}" value="Própria"/>
+                                                        <h:outputText rendered="#{item.idUnidade.situacao eq 'S'}" value="Sob Jurisdição"/>
+                                                        <h:outputText rendered="#{item.idUnidade.situacao eq 'V'}" value="Vazia"/>
+                                                    </p:column>
+
+                                                </p:dataTable>
+                                            </div>
+                                        </div>
+                                    </p:outputPanel>
+                                </p:fieldset>
+
+                                <div class="form-actions">
+                                    <h:commandLink action="#{mensalidadeControle.doFinishAdd()}"  styleClass="btn blue " value="Salvar" />
+                                    <h:commandLink action="listaMensalidade.xhtml" immediate="true" styleClass="btn default" value="Cancelar" />
+                                </div>
+                            </h:form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>
+

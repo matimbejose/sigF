@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+
+        <ui:param name="title" value="Código de barras"/>
+        <ui:define name="title">#{title}</ui:define>
+        <ui:define name="viewname">
+            <li>Financeiro</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/contaPagar/listaContaPagar.xhtml"> #{title}</p:link></li>
+        </ui:define>
+        <ui:define name="content">
+            <h:messages class="alertMessage" id="msgResultado" errorClass="alert alert-danger" />
+            <div class="row">
+                <div class="col-md-12 ">
+                    <!-- BEGIN SAMPLE FORM PORTLET-->
+                    <div class="portlet light bordered">
+                        <div class="portlet-title">
+                        </div>
+                        <div class="portlet-body form">
+                            <h:form id="form" acceptcharset="ISO-8859-1" role="form" enctype="multipart/form-data">
+                                <div class="form-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="input-group">
+                                                <label class="control-label"><span class="required"> * </span> Tipo de boleto</label>
+                                                <p:selectOneMenu  value="#{contaPagarControle.tipoBoleto}"
+                                                                  required="true"
+                                                                  requiredMessage="Informe o tipo de boleto"
+                                                                  styleClass="form-control">
+                                                    <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                    <f:selectItem itemLabel="Boleto de convênio " itemValue="BC" />
+                                                    <f:selectItem itemLabel="Boleto de serviço" itemValue="BS" />
+                                                    <p:ajax event="change" process="@this"/>
+                                                </p:selectOneMenu>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="input-group">
+                                                <label class="control-label"><span class="required"> * </span> Scanner?</label>
+                                                <p:selectOneMenu  value="#{contaPagarControle.boletoDigitavel}"
+                                                                  required="true"
+                                                                  id="idImpresso"
+                                                                  requiredMessage="Informe se será lido o código de barras com a scanner"
+                                                                  styleClass="form-control">
+                                                    <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                    <f:selectItem itemLabel="Sim " itemValue="N" />
+                                                    <f:selectItem itemLabel="Não" itemValue="S" />
+
+                                                    <p:ajax event="change" update="outPeriodo" process="@this"/>
+                                                </p:selectOneMenu>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <br></br>
+                                    <br></br>
+                                    <p:outputPanel id = "outPeriodo">
+                                        <div class="row">
+                                            <p:outputPanel rendered="#{contaPagarControle.tipoBoleto eq 'BS' and contaPagarControle.boletoDigitavel ne 'S'}">
+                                                <div class="col-md-6">
+                                                    <div class="form-group form-md-line-input">
+                                                        <label class="control-label"><span class="required"> * </span>Código de barras</label>
+                                                        <p:inputText value="#{contaPagarControle.codigoDeBarrasLeitora}"
+                                                                     styleClass="form-control"
+                                                                     required="true"
+                                                                     requiredMessage="Favor informar o código de barras."/>
+                                                    </div>
+                                                </div>
+                                            </p:outputPanel>
+                                            <p:outputPanel rendered="#{contaPagarControle.tipoBoleto eq 'BS' and contaPagarControle.boletoDigitavel eq 'S'}">
+                                                <div class="col-md-6">
+                                                    <div class="form-group form-md-line-input">
+                                                        <label class="control-label"><span class="required"> * </span>Código de barras</label>
+                                                        <p:inputMask value="#{contaPagarControle.codigoDeBarrasLeitora}"
+                                                                     styleClass="form-control"
+                                                                     required="true"
+                                                                     requiredMessage="Favor informar o código de barras."
+                                                                     mask="99999.99999 99999.999999 99999.999999 9 99999999999999"/>
+                                                    </div>
+                                                </div>
+                                            </p:outputPanel>
+                                            <p:outputPanel rendered="#{contaPagarControle.tipoBoleto eq 'BC' and contaPagarControle.boletoDigitavel ne 'S'}">
+                                                <div class="col-md-6">
+                                                    <div class="form-group form-md-line-input">
+                                                        <label class="control-label"><span class="required"> * </span>Código de barras</label>
+                                                        <p:inputText value="#{contaPagarControle.codigoDeBarrasLeitora}"
+                                                                     styleClass="form-control"
+                                                                     required="true"
+                                                                     requiredMessage="Favor informar o código de barras."/>
+                                                    </div>
+                                                </div>
+                                            </p:outputPanel>
+                                            <p:outputPanel rendered="#{contaPagarControle.tipoBoleto eq 'BC' and contaPagarControle.boletoDigitavel eq 'S'}">
+                                                <div class="col-md-6">
+                                                    <div class="form-group form-md-line-input">
+                                                        <label class="control-label"><span class="required"> * </span>Código de barras</label>
+                                                        <p:inputMask value="#{contaPagarControle.codigoDeBarrasLeitora}"
+                                                                     styleClass="form-control"
+                                                                     required="true"
+                                                                     requiredMessage="Favor informar o código de barras."
+                                                                     mask="99999999999 9 99999999999 9 99999999999 9 99999999999 9"/>
+                                                    </div>
+                                                </div>
+                                            </p:outputPanel>
+                                        </div>
+                                    </p:outputPanel>
+
+                                    <div class="form-actions">
+                                        <h:commandButton action="#{contaPagarControle.doAlteraContaPorCodigo}"  styleClass="btn blue " value="Confirmar código" />
+                                        <h:commandButton action="listaContaPagar.xhtml" immediate="true" styleClass="btn default" value="Voltar" />
+                                    </div>
+                                </div>
+                            </h:form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </ui:define>
+
+    </ui:composition>
+</html>

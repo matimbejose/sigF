@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite/components"
+      lang="pt-br">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Nota fiscal de serviço"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Nota fiscal</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/notaFiscalServico/listaNotaFiscalServico.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteSave" action="#{notaFiscalServicoControle.doFinishAdd()}"/>
+            <h:commandButton id="remoteCancel" action="listaNotaFiscalServico.xhtml" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <style>
+                div.form-group > textarea + span {
+                    position: absolute;
+                    top: 0;
+                    right: 15px;
+                }
+            </style>
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-3">
+                        <div class="form-group form-md-line-input">
+                            <label class="control-label">Preencher com nota existente?</label>
+                            <p:selectOneMenu  value="#{notaFiscalServicoControle.preenchidoComNotaExistente}"
+                                              required="true" requiredMessage="Informe se será preenchido com nota existente">
+                                <f:selectItem itemLabel="Não" itemValue="false"/>
+                                <f:selectItem itemLabel="Sim" itemValue="true" />
+
+                                <p:ajax event="change" process="@this" update="panelNumeroNotaFormatado" />
+                            </p:selectOneMenu >
+                        </div>
+                    </div>
+                    <h:panelGroup id="panelNumeroNotaFormatado" styleClass="col-3">
+                        <p:row rendered="#{notaFiscalServicoControle.preenchidoComNotaExistente}">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label">Número da nota</label>
+                                        <p:inputMask id="numeroNotaFiscalExistente"
+                                                     mask="9999/99?9" value="#{notaFiscalServicoControle.numeroNotaFiscalFormatado}" />
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="control-label"><font style="color: white">.</font></label>
+                                    <div class="form-group form-md-line-input">
+                                        <h:commandLink styleClass="btn blue btn-outline sbold">
+                                            <p:ajax update="form" process="panelNumeroNotaFormatado"
+                                                    listener="#{notaFiscalServicoControle.preencherNotaComNotaExistente()}" />
+                                            <i class="fa fa-search"></i> Buscar
+                                        </h:commandLink>
+                                    </div>
+                                </div>
+                            </div>
+                        </p:row>
+                    </h:panelGroup>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 col-sm-12">
+                        <div class="card card-w-title">
+                            <h5>Cliente</h5>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group form-md-line-input">
+                                        <cc:addButton label="Cliente" required="true" entityName="cliente">
+                                            <p:selectOneMenu value="#{notaFiscalServicoControle.nfsSelecionado.idCliente}" panelStyle="width:180px"
+                                                             effect="fade" var="t" filter="true" filterMatchMode="startsWith" converter="#{genericConverter}">
+                                                <p:column>
+                                                    <h:outputText value="#{t.nome}"/>
+                                                </p:column>
+
+                                                <f:selectItem itemLabel="-- Selecione -- "
+                                                              noSelectionOption="true"/>
+                                                <f:selectItems
+                                                    value="#{clienteControle.listarClientes()}"
+                                                    var="cliente" itemLabel="#{cliente.nome}"
+                                                    itemValue="#{cliente}"/>
+
+                                                <p:ajax update="form:pnlTipoCliente, form:pnlCliente, form:pnlDetalhes, form:pnlIntermediario3, form:pnlDescontos, form:pnlDescricaoServico, form:pnlCpfCnpj"
+                                                        listener="#{notaFiscalServicoControle.preencherCliente()}" event="change"/>
+                                            </p:selectOneMenu>
+                                        </cc:addButton>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <p:outputPanel id="pnlTipoCliente" styleClass="col-md-6">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label"><span class="required">* </span>Tipo pessoa</label>
+                                        <p:inputText styleClass="form-control" disabled="true"
+                                                     rendered="#{notaFiscalServicoControle.nfsSelecionado.idCliente eq null}" />
+                                        <p:selectOneMenu
+                                            value="#{notaFiscalServicoControle.nfsSelecionado.tipoPessoaCliente}"
+                                            rendered="#{notaFiscalServicoControle.nfsSelecionado.idCliente ne null}"
+                                            required="true"
+                                            requiredMessage="Informe o tipo pessoa(física ou jurídica) para o cliente">
+                                            <f:selectItem itemLabel="-- Selecione -- "
+                                                          noSelectionOption="true"/>
+                                            <f:selectItem itemLabel="Pessoa física" itemValue="PF"/>
+                                            <f:selectItem itemLabel="Pessoa jurídica"
+                                                          itemValue="PJ"/>
+                                            <p:ajax event="change" process="@this"
+                                                    update="pnlCliente, pnlCpfCnpj"/>
+                                        </p:selectOneMenu>
+                                    </div>
+                                </p:outputPanel>
+                                <p:outputPanel id="pnlCpfCnpj" styleClass="col-md-6">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label"><span class="required">* </span>
+                                            <p:row rendered="#{notaFiscalServicoControle.nfsSelecionado.tipoPessoaCliente eq null}">CPF / CNPJ</p:row>
+                                            <p:row rendered="#{notaFiscalServicoControle.nfsSelecionado.tipoPessoaCliente eq 'PJ'}">CNPJ</p:row>
+                                            <p:row rendered="#{notaFiscalServicoControle.nfsSelecionado.tipoPessoaCliente eq 'PF'}">CPF</p:row>
+                                        </label>
+                                        <p:inputText styleClass="form-control" disabled="true"
+                                                     rendered="#{notaFiscalServicoControle.nfsSelecionado.tipoPessoaCliente eq null}" />
+                                        <p:inputMask mask="99.999.999/9999-99"
+                                                     value="#{notaFiscalServicoControle.nfsSelecionado.cpfCnpjCliente}"
+                                                     required="true"
+                                                     requiredMessage="Informe o CNPJ do cliente"
+                                                     rendered="#{notaFiscalServicoControle.nfsSelecionado.tipoPessoaCliente eq 'PJ'}"
+                                                     styleClass="form-control" />
+                                        <p:inputMask mask="999.999.999-99"
+                                                     value="#{notaFiscalServicoControle.nfsSelecionado.cpfCnpjCliente}"
+                                                     required="true"
+                                                     requiredMessage="Informe o CPF do cliente"
+                                                     rendered="#{notaFiscalServicoControle.nfsSelecionado.tipoPessoaCliente eq 'PF'}"
+                                                     styleClass="form-control" />
+                                    </div>
+                                </p:outputPanel>
+                            </div>
+
+                            <p:outputPanel id="pnlCliente">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label"><span class="required">* </span>
+                                                <p:row rendered="#{notaFiscalServicoControle.nfsSelecionado.tipoPessoaCliente eq null}">Nome / Razão social</p:row>
+                                                <p:row rendered="#{notaFiscalServicoControle.nfsSelecionado.tipoPessoaCliente eq 'PJ'}">Razão social</p:row>
+                                                <p:row rendered="#{notaFiscalServicoControle.nfsSelecionado.tipoPessoaCliente eq 'PF'}">Nome</p:row>
+                                            </label>
+                                            <p:inputText styleClass="form-control" disabled="true"
+                                                         rendered="#{notaFiscalServicoControle.nfsSelecionado.idCliente eq null}" />
+                                            <p:inputText
+                                                value="#{notaFiscalServicoControle.nfsSelecionado.nomeCliente}"
+                                                rendered="#{notaFiscalServicoControle.nfsSelecionado.idCliente ne null}"
+                                                styleClass="form-control"/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">
+                                                <p:row rendered="#{notaFiscalServicoControle.nfsSelecionado.tipoPessoaCliente eq 'PJ'}"></p:row>
+                                                Inscrição municipal
+                                            </label>
+                                            <p:inputText styleClass="form-control" disabled="true"
+                                                         rendered="#{notaFiscalServicoControle.nfsSelecionado.idCliente eq null or notaFiscalServicoControle.nfsSelecionado.tipoPessoaCliente ne 'PJ'}" />
+                                            <p:inputText
+                                                value="#{notaFiscalServicoControle.nfsSelecionado.inscricaoMunicipalCliente}"
+                                                rendered="#{notaFiscalServicoControle.nfsSelecionado.idCliente ne null and notaFiscalServicoControle.nfsSelecionado.tipoPessoaCliente eq 'PJ'}"
+                                                styleClass="form-control"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Email</label>
+                                            <p:inputText styleClass="form-control" disabled="true"
+                                                         rendered="#{notaFiscalServicoControle.nfsSelecionado.idCliente eq null}" />
+                                            <p:inputText
+                                                value="#{notaFiscalServicoControle.nfsSelecionado.emailCliente}"
+                                                rendered="#{notaFiscalServicoControle.nfsSelecionado.idCliente ne null}"
+                                                styleClass="form-control"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Telefone</label>
+                                            <p:inputText styleClass="form-control" disabled="true"
+                                                         rendered="#{notaFiscalServicoControle.nfsSelecionado.idCliente eq null}" />
+                                            <p:inputMask mask="(99) 9999-9999?9" value="#{notaFiscalServicoControle.nfsSelecionado.telefoneCliente}" rendered="#{notaFiscalServicoControle.nfsSelecionado.idCliente ne null}" styleClass="form-control telefone"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">RG</label>
+                                            <p:inputText styleClass="form-control" disabled="true"
+                                                         rendered="#{notaFiscalServicoControle.nfsSelecionado.idCliente eq null}" />
+                                            <p:inputText
+                                                value="#{notaFiscalServicoControle.nfsSelecionado.rgCliente}"
+                                                rendered="#{notaFiscalServicoControle.nfsSelecionado.idCliente ne null}"
+                                                styleClass="form-control"/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label"><span class="required">* </span>CEP</label>
+                                            <p:inputText styleClass="form-control" disabled="true"
+                                                         rendered="#{notaFiscalServicoControle.nfsSelecionado.idCliente eq null}" />
+                                            <p:inputMask mask="99.999-999"
+                                                         value="#{notaFiscalServicoControle.nfsSelecionado.cepCliente}"
+                                                         required="true"
+                                                         requiredMessage="Informe o CEP"
+                                                         rendered="#{notaFiscalServicoControle.nfsSelecionado.idCliente ne null}"
+                                                         styleClass="form-control"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label"><span class="required">* </span>Nº</label>
+                                            <p:inputText styleClass="form-control" disabled="true"
+                                                         rendered="#{notaFiscalServicoControle.nfsSelecionado.idCliente eq null}" />
+                                            <p:inputText
+                                                value="#{notaFiscalServicoControle.nfsSelecionado.numeroCliente}"
+                                                rendered="#{notaFiscalServicoControle.nfsSelecionado.idCliente ne null}"
+                                                required="true"
+                                                requiredMessage="Informe o número do endereço"
+                                                styleClass="form-control"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Complemento</label>
+                                            <p:inputText styleClass="form-control" disabled="true"
+                                                         rendered="#{notaFiscalServicoControle.nfsSelecionado.idCliente eq null}" />
+                                            <p:inputText
+                                                value="#{notaFiscalServicoControle.nfsSelecionado.complementoCliente}"
+                                                rendered="#{notaFiscalServicoControle.nfsSelecionado.idCliente ne null}"
+                                                styleClass="form-control"/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label"><span class="required">* </span>Logradouro</label>
+                                            <p:inputText styleClass="form-control" disabled="true"
+                                                         rendered="#{notaFiscalServicoControle.nfsSelecionado.idCliente eq null}" />
+                                            <p:inputText
+                                                value="#{notaFiscalServicoControle.nfsSelecionado.enderecoCliente}"
+                                                rendered="#{notaFiscalServicoControle.nfsSelecionado.idCliente ne null}"
+                                                required="true"
+                                                requiredMessage="Informe o endereço"
+                                                styleClass="form-control"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label"><span class="required">* </span>Bairro</label>
+                                            <p:inputText styleClass="form-control" disabled="true"
+                                                         rendered="#{notaFiscalServicoControle.nfsSelecionado.idCliente eq null}" />
+                                            <p:inputText
+                                                value="#{notaFiscalServicoControle.nfsSelecionado.bairroCliente}"
+                                                rendered="#{notaFiscalServicoControle.nfsSelecionado.idCliente ne null}"
+                                                required="true"
+                                                requiredMessage="Infome o bairro"
+                                                styleClass="form-control"/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label"><span class="required">* </span>UF</label>
+                                            <p:inputText styleClass="form-control" disabled="true"
+                                                         rendered="#{notaFiscalServicoControle.nfsSelecionado.idCliente eq null}" />
+                                            <p:selectOneMenu id="uf"
+                                                             value="#{notaFiscalServicoControle.nfsSelecionado.idUFCliente}"
+                                                             rendered="#{notaFiscalServicoControle.nfsSelecionado.idCliente ne null}"
+                                                             required="true"
+                                                             requiredMessage="Informe a UF do cliente"
+                                                             converter="#{genericConverter}">
+                                                <f:selectItem itemLabel="-- Selecione -- "
+                                                              noSelectionOption="true"/>
+                                                <f:selectItems
+                                                    value="#{notaFiscalServicoControle.UFs}"
+                                                    var="uf" itemLabel="#{uf.descricao}"
+                                                    itemValue="#{uf}"/>
+                                                <p:ajax event="change" process="@this"
+                                                        update="uf, cidade"/>
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label"><span class="required">* </span>Cidade</label>
+                                            <p:inputText styleClass="form-control" disabled="true"
+                                                         rendered="#{notaFiscalServicoControle.nfsSelecionado.idCliente eq null}" />
+                                            <p:selectOneMenu id="cidade"
+                                                             value="#{notaFiscalServicoControle.nfsSelecionado.idCidadeCliente}"
+                                                             panelStyle="width:180px" effect="fade"
+                                                             var="t" filter="true"
+                                                             filterMatchMode="contains"
+                                                             rendered="#{notaFiscalServicoControle.nfsSelecionado.idCliente ne null}"
+                                                             converter="#{genericConverter}">
+                                                <p:column>
+                                                    <h:outputText value="#{t.descricao}"/>
+                                                </p:column>
+
+                                                <f:selectItem itemLabel="-- Selecione -- "
+                                                              noSelectionOption="true"/>
+                                                <f:selectItems
+                                                    value="#{notaFiscalServicoControle.cidades}"
+                                                    var="cidade" itemLabel="#{cidade.descricao}"
+                                                    itemValue="#{cidade}"/>
+
+                                                <p:ajax event="change" process="@this" listener="#{notaFiscalServicoControle.preencherDescricaoCidade()}" />
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+                                </div>
+                            </p:outputPanel>
+                        </div>
+                        <p:outputPanel id="pnlIntermediario3">
+                            <div class="card card-w-title">
+                                <h5>Intermediário</h5>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Tipo pessoa intermediário</label>
+                                            <p:selectOneMenu value="#{notaFiscalServicoControle.nfsSelecionado.tipoPessoaIntermediario}" >
+                                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                <f:selectItem itemLabel="Pessoa física" itemValue="PF" />
+                                                <f:selectItem itemLabel="Pessoa jurídica" itemValue="PJ" />
+                                                <p:ajax event="change" process="@this" update="pnlIntermediario1, pnlIntermediario2" />
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p:outputPanel id="pnlIntermediario1">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label">
+                                                    <p:row rendered="#{notaFiscalServicoControle.nfsSelecionado.tipoPessoaIntermediario eq null}">CPF / CNPJ intermediário</p:row>
+                                                    <p:row rendered="#{notaFiscalServicoControle.nfsSelecionado.tipoPessoaIntermediario eq 'PJ'}"><span class="required">* </span>CNPJ intermediário</p:row>
+                                                    <p:row rendered="#{notaFiscalServicoControle.nfsSelecionado.tipoPessoaIntermediario eq 'PF'}"><span class="required">* </span>CPF intermediário</p:row>
+                                                </label>
+                                                <p:inputText disabled="true"
+                                                             styleClass="form-control" rendered="#{notaFiscalServicoControle.nfsSelecionado.tipoPessoaIntermediario eq null}" />
+
+                                                <p:inputMask mask="99.999.999/9999-99"
+                                                             value="#{notaFiscalServicoControle.nfsSelecionado.cpfCnpjIntermediario}"
+                                                             rendered="#{notaFiscalServicoControle.nfsSelecionado.tipoPessoaIntermediario eq 'PJ'}"
+                                                             required="true" requiredMessage="Informe o CNPJ do intermediário"
+                                                             styleClass="form-control" />
+                                                <p:inputMask mask="999.999.999-99"
+                                                             value="#{notaFiscalServicoControle.nfsSelecionado.cpfCnpjIntermediario}"
+                                                             required="true" requiredMessage="Informe o CPF do intermediário"
+                                                             rendered="#{notaFiscalServicoControle.nfsSelecionado.tipoPessoaIntermediario eq 'PF'}"
+                                                             styleClass="form-control" />
+                                            </div>
+                                        </p:outputPanel>
+                                    </div>
+                                </div>
+                                <p:outputPanel id="pnlIntermediario2">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label">
+                                                    <p:row rendered="#{notaFiscalServicoControle.nfsSelecionado.tipoPessoaIntermediario eq null}">Nome intermediário</p:row>
+                                                    <p:row rendered="#{notaFiscalServicoControle.nfsSelecionado.tipoPessoaIntermediario eq 'PJ'}"><span class="required">* </span>Razão social intermediário</p:row>
+                                                    <p:row rendered="#{notaFiscalServicoControle.nfsSelecionado.tipoPessoaIntermediario eq 'PF'}"><span class="required">* </span>Nome intermediário</p:row>
+                                                </label>
+
+                                                <p:inputText disabled="true"
+                                                             styleClass="form-control" rendered="#{notaFiscalServicoControle.nfsSelecionado.tipoPessoaIntermediario eq null}" />
+                                                <p:inputText value="#{notaFiscalServicoControle.nfsSelecionado.nomeIntermediario}"
+                                                             required="true" requiredMessage="Informe a nome/razão social do intermediário"
+                                                             rendered="#{notaFiscalServicoControle.nfsSelecionado.tipoPessoaIntermediario ne null}"
+                                                             styleClass="form-control" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label">
+                                                    <p:row rendered="#{notaFiscalServicoControle.nfsSelecionado.tipoPessoaIntermediario eq 'PJ'}"><span class="required">* </span></p:row>
+                                                    Insc. municipal intermediário</label>
+                                                <p:inputText disabled="true"
+                                                             styleClass="form-control"
+                                                             rendered="#{notaFiscalServicoControle.nfsSelecionado.tipoPessoaIntermediario eq null or notaFiscalServicoControle.nfsSelecionado.tipoPessoaIntermediario ne 'PJ'}" />
+                                                <p:inputText value="#{notaFiscalServicoControle.nfsSelecionado.inscricaoMunicipalIntermediario}"
+                                                             rendered="#{notaFiscalServicoControle.nfsSelecionado.tipoPessoaIntermediario ne null and notaFiscalServicoControle.nfsSelecionado.tipoPessoaIntermediario eq 'PJ'}"
+                                                             styleClass="form-control" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </p:outputPanel>
+                            </div>
+                        </p:outputPanel>
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                        <p:outputPanel id="pnlDetalhes">
+                            <div class="card card-w-title">
+                                <h5>Detalhes</h5>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Número do RPS</label>
+                                            <p:inputNumber value="#{notaFiscalServicoControle.nfsSelecionado.numeroRPS}"
+                                                           maxValue="999999999" decimalPlaces="0" thousandSeparator=""
+                                                           id ="numeroNF"
+                                                           />
+                                            <p:tooltip  for="numeroNF" value="Deixe o campo em branco para que o SGFinanças preencha automaticamente." position="top"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p:outputPanel id="pnlDescricaoServico">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label"><span class="required">* </span>Descrição do serviço</label>
+                                                <p:inputTextarea rows="2" cols="30" counter="display" maxlength="2000"
+                                                                 counterTemplate="{0} caracteres restantes"
+                                                                 required="true" requiredMessage="Informe a descrição do serviço"
+                                                                 disabled="#{notaFiscalServicoControle.nfsSelecionado.idCliente eq null}"
+                                                                 value="#{notaFiscalServicoControle.nfsSelecionado.descricaoServico}"
+                                                                 styleClass="form-control"/>
+                                                <h:outputText id="display" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </p:outputPanel>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label"><span class="required">* </span>Data de competência</label>
+                                            <p:calendar navigator="true"  value="#{notaFiscalServicoControle.nfsSelecionado.competencia}" pattern="dd/MM/yyyy" mask="true"
+                                                        required="true" requiredMessage="Informe a data de emissão"  />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label"><span class="required">* </span>Valor total do(s) serviço(s)</label>
+                                            <p:inputNumber
+                                                value="#{notaFiscalServicoControle.nfsSelecionado.valorTotal}"
+                                                symbol="R$ " decimalSeparator=","
+                                                thousandSeparator="." decimalPlaces="2"
+                                                required="true"
+                                                requiredMessage="Informe o valor total do(s) serviço(s)">
+                                                <p:ajax event="change" process="@this"
+                                                        update="calculaRetencao"
+                                                        listener="#{notaFiscalServicoControle.calculaValoresRetencao()}"/>
+                                            </p:inputNumber>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label"><span class="required">* </span>Município ISSQN</label>
+                                            <p:selectOneMenu value="#{notaFiscalServicoControle.nfsSelecionado.idMunicipioISSQN}"
+                                                             panelStyle="width:180px" effect="fade"
+                                                             var="t"  filter="true" filterMatchMode="contains"
+                                                             converter="#{genericConverter}">
+                                                <p:column>
+                                                    <h:outputText value="#{t.idUF.descricao} - #{t.descricao}" />
+                                                </p:column>
+
+                                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                <f:selectItems value="#{notaFiscalServicoControle.listarMunicipios()}"
+                                                               var="municipio"
+                                                               itemLabel="#{municipio.idUF.descricao} - #{municipio.descricao}"
+                                                               itemValue="#{municipio}"/>
+
+                                                <p:ajax update="pnlCtiss" process="@this" event="change"/>
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p:outputPanel id="pnlCtiss">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label"><span class="required">* </span>Ctiss</label>
+                                                <p:inputText styleClass="form-control" disabled="true"
+                                                             rendered="#{notaFiscalServicoControle.nfsSelecionado.idMunicipioISSQN eq null}" />
+                                                <p:selectOneMenu value="#{notaFiscalServicoControle.nfsSelecionado.idCtiss}"
+                                                                 panelStyle="width:500px" effect="fade"
+                                                                 filter="true" filterMatchMode="contains"
+                                                                 rendered="#{notaFiscalServicoControle.nfsSelecionado.idMunicipioISSQN ne null}"
+                                                                 converter="#{genericConverter}">
+                                                    <p:column>
+                                                        <h:outputText value="#{t.codigo}" />
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{t.descricao}" />
+                                                    </p:column>
+
+                                                    <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                    <f:selectItems value="#{notaFiscalServicoControle.listarCtiss()}"  var="ctiss" itemLabel="#{ctiss.codigo} - #{ctiss.descricao}" itemValue="#{ctiss}"/>
+                                                </p:selectOneMenu>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </p:outputPanel>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label"><span class="required">* </span>Natureza da operação</label>
+                                            <p:selectOneMenu value="#{notaFiscalServicoControle.nfsSelecionado.naturezaOperacao}" required="true" requiredMessage="Informe a natureza da operação">
+                                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                <f:selectItems value="#{notaFiscalServicoControle.listarNaturezaOperacao()}"  var="no" itemLabel="#{no.value}" itemValue="#{no.key}"/>
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Regime especial de tributação</label>
+                                            <p:selectOneMenu value="#{notaFiscalServicoControle.nfsSelecionado.regimeTributacao}">
+                                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                <f:selectItems value="#{notaFiscalServicoControle.listarRegimeTributacao()}"  var="r" itemLabel="#{r.value}" itemValue="#{r.key}"/>
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Nº CEI (obra/empresa)</label>
+                                            <p:inputText value="#{notaFiscalServicoControle.nfsSelecionado.numeroCei}" styleClass="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Nº da ART</label>
+                                            <p:inputText value="#{notaFiscalServicoControle.nfsSelecionado.numeroArt}" styleClass="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <p:commandButton value="Parcela vinculada" action="#{notaFiscalServicoControle.doShowParcelaVinculada()}"
+                                                         rendered="#{notaFiscalServicoControle.nfsSelecionado.id ne null}"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div></div>
+                        </p:outputPanel>
+                        <p:outputPanel id="pnlDescontos">
+                            <div class="card card-w-title">
+                                <h5>Descontos / Tributos</h5>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Desconto condicionado</label>
+                                            <p:inputNumber
+                                                value="#{notaFiscalServicoControle.nfsSelecionado.descontoCondicionado}"
+                                                symbol="R$ " decimalSeparator=","
+                                                thousandSeparator="." decimalPlaces="2"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Desconto incondicionado</label>
+                                            <p:inputNumber
+                                                value="#{notaFiscalServicoControle.nfsSelecionado.descontoIncondicionado}"
+                                                symbol="R$ " decimalSeparator=","
+                                                thousandSeparator="." decimalPlaces="2"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p:outputPanel id = "calculaRetencao">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label"><span class="required">* </span>ISS retido?</label>
+                                                <p:selectOneMenu
+                                                    value="#{notaFiscalServicoControle.nfsSelecionado.issRetido}">
+                                                    <f:selectItem itemLabel="Não" itemValue="N"/>
+                                                    <f:selectItem itemLabel="Sim" itemValue="S"/>
+                                                </p:selectOneMenu>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label">Valor ISS</label>
+                                                <p:inputText styleClass="form-control" disabled="true"
+                                                             rendered="#{notaFiscalServicoControle.nfsSelecionado.idCliente eq null}" />
+                                                <p:inputNumber
+                                                    value="#{notaFiscalServicoControle.nfsSelecionado.valorIss}"
+                                                    rendered="#{notaFiscalServicoControle.nfsSelecionado.idCliente ne null}"
+                                                    symbol="R$ " decimalSeparator=","
+                                                    thousandSeparator="." decimalPlaces="2"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label">Valor IR</label>
+                                                <p:inputText styleClass="form-control" disabled="true"
+                                                             rendered="#{notaFiscalServicoControle.nfsSelecionado.idCliente eq null}" />
+                                                <p:inputNumber
+                                                    value="#{notaFiscalServicoControle.nfsSelecionado.valorIr}"
+                                                    rendered="#{notaFiscalServicoControle.nfsSelecionado.idCliente ne null}"
+                                                    symbol="R$ " decimalSeparator=","
+                                                    thousandSeparator="." decimalPlaces="2"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row ">
+                                        <div class="col-md-4">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label">Valor PIS</label>
+                                                <p:inputText styleClass="form-control" disabled="true"
+                                                             rendered="#{notaFiscalServicoControle.nfsSelecionado.idCliente eq null}" />
+                                                <p:inputNumber
+                                                    value="#{notaFiscalServicoControle.nfsSelecionado.valorPis}"
+                                                    rendered="#{notaFiscalServicoControle.nfsSelecionado.idCliente ne null}"
+                                                    symbol="R$ " decimalSeparator=","
+                                                    thousandSeparator="." decimalPlaces="2"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label">Valor CSLL</label>
+                                                <p:inputText styleClass="form-control" disabled="true"
+                                                             rendered="#{notaFiscalServicoControle.nfsSelecionado.idCliente eq null}" />
+                                                <p:inputNumber
+                                                    value="#{notaFiscalServicoControle.nfsSelecionado.valorCsll}"
+                                                    rendered="#{notaFiscalServicoControle.nfsSelecionado.idCliente ne null}"
+                                                    symbol="R$ " decimalSeparator=","
+                                                    thousandSeparator="." decimalPlaces="2"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label">Valor Cofins</label>
+                                                <p:inputText styleClass="form-control" disabled="true"
+                                                             rendered="#{notaFiscalServicoControle.nfsSelecionado.idCliente eq null}" />
+                                                <p:inputNumber
+                                                    value="#{notaFiscalServicoControle.nfsSelecionado.valorCofins}"
+                                                    rendered="#{notaFiscalServicoControle.nfsSelecionado.idCliente ne null}"
+                                                    symbol="R$ " decimalSeparator=","
+                                                    thousandSeparator="." decimalPlaces="2"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row ">
+                                        <div class="col-md-4">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label">Valor INSS</label>
+                                                <p:inputText styleClass="form-control" disabled="true"
+                                                             rendered="#{notaFiscalServicoControle.nfsSelecionado.idCliente eq null}" />
+                                                <p:inputNumber
+                                                    value="#{notaFiscalServicoControle.nfsSelecionado.valorInss}"
+                                                    rendered="#{notaFiscalServicoControle.nfsSelecionado.idCliente ne null}"
+                                                    symbol="R$ " decimalSeparator=","
+                                                    thousandSeparator="." decimalPlaces="2"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label">Valor das deduções</label>
+                                                <p:inputNumber
+                                                    value="#{notaFiscalServicoControle.nfsSelecionado.valorDeducoes}"
+                                                    symbol="R$ " decimalSeparator=","
+                                                    thousandSeparator="." decimalPlaces="2"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label">Outras retenções</label>
+                                                <p:inputNumber
+                                                    value="#{notaFiscalServicoControle.nfsSelecionado.outrasRetencoes}"
+                                                    symbol="R$ " decimalSeparator=","
+                                                    thousandSeparator="." decimalPlaces="2"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </p:outputPanel>
+                            </div>
+                        </p:outputPanel>
+                    </div>
+                </div>
+            </div>
+
+        </ui:define>
+
+    </ui:composition>
+
+</html>

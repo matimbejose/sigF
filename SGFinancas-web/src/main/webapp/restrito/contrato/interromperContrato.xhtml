@@ -1,0 +1,92 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <p:importEnum type="br.com.villefortconsulting.sgfinancas.util.EnumTipoContrato" var="EnumTipoContrato"/>
+    <div class="row">
+        <div class="col-md-12 col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group form-md-line-input">
+                                <p:row rendered="#{controle.tipoContrato eq EnumTipoContrato.CLIENTE}">
+                                    <label class="control-label">Cliente</label>
+                                    <p:inputText value="#{controle.contratoSelecionado.idCliente.nome}"
+                                                 styleClass="form-control" disabled="true"/>
+                                </p:row>
+                                <p:row rendered="#{controle.tipoContrato eq EnumTipoContrato.FORNECEDOR}">
+                                    <label class="control-label">Fornecedor</label>
+                                    <p:inputText value="#{controle.contratoSelecionado.idFornecedor.razaoSocial}"
+                                                 styleClass="form-control" disabled="true"/>
+                                </p:row>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label">Plano de conta</label>
+                                <p:inputText value="#{controle.contratoSelecionado.idPlanoConta.descricao}"
+                                             styleClass="form-control" disabled="true"/>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label">Início</label>
+                                <p:calendar navigator="true" value="#{controle.contratoSelecionado.dataInicio}"
+                                            styleClass="disable-field">
+                                    <f:passThroughAttribute name="autocomplete" value="off"/>
+                                </p:calendar>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label">Fim previsto</label>
+                                <p:calendar navigator="true" value="#{controle.contratoSelecionado.dataFim}"
+                                            styleClass="disable-field">
+                                    <f:passThroughAttribute name="autocomplete" value="off"/>
+                                </p:calendar>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label">Valor original</label>
+                                <p:inputText value="#{controle.contratoSelecionado.valorContrato}"
+                                             styleClass="form-control" disabled="true">
+                                    <f:convertNumber type="currency" currencyCode="BRL"/>
+                                </p:inputText>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label">Parcelas pagas</label>
+                                <p:inputText value="#{controle.contratoSelecionado.obterParcelasJaPagas().size()}"
+                                             styleClass="form-control" disabled="true"/>
+                            </div>
+                        </div>
+                    </div>
+                    <hr/>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label"><span class="required"> * </span>Motivo da interrupção</label>
+                                <p:inputTextarea value="#{controle.contratoSelecionado.justificativaInterrupcao}"
+                                                 styleClass="form-control" maxlength="500"
+                                                 required="true" requiredMessage="Informe o motivo da interrupção do contrato"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <style>
+        .disable-field {
+            pointer-events: none;
+        }
+        .disable-field > input {
+            border-bottom: 1px dashed #c2cad8;
+            background-color: #e1e1e1 !important;
+            color: #555;
+        }
+    </style>
+</ui:composition>

@@ -1,0 +1,109 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:sec="http://www.springframework.org/security/facelets/tags"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <f:metadata >
+        <f:event listener="#{usuarioControle.controleMenu.setMenuFinanceiroContaReceber()}" type="preRenderView" />
+        <f:event listener="#{contaReceberControle.preencherEstatisticaDTO()}" type="preRenderView" />
+    </f:metadata>
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Parcelas não pagas com extrato"/>
+        <ui:define name="title">#{title}</ui:define>
+        <ui:define name="viewname">
+            <li>Financeiro</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/extrato/listaParcelasNaoPagasComExtrato.xhtml"> #{title}</p:link></li>
+        </ui:define>
+        <ui:define name="content">
+            <h:messages id="msg" class="alertMessage" errorClass="alert alert-danger" infoClass="alert alert-success"/>
+            <h:form id="formPrincipal" acceptcharset="ISO-8859-1">
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <!-- BEGIN EXAMPLE TABLE PORTLET-->
+                        <div class="portlet light bordered">
+
+                            <div class="portlet-title">
+
+                                <div class="caption">
+                                    <h:column>
+                                        <span class="caption-subject font-dark sbold uppercase"> Parcelas não pagas com extrato</span>
+                                    </h:column>
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+
+                                <div class="col-md-12">
+
+                                    <p:dataTable value="#{extratoValidacaoControle.listaParcelasNaoPagasComExtrato}" emptyMessage="Nenhum registro encontrado." var="item" id="tabelaDados" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+
+                                        <p:column headerText="Conta bancária." sortBy="#{idContaBancaria.descricao}">
+                                            <h:outputText value="#{item.idContaBancaria.descricao}"/>
+                                        </p:column>
+
+                                        <p:column headerText="Plano de conta" sortBy="#{idConta.idPlanoConta.descricao}">
+                                            <h:outputText value="#{item.idConta.idPlanoConta.descricao} (#{item.numParcela}/#{item.idConta.numeroParcelas})"/>
+                                        </p:column>
+
+                                        <p:column headerText="Obs." sortBy="#{idConta.observacao}">
+                                            <h:outputText value="#{item.idConta.observacao}"/>
+                                        </p:column>
+
+                                        <p:column headerText="Origem"  >
+                                            <h:outputText value="#{extratoValidacaoControle.mostraOrigem(item.idConta)}"/>
+                                        </p:column>
+
+                                        <p:column headerText="Venc." sortBy="#{item.dataVencimento}" width="95">
+                                            <h:outputText value="#{item.dataVencimento}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                                            </h:outputText>
+                                        </p:column>
+
+                                        <p:column headerText="Valor bruto"  sortBy="#{item.valor}" sortFunction="#{contaReceberControle.sortDoubleValue}" style="text-align: right">
+                                            <h:outputText value="#{item.valor}">
+                                                <f:convertNumber currencySymbol="R$" type="currency" />
+                                            </h:outputText>
+                                        </p:column>
+
+                                        <p:column headerText="Valor líquido" sortBy="#{item.valorTotal}" style="text-align: right">
+                                            <h:outputText value="#{item.valorTotal}">
+                                                <f:convertNumber currencySymbol="R$" type="currency" />
+                                            </h:outputText>
+                                        </p:column>
+
+                                        <p:column headerText="Situação" sortBy="#{item.situacao}">
+                                            <h:outputText value="#{extratoValidacaoControle.buscarSituacao(item.situacao)}"/>
+                                        </p:column>
+
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <h:panelGrid columns="4" >
+                                    <h:commandButton action="#{extratoValidacaoControle.doFinishAtualizarParcelasNaoPagasComExtrato()}" styleClass="btn green " value="Atualizar extrato" />
+
+                                    <p:spacer width="10" height="10" />
+
+                                    <h:commandButton action="listaExtratoContaCorrente.xhtml" styleClass="btn default " value="Voltar" />
+                                </h:panelGrid>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </h:form>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

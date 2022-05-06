@@ -1,0 +1,182 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+
+        <ui:param name="title" value="Mensalidade"/>
+        <ui:define name="title">#{title}</ui:define>
+        <ui:define name="viewname">
+            <li>##SECTION_NAME##</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/mensalidade/listaMensalidade.xhtml"> #{title}</p:link></li>
+        </ui:define>
+        <ui:define name="content">
+            <h:messages class="alertMessage" id="msgResultado" errorClass="alert alert-danger" />
+            <div class="row">
+                <div class="col-md-12 ">
+                    <!-- BEGIN SAMPLE FORM PORTLET-->
+                    <div class="portlet light bordered">
+                        <div class="portlet-title">
+                            <div class="caption">
+                                <i class="fa fa-upload"></i>
+                                <h:column>
+                                    <span class="caption-subject font-dark sbold uppercase">Recebimento</span>
+                                </h:column>
+                            </div>
+                            <div class="tools">
+                            </div>
+                            <div class="actions">
+                                <h:form>
+                                    <h:commandLink styleClass="btn blue btn-circle btn-outline sbold" immediate="true" action="#{mensalidadeControle.mostrarAjudaRecebimentoParcial()}">
+                                        <i class="icon-question"></i>
+                                    </h:commandLink>
+                                </h:form>
+                            </div>
+                        </div>
+                        <div class="portlet-body form">
+                            <h:form acceptcharset="ISO-8859-1" role="form" enctype="multipart/form-data">
+                                <div class="form-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label">Descrição</label>
+                                                <p:inputText value="#{mensalidadeControle.mensalidadeParcelaSelecionada.idContaReceber.descricao}"
+                                                             disabled ="true"
+                                                             styleClass="form-control" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label">Vencimento</label>
+                                                <p:inputText value="#{mensalidadeControle.mensalidadeParcelaSelecionada.idContaReceber.dataVencimento}"
+                                                             disabled ="true"
+                                                             styleClass="form-control" >
+                                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                                </p:inputText>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label">Valor parcela</label>
+                                                <p:inputText value="#{mensalidadeControle.mensalidadeParcelaSelecionada.valorParcela}" styleClass="form-control" disabled = "true">
+                                                    <f:convertNumber type="currency" locale="pt_BR"/>
+                                                </p:inputText>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label">Valor restante</label>
+                                                <p:inputText value="#{mensalidadeControle.mensalidadeParcelaSelecionada.valorRestante}" styleClass="form-control" disabled = "true">
+                                                    <f:convertNumber type="currency" locale="pt_BR"/>
+                                                </p:inputText>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label">
+                                                    <span class="required">* </span>
+                                                    Tipo recebimento
+                                                </label>
+
+                                                <p:inputText value="Informar valor"
+                                                        rendered="#{mensalidadeControle.mensalidadeParcelaSelecionada.recebimentoParcial eq 'S'}"
+                                                        disabled="true" readonly="true"
+                                                        styleClass="form-control" />
+
+                                                <p:selectOneMenu  value="#{mensalidadeControle.mensalidadeParcelaSelecionada.recebimentoParcial}"
+                                                                  rendered="#{mensalidadeControle.mensalidadeParcelaSelecionada.recebimentoParcial ne 'S'}"
+                                                                  required="true" requiredMessage="Informe se o tipo de recebimento"
+                                                                  styleClass="form-control">
+                                                    <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                    <f:selectItem itemLabel="Recebimento integral" itemValue="N" />
+                                                    <f:selectItem itemLabel="Informar valor" itemValue="S" />
+                                                    <p:ajax update="pnlValorPago" event="change" process="@this" />
+                                                </p:selectOneMenu >
+                                            </div>
+                                        </div>
+
+                                        <p:outputPanel id="pnlValorPago">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label">
+                                                    <p:row rendered="#{mensalidadeControle.mensalidadeParcelaSelecionada.recebimentoParcial eq 'S'}"><span class="required">* </span></p:row>
+                                                    Valor pago
+                                                </label>
+
+                                                <p:inputText value=""
+                                                        rendered="#{mensalidadeControle.mensalidadeParcelaSelecionada.recebimentoParcial ne 'S'}"
+                                                        disabled="true" readonly="true"
+                                                        styleClass="form-control" />
+
+                                                <p:inputNumber rendered="#{mensalidadeControle.mensalidadeParcelaSelecionada.recebimentoParcial eq 'S'}"
+                                                                maxValue="#{mensalidadeControle.mensalidadeParcelaSelecionada.valorRestante}"
+                                                                value="#{mensalidadeControle.valorRecebido}"
+                                                                symbol="R$ " decimalSeparator="," thousandSeparator="." decimalPlaces="2" />
+                                            </div>
+                                        </div>
+                                        </p:outputPanel>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label">
+                                                    <span class="required">* </span>
+                                                    Data recebimento
+                                                </label>
+                                                <p:calendar navigator="true" value="#{mensalidadeControle.mensalidadeParcelaSelecionada.dataRecebimento}" mask="true"
+                                                            required="true" requiredMessage="Informe a data de recebimento" pattern="dd/MM/yyyy"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label">Desconto</label>
+                                                <p:inputNumber value="#{mensalidadeControle.mensalidadeParcelaSelecionada.desconto}"
+                                                                symbol="R$ " decimalSeparator="," thousandSeparator="." decimalPlaces="2" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label">Juros</label>
+                                                <p:inputNumber value="#{mensalidadeControle.mensalidadeParcelaSelecionada.juros}"
+                                                                symbol="R$ " decimalSeparator="," thousandSeparator="." decimalPlaces="2" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label">Outros custos</label>
+                                                <p:inputNumber value="#{mensalidadeControle.mensalidadeParcelaSelecionada.outrosCustos}"
+                                                                symbol="R$ " decimalSeparator="," thousandSeparator="." decimalPlaces="2" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-actions">
+                                    <h:commandButton action="#{mensalidadeControle.doFinishAddParcelaParcial()}"  styleClass="btn blue " value="Salvar" />
+                                    <h:commandButton action="listaContaReceber.xhtml" immediate="true" styleClass="btn default" value="Cancelar" />
+                                </div>
+                            </h:form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+</html>

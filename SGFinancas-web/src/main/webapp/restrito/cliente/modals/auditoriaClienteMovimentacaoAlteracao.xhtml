@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <ui:composition template="/WEB-INF/templateModal.xhtml">
+
+        <ui:param name="title" value="Auditoria"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="content">
+            <style>
+                body {
+                    overflow: hidden;
+                }
+            </style>
+            <div class="form-body">
+                <div class="row">
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Usuário solicitação"/>
+                        <p:inputText value="#{clienteControle.clienteMovimentacaoAlteracaoSelecionada.idUsuarioSolicitacao.nome}" disabled="true"/>
+                    </div>
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Data da solicitação"/>
+                        <p:calendar value="#{clienteControle.clienteMovimentacaoAlteracaoSelecionada.dataAlteracao}" readonly="true" pattern="dd/MM/yyyy"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Usuário finalização"/>
+                        <p:inputText value="#{clienteControle.clienteMovimentacaoAlteracaoSelecionada.idUsuarioFinalizacao.nome}" disabled="true"/>
+                    </div>
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Data de finalização"/>
+                        <p:calendar value="#{clienteControle.clienteMovimentacaoAlteracaoSelecionada.dataFinalizacao}" readonly="true" pattern="dd/MM/yyyy"/>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

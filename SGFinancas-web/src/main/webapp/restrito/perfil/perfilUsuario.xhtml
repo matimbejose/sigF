@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <f:metadata>
+        <f:event listener="#{menuPerfilControle.doStartAlterar()}" type="preRenderView" />
+    </f:metadata>
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:define name="titleOfPage">
+            Minha conta
+        </ui:define>
+
+        <ui:param name="title" value="Minha conta"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Segurança</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/perfil/perfilUsuario.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="content">
+            <div class="card p-0">
+                <p:tabView id="tabs">
+                    <p:tab title="Conta">
+                        <div class="row">
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label class="control-label">Data cadastro</label>
+                                    <p:inputText value="#{menuPerfilControle.dataCadastro}" disabled="true" readonly="true">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </p:inputText>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Tipo de conta</label>
+                                    <p:inputText value="#{menuPerfilControle.tipoDeConta}" disabled="true" readonly="true"/>
+                                </div>
+                                <p:outputPanel rendered="#{menuPerfilControle.tipoDeConta eq 'Gratuita'}">
+                                    <div class="form-group">
+                                        <label class="control-label">Tempo restante degustação (Dias)</label>
+                                        <p:inputText value="#{menuPerfilControle.tempoDegustacao}" disabled="true" readonly="true"/>
+                                    </div>
+                                </p:outputPanel>
+                                <p:outputPanel rendered="#{menuPerfilControle.tipoDeConta eq 'Paga'}">
+                                    <div class="form-group">
+                                        <label class="control-label">Data vigência atual</label>
+                                        <p:inputText value="#{menuPerfilControle.dataVigencia}" disabled="true" readonly="true">
+                                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                                        </p:inputText>
+                                    </div>
+                                </p:outputPanel>
+                                <p:outputPanel rendered="#{menuPerfilControle.tipoDeConta eq 'Expirada'}">
+                                    <div class="form-group">
+                                        <label class="control-label">Data de expiração</label>
+                                        <p:inputText value="#{menuPerfilControle.dataVigencia}" disabled="true" readonly="true">
+                                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                                        </p:inputText>
+
+                                    </div>
+                                </p:outputPanel>
+                                <div class="margiv-top-10">
+                                    <p:commandButton value="#{menuPerfilControle.tipoDeConta eq 'Gratuita' ? 'Assine' : 'Renovar'}"
+                                                     action="#{meuPlanoControle.doStartRenovar()}" ajax="false"/>
+                                    <p:spacer width="10"/>
+                                    <p:row rendered="#{meuPlanoControle.exibeBotaoExportarDados()}">
+                                        <p:commandButton value="Solicitar exportação de dados" action="#{meuPlanoControle.solictarExportacaoDados()}"
+                                                         process="@this" update="form:msgResultado"/>
+                                        <i class="fa fa-info-circle info-msg" data-toggle="tooltip" data-placement="top"
+                                           title="Essa funcionalidade serve para solicitar automaticamente, a exportação em PDF ou Excel dos dados de cadastro que realizou no SG Finanças"/>
+                                    </p:row>
+                                </div>
+                            </div>
+                        </div>
+                    </p:tab>
+                    <p:tab title="Informações pessoais">
+                        <div class="row">
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label class="control-label">Nome</label>
+                                    <p:inputText value="#{menuPerfilControle.usuario.nome}" disabled="true" readonly="true"/>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Perfil</label>
+                                    <p:inputText value="#{menuPerfilControle.usuario.idPerfil.descricao}" disabled="true" readonly="true"/>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Email</label>
+                                    <p:inputText value="#{menuPerfilControle.usuario.email}"/>
+                                </div>
+                                <div class="margiv-top-10">
+                                    <p:commandButton value="Salvar" action="#{menuPerfilControle.salvarDadosUsuario()}"/>
+                                </div>
+                            </div>
+                        </div>
+                    </p:tab>
+                    <p:tab title="Mudar foto">
+                        <div class="row">
+                            <div class="col-4">
+                                <p:outputPanel id="panelFoto">
+                                    <div class="form-group">
+                                        <div class="fileinput fileinput-new" data-provides="fileinput">
+                                            <div class="fileinput-new thumbnail" style="width: 210px; height: 210px;">
+                                                <p:graphicImage cache="false" rendered="#{menuPerfilControle.usuario.foto ne null}" styleClass="foto-container" id="foto" value="#{usuarioControle.imagemPerfil}"/>
+                                                <p:graphicImage cache="false" rendered="#{menuPerfilControle.usuario.foto eq null}" styleClass="foto-container" id="fotoPadrao" url="/resources/images/avatar-usuario.jpg"/>
+                                            </div>
+                                            <div>
+                                                <span class="btn default btn-file">
+                                                    <p:fileUpload id="inputFoto" value="#{menuPerfilControle.part}" mode="simple"/>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </p:outputPanel>
+                                <div class="margin-top-10">
+                                    <div class="form-actions">
+                                        <p:commandButton value="Salvar" action="#{menuPerfilControle.salvarFotoPadrao()}" styleClass="mr-2"
+                                                         process="@this, inputFoto" ajax="false"/>
+                                        <p:commandButton value="Remover imagem" action="#{menuPerfilControle.removerFotoPadrao()}"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </p:tab>
+                    <p:tab title="Mudar senha">
+                        <div class="row">
+                            <div class="col-4">
+                                <p:outputPanel id="panelSenha">
+                                    <div class="form-group">
+                                        <label class="control-label">Senha atual</label>
+                                        <p:inputText  type="password" value="#{menuPerfilControle.senhaAtual}"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">Nova senha</label>
+                                        <p:inputText type="password" value="#{menuPerfilControle.senhaNova}"/>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label">Confirmar nova senha</label>
+                                        <p:inputText type="password" value="#{menuPerfilControle.confimacaoSenha}"/>
+                                    </div>
+                                    <div class="margin-top-10">
+                                        <p:commandButton value="Alterar senha">
+                                            <p:ajax process="panelSenha" update="form:msgResultado" listener="#{menuPerfilControle.alterarSenha()}"/>
+                                        </p:commandButton>
+                                    </div>
+                                </p:outputPanel>
+                            </div>
+                        </div>
+                    </p:tab>
+                    <p:tab title="Aplicativo">
+                        <div class="row">
+                            <div class="col-5">
+                                <p:dataTable value="#{menuPerfilControle.listaTokenApp}" var="token" emptyMessage="Nenhum acesso encontrado."
+                                             lazy="true" id="tbl" widgetVar="tbl"
+                                             styleClass="card p-0 ui-datatable-striped ui-datatable-sm ui-datatable-gridlines">
+
+                                    <f:facet name="header">
+                                        Acessos ao aplicativo
+                                        <div style="float: right">
+                                            <p:commandLink styleClass="btn btn-sm" id="toggler" type="button" value="Colunas"/>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                        <p:columnToggler datasource="tbl" trigger="toggler"/>
+                                    </f:facet>
+
+                                    <p:column headerText="#" width="55" sortBy="#{token.id}" visible="false">
+                                        <h:outputText value="#{token.id}"/>
+                                    </p:column>
+
+                                    <p:column headerText="Dispositivo" sortBy="#{token.deviceUuid}">
+                                        <h:outputText value="#{token.deviceUuid}"/>
+                                    </p:column>
+
+                                    <p:column headerText="Empresa" sortBy="#{token.idEmpresa.descricao}" visible="false">
+                                        <h:outputText value="#{token.idEmpresa.descricao}"/>
+                                    </p:column>
+
+                                    <p:column headerText="Data" sortBy="#{token.data}">
+                                        <h:outputText value="#{token.data}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                        </h:outputText>
+                                    </p:column>
+
+                                    <p:column width="77" headerText="Ações" >
+                                        <div class="actions">
+                                            <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Revogar acesso"
+                                                           action="#{menuPerfilControle.doStartRevokeToken()}" immediate="true">
+                                                <i class="fa fa-ban"></i>
+                                                <f:setPropertyActionListener value="#{token}" target="#{menuPerfilControle.tokenSelecionado}"/>
+                                            </h:commandLink>
+                                        </div>
+                                    </p:column>
+
+                                </p:dataTable>
+                            </div>
+                            <div class="col">
+                                <h3>Ainda não tem o aplicativo do SG Finanças?</h3>
+                                <h4>
+                                    Baixe-o gratuitamente pela
+                                    <a href="https://play.google.com/store/apps/details?id=br.com.villefort.sgfinancas">PlayStore</a>
+                                    ou pela
+                                    <a href="https://apps.apple.com/us/app/sgfinancas-app/id1469211507?l=pt">AppStore</a>
+                                </h4>
+                            </div>
+                        </div>
+                    </p:tab>
+                    <p:tab title="Acesso rápido">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="portlet-body flip-scroll">
+                                    <p:dataTable value="#{usuarioControle.acessoRapidoList}" id="tblAcessoRapidoList"
+                                                 emptyMessage="Nenhum link de acesso rápido cadastrado" var="ar"
+                                                 styleClass="card p-0 ui-datatable-striped ui-datatable-sm ui-datatable-gridlines">
+
+                                        <p:column headerText="Funcionalidades disponíveis"  sortBy="#{ar.descricao}">
+                                            <h:outputText value="#{ar.descricao}"/>
+                                        </p:column>
+
+                                        <p:column headerText="" width="25">
+                                            <f:facet name="header">
+                                                <div class="pesquisa-list .pesquisa-dois .pesquisa-tres">
+                                                    <p:commandLink class="btn btn-circle btn-icon-only btn-default icones" title="Selecionar todas"
+                                                                   action="#{usuarioControle.doAdicionaAcessoRapidoTodos()}" update="form:tabs:tblAcessoRapidoList, form:tabs:tblAcessoRapidoSelecionadoList, linksRapidos" immediate="true">
+                                                        <i class="fa fa-angle-double-right"></i>
+                                                    </p:commandLink>
+                                                </div>
+                                            </f:facet>
+                                            <p:commandLink title="Selecionar funcionalidade" class="btn btn-circle btn-icon-only btn-default icones"
+                                                           action="#{usuarioControle.doAdicionaAcessoRapido(ar)}"
+                                                           disabled="#{usuarioControle.possuiAcessoRapido(ar)}"
+                                                           update="form:tabs:tblAcessoRapidoList, form:tabs:tblAcessoRapidoSelecionadoList, linksRapidos" immediate="true">
+                                                <i class="fa fa-angle-double-right"></i>
+                                            </p:commandLink>
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="portlet-body flip-scroll">
+                                    <p:dataTable value="#{usuarioControle.usuarioLogado.usuarioAcessoRapidoList}" id="tblAcessoRapidoSelecionadoList"
+                                                 emptyMessage="Nenhum link de acesso rápido cadastrado" var="uar" draggableRows="true"
+                                                 styleClass="card p-0 ui-datatable-striped ui-datatable-sm ui-datatable-gridlines">
+
+                                        <p:ajax event="rowReorder" listener="#{usuarioControle.onRowReorder}" update="form:tabs:tblAcessoRapidoList, form:tabs:tblAcessoRapidoSelecionadoList, linksRapidos"/>
+
+                                        <p:column headerText="Funcionalidades atribuídas" sortBy="#{uar.idAcessoRapido.descricao}">
+                                            <h:outputText value="#{uar.idAcessoRapido.descricao}"/>
+                                        </p:column>
+
+                                        <p:column headerText="" width="25">
+                                            <f:facet name="header">
+                                                <div class="pesquisa-list .pesquisa-dois .pesquisa-tres">
+                                                    <p:commandLink title="Remover todos os acessos rápidos"  class="btn btn-circle btn-icon-only btn-default icones"
+                                                                   action="#{usuarioControle.doRemoverAcessoRapidoTodos()}" update="form:tabs:tblAcessoRapidoList, form:tabs:tblAcessoRapidoSelecionadoList, linksRapidos" immediate="true" >
+                                                        <i class="fa fa-trash-o"></i>
+                                                    </p:commandLink>
+                                                </div>
+                                            </f:facet>
+                                            <p:commandLink title="Remover acesso rápido" class="btn btn-circle btn-icon-only btn-default icones"
+                                                           action="#{usuarioControle.doRemoverAcessoRapido(uar)}" update="form:tabs:tblAcessoRapidoList, form:tabs:tblAcessoRapidoSelecionadoList, linksRapidos" immediate="true" >
+                                                <i class="fa fa-trash-o"></i>
+                                            </p:commandLink>
+                                        </p:column>
+                                        <f:facet name="footer">
+                                            <small>Arraste os itens para mudar a ordem</small>
+                                        </f:facet>
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                        </div>
+                    </p:tab>
+                </p:tabView>
+            </div>
+            <script>
+                // <![CDATA[
+                function imgError(elem) {
+                    elem.src = '/resources/images/blank.jpg';
+                }
+                $(document).ready(function () {
+                    const fid = document.querySelector('.fileinput');
+                    const img = fid.querySelector('img');
+                    const inp = fid.querySelector('input');
+                    img.addEventListener('click', evt => inp.click());
+                    inp.addEventListener('change', evt => {
+                        for (let file of evt.target.files) {
+                            let reader = new FileReader();
+                            reader.onload = () => img.setAttribute('src', reader.result);
+                            reader.readAsDataURL(file);
+                        }
+                    }, {passive: true});
+                });
+                // ]]>
+            </script>
+            <style>
+                .foto-container {
+                    width: 200px;
+                    height: 200px;
+                }
+                .ui-datagrid .text-center .pref-img {
+                    width: 100%;
+                    height: 120px;
+                    border: 1px solid #c8c8c8;
+                }
+                .ui-datagrid .text-center .ui-button {
+                    width: 100%;
+                }
+            </style>
+        </ui:define>
+    </ui:composition>
+
+</html>

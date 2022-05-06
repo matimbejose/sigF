@@ -1,0 +1,171 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:sec="http://www.springframework.org/security/facelets/tags"
+    xmlns:p="http://primefaces.org/ui">
+
+    <ul class="route-bar-menu" style="margin: 0 -5px;padding: 0;">
+        <li class="action" data-value="Refresh">
+            <a href="#" class="ui-button outlined-button p-2">
+                <i class="fa fa-refresh"/>
+                <span>Atualizar</span>
+            </a>
+        </li>
+        <li class="action" data-value="Add">
+            <a href="#" class="ui-button outlined-button p-2">
+                <i class="fa fa-plus"/>
+                <span>Novo</span>
+            </a>
+        </li>
+        <li class="action" data-value="Import">
+            <a href="#" class="ui-button outlined-button p-2">
+                <i class="fa fa-upload"/>
+                <span>Importar</span>
+            </a>
+        </li>
+        <li class="action" data-value="Export">
+            <a href="#" class="ui-button outlined-button p-2">
+                <i class="fa fa-download"/>
+                <span>Exportar</span>
+            </a>
+        </li>
+        <li class="action" data-value="Interrupt">
+            <a href="#" class="ui-button outlined-button p-2">
+                <i class="fa fa-chain-broken"/>
+                <span>Interromper</span>
+            </a>
+        </li>
+        <li class="action" data-value="GenerateWO">
+            <a href="#" class="ui-button outlined-button p-2">
+                <i class="fa fa-industry"/>
+                <span>Gerar OS</span>
+            </a>
+        </li>
+        <li class="action" data-value="GenerateSale">
+            <a href="#" class="ui-button outlined-button p-2">
+                <i class="fa fa-money"/>
+                <span>Gerar venda</span>
+            </a>
+        </li>
+        <li class="action" data-value="Save">
+            <a href="#" class="ui-button outlined-button p-2">
+                <i class="fa fa-check"/>
+                <span>Salvar</span>
+            </a>
+        </li>
+        <li class="action" data-value="Process">
+            <a href="#" class="ui-button outlined-button p-2">
+                <i class="fa fa-cogs"/>
+                <span>Processar</span>
+            </a>
+        </li>
+        <li class="action" data-value="Reject">
+            <a href="#" class="ui-button outlined-button p-2">
+                <i class="fa fa-times-circle-o"/>
+                <span>Rejeitar</span>
+            </a>
+        </li>
+        <li class="action" data-value="Remove">
+            <a href="#" class="ui-button outlined-button p-2">
+                <i class="fa fa-trash-o"/>
+                <span>Remover</span>
+            </a>
+        </li>
+        <li class="action" data-value="Cancel">
+            <a href="#" class="ui-button outlined-button p-2">
+                <i class="fa fa-times"/>
+                <span>Cancelar</span>
+            </a>
+        </li>
+        <li class="action" data-value="Accept">
+            <a href="#" class="ui-button outlined-button p-2">
+                <i class="fa fa-check"/>
+                <span>Aceitar</span>
+            </a>
+        </li>
+        <li class="action" data-value="Back">
+            <a href="#" class="ui-button outlined-button p-2">
+                <i class="fa fa-arrow-left"/>
+                <span>Voltar</span>
+            </a>
+        </li>
+        <li class="action" data-value="Next">
+            <a href="#" class="ui-button outlined-button p-2">
+                <i class="fa fa-arrow-right"/>
+                <span>Avançar</span>
+            </a>
+        </li>
+    </ul>
+
+    <script>
+        function addIntroJS() {
+            let js = document.createElement("SCRIPT");
+            js.setAttribute('src', '#{facesContext.externalContext.requestContextPath}/resources/js/intro.min.js');
+            js.setAttribute('type', 'text/javascript');
+            let css = document.createElement("LINK");
+            css.setAttribute('href', '#{facesContext.externalContext.requestContextPath}/resources/css/introjs.min.css');
+            css.setAttribute('rel', 'stylesheet');
+            css.setAttribute('type', 'text/css');
+            document.getElementsByTagName('head')[0].appendChild(js);
+            document.getElementsByTagName('head')[0].appendChild(css);
+        }
+        function waitForIntrosJS(callback = () => {}) {
+            let interval = setInterval(() => {
+                if (window.introJs !== undefined) {
+                    clearInterval(interval);
+                    callback();
+                }
+            }, 100);
+        }
+        function configIntroJS() {
+            window.ijs = introJs();
+            ijs.setOption('doneLabel', 'Pronto');
+            ijs.setOption('hintButtonLabel', 'Entendi');
+            ijs.setOption('nextLabel', 'Próximo');
+            ijs.setOption('prevLabel', 'Anterior');
+        }
+        function showIntroJsBtn() {
+            helpBtn.style.display = 'inline-block';
+            helpBtn.querySelector('a').addEventListener('click', () => ijs.start(), false);
+        }
+        function startIntroJS(rev, key) {
+            const last = localStorage.getItem(key) ?? 0;
+                if (rev > last) {
+                ijs.start();
+            }
+            localStorage.setItem(key, rev);
+        }
+        function showHideIcons() {
+            try {
+                const getById = id => document.getElementById('form:remote' + id);
+                const actions = Array.from(document.querySelectorAll('ul.route-bar-menu > li.action:not(.processed):not(.skip)'))
+                    .forEach(e => {
+                        let elem = getById(e.getAttribute('data-value'));
+                        if (elem) {
+                            e.querySelector('a').addEventListener('click', function () {
+                                elem.click();
+                            }, {passive: true});
+                            e.style.display = 'inline-block';
+                            e.classList.add('processed');
+                        } else {
+                            e.style.display = 'none';
+                            e.classList.remove('processed');
+                        }
+                    });
+                if (document.querySelector('*[data-intro]') !== null) {
+                    addIntroJS();
+                    waitForIntrosJS(() => {
+                        configIntroJS();
+                        showIntroJsBtn();
+                    });
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+        $(document).ready(showHideIcons);
+    </script>
+
+</ui:composition>

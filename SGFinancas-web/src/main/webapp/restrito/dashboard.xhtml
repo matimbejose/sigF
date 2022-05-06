@@ -1,0 +1,391 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:sec="http://www.springframework.org/security/facelets/tags"
+                xmlns:cc="http://xmlns.jcp.org/jsf/composite/components"
+                template="/WEB-INF/template.xhtml">
+
+    <f:metadata>
+        <f:event listener="#{telaInicialControle.obterValoresParaGrafico()}" type="preRenderView" />
+    </f:metadata>
+
+    <ui:param name="title" value="Dashboard" />
+    <ui:define name="title">#{title}</ui:define>
+
+    <ui:define name="head"></ui:define>
+
+    <ui:define name="content">
+        <sec:ifAnyGranted roles ="DASHBOARD_VISUALIZAR" >
+            <script src="#{facesContext.externalContext.requestContextPath}/resources/js/Highcharts/highcharts.js" type="text/javascript"></script>
+            <script src="#{facesContext.externalContext.requestContextPath}/resources/js/Highcharts/themes/sand-signika.js" type="text/javascript"></script>
+            <h:inputHidden id="valorFinanceira" value="#{telaInicialControle.analiseFinanceira}" />
+            <h:inputHidden id="valorPagarReceber" value="#{telaInicialControle.contaPagarReceber}" />
+            <h:inputHidden id="venda" value="#{telaInicialControle.venda}" />
+            <style>
+                text {
+                    font-size: 30px;
+                }
+
+                .knob-label {
+                    margin-left: 10%;
+                    width: 80%;
+                }
+
+                .highcharts-yaxis-title {
+                    font-size: 16px;
+                }
+
+                .knob-container {
+                    min-width: 180px;
+                }
+                .stats-box a, .stats-box a:hover {
+                    color: white;
+                }
+                .layout-dashboard .stats-box span.statistics-header {
+                    letter-spacing: 0;
+                    margin: 16px 0 16px 14px;
+                }
+                .layout-dashboard .stats-box span.statistics{
+                    font-size: 22px;
+                }
+                :root {
+                    --cor: transparent;
+                }
+                .gradient {
+                    box-shadow: 0 0 0 12px var(--cor), 0 0 0 24px var(--cor), 0 0 0 36px var(--cor);
+                    width: 2px;
+                    height: 2px;
+                    position: absolute;
+                    right: -2px;
+                    top: -2px;
+                    border-radius: 1px;
+                }
+                .card.overview-box {
+                    overflow: hidden;
+                }
+            </style>
+            <div class="layout-dashboard">
+                <div class="layout-dashboard mb-3">
+                    <div class="row">
+                        <div class="col intro-text">
+                            <span>
+                                Análise de
+                                <p:calendar navigator="true" pattern="dd/MM/yyyy" styleClass="top-calendar m-0" value="#{telaInicialControle.data.min}">
+                                    <p:ajax event="dateSelect" listener="#{telaInicialControle.obterValoresParaGrafico()}" update="indicadores, valorFinanceira, valorPagarReceber, venda" oncomplete="geraGraficos();" />
+                                </p:calendar>
+                                até
+                                <p:calendar navigator="true" pattern="dd/MM/yyyy" styleClass="top-calendar m-0" value="#{telaInicialControle.data.max}">
+                                    <p:ajax event="dateSelect" listener="#{telaInicialControle.obterValoresParaGrafico()}" update="indicadores, valorFinanceira, valorPagarReceber, venda" oncomplete="geraGraficos();" />
+                                </p:calendar>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <p:outputPanel id="indicadores">
+
+                    <div class="row">
+                        <div class="col-12 col-sm-6 col-md-4 col-xl my-3">
+                            <h:commandLink action="#{contaReceberControle.doMudarListagem()}">
+                                <div class="card overview-box" style="--cor: #3c946233;">
+                                    <div class="gradient"></div>
+                                    <div class="overview">
+                                        <span class="overview-title">A receber</span>
+                                        <h3 class="statistics">
+                                            <cc:convertMoney value="#{telaInicialControle.cardRecebimento.valor}"/>
+                                        </h3>
+                                        <span>#{telaInicialControle.cardRecebimento.quantidade} contas</span>
+                                    </div>
+                                    <f:setPropertyActionListener value="receber" target="#{contaReceberControle.tipoListagem}" />
+                                    <f:setPropertyActionListener value="receber" target="#{contaReceberControle.filtro.tipoListagem}" />
+                                    <f:setPropertyActionListener value="R" target="#{contaReceberControle.filtro.tipoTransacao}" />
+                                </div>
+                            </h:commandLink>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4 col-xl my-3">
+                            <h:commandLink action="#{contaPagarControle.doMudarListagem()}">
+                                <div class="card overview-box" style="--cor: #943c3c33;">
+                                    <div class="gradient"></div>
+                                    <div class="overview">
+                                        <span class="overview-title">A pagar</span>
+                                        <h3 class="statistics">
+                                            <cc:convertMoney value="#{telaInicialControle.cardPagamento.valor}"/>
+                                        </h3>
+                                        <span>#{telaInicialControle.cardPagamento.quantidade} contas</span>
+                                    </div>
+                                    <f:setPropertyActionListener value="pagar" target="#{contaPagarControle.tipoListagem}" />
+                                    <f:setPropertyActionListener value="pagar" target="#{contaPagarControle.filtro.tipoListagem}" />
+                                    <f:setPropertyActionListener value="P" target="#{contaPagarControle.filtro.tipoTransacao}" />
+                                </div>
+                            </h:commandLink>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4 col-xl my-3">
+                            <div class="card overview-box" style="--cor: #88888833;">
+                                <div class="gradient"></div>
+                                <div class="overview">
+                                    <span class="overview-title">Saldo</span>
+                                    <h3 class="statistics">
+                                        <cc:convertMoney value="#{telaInicialControle.cardSaldo.valor}"/>
+                                    </h3>
+                                    <span></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4 col-xl my-3">
+                            <h:commandLink action="#{contaReceberControle.doMudarListagem()}">
+                                <div class="card overview-box" style="--cor: #3c946233;">
+                                    <div class="gradient"></div>
+                                    <div class="overview">
+                                        <span class="overview-title">Crédito em atraso</span>
+                                        <h3 class="statistics">
+                                            <cc:convertMoney value="#{telaInicialControle.cardCreditoAtraso.valor}"/>
+                                        </h3>
+                                        <span>#{telaInicialControle.cardCreditoAtraso.quantidade} contas</span>
+                                    </div>
+                                    <f:setPropertyActionListener value="atraso" target="#{contaReceberControle.tipoListagem}" />
+                                    <f:setPropertyActionListener value="atraso" target="#{contaReceberControle.filtro.tipoListagem}" />
+                                    <f:setPropertyActionListener value="R" target="#{contaReceberControle.filtro.tipoTransacao}" />
+                                </div>
+                            </h:commandLink>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4 col-xl my-3">
+                            <h:commandLink action="#{contaPagarControle.doMudarListagem()}">
+                                <div class="card overview-box" style="--cor: #943c3c33;">
+                                    <div class="gradient"></div>
+                                    <div class="overview">
+                                        <span class="overview-title">Débitos em atraso</span>
+                                        <h3 class="statistics">
+                                            <cc:convertMoney value="#{telaInicialControle.cardDebitoAtraso.valor}"/>
+                                        </h3>
+                                        <span>#{telaInicialControle.cardDebitoAtraso.quantidade} contas</span>
+                                    </div>
+                                    <f:setPropertyActionListener value="atraso" target="#{contaPagarControle.tipoListagem}" />
+                                </div>
+                            </h:commandLink>
+                        </div>
+                    </div>
+                    <div class="row my-3">
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>Indicadores</h5>
+                                </div>
+                                <div class="row justify-content-center">
+                                    <p:row rendered="#{telaInicialControle.listaIndicadores.isEmpty()}">
+                                        <div class="col text-center">
+                                            Nenhum indicador selecionado
+                                        </div>
+                                    </p:row>
+                                    <p:repeat value="#{telaInicialControle.listaIndicadores}" var="indicador">
+                                        <div class="col-4 col-md-3 col-lg-2 knob-container text-center"
+                                             data-value="#{indicador.desempenhoFix}">
+                                            <svg width="130" height="130">
+                                                <circle cx="65" cy="65" r="60" stroke="black" stroke-width="5"
+                                                        fill="transparent" />
+                                                <circle cx="65" cy="65" r="60" stroke="black" stroke-width="9"
+                                                        fill="transparent" style="transform: rotate(90deg) translateY(-100%);" />
+                                                <text x="65" y="77" text-anchor="middle"></text>
+                                            </svg>
+                                            <div class="mx-3">
+                                                <strong>#{indicador.idPlanoConta.descricao}</strong>
+                                            </div>
+                                        </div>
+                                    </p:repeat>
+                                </div>
+                                <script>
+                                    // <![CDATA[
+                                    (() => {
+                                        Array.from(document.querySelectorAll('.knob-container'))
+                                            .forEach(e => {
+                                                const circles = e.querySelectorAll('circle');
+                                                const text = e.querySelector('text');
+                                                let value = parseFloat(e.getAttribute('data-value'));
+                                                const lenghtPercent = Math.PI * 60 * 2 / 100;
+                                                const dF = new Intl.NumberFormat('pt-br', {maximumFractionDigits: 0});
+                                                if (value > 190) {
+                                                    value = 190;
+                                                } else if (value < 0) {
+                                                    value = 0;
+                                                }
+                                                iterator(0, value, 0, val => {
+                                                    const hue = val * 1.2 - 10;
+                                                    const sat = val === 0 ? 0 : 1;
+                                                    circles[1].setAttribute('stroke', 'hsl(' + hue + ', ' + (sat * 60) + '%, ' + (sat * 50) + '%)');
+                                                    circles[0].setAttribute('stroke', 'hsl(' + hue + ', ' + (sat * 60) + '%, 90%)');
+                                                    circles[1].setAttribute('stroke-dasharray', (val === 0 ? 1 : val * lenghtPercent) + ' ' + (100 * lenghtPercent));
+                                                    text.innerHTML = dF.format(val);
+                                                    text.setAttribute('fill', 'hsl(' + hue + ', ' + (sat * 60) + '%, 70%)');
+                                                });
+                                            });
+                                    })();
+                                    // ]]>
+                                </script>
+                            </div>
+                        </div>
+                    </div>
+
+                </p:outputPanel>
+
+                <div style="height: 1px;"></div>
+                <div class="row my-3">
+                    <div class="col-12 col-xl-6">
+                        <div class="card">
+                            <div class="card-header">Análise financeira</div>
+                            <div id="analiseFinanceira" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-xl-6 mt-3 mt-xl-0">
+                        <div class="card">
+                            <div class="card-header">Análise de contas a pagar/receber</div>
+                            <div id="graficoContaPagarReceber" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+                        </div>
+                    </div>
+                </div>
+                <div style="height: 1px;"></div>
+                <div class="row my-3">
+                    <div class="col-12 col-xl-6">
+                        <div class="card">
+                            <div class="card-header">Vendas</div>
+                            <div id="graficoVenda" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-xl-6 mt-3 mt-xl-0">
+                        <div class="card">
+                            <div class="card-header">Lucratividade</div>
+                            <div id="graficoLucratividade" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+                        </div>
+                    </div>
+                </div>
+                <script>
+                    // <![CDATA[
+                    $x = jQuery.noConflict();
+                    $ = jQuery;
+
+                    const tooltip = {valuePrefix: 'R$ '};
+                    const style = {color: Highcharts.getOptions().colors[4]};
+                    const labels = {format: 'R$ {value}', style};
+                    const chart = {type: 'column', zoomType: 'xy'};
+                    const title = {text: ''};
+                    const credits = {enabled: false};
+                    const xAxis = {categories: getInput('venda').map(obj => obj.nomeMes), crosshair: true};
+
+                    function geraGraficos() {
+                        geraAnaliseFinanceira();
+                        geraContaPagarReceber();
+                        geraLucratividade();
+                        geraVenda();
+                    }
+
+                    function geraVenda() {
+                        let valorProduto = [], valorServico = [];
+
+                        getInput('venda').forEach(obj => {
+                            valorProduto.push(obj.valorProduto || 0);
+                            valorServico.push(obj.valorServico || 0);
+                        });
+                        $x(graficoVenda).highcharts({
+                            chart, title, credits, xAxis,
+                            yAxis: {min: 0, title: {text: 'Valor (R$)'}},
+                            plotOptions: {column: {pointPadding: 0.2, borderWidth: 0}},
+                            series: [
+                                {name: 'Produto', color: Highcharts.getOptions().colors[2], data: valorProduto},
+                                {name: 'Serviço', color: Highcharts.getOptions().colors[4], data: valorServico}
+                            ]});
+                    }
+
+                    function geraLucratividade() {
+                        $x(graficoLucratividade).highcharts({
+                            title, credits, xAxis,
+                            yAxis: {
+                                title: {text: '%'}
+                            },
+                            tooltip: {valueSuffix: '%'},
+                            series: [
+                                {name: 'Lucro', type: 'spline', data: getInput('valorFinanceira').map(obj => obj.lucratividade || 0)}
+                            ]
+                        });
+                    }
+
+                    function geraContaPagarReceber() {
+                        let valorReceita = [], valorDespesa = [], caixa = [], media = [];
+
+                        getInput('valorPagarReceber').forEach(obj => {
+                            valorReceita.push(obj.valorReceber || 0);
+                            valorDespesa.push(obj.valorPagar || 0);
+                            media.push((obj.valorReceber || 0) - (obj.valorPagar || 0));
+                            caixa.push(obj.necessidadeCaixa || 0);// Permitir inserir valores negativos para o cálculo
+                        });
+
+                        caixa = caixa
+                            .map(m => parseFloat(m.toFixed(2)))
+                            .map(m => m < 0 ? 0 : m);// Remover valores negativos para a visualização
+
+                        $x(graficoContaPagarReceber).highcharts({
+                            chart, title, credits, xAxis,
+                            yAxis: [
+                                {title: {text: 'Valor a pagar / receber', style}, labels, opposite: true},
+                                {title: {text: 'Necessidade de caixa', style}, labels}
+                            ],
+                            tooltip: {shared: true},
+                            series: [
+                                {name: 'Necessidade de Caixa', type: 'column', yAxis: 1, data: caixa, color: Highcharts.getOptions().colors[2], tooltip},
+                                {name: 'Conta a receber', type: 'spline', data: valorReceita, color: Highcharts.getOptions().colors[0], tooltip},
+                                {name: 'Conta a pagar', type: 'spline', data: valorDespesa, color: Highcharts.getOptions().colors[1], tooltip}
+                            ]
+                        });
+                    }
+
+                    function geraAnaliseFinanceira() {
+                        let valorReceita = [], valorDespesa = [], valorLucratividade = [];
+
+                        getInput('valorFinanceira').forEach(obj => {
+                            valorReceita.push(obj.receita || 0);
+                            valorDespesa.push(obj.despesa || 0);
+                            valorLucratividade.push(obj.lucroPrejuizo || 0);
+                        });
+
+                        $x(analiseFinanceira).highcharts({
+                            chart, title, credits, xAxis,
+                            yAxis: [
+                                {title: {text: 'Lucro no período', style}, labels},
+                                {title: {text: 'Receita / Despesa', style}, labels, opposite: true}
+                            ],
+                            tooltip: {shared: true},
+                            series: [
+                                {name: 'Receita', type: 'column', yAxis: 1, data: valorReceita, tooltip},
+                                {name: 'Despesa', type: 'column', yAxis: 1, data: valorDespesa, tooltip},
+                                {name: 'Lucro', type: 'spline', data: valorLucratividade, tooltip}
+                            ]
+                        });
+                    }
+
+                    function getInput(name) {
+                        return JSON.parse($('input:hidden').filter((i, f) => f.id.indexOf(name) >= 0).get(0).value);
+                    }
+
+                    function mostraNotificacao() {
+                        let t = new VillefortToast();
+                        t.setImportacaoParametro(#{false and controleMenu.dadosImportacaoPreenchidos()});
+                        t.setNotaFiscalParametro(#{!controleMenu.dadosNotaFiscalPreenchidos()});
+                        t.setNotaFiscal(#{!controleMenu.existeCerticadoInformado()});
+                        t.setContaCorrente(#{!controleMenu.existeContaCorrenteCadastrada()});
+                        t.setDadosEmpresa(#{controleMenu.precisaAtualizarDados()});
+                        t.setEmpresaExpirou(#{controleMenu.mostraEmpresaExpirada()});
+                        t.setContatosCliente(#{controleMenu.mostraClienteContatoHoje()});
+                        t.show();
+                    }
+
+
+                    $(document).ready(() => {
+                        geraGraficos();
+                        mostraNotificacao();
+                    });
+                    #{introJSConfigControle.getIntroJSFor('dashboard')}
+                    // ]]>
+                </script>
+            </div>
+        </sec:ifAnyGranted>
+    </ui:define>
+
+</ui:composition>

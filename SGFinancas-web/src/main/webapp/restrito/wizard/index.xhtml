@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <f:metadata>
+        <f:event listener="#{wizardControle.init()}" type="preRenderView"/>
+    </f:metadata>
+
+    <ui:composition template="/WEB-INF/templateFull.xhtml">
+
+        <ui:define name="title">Wizard</ui:define>
+
+        <ui:define name="viewname">
+            <li>#{wizardControle.stepName}</li>
+        </ui:define>
+
+        <ui:define name="content">
+            <style>
+                :root {
+                    --offset: 45px;
+                }
+                .balao {
+                    padding: 1rem;
+                    border: .25rem solid #666;
+                    border-radius: .5rem;
+                }
+                .balao:before {
+                    bottom: 2px;
+                    left: var(--offset);
+                    border: 21px solid transparent;
+                    border-top-color: #666;
+                }
+                .balao:after {
+                    bottom: 9px;
+                    left: calc(var(--offset) + 3px);
+                    border: 16px solid transparent;
+                    border-top-color: #fff;
+                }
+                .balao:before, .balao:after {
+                    content: '';
+                    position: absolute;
+                    width: 0;
+                    height: 0;
+                    border-bottom: 0;
+                    border-left: 0;
+                    margin-left: -10px;
+                    margin-bottom: -20px;
+                }
+            </style>
+            <p:outputPanel id="view">
+                <ui:include src="./steps/#{wizardControle.step}.xhtml"/>
+                <div class="row">
+                    <div class="col-auto mr-auto">
+                        <p:commandButton value="Voltar" action="#{wizardControle.previous}" rendered="#{wizardControle.previousBtnRendered}"
+                                         process="view" update="view, viewname, msgResultado" icon="fa fa-arrow-left" immediate="true"/>
+                    </div>
+                    <div class="col-auto ml-auto">
+                        <p:commandLink value="Pular" action="#{wizardControle.skip}" rendered="#{wizardControle.skipBtnRendered}"
+                                       immediate="true" styleClass="btn btn-sm" process="view" update="view, viewname, msgResultado"/>
+                        <p:commandButton value="#{wizardControle.labelNext}" action="#{wizardControle.next}" rendered="#{wizardControle.nextBtnRendered}"
+                                         process="view" update="view, viewname, msgResultado" icon="#{wizardControle.iconNext}" iconPos="s"/>
+                    </div>
+                </div>
+            </p:outputPanel>
+        </ui:define>
+
+    </ui:composition>
+</html>

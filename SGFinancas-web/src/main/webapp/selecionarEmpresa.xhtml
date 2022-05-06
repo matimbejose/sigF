@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/templateFull.xhtml">
+
+        <ui:param name="title" value="Minhas empresas"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>#{title}</li>
+        </ui:define>
+
+        <ui:define name="content">
+            <p:importEnum type="br.com.villefortconsulting.sgfinancas.util.EnumPorteEmpresa"/>
+            <p:dataTable value="#{empresaSelecaoControle.model}" var="item" emptyMessage="Nenhuma empresa encontrada." style="margin: -18px -15px;"
+                         lazy="true" rows="30" paginator="true" paginatorPosition="bottom" rowsPerPageTemplate="10,20,30,50,100" id="tbl" widgetVar="tbl"
+                         styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow"
+                         rowStyleClass="#{item.styleClass}">
+
+                <p:column width="57" headerText="">
+                    <div class="actions">
+                        <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Selecionar" action="#{empresaSelecaoControle.doStartAlterar()}"  >
+                            <i class="fa fa-sign-in fa-lg"></i>
+                            <f:setPropertyActionListener value="#{item}" target="#{empresaSelecaoControle.empresa}"/>
+                        </h:commandLink>
+                    </div>
+                </p:column>
+
+                <p:column headerText="Descrição" filterBy="#{item.descricao}">
+                    <f:facet name="filter">
+                        <p:inputText value="#{empresaSelecaoControle.filtro.descricao}" onchange="PF('tbl').filter()"/>
+                    </f:facet>
+                    <h:outputText value="(#{item.id}) #{item.descricao}"/>
+                </p:column>
+
+                <p:column headerText="Porte" style="text-align: right;">
+                    <f:facet name="filter">
+                        <p:inputText value="#{empresaSelecaoControle.filtro.descricao}" onchange="PF('tbl').filter()"/>
+                    </f:facet>
+                    <h:outputText value="#{empresaSelecaoControle.preenchePorte(item.porte)}"/>
+                </p:column>
+
+            </p:dataTable>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

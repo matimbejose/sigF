@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Producao" />
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Estoque</li>
+            <li>/</li>
+            <li>
+                <p:link outcome="/restrito/producao/listaProducao.xhtml"> #{title}</p:link>
+            </li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <p:row rendered="#{!producaoControle.producaoSelecionado.finalizado}">
+                <h:commandButton id="remoteSave" action="#{producaoControle.doFinishAdd()}"/>
+                <h:commandButton id="remoteCancel" action="listaProducao.xhtml" immediate="true"/>
+            </p:row>
+            <p:row rendered="#{producaoControle.producaoSelecionado.finalizado}">
+                <h:commandButton id="remoteBack" action="listaProducao.xhtml" immediate="true"/>
+            </p:row>
+        </ui:define>
+
+        <ui:define name="content">
+            <div class="form-body">
+                <div class="card card-w-title">
+                    <div class="row">
+                        <div class="col-2">
+                            <div class="form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Número"/>
+                                <p:inputText value="#{producaoControle.producaoSelecionado.numero}" disabled="true"/>
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <div class="form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Data do pedido"/>
+                                <p:calendar navigator="true" value="#{producaoControle.producaoSelecionado.dataPedido}" required="true"
+                                            requiredMessage="Informe a data do pedido"
+                                            disabled="#{producaoControle.producaoSelecionado.finalizado}"/>
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <div class="form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Data limite"/>
+                                <p:calendar navigator="true" value="#{producaoControle.producaoSelecionado.dataLimite}"
+                                            disabled="#{producaoControle.producaoSelecionado.finalizado}"/>
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <div class="form-group form-md-line-input">
+                                <p:importEnum type="br.com.villefortconsulting.sgfinancas.util.EnumStatusProducao"/>
+                                <p:outputLabel for="@next" value="Status"/>
+                                <p:selectOneMenu value="#{producaoControle.producaoSelecionado.status}"
+                                                 disabled="#{producaoControle.producaoSelecionado.status eq EnumStatusProducao.NOVO.tipo or producaoControle.producaoSelecionado.finalizado}">
+                                    <f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+                                    <f:selectItems value="#{EnumStatusProducao.ALL_VALUES}" var="enum"
+                                                   itemLabel="#{enum.descricao}" itemValue="#{enum.tipo}"/>
+                                </p:selectOneMenu>
+                            </div>
+                        </div>
+                    </div>
+                    <p:dataTable value="#{producaoControle.producaoSelecionado.producaoProdutoList}" var="item" id="tbl"
+                                 emptyMessage="Nenhum item adicionado"
+                                 styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+                        <p:column headerText="Produto" style="text-align:left">
+                            <p:selectOneMenu value="#{item.idProduto}" id="somProduto" var="t" filter="true" filterMatchMode="contains"
+                                             converter="#{genericConverter}" disabled="#{producaoControle.producaoSelecionado.finalizado}">
+
+                                <p:column>
+                                    <p:row rendered="#{itemVenda.tipoProduto eq 'C'}">
+                                        <i class="fa fa-fw fa-object-group" title="Produto composto"></i>
+                                    </p:row>
+                                    <p:row rendered="#{itemVenda.tipoProduto eq 'K'}">
+                                        <i class="fa fa-fw fa-archive" title="Kit de produto"></i>
+                                    </p:row>
+                                    <h:outputText value="#{t.descricao}"/>
+                                </p:column>
+
+                                <f:selectItem itemLabel="-- Selecione --" noSelectionOption="true" />
+                                <f:selectItems value="#{producaoControle.produtos}"  var="produto" itemLabel="#{produto.descricao}" itemValue="#{produto}"/>
+                                <p:ajax process="@this"/>
+                            </p:selectOneMenu>
+                        </p:column>
+
+                        <p:column headerText="Quantidade" width="125">
+                            <p:inputNumber value="#{item.quantidade}" thousandSeparator="." decimalSeparator=","
+                                           disabled="#{producaoControle.producaoSelecionado.finalizado}"/>
+                        </p:column>
+
+                        <p:column headerText="Observação">
+                            <p:inputText value="#{item.detalhesItem}" disabled="#{producaoControle.producaoSelecionado.finalizado}">
+                                <p:ajax process="@this"/>
+                            </p:inputText>
+                        </p:column>
+
+                        <p:column width="57" headerText="Ações" rendered="#{!producaoControle.producaoSelecionado.finalizado}">
+                            <div class="actions">
+                                <p:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Remover produto" immediate="true"
+                                               process="@this" action="#{producaoControle.removeProduto(item)}" update="tbl">
+                                    <i class="icon-trash"></i>
+                                </p:commandLink>
+                            </div>
+                        </p:column>
+
+                        <f:facet name="footer">
+                            <p:commandButton value="Adicionar" process="@this" update="tbl" action="#{producaoControle.addProduto()}"
+                                             rendered="#{!producaoControle.producaoSelecionado.finalizado}"/>
+                        </f:facet>
+                    </p:dataTable>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

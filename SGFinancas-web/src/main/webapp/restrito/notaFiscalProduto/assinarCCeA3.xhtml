@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Assinar Nf-e com certificado A3"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Nota fiscal</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/notaFiscalProduto/listaNotaFiscalProduto.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes"/>
+
+        <ui:define name="content">
+            <div class="notification">
+                <div class="notification-title">
+                    Atenção!
+                </div>
+                - Certifique-se que o seu certificado esteja corretamente conectado ao seu computador. <br></br>
+                - Se o plugin Web PKI ainda não estiver instalado em seu navegador, você será direcionado para a página de instalação.
+            </div>
+
+            <div class="row">
+                <div class="col-md-12 ">
+                    <div class="card card-w-title">
+                        <h1>Assinar nota com certificado A3</h1>
+                        <div class="form-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="control-label">Escolha o certificado</label>
+                                        <div class="input-group">
+                                            <div class="input-group-append">
+                                                <select id="certificateSelect" style="width: 100%;"></select>
+                                                <button id="refreshButton" type="button" class="ui-button ui-widget ui-state-default" style="padding: 6px;">Atualizar</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <input type="hidden" id="toSignHashField" name="toSignHashField" value="#{notaFiscalProdutoControle.hashCCe}"/>
+                            <p:inputText type="hidden" id="certificateField" class="certificateField" value="#{notaFiscalProdutoControle.certificateField}"/>
+                            <p:inputText type="hidden" id="signatureField" class="signatureField" value="#{notaFiscalProdutoControle.signatureField}"/>
+                            <p:inputText type="hidden" id="stateField" class="stateField"/>
+                            <p:remoteCommand name="rc" process="@form" action="#{notaFiscalProdutoControle.assinarCCe()}"/>
+
+                            <p:commandButton class="signButton" immediate="true" value="Transmitir" />
+                            <p:spacer width="5"/>
+                            <p:commandButton action="listaNotaFiscalProduto.xhtml" immediate="true" value="Cancelar"/>
+                            <a class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only pull-right" data-toggle="collapse"
+                               href="#xmlText" role="button" aria-expanded="false" aria-controls="xmlText">
+                                <span class="ui-button-text ui-c">XML</span>
+                            </a>
+                        </div>
+                        <div class="collapse" id="xmlText">
+                            <p:inputTextarea value="#{notaFiscalProdutoControle.xmlEnvio}" style="min-height: 200px;"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+        <ui:define name="script">
+            <script src="#{facesContext.externalContext.requestContextPath}/resources/webPki/scripts/lacuna-web-pki-2.5.0.js" type="text/javascript"></script>
+            <script src="#{facesContext.externalContext.requestContextPath}/resources/webPki/scripts/signature-form.js" type="text/javascript"></script>
+
+            <script>
+                const xml = #{notaFiscalProdutoControle.xmlEnvioJson};
+                $(document).ready(function () {
+                    signatureForm.init({
+                        form: $('#form'),
+                        certificateSelect: $('#certificateSelect'),
+                        signButton: $('.signButton').first(),
+                        refreshButton: $('#refreshButton'),
+                        toSignHashField: $('#toSignHashField'),
+                        certificateField: $('#certificateField'),
+                        stateField: $('#stateField'),
+                        signatureField: $('#signatureField')
+                    });
+                    $('#form').removeAttr("enctype");
+                    const btn = $('.signButton');
+                    $(certificateSelect).change(function () {
+                        if (this.value === '') {
+                            btn.attr('disabled', 'disabled');
+                        } else {
+                            btn.removeAttr('disabled');
+                        }
+                    }).change();
+                });
+            </script>
+            <style>
+                button[disabled] {
+                    background-color: #6bb8c8;
+                    color: #333;
+                    cursor: not-allowed;
+                }
+            </style>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

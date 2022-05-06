@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Consolidação mensal"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Financeiro</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/financeiro/consolidacaoMensal.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes"/>
+
+        <ui:define name="content">
+            <style>
+                h5 {
+                    margin: 0;
+                    font-size: 18px;
+                    padding: 0 2px;
+                }
+                .totTable tr > td:first-child {
+                    text-align: right;
+                }
+                .ui-datatable .ui-rowgroup-header > td > a.ui-rowgroup-toggler {
+                    float: left;
+                    margin-top: 10px;
+                }
+                .ui-datatable td {
+                    font-weight: normal;
+                    vertical-align: top;
+                }
+                .recibo {
+                    font-size: 1.7rem;
+                    cursor: pointer;
+                }
+            </style>
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <p:selectOneMenu value="#{financeiroControle.cliente}" var="t" id="nomeInp"
+                                         filter="true" filterMatchMode="startsWith" panelStyle="width:180px"
+                                         converter="#{genericConverter}">
+                            <p:column>
+                                <h:outputText value="#{t.nome}"/>
+                            </p:column>
+                            <f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+                            <f:selectItems value="#{clienteControle.clientes}" var="cliente"
+                                           itemLabel="#{cliente.nome}" itemValue="#{cliente}"/>
+                            <p:ajax event="change" process="nomeInp, mesInp, anoInp" update="recebimentos, gastos, totais"
+                                    listener="#{financeiroControle.updateTables}" oncomplete="collapse();"/>
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="col-md-2 col-md-offset-5">
+                        <p:selectOneMenu value="#{financeiroControle.nomeMes}" var="t" id="mesInp">
+                            <f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+                            <f:selectItems value="#{financeiroControle.meses}"  var="mes"
+                                           itemLabel="#{mes}" itemValue="#{mes}"/>
+                            <p:ajax event="change" process="nomeInp, mesInp, anoInp" update="recebimentos, gastos, totais"
+                                    listener="#{financeiroControle.updateTables}" oncomplete="collapse();"/>
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="col-md-2">
+                        <p:inputNumber value="#{financeiroControle.ano}" decimalPlaces="0" thousandSeparator="" id="anoInp">
+                            <p:ajax event="change" process="nomeInp, mesInp, anoInp" update="recebimentos, gastos, totais"
+                                    listener="#{financeiroControle.updateTables}" oncomplete="collapse();"/>
+                        </p:inputNumber>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <h1>
+                                Recebimentos
+                                <span class="pull-right">
+                                    <p:commandLink title="Gerar recibo" ajax="false" class="btn btn-circle btn-icon-only btn-default icones">
+                                        <i class="fa fa-wpforms recibo"></i>
+                                        <p:fileDownload value="#{financeiroControle.doPrintRecibo()}"/>
+                                    </p:commandLink>
+                                </span>
+                            </h1>
+                            <p:dataTable id="recebimentos" emptyMessage="Sem recebimentos para o mês informado" sortBy="#{item.nomePlanoConta}"
+                                         expandableRowGroups="true" expandedRow="false" first="#{financeiroControle.first}" lazy="true" var="item"
+                                         value="#{financeiroControle.modelRecebimento}"
+                                         styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+                                <p:headerRow>
+                                    <p:column>
+                                        <h:outputText value="#{item.nomePlanoConta}"/>
+                                    </p:column>
+
+                                    <p:column colspan="2">
+                                        <h:outputText value="#{financeiroControle.getTotalRecebimentoPlanoConta(item)}">
+                                            <f:convertNumber locale="pt_BR" type="currency"/>
+                                        </h:outputText>
+                                    </p:column>
+                                </p:headerRow>
+
+                                <p:column headerText="Recebimentos" sortBy="#{item.nomeCliente}">
+                                    <h:outputText value="#{item.nomeCliente}"/>
+                                </p:column>
+
+                                <p:column headerText="#{financeiroControle.nomeMes}" sortBy="#{item.valor}">
+                                    <h:outputText value="#{item.valor}">
+                                        <f:convertNumber locale="pt_BR" type="currency"/>
+                                    </h:outputText>
+                                </p:column>
+
+                                <p:column headerText="Pago" style="width: 55px;text-align: center;">
+                                    <i class="fa fa-#{item.pago ? 'check text-suxxess' : 'times text-danger'}"></i>
+                                </p:column>
+
+                            </p:dataTable>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <h1>Gastos</h1>
+                            <p:dataTable emptyMessage="Sem recebimentos para o mês informado" expandableRowGroups="true" expandedRow="false" var="item"
+                                         first="#{financeiroControle.first}" id="gastos" lazy="true" value="#{financeiroControle.modelGasto}"
+                                         styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+                                <p:headerRow>
+                                    <p:column>
+                                        <h:outputText value="#{item.nomePlanoConta}"/>
+                                    </p:column>
+
+                                    <p:column colspan="2">
+                                        <h:outputText value="#{financeiroControle.getTotalGastoPlanoConta(item)}"/>
+                                    </p:column>
+                                </p:headerRow>
+
+                                <p:column headerText="Gastos" sortBy="#{item.nomeCliente}">
+                                    <h:outputText value="#{item.nomeCliente}">
+                                        <f:convertNumber locale="pt_BR" type="currency"/>
+                                    </h:outputText>
+                                </p:column>
+
+                                <p:column headerText="#{financeiroControle.nomeMes}" sortBy="#{item.valor}">
+                                    <h:outputText value="#{item.valor}">
+                                        <f:convertNumber locale="pt_BR" type="currency"/>
+                                    </h:outputText>
+                                </p:column>
+
+                                <p:column headerText="Pago" style="width: 55px;text-align: center;">
+                                    <i class="fa fa-#{item.pago ? 'check text-suxxess' : 'times text-danger'}"></i>
+                                </p:column>
+
+                            </p:dataTable>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="card mt-3">
+                            <h1>Total</h1>
+                            <div class="col-md-6">
+                                <p:outputPanel id="totais">
+                                    <table class="totTable">
+                                        <tr style="color: #8cc63e;">
+                                            <td><h5>Recebimentos:</h5></td>
+                                            <td>
+                                                <h5>
+                                                    <h:outputText value="#{financeiroControle.totalRecebimento}">
+                                                        <f:convertNumber locale="pt_BR" type="currency"/>
+                                                    </h:outputText>
+                                                </h5>
+                                            </td>
+                                        </tr>
+                                        <tr style="color: #c63e3e;">
+                                            <td><h5>Gastos:</h5></td>
+                                            <td>
+                                                <h5>
+                                                    <h:outputText value="#{financeiroControle.totalGasto}">
+                                                        <f:convertNumber locale="pt_BR" type="currency"/>
+                                                    </h:outputText>
+                                                </h5>
+                                            </td>
+                                        </tr>
+                                        <tr style="color: #333;">
+                                            <td><h5>Sub-total:</h5></td>
+                                            <td>
+                                                <h5>
+                                                    <h:outputText value="#{financeiroControle.totalRecebimento - financeiroControle.totalGasto}">
+                                                        <f:convertNumber locale="pt_BR" type="currency"/>
+                                                    </h:outputText>
+                                                </h5>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </p:outputPanel>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <script>
+                function collapse() {
+                    Array.from(document.querySelectorAll('.ui-rowgroup-toggler'))
+                        .filter(f => f.getAttribute('aria-expanded') === 'true')
+                        .forEach(e => e.click());
+                }
+                document.addEventListener('DOMContentLoaded', collapse);
+            </script>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

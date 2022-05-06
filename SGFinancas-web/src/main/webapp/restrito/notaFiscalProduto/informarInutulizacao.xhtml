@@ -1,0 +1,93 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Inutilização de NFe"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Nota fiscal</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/notaFiscalProduto/listaNotaFiscalProduto.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <p:remoteCommand name="remoteCancel" action="listaNotaFiscalProduto.xhtml" update="@(form:first)" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <h1>
+                <span class="fa-stack fa-md" style="transform: scale(.5);">
+                    <i class="fa fa-rotate-right fa-stack-2x" style="height: 50%;overflow: hidden;line-height: 1;"></i>
+                    <i class="fa fa-circle fa-stack-1x" style="font-size: 8px;margin-top: 25%;"></i>
+                </span>
+                Inutilização de NF-e
+            </h1>
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- BEGIN EXAMPLE TABLE PORTLET-->
+                    <div class="card">
+                        <div class="row">
+                            <div class="col-md-1">
+                                <div class="form-group">
+                                    <label class="control-label">Ano</label>
+                                    <p:calendar navigator="true" value="#{notaFiscalProdutoControle.inutilizacaoDTO.ano}" required="true"
+                                                requiredMessage="Informe o ano" pattern="yy" mask="true"/>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="control-label">Modelo</label>
+                                    <p:selectOneMenu value="#{notaFiscalProdutoControle.inutilizacaoDTO.modelo}">
+                                        <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                        <f:selectItems value="#{notaFiscalProdutoControle.modelos}" var="m" itemLabel="#{m.tipo} - #{m.descricao}" itemValue="#{m.tipo}"/>
+                                    </p:selectOneMenu>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label class="control-label">Série</label>
+                                    <p:inputNumber value="#{notaFiscalProdutoControle.inutilizacaoDTO.serie}" decimalPlaces="0"/>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label class="control-label">Número inicial</label>
+                                    <p:inputText onchange="removeEspacos(event.target);" value="#{notaFiscalProdutoControle.inutilizacaoDTO.numeroInicial}"/>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label class="control-label">Número final</label>
+                                    <p:inputText onchange="removeEspacos(event.target);" value="#{notaFiscalProdutoControle.inutilizacaoDTO.numeroFinal}"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="control-label">Motivo</label>
+                                    <p:inputTextarea value="#{notaFiscalProdutoControle.inutilizacaoDTO.motivo}"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <p:commandButton action="#{notaFiscalProdutoControle.doFinishAddDisablement()}" styleClass="btn" value="Inutilizar numeração"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script>
+                function removeEspacos(elem) {
+                    elem.value = elem.value.replace(/\s+/g, "");
+                }
+            </script>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

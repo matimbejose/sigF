@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1440" height="1024" viewBox="0 0 1440 1024">
+    <defs>
+        <linearGradient id="a" x1="50%" x2="0%" y1="0%" y2="100%">
+            <stop offset="0%" stop-color="#4B7ECF"/>
+            <stop offset="100%" stop-color="#8E70EE"/>
+        </linearGradient>
+        <path id="b" d="M0 22h1440v1024H0z"/>
+    </defs>
+    <g fill="none" fill-rule="evenodd">
+        <path fill="#212121" d="M0 0h1440v1024H0z"/>
+        <g transform="translate(34 -22)">
+            <circle cx="87" cy="1000" r="24" stroke="#00B395" stroke-width="8"/>
+            <path stroke="#E4018D" stroke-width="7.6" d="M1053 484l20 34h-40z"/>
+            <path stroke="#FFBA01" stroke-width="7.6" d="M672.593 161.654l37.091 9.939-9.939 37.091-37.091-9.939z"/>
+            <circle cx="1394" cy="123" r="23" stroke="#00B395" stroke-width="7.6"/>
+            <path stroke="#E4018D" stroke-width="7.2" d="M541.635 305.918l10.07 35.827L515 331.91z"/>
+            <path stroke="#FFBA01" stroke-width="7.2" d="M1270.818 571.918l31.004 17.9-17.9 31.004-31.004-17.9z"/>
+            <circle cx="988.5" cy="916.5" r="21.5" stroke="#00B395" stroke-width="7.2"/>
+            <path stroke="#E4018D" stroke-width="6.8" d="M319.088 883l.089 35.847-31.177-18z"/>
+            <path stroke="#FFBA01" stroke-width="6.8" d="M685.991 723.808l24.183 24.183-24.183 24.183-24.183-24.183z"/>
+            <circle cx="240.5" cy="549.5" r="20.5" stroke="#00B395" stroke-width="6.8"/>
+            <path stroke="#E4018D" stroke-width="6.4" d="M1098.527 203.02l-8.485 32.528L1066 211.506z"/>
+            <path stroke="#FFBA01" stroke-width="6.4" d="M31.738 668.37l15.8 27.367-27.367 15.8-15.8-27.366z"/>
+            <circle cx="1066" cy="645" r="19" stroke="#00B395" stroke-width="6.4"/>
+            <path stroke="#E4018D" stroke-width="6" d="M94.383 314.856L79 342.213 63 314.5z"/>
+            <path stroke="#FFBA01" stroke-width="6" d="M886.652 3.674l7.765 28.978-28.978 7.764-7.764-28.978z"/>
+            <circle cx="306" cy="218" r="18" stroke="#00B395" stroke-width="6"/>
+            <path stroke="#E4018D" stroke-width="6" d="M1419.221 874.455l-21.939 22.443-8.282-30.91z"/>
+            <path stroke="#FFBA01" stroke-width="8" d="M613 1026h40v40h-40z"/>
+        </g>
+        <g opacity=".8" transform="translate(0 -22)">
+            <use fill="url(#a)" xlink:href="#b"/>
+            <use fill="#212121" fill-opacity=".6" xlink:href="#b"/>
+        </g>
+    </g>
+</svg>

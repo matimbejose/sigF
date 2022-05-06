@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite/components"
+      lang="pt-br">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Compra"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Compra</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/compra/listaCompra.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteSave" action="#{compraControle.doFinishAdd()}"/>
+            <h:commandButton id="remoteCancel" action="listaCompra.xhtml" immediate="true"/>
+            <h:commandButton id="remoteHelp" rendered="false" action="#{contaPagarControle.mostrarAjuda()}" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <script>
+                const NF = Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL'});
+                function updatePreco() {
+                    let qte = parseFloat(document.querySelector("#form\\:qteToAdd_hinput").value) || 1;
+                    let vlr = parseFloat(document.querySelector("#form\\:vlrToAdd_hinput").value) || 0;
+                    let desc = parseFloat(document.querySelector("#form\\:vlrToSub_hinput").value) || 0;
+                    let total = document.querySelector("#form\\:vlrTotal_input");
+                    total.value = NF.format(qte * vlr - desc);
+                }
+            </script>
+            <div class="form-body">
+                <div class="row">
+                    <div class="col">
+                        <div class="card mb-3">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group form-md-line-input">
+                                        <cc:addButton label="Fornecedor" required="true" entityName="fornecedor" disabled="#{compraControle.cadastroCompraXml}">
+                                            <p:selectOneMenu value="#{compraControle.compraSelecionado.idFornecedor}" converter="#{genericConverter}"
+                                                             panelStyle="width:180px" effect="fade" var="t" filter="true" filterMatchMode="startsWith"
+                                                             required="true" requiredMessage="Informe ao menos um fornecedor" disabled="#{compraControle.cadastroCompraXml}">
+                                                <p:column>
+                                                    <h:outputText value="#{t.razaoSocial}"/>
+                                                </p:column>
+
+                                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                <f:selectItems value="#{fornecedorControle.fornecedores}" var="fornecedor"
+                                                               itemLabel="#{fornecedor.razaoSocial}" itemValue="#{fornecedor}"/>
+                                            </p:selectOneMenu>
+                                        </cc:addButton>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group form-md-line-input">
+                                        <div class="form-group">
+                                            <label class="control-label">Chave da NFe de referência</label>
+                                            <p:inputText value="#{compraControle.compraSelecionado.NReferencia}" styleClass="form-control"
+                                                         disabled="#{compraControle.cadastroCompraXml}"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group form-md-line-input">
+                                        <div class="form-group">
+                                            <label class="control-label"> <span class="required">* </span>Número do pedido</label>
+                                            <p:inputText value="#{compraControle.compraSelecionado.numeroPedido}" maxlength="10"
+                                                         required="true" requiredMessage="Informe o número do pedido" styleClass="form-control"
+                                                         disabled="#{compraControle.cadastroCompraXml}"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label">Observação</label>
+                                        <p:inputText value="#{compraControle.compraSelecionado.observacao}" styleClass="form-control"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 col-sm-12">
+                        <div class="card card-w-title mb-3">
+                            <h5>
+                                Produtos
+                                <div class="pull-right">
+                                    <p:commandButton value="Adicionar" oncomplete="PF('pnlItens').show();return true;"
+                                                     action="#{compraControle.limpaControle}" process="@this" update="dadosProd"
+                                                     disabled="#{compraControle.cadastroCompraXml}"/>
+                                </div>
+                            </h5>
+                            <p:dataTable value="#{compraControle.listCompraProduto}" var="item" emptyMessage="Nenhum produto informado."
+                                         id="tblProdutos" styleClass="card p-0 ui-datatable-striped ui-datatable-sm ui-datatable-gridlines">
+
+                                <p:column headerText="Produto" style="text-align:left">
+                                    <h:outputText value="#{item.dadosProduto.idProduto.descricao}"/>
+                                </p:column>
+
+                                <p:column headerText="Qtd" width="125">
+                                    <h:outputText value="#{item.dadosProduto.quantidade}"/>
+                                </p:column>
+
+                                <p:column headerText="Valor unitário" width="125" style="text-align: right;">
+                                    <h:outputText value="#{item.dadosProduto.valor}">
+                                        <f:convertNumber type="currency" locale="pt_BR"/>
+                                    </h:outputText>
+                                </p:column>
+
+                                <p:column headerText="Desconto" width="125" style="text-align: right;">
+                                    <h:outputText value="#{item.dadosProduto.desconto}">
+                                        <f:convertNumber type="currency" locale="pt_BR"/>
+                                    </h:outputText>
+                                </p:column>
+
+                                <p:column headerText="Valor total" width="125" style="text-align:right">
+                                    <h:outputText value="#{item.dadosProduto.valorTotal}">
+                                        <f:convertNumber locale="pt_BR" type="currency"/>
+                                    </h:outputText>
+                                </p:column>
+
+                                <p:column width="57" headerText="Ações" rendered="#{!compraControle.existeParcelaPaga() and not compraControle.cadastroCompraXml}">
+                                    <div class="actions">
+                                        <p:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Editar item"
+                                                       process="@this" action="#{compraControle.editItem(item)}" update="form:dadosProd"
+                                                       onclick="PF('pnlItens').show();">
+                                            <i class="fa fa-pencil"></i>
+                                        </p:commandLink>
+
+                                        <p:commandLink  styleClass="btn btn-circle btn-icon-only btn-default icones" title="Remover produto" immediate="true" process="@this" action="#{compraControle.removeProduto()}" update="tblProdutos, form:pnlFormaPagamento, form:pnlParcelado">
+                                            <i class="icon-trash"></i>
+                                            <f:setPropertyActionListener value="#{item}" target="#{compraControle.itemSelecionado}"/>
+                                        </p:commandLink>
+                                    </div>
+                                </p:column>
+
+                                <p:columnGroup type="footer">
+                                    <p:row>
+                                        <p:column colspan="3" footerText="Total" style="text-align:right; font-weight: bold"/>
+                                        <p:column footerText="#{compraControle.descontoTotal}" style="text-align:right; font-weight: bold"/>
+                                        <p:column footerText="#{compraControle.subTotal}" style="text-align:right; font-weight: bold"/>
+                                        <p:column rendered="#{!compraControle.existeParcelaPaga() and not compraControle.cadastroCompraXml}"
+                                                  footerText="" style="text-align:right"/>
+                                    </p:row>
+                                </p:columnGroup>
+
+                            </p:dataTable>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-12 col-sm-12">
+                        <div class="card card-w-title mb-3">
+                            <h5>Pagamento</h5>
+                            <div class="row">
+                                <ui:remove>
+                                    <div class="col">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label"><span class="required">* </span>Conta bancária</label>
+                                            <div class="input-group">
+                                                <p:selectOneMenu id="auto6" value="#{compraControle.compraSelecionado.idContaBancaria}"
+                                                                 required="true"
+                                                                 requiredMessage="Informe a conta bancária"
+                                                                 panelStyle="width:180px" effect="fade"
+                                                                 var="t" style="width: calc(100% - 30px) !important" filter="true" filterMatchMode="startsWith"
+                                                                 converter="#{genericConverter}">
+                                                    <p:column>
+                                                        <h:outputText value="#{t.descricao}"/>
+                                                    </p:column>
+
+                                                    <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                    <f:selectItems value="#{contaBancariaControle.contaBancarias}"  var="contaBancaria" itemLabel="#{contaBancaria.descricao}" itemValue="#{contaBancaria}"/>
+                                                </p:selectOneMenu>
+                                                <p:remoteCommand name="updateContaBancaria" update="@previous" immediate="true"/>
+                                                <p:commandLink title="Atualizar" onclick="updateContaBancaria();" styleClass="btn btn-sm">
+                                                    <i class="fa fa-refresh"></i>
+                                                </p:commandLink>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </ui:remove>
+                                <div class="col">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label"> <span class="required"> * </span>Data da compra</label>
+                                        <p:calendar navigator="true" value="#{compraControle.compraSelecionado.dataCompra}" pattern="dd/MM/yyyy" mask="true" maxdate="#{compraControle.dataHoje()}">
+                                            <f:passThroughAttribute name="autocomplete" value="off"/>
+                                        </p:calendar>
+
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label"> <span class="required"> * </span>Data de vencimento</label>
+                                        <p:calendar navigator="true" id="inpDataVencimento" value="#{compraControle.compraSelecionado.prazoRecebimento}"  pattern="dd/MM/yyyy" mask="true">
+                                            <p:ajax event="dateSelect" process="@this, tblProdutos" update="form:pnlFormaPagamento, form:pnlParcelado"/>
+                                            <f:passThroughAttribute name="autocomplete" value="off"/>
+                                        </p:calendar>
+                                    </div>
+                                </div>
+                                <ui:remove>
+                                    <div class="col">
+                                        <div class="form-group form-md-line-input">
+                                            <cc:addButton label="Forma de pagamento" entityName="formaPagamento" disabled="#{formaPagamentoDisabled}">
+                                                <p:selectOneMenu value="#{compraControle.formaPagamento}"
+                                                                 converter="#{genericConverter}" var="t" style="width: calc(100% - 30px) !important"
+                                                                 id="selectFormasPagamento" >
+
+                                                    <f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+                                                    <f:selectItems value="#{compraControle.listaFormasPagamentoAtiva()}" var="fdep" itemLabel="#{fdep.descricao}" itemValue="#{fdep}"/>
+                                                </p:selectOneMenu>
+                                            </cc:addButton>
+                                        </div>
+
+                                    </div>
+                                </ui:remove>
+                                <div class="col">
+                                    <p:outputPanel id="pnlFormaPagamento">
+                                        <div class="form-group form-md-line-input">
+                                            <f:param name="formaPagamentoDisabled" value="#{compraControle.compraSelecionado.prazoRecebimento eq null or compraControle.listCompraProduto.size() eq 0}"/>
+                                            <label class="control-label"> <span class="required"> * </span>Tipo de pagamento</label>
+                                            <p:selectOneMenu value="#{compraControle.compraSelecionado.formaPagamento}"
+                                                             disabled="#{formaPagamentoDisabled}"
+                                                             required="true" requiredMessage="Informe o tipo de pagamento">
+                                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                <f:selectItems value="#{compraControle.formasPagamento}" var="formaPagamento" itemLabel="#{formaPagamento.descricao}" itemValue="#{formaPagamento.forma}"/>
+                                                <p:ajax event="change" update="form:pnlParcelado" process="@this, form:inpDataVencimento"
+                                                        listener="#{compraControle.preencherFormaPagamento()}"/>
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </p:outputPanel>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 col-sm-12">
+                        <div class="card card-w-title">
+                            <h5>Parcelamento</h5>
+                            <p:outputPanel id="pnlParcelado">
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <p:row rendered="#{compraControle.compraSelecionado.condicaoPagamento ne 'C'}">
+                                            Sem parcelas - necessário informar a data de vencimento e ao menos um produto.
+                                        </p:row>
+                                        <p:row rendered="#{compraControle.compraSelecionado.condicaoPagamento eq 'C'}">
+                                            <p:dataTable id="tblParcela" value="#{compraControle.compraSelecionado.listParcelaDTO}" var="item"
+                                                         emptyMessage="Nenhuma parcela informada." editable="true" editMode="cell"
+                                                         styleClass="card p-0 ui-datatable-striped ui-datatable-sm ui-datatable-gridlines">
+
+                                                <p:column headerText="Parcela" width="10%">
+                                                    <h:outputText value="#{item.numParcela}"/>
+                                                </p:column>
+
+                                                <p:column headerText="Valor bruto">
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <p:inputText value="#{item.valor}" readonly="#{item.dataPagamento ne null}">
+                                                                <f:convertNumber type="currency" locale="pt_BR"/>
+                                                            </p:inputText>
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:inputNumber value="#{item.valor}" symbol="R$ " thousandSeparator="." decimalSeparator="," decimalPlaces="2" disabled="#{item.dataPagamento ne null}">
+                                                                <p:ajax event="blur" process="@this, tblParcela" immediate="true" listener="#{compraControle.calcularValorTotal()}"/>
+                                                            </p:inputNumber>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+
+                                                <p:column headerText="Desconto">
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <p:inputText value="#{item.desconto}" readonly="#{item.dataPagamento ne null}">
+                                                                <f:convertNumber type="currency" locale="pt_BR"/>
+                                                            </p:inputText>
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:inputNumber value="#{item.desconto}" symbol="R$ " thousandSeparator="." decimalSeparator="," disabled="#{item.dataPagamento ne null}">
+                                                                <p:ajax event="blur" process="@this, tblParcela" immediate="true" listener="#{compraControle.calcularDescontoTotal()}"/>
+                                                            </p:inputNumber>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+
+                                                <p:column headerText="Valor Pago">
+                                                    <h:outputText value="#{item.valorPago}">
+                                                        <f:convertNumber currencySymbol="R$" type="currency"/>
+                                                    </h:outputText>
+                                                </p:column>
+
+                                                <p:column headerText="Data vencimento">
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <p:inputText value="#{item.dataVencimento}" readonly="#{item.dataPagamento ne null}">
+                                                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                                            </p:inputText>
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:calendar navigator="true" value="#{item.dataVencimento}" pattern="dd/MM/yyyy" mask="true" disabled="#{item.dataPagamento ne null}">
+                                                                <f:passThroughAttribute name="autocomplete" value="off"/>
+                                                            </p:calendar>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+
+                                                <p:column headerText="Situação" width="15%">
+                                                    <h:outputText value="#{item.situacao}"/>
+                                                </p:column>
+
+                                            </p:dataTable>
+                                        </p:row>
+                                    </div>
+                                </div>
+                            </p:outputPanel>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p:dialog id="pnlItens" widgetVar="pnlItens">
+                <h:messages class="alertMessage" id="msgResultado1" errorClass="alert alert-danger"/>
+                <p:outputPanel id="dadosProd" rendered="#{!compraControle.existeParcelaPaga()}">
+                    <p:outputPanel rendered="#{compraControle.itemSelecionado ne null}">
+                        <div class="row">
+                            <div class="col">
+                                <label class="control-label">Produto</label>
+                                <div class="input-group">
+                                    <p:selectOneMenu value="#{compraControle.itemSelecionado.dadosProduto.idProduto}" panelStyle="width:180px" var="t"
+                                                     effect="fade" filter="true" filterMatchMode="contains" converter="#{genericConverter}"
+                                                     disabled="#{compraControle.itemSelecionado.controle ne null}" style="width: calc(100% - 30px) !important">
+
+                                        <p:column>
+                                            <p:row rendered="#{compraControle.itemSelecionado.dadosProduto.idProduto.tipo eq 'C'}">
+                                                <i class="fa fa-fw fa-object-group" title="Produto composto"></i>
+                                            </p:row>
+                                            <p:row rendered="#{compraControle.itemSelecionado.dadosProduto.idProduto.tipo eq 'K'}">
+                                                <i class="fa fa-fw fa-archive" title="Kit de produto"></i>
+                                            </p:row>
+                                            <h:outputText value="#{t.descricao}"/>
+                                        </p:column>
+
+                                        <f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+                                        <f:selectItems value="#{compraControle.produtosDisponiveis}" var="produto"
+                                                       itemLabel="#{produto.descricao}" itemValue="#{produto}" itemDisabled="#{!produto.selecionavel}"/>
+                                        <p:ajax process="@this" update="dadosProd" listener="#{compraControle.carregarProduto}"/>
+                                    </p:selectOneMenu>
+                                    <p:remoteCommand name="updateProduto" update="@previous" immediate="true"
+                                                     action="#{compraControle.initItensVendaDTO()}"/>
+
+                                    <p:commandLink action="#{compraControle.adicionarProduto()}" styleClass="btn btn-default btn-sm"
+                                                   update="pnlAdicionarProduto, dadosProd" process="@this">
+                                        <i class="fa fa-plus"></i>
+                                    </p:commandLink>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <p:outputPanel id="pnlAdicionarProduto" styleClass="col">
+                                <p:row rendered="#{compraControle.adicionaProduto}">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label"><span class="required">* </span>Descrição do produto</label>
+                                                <p:inputText value="#{compraControle.addDescricao}" required="true"
+                                                             requiredMessage="Informe a descrição do produto" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+
+                                        <div class="col">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label"><span class="required">* </span>Preço de Custo</label>
+                                                <p:inputNumber value="#{compraControle.precoCusto}" id="vlrCusto"
+                                                               required="true" requiredMessage="Informe o valor de custo"
+                                                               symbol="R$ " decimalSeparator=","
+                                                               thousandSeparator="." decimalPlaces="2">
+                                                    <p:ajax process="@this"/>
+                                                </p:inputNumber>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label"><span class="required">* </span>Valor de venda</label>
+                                                <p:inputNumber value="#{compraControle.precoVenda}" required="true" id="vlrVenda"
+                                                               requiredMessage="Informe o valor da venda" symbol="R$ " decimalSeparator=","
+                                                               thousandSeparator="." decimalPlaces="2" widgetVar="vlrUnitCad" onkeyup="atualizaPrecoUnit(this)">
+                                                    <p:ajax process="@this"/>
+                                                </p:inputNumber>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label"><span class="required">* </span>Estoque inicial</label>
+                                                <p:inputNumber value="#{compraControle.estoqueInicial}" id="estInicial"
+                                                               required="true" requiredMessage="Informe o estoque inicial"
+                                                               decimalSeparator=","
+                                                               thousandSeparator="." decimalPlaces="2">
+                                                    <p:ajax process="@this"/>
+                                                </p:inputNumber>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label"><span class="required">* </span>Unidade de medida</label>
+                                                <p:selectOneMenu value="#{compraControle.addUnidade}"
+                                                                 required="true" requiredMessage="Informe a unidade medida"
+                                                                 converter="#{genericConverter}">
+                                                    <f:selectItems value="#{unidadeMedidaControle.unidadeMedidas}" var="unidadeMedida"
+                                                                   itemLabel="#{unidadeMedida.descricao}" itemValue="#{unidadeMedida}" />
+                                                </p:selectOneMenu>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <script>
+                                        function atualizaPrecoUnit(vlrVenda) {
+                                            let valorUnitario = document.querySelector("#form\\:vlrVenda_hinput").value;
+                                            document.querySelector("#form\\:vlrToAdd_input").value = NF.format(valorUnitario);
+                                            document.querySelector("#form\\:vlrToAdd_hinput").value = valorUnitario;
+                                            updatePreco();
+                                        }
+                                    </script>
+                                </p:row>
+                            </p:outputPanel>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group form-md-line-input">
+                                    <label class="control-label">Quantidade</label>
+                                    <p:inputNumber id="qteToAdd" value="#{compraControle.itemSelecionado.dadosProduto.quantidade}"
+                                                   thousandSeparator="." decimalSeparator="," onchange="updatePreco();"/>
+                                    <p:ajax process="@this" update="pnlItens" />
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group form-md-line-input">
+                                    <label class="control-label">Valor</label>
+                                    <p:inputNumber id="vlrToAdd" value="#{compraControle.itemSelecionado.dadosProduto.valor}" symbol="R$ "
+                                                   thousandSeparator="." decimalSeparator="," decimalPlaces="2" onchange="updatePreco();"/>
+                                    <p:ajax process="@this" update="pnlItens" />
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group form-md-line-input">
+                                    <label class="control-label">Desconto</label>
+                                    <p:inputNumber id="vlrToSub" value="#{compraControle.itemSelecionado.dadosProduto.desconto}" symbol="R$ "
+                                                   thousandSeparator="." decimalSeparator="," decimalPlaces="2" onchange="updatePreco();"/>
+                                    <p:ajax process="@this" update="pnlItens" />
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group form-md-line-input">
+                                    <label class="control-label">Valor total</label>
+                                    <p:inputNumber id="vlrTotal" value="#{compraControle.itemSelecionado.dadosProduto.valorTotal}" symbol="R$ " disabled="true"
+                                                   thousandSeparator="." decimalSeparator="," decimalPlaces="2"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <p:row rendered="#{!compraControle.existeParcelaPaga()}">
+                                <div class="col-md-2">
+                                    <p:commandButton actionListener="#{compraControle.addItem}" action="#{compraControle.preencherFormaPagamento()}"
+                                                     value="#{compraControle.controleEdicao eq null ? 'Adicionar' : 'Alterar'}"
+                                                     process="@this, dadosProd" update="dadosProd, tblProdutos, pnlFormaPagamento, pnlParcelado, msgResultado1"/>
+                                </div>
+                            </p:row>
+                        </div>
+                    </p:outputPanel>
+                </p:outputPanel>
+            </p:dialog>
+        </ui:define>
+
+    </ui:composition>
+</html>

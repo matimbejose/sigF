@@ -1,0 +1,54 @@
+http://serverfault.com/questions/289965/axisfault-read-timed-out
+
+
+1-> classe: public class CertificadoUtil 
+
+metodo:
+public void iniciaConfiguracoes() throws NfeException {
+
+incluir:
+System.setProperty("jdk.tls.client.protocols", "SSLv3,TLSv1"); // Servidor do	Sefaz RS
+
+2. alterar o timeout
+evento.java
+RecepcaoEventoStub stub = new RecepcaoEventoStub(UrlWebServiceUtil.evento(estado).toString());
+stub._getServiceClient().getOptions().setTimeOutInMilliSeconds(120000);
+
+private static String xmlParaEnvio;
+
+public static String getXmlParaEnvio() {
+        return xmlParaEnvio;
+}
+
+public static void setXmlParaEnvio(String xmlParaEnvio) {
+	Evento.xmlParaEnvio = xmlParaEnvio;
+}
+
+
+ 
+ enviar.java
+NfeAutorizacaoStub stub = new NfeAutorizacaoStub(UrlWebServiceUtil.enviarSincrono().toString());
+stub._getServiceClient().getOptions().setTimeOutInMilliSeconds(120000);
+
+
+private static String xmlParaEnvio;
+
+
+ public static String getXmlParaEnvio() {
+        return xmlParaEnvio;
+    }
+ public static void setXmlParaEnvio(String xmlParaEnvio) {
+        Enviar.xmlParaEnvio = xmlParaEnvio;
+    }
+	
+
+3. retorno do XML:
+NFE
+public static String getXmlEnvio() {
+	return Enviar.getXmlParaEnvio();
+}
+    
+public static String getXmlEnvioCancelamento() {
+	return Evento.getXmlParaEnvio();
+}
+

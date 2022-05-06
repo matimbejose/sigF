@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Funcionário"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Pessoal</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/funcionario/listaFuncionario.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteSave" action="#{funcionarioControle.doFinishAdd()}"/>
+            <h:commandButton id="remoteCancel" action="listaFuncionario.xhtml" immediate="true"/>
+            <h:commandButton id="remoteHelp" rendered="false" action="#{funcionarioControle.mostrarAjuda()}" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <style>
+                .p-datepicker {
+                    min-width: 100%;
+                }
+            </style>
+            <div class="form-body">
+                <div class="row mb-3">
+                    <div class="col-md-6 col-sm-12">
+                        <div class="card card-w-title">
+                            <h5>Identificação</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label"><span class="required">* </span>Nome do funcionário</label>
+                                        <p:inputText value="#{funcionarioControle.funcionarioSelecionado.nome}"
+                                                     required="true"
+                                                     requiredMessage="Informe o nome do funcionário"
+                                                     />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label"><span class="required">* </span>CPF</label>
+                                        <p:inputMask mask="999.999.999-99" value="#{funcionarioControle.funcionarioSelecionado.cpf}"
+                                                     required="true"
+                                                     requiredMessage="Informe o cpf do funcionário"
+                                                     validatorMessage="CPF inválido"
+                                                     autocomplete="off"
+                                                     >
+                                        </p:inputMask>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label">Número da Matrícula</label>
+                                        <p:inputText value="#{funcionarioControle.funcionarioSelecionado.matricula}"
+                                                     disabled="#{funcionarioControle.funcionarioSelecionado.matricula ne null}"/>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label"> <span class="required"> * </span>Data de nascimento</label>
+                                        <p:calendar navigator="true" value="#{funcionarioControle.funcionarioSelecionado.dataNascimento}" pattern="dd/MM/yyyy" mask="true"
+                                                    required="true" requiredMessage="Informe a data de nascimento do funcionário" yearRange="c-50:c+50"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group form-md-line-input">
+                                        <p:importEnum type="br.com.villefortconsulting.sgfinancas.util.EnumTipoContratacao"/>
+                                        <label class="control-label"><span class="required">* </span>Tipo da contratação</label>
+                                        <p:selectOneMenu value="#{funcionarioControle.funcionarioSelecionado.tipoContratacao}"
+                                                         required="true" requiredMessage="Informe o tipo da contratação">
+                                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                            <f:selectItems value="#{EnumTipoContratacao.ALL_VALUES}" var="enum"
+                                                           itemLabel="#{enum.descricao}" itemValue="#{enum.tipo}"/>
+                                        </p:selectOneMenu>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label"> <span class="required"> * </span>Data da contratação</label>
+                                        <p:calendar navigator="true" value="#{funcionarioControle.funcionarioSelecionado.dataContratacao}" pattern="dd/MM/yyyy" mask="true" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label"><span class="required">* </span> Funcionário com hora especial?</label>
+                                        <p:selectOneMenu  value="#{funcionarioControle.funcionarioSelecionado.temHorarioEspecial}"
+                                                          required="true"
+                                                          requiredMessage="Informe se o funcionário tem horário especial"
+                                                          >
+                                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                            <f:selectItem itemLabel="Sim" itemValue="S" />
+                                            <f:selectItem itemLabel="Não" itemValue="N" />
+                                            <p:ajax update="outputRepetir" event="change" process="@this" />
+                                        </p:selectOneMenu >
+                                    </div>
+                                </div>
+                                <p:outputPanel id="outputRepetir" styleClass="col row">
+                                    <div class="col">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">
+                                                <p:row rendered="#{funcionarioControle.funcionarioSelecionado.temHorarioEspecial eq 'S'}"><span class="required">* </span></p:row>
+                                                Início
+                                            </label>
+
+                                            <p:inputText value="" rendered="#{funcionarioControle.funcionarioSelecionado.temHorarioEspecial ne 'S'}"
+                                                         disabled="true" readonly="true"/>
+
+                                            <p:inputMask value="#{funcionarioControle.funcionarioSelecionado.horaEspecial}" mask="99:99"
+                                                         rendered="#{funcionarioControle.funcionarioSelecionado.temHorarioEspecial eq 'S'}"
+                                                         required="true" requiredMessage="Informe a hora especial do funcionário"/>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">
+                                                <p:row rendered="#{funcionarioControle.funcionarioSelecionado.temHorarioEspecial eq 'S'}"><span class="required">* </span></p:row>
+                                                Fim
+                                            </label>
+
+                                            <p:inputText value="" rendered="#{funcionarioControle.funcionarioSelecionado.temHorarioEspecial ne 'S'}"
+                                                         disabled="true" readonly="true"/>
+
+                                            <p:inputMask value="#{funcionarioControle.funcionarioSelecionado.horaEspecialFinal}" mask="99:99"
+                                                         rendered="#{funcionarioControle.funcionarioSelecionado.temHorarioEspecial eq 'S'}"
+                                                         required="true" requiredMessage="Informe a hora especial do funcionário"/>
+                                        </div>
+                                    </div>
+                                </p:outputPanel>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label">Salário base</label>
+                                        <p:inputNumber  value="#{funcionarioControle.funcionarioSelecionado.salarioBase}"
+                                                        symbol="R$ "
+                                                        thousandSeparator="."
+                                                        decimalSeparator=","
+                                                        decimalPlaces="2">
+                                        </p:inputNumber>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="control-label"><span class="required">* </span>É vendedor?</label>
+                                    <p:selectOneMenu value="#{funcionarioControle.funcionarioSelecionado.ehOrcamentista}">
+                                        <f:selectItem itemLabel="Sim" itemValue="S"/>
+                                        <f:selectItem itemLabel="Não" itemValue="N"/>
+                                    </p:selectOneMenu>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label">Data de demissão</label>
+                                        <p:calendar navigator="true" value="#{funcionarioControle.funcionarioSelecionado.dataDemissao}" pattern="dd/MM/yyyy" mask="true" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label">Foto </label>
+                                        <div class="fileinput fileinput-new d-flex" data-provides="fileinput">
+                                            <div class="fileinput-new thumbnail" >
+                                                <p:graphicImage rendered="#{funcionarioControle.funcionarioSelecionado.foto ne null}" id="foto" value="#{funcionarioControle.foto}" style="width: 111px; height: 111px;" cache="false" />
+                                                <p:graphicImage cache="false" rendered="#{funcionarioControle.funcionarioSelecionado.foto eq null}" id="fotoPadrao" url="/resources/images/avatar-usuario.jpg" style="width: 111px; height: 111px;" />
+                                            </div>
+                                            <div>
+                                                <span class="btn default btn-file">
+                                                    <h:inputFile id="inputFoto" value="#{funcionarioControle.partFoto}" />
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label">Limite de desconto</label>
+                                                <p:inputNumber value="#{funcionarioControle.funcionarioSelecionado.limiteDeDesconto}"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label">Cargo</label>
+                                                <p:inputText value="#{funcionarioControle.funcionarioSelecionado.cargo}"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                        <div class="card card-w-title h-100">
+                            <h5>Contato/Endereço</h5>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label"><span class="required"> * </span>Email</label>
+                                        <p:inputText value="#{funcionarioControle.funcionarioSelecionado.email}"
+                                                     required="true"
+                                                     requiredMessage="Favor informar o email."
+                                                     validatorMessage="Email incorreto"
+                                                     >
+                                        </p:inputText>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label">Telefone celular</label>
+                                        <p:inputMask value="#{funcionarioControle.funcionarioSelecionado.telefoneCelular}" mask="(99) 99999-9999" styleClass="telefone"/>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label">Telefone residencial</label>
+                                        <p:inputMask value="#{funcionarioControle.funcionarioSelecionado.telefoneResidencial}" mask="(99) 9999-9999?9"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label">Nome da mãe</label>
+                                        <p:inputText value="#{funcionarioControle.funcionarioSelecionado.nomeMae}"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-auto pr-5 form-group form-md-line-input" style="width: 160px;">
+                                    <label class="control-label">CEP</label>
+                                    <div class="input-group">
+                                        <div class="input-group-append">
+                                            <p:inputMask value="#{funcionarioControle.funcionarioSelecionado.cep}"
+                                                         mask="99.999-999" id="inpCep">
+                                            </p:inputMask>
+                                            <p:commandLink action="#{funcionarioControle.buscarEnderecoPorCep()}" process="@this, inpCep"
+                                                           styleClass="btn blue btn-outline sbold" update="pnlEndereco1, pnlEndereco2">
+                                                <i class="fa fa-search"></i>
+                                            </p:commandLink>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p:outputPanel id="pnlEndereco1" styleClass="col row">
+                                    <div class="col form-group form-md-line-input">
+                                        <label class="control-label">Logradouro</label>
+                                        <p:inputText value="#{funcionarioControle.funcionarioSelecionado.endereco}"/>
+                                    </div>
+                                </p:outputPanel>
+                            </div>
+                            <p:outputPanel id="pnlEndereco2">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Número</label>
+                                            <p:inputMask value="#{funcionarioControle.funcionarioSelecionado.numero}" mask="9?9999999"/>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Complemento</label>
+                                            <p:inputText value="#{funcionarioControle.funcionarioSelecionado.complemento}"/>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Bairro</label>
+                                            <p:inputText value="#{funcionarioControle.funcionarioSelecionado.bairro}"
+                                                         />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">UF</label>
+                                            <p:selectOneMenu id="uf" value="#{funcionarioControle.ufSelecionado}"  converter="#{genericConverter}">
+                                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                <f:selectItems value="#{funcionarioControle.UFs}"  var="uf" itemLabel="#{uf.descricao}" itemValue="#{uf}"/>
+                                                <p:ajax event="change" process="@this" update="uf, cidade" />
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Cidade</label>
+                                            <p:selectOneMenu id="cidade" value="#{funcionarioControle.funcionarioSelecionado.idCidade}"
+                                                             panelStyle="width:180px" effect="fade"
+                                                             var="t" filter="true" filterMatchMode="contains"
+                                                             converter="#{genericConverter}">
+                                                <p:column>
+                                                    <h:outputText value="#{t.descricao}" />
+                                                </p:column>
+
+                                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                <f:selectItems value="#{funcionarioControle.cidades}"  var="cidade" itemLabel="#{cidade.descricao}" itemValue="#{cidade}"/>
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+                                </div>
+                            </p:outputPanel>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card card-w-title">
+                            <h5>Horário de atendimento</h5>
+                            <p:repeat value="#{funcionarioControle.numeroDias}" var="dia">
+                                <div class="row">
+                                    <div class="col py-2">
+                                        #{funcionarioControle.diasSemana.get(dia)}
+                                    </div>
+                                </div>
+                                <div class="row pb-3">
+                                    <div class="col">
+                                        <p:datePicker value="#{funcionarioControle.getFuncionarioAtendimentoDoDia(dia).horaInicial}"
+                                                      timeOnly="true" pattern="HH:mm" />
+                                    </div>
+                                    <div class="col">
+                                        <p:datePicker value="#{funcionarioControle.getFuncionarioAtendimentoDoDia(dia).horaFinal}"
+                                                      timeOnly="true" pattern="HH:mm"/>
+                                    </div>
+                                </div>
+                            </p:repeat>
+                            <small>Será possível marcar atendimentos apenas nos dias selecionados acima.</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card card-w-title">
+                            <h5>Serviços</h5>
+
+                            <p:outputPanel id="servicos" styleClass="row">
+                                <div class="col-md-6">
+                                    <p:dataTable value="#{funcionarioControle.servicosDisponiveis}" emptyMessage="Nenhum serviço localizado"
+                                                 styleClass="card p-0 ui-datatable-striped ui-datatable-sm ui-datatable-gridlines" var="item">
+
+                                        <p:column headerText="Serviços disponíveis">
+                                            <h:outputText value="#{item.descricao}"/>
+                                        </p:column>
+
+                                        <p:column headerText="" width="50">
+                                            <f:facet name="header">
+                                                <p:commandLink class="btn btn-circle btn-icon-only btn-default icones" title="Selecionar todas"
+                                                               action="#{funcionarioControle.doAdicionarTodosServicos()}" update="form:servicos" process="@this" immediate="true">
+                                                    <i class="fa fa-angle-double-right"></i>
+                                                </p:commandLink>
+                                            </f:facet>
+                                            <p:commandLink title="Selecionar serviço" class="btn btn-circle btn-icon-only btn-default icones"
+                                                           action="#{funcionarioControle.doAdicionarServico()}" update="form:servicos" process="@this" immediate="true">
+                                                <i class="fa fa-angle-double-right"></i>
+                                                <f:setPropertyActionListener value="#{item}" target="#{funcionarioControle.servicoSelecionado}"/>
+                                            </p:commandLink>
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
+                                <div class="col-md-6">
+                                    <p:dataTable value="#{funcionarioControle.funcionarioSelecionado.funcionarioServicoList}" var="itemSelecionado"
+                                                 emptyMessage="Nenhum serviço localizado"
+                                                 styleClass="card p-0 ui-datatable-striped ui-datatable-sm ui-datatable-gridlines">
+
+                                        <p:column headerText="Serviços atribuídos">
+                                            <h:outputText value="#{itemSelecionado.idServico.descricao}"/>
+                                        </p:column>
+
+                                        <p:column headerText="" width="50">
+                                            <f:facet name="header">
+                                                <p:commandLink title="Remover todas permissões"  class="btn btn-circle btn-icon-only btn-default icones"
+                                                               action="#{funcionarioControle.doRemoverTodosServicos()}" update="form:servicos" process="@this" immediate="true" >
+                                                    <i class="fa fa-trash-o"></i>
+                                                </p:commandLink>
+                                            </f:facet>
+                                            <p:commandLink  title="Remover permissão" class="btn btn-circle btn-icon-only btn-default icones"
+                                                            action="#{funcionarioControle.doRemoverServico()}" update="form:servicos" process="@this" immediate="true" >
+                                                <i class="fa fa-trash-o"></i>
+                                                <f:setPropertyActionListener value="#{itemSelecionado}" target="#{funcionarioControle.funcionarioServicoSelecionado}"/>
+                                            </p:commandLink>
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
+                            </p:outputPanel>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+        <ui:define name="scriptPagina">
+            <!--<script>-->
+            $x = jQuery.noConflict();
+            function readURL(input) {
+
+            if (input.files &amp;&amp; input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+            $x('#foto').attr('src', e.target.result);
+            $x('#fotoPadrao').attr('src', e.target.result);
+            }
+
+            reader.readAsDataURL(input.files[0])
+            }
+            }
+
+            $x("#inputFoto").change(function () {
+            readURL(this);
+            });
+            <!--</script>-->
+
+        </ui:define>
+
+    </ui:composition>
+
+</html>

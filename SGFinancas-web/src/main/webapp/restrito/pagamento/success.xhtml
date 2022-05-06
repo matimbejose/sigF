@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite/components"
+      xmlns:sec="http://www.springframework.org/security/facelets/tags"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Assine já"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Pagamentos</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/pagamento/assineJa.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes"/>
+
+        <ui:define name="content">
+            <ui:param name="isBoleto" value="#{checkoutControle.dadosPagamento.tipoPagamento eq 'BB'}"/>
+            <div class="row">
+                <div class="col" style="padding: 10px 25px ">
+                    <h3 class="text-center">Comprovante do pagamento</h3>
+                    <hr class="divider-dark"/>
+                    <p>Valor#{isBoleto ? '' : ' pago'}: <small class="text-muted"><cc:convertMoney value="#{checkoutControle.transacao.idPagamentoSistema.valor}"/></small></p>
+                    <p:row rendered="#{not isBoleto}">
+                        <p>Codigo pagamento: <small class="text-muted">#{checkoutControle.transacao.idPagamento}</small></p>
+                        <p>Data do pagamento: <small class="text-muted">#{checkoutControle.retornarDataHora()}</small></p>
+                        <p>Nome do cartão: <small class="text-muted">#{checkoutControle.transacao.nomeCartao}</small></p>
+                        <p>Nº cartão: <small class="text-muted">XXXX.XXXX.XXXX.#{checkoutControle.transacao.numeroCartao}</small></p>
+                    </p:row>
+                    <p:row rendered="#{isBoleto}">
+                        <p>Linha digitável: <small class="text-muted">#{checkoutControle.transacao.linhaDigitavel}</small></p>
+                        <h:commandLink action="#{checkoutControle.baixarBoleto()}" class="btn btn-md btn-success ri">
+                            <i class="fa fa-download"></i> Baixar o boleto
+                        </h:commandLink>
+                    </p:row>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

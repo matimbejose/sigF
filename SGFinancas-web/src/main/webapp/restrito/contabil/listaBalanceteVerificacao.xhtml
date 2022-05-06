@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:sec="http://www.springframework.org/security/facelets/tags"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:define name="cssInicial">
+            <link href="#{facesContext.externalContext.requestContextPath}/resources/metronic/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.css" rel="stylesheet" type="text/css"/>
+            <link href="#{facesContext.externalContext.requestContextPath}/resources/metronic/assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css" rel="stylesheet" type="text/css" />
+            <link href="#{facesContext.externalContext.requestContextPath}/resources/metronic/assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css" rel="stylesheet" type="text/css" />
+            <link href="#{facesContext.externalContext.requestContextPath}/resources/metronic/assets/global/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" />
+        </ui:define>
+
+        <ui:param name="title" value="Balancete de verificação"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Contábil</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/contabil/listaBalanceteVerificacao.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes"/>
+
+        <ui:define name="funcaoLateral">
+            <h:form acceptcharset="ISO-8859-1" id="formFiltro" prependId="false">
+
+                <div id="reportrange" class="pull-right tooltips btn btn-sm" data-container="body" data-placement="bottom" data-original-title="Período de compra">
+                    <i class="icon-calendar"></i>
+                    <span class="thin uppercase hidden-xs"></span>
+                    <i class="fa fa-angle-down"></i>
+                </div>
+                <p:inputText class="dataIni" type="hidden" value="#{balanceteVerificacaoControle.filtro.dataInicio}" />
+                <p:inputText class="dataFim" type="hidden" value="#{balanceteVerificacaoControle.filtro.dataFim}"/>
+
+                <p:remoteCommand name="rc" update=":formPrincipal:tbl"  />
+                <p:remoteCommand name="painel" />
+            </h:form>
+        </ui:define>
+
+        <ui:define name="formButtons">
+            <p:commandButton action="#{balanceteVerificacaoControle.gerarBalanceteVerificacao()}" value="Visualizar relatório" ajax="false"/>
+            <p:commandButton type="button" value="Limpar filtros" onclick="clearDataTableFilters('tbl');"/>
+            <p:commandButton id="toggler" type="button" value="Colunas"/>
+            <p:columnToggler datasource="tbl" trigger="toggler"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <h:messages class="alertMessage" errorClass="alert alert-danger" infoClass="alert alert-success"/>
+            <h:form acceptcharset="ISO-8859-1"  prependId="false" id="formPrincipal">
+                <div class="col-md-12">
+                    <!-- BEGIN EXAMPLE TABLE PORTLET-->
+                    <div class="portlet light bordered">
+                        <div class="portlet-body">
+                            <div class="portlet-body flip-scroll">
+                                <p:dataTable value="#{balanceteVerificacaoControle.model}" emptyMessage="Nenhum registro encontrado." var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+                                    <p:column headerText="#" width="55" sortBy="#{item.id}" visible="false">
+                                        <h:outputText value="#{item.id}"/>
+                                    </p:column>
+                                    a
+                                    <p:column headerText="Data" sortBy="#{item.data}" width="110"  style="text-align: right">
+                                        <h:outputText value="#{item.data}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                                        </h:outputText>
+                                    </p:column>
+
+                                    <p:column headerText="Conta de crédito" sortBy="#{item.idPlanoContaCredito.descricao}" width="110"  style="text-align: right">
+                                        <h:outputText value="#{item.idPlanoContaCredito.descricao}" />
+                                    </p:column>
+
+                                    <p:column headerText="Conta de débito" sortBy="#{item.idPlanoContaDebito.descricao}" width="110"  style="text-align: right">
+                                        <h:outputText value="#{item.idPlanoContaDebito.descricao}"/>
+                                    </p:column>
+
+                                    <p:column headerText="Valor" sortBy="#{item.valor}" width="110"  style="text-align: right">
+                                        <h:outputText value="#{item.valor}">
+                                            <f:convertNumber locale="pt_BR" type="currency" />
+                                        </h:outputText>
+                                    </p:column>
+
+                                    <p:column headerText="Situação" sortBy="#{item.situacao}" width="110">
+                                        <h:outputText rendered="#{item.situacao eq 'A'}" value="Ativa"/>
+                                        <h:outputText rendered="#{item.situacao eq 'C'}" value="Cancelada"/>
+                                    </p:column>
+
+                                </p:dataTable>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </h:form>
+        </ui:define>
+
+        <ui:define name="script">
+            <script src="#{facesContext.externalContext.requestContextPath}/resources/metronic/assets/global/plugins/moment.min.js" type="text/javascript"></script>
+            <script src="#{facesContext.externalContext.requestContextPath}/resources/metronic/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.js" type="text/javascript"></script>
+            <script src="#{facesContext.externalContext.requestContextPath}/resources/metronic/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js" type="text/javascript"></script>
+            <script src="#{facesContext.externalContext.requestContextPath}/resources/metronic/assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.js" type="text/javascript"></script>
+            <script src="#{facesContext.externalContext.requestContextPath}/resources/metronic/assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js" type="text/javascript"></script>
+            <script src="#{facesContext.externalContext.requestContextPath}/resources/metronic/assets/pages/scripts/components-date-time-pickers.js"  charset="utf-8" type="text/javascript"></script>
+        </ui:define>
+    </ui:composition>
+
+</html>

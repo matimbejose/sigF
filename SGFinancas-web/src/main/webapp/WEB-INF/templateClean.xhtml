@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <h:head>
+        <f:facet name="first">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+        </f:facet>
+        <title><ui:insert name="title">SG Finanças</ui:insert></title>
+        <link rel="icon" type="image/png" href="/resources/images/favicon.png" />
+        <h:outputScript name="js/layout.js" library="rain-layout" />
+        <ui:insert name="head"/>
+        <ui:insert name="cssInicial"/>
+        <script src="#{facesContext.externalContext.requestContextPath}/resources/js/main.js?v=#{usuarioControle.revNumber}"/>
+        <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+        <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet" />
+        <link href="#{facesContext.externalContext.requestContextPath}/resources/css/main.css?v=#{usuarioControle.revNumber}" rel="stylesheet" type="text/css" />
+        <link href="#{facesContext.externalContext.requestContextPath}/resources/css/toast/toastr.min.css" rel="stylesheet" type="text/css"/>
+        <script src="#{facesContext.externalContext.requestContextPath}/resources/js/toast/toastr.min.js" type="text/javascript"></script>
+        <script src="#{facesContext.externalContext.requestContextPath}/resources/js/toast/toast.js" type="text/javascript"></script>
+        <h:outputStylesheet name="css/layout-chateau-green-light.css" library="rain-layout" />
+        <h:outputStylesheet name="css/primeicons.css" library="rain-layout" />
+        <link rel="stylesheet" href="#{facesContext.externalContext.requestContextPath}/resources/bootstrap-4.3.1/css/bootstrap.css"></link>
+        <style type="text/css">
+            .forgot {
+                color: #a0a9b4;
+                padding-top: 20px;
+                margin-right: 1em;
+                display: inline-block;
+            }
+            .msg {
+                border-width: 1px ;
+                border-color: #fbe1e3;
+                color: #e73d4a;
+                padding: 15px;
+                text-align: center;
+            }
+            #canvas {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                width: 100vw;
+            }
+            .login-footer {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                height: 45px;
+                width: 100vw;
+                background-color: #0003;
+                color: white;
+            }
+            .login-social {
+                list-style: none;
+            }
+            .image-panel {
+                margin: -16px -1px -16px 0;
+                background-image: url(resources/images/logo_aplicacao3d.jpg);
+                background-size: 100%;
+                background-position-y: -50px;
+                height: 450px;
+                color: #aaa;
+                font-weight: bold;
+                text-align: center;
+            }
+            body {
+                background-image: linear-gradient(to top, #134E5E, #71B280);
+            }
+            .card {
+                overflow: hidden;
+                border-width: 3px;
+                border-color: #fff;
+                background-color: #fffd;
+            }
+            .quote {
+                background-color: #d4d4d4d4;
+                color: #4a4a4a;
+                border: none;
+                border-left: 5px solid #185460;
+                border-radius: 0 5px 5px 0;
+                font-size: 18px;
+            }
+        </style>
+    </h:head>
+    <h:body>
+        <div class="p-4">
+            <div class="login-bg" style="background-image:url('logo_SG_Financas_menor.png')">
+                <img class="login-logo" src="/resources/images/logo_grande_branca.png" style="height: 40px;"/>
+            </div>
+        </div>
+
+        <div class="col ml-auto mr-auto mt-5" style="width: 600px;">
+            <div class="card">
+                <h:form acceptcharset="ISO-8859-1" id="form" prependId="false">
+                    <ui:insert name="content"></ui:insert>
+                </h:form>
+            </div>
+        </div>
+
+        <div class="login-footer">
+            <div class="row">
+                <div class="col"></div>
+                <div class="col">
+                    <div class="pull-right pr-2">
+                        <p>2007 @Copyright Villefort Consulting.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </h:body>
+</html>

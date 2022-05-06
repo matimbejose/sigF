@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Interrupção de contrato"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Contrato</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/contratoSaida/listaContratoFornecedor.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteInterrupt" action="#{contratoFornecedorControle.doFinishInterrupt()}" rendered="#{contratoFornecedorControle.podeSalvar()}"/>
+            <h:commandButton id="remoteBack" action="#{contratoFornecedorControle.retornarTela()}" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <ui:include src="../contrato/interromperContrato.xhtml">
+                <ui:param name="controle" value="#{contratoFornecedorControle}"/>
+            </ui:include>
+        </ui:define>
+
+    </ui:composition>
+</html>

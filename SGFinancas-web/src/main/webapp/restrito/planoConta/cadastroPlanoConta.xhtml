@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Plano de contas"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Cadastro</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/planoConta/listaPlanoConta.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteSave" action="#{planoContaControle.doFinishAdd()}"/>
+            <h:commandButton id="remoteCancel" action="listaPlanoConta.xhtml" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-12 ">
+                        <!-- BEGIN SAMPLE FORM PORTLET-->
+                        <div class="card">
+                            <p:row rendered="#{planoContaControle.planoContaSelecionado.registroPadrao eq 'S'}">
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label"><span class="required">* </span>Código</label>
+                                            <p:inputText value="#{planoContaControle.planoContaSelecionado.codigo}" disabled="true"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label"><span class="required">* </span>Descricao</label>
+                                            <p:inputText value="#{planoContaControle.planoContaSelecionado.descricao}"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Tipo</label>
+                                            <p:inputText value="Débito" rendered="#{planoContaControle.planoContaSelecionado.tipo eq 'D'}"
+                                                         disabled="true"
+                                                         styleClass="form-control" />
+                                            <p:inputText value="Crédito" rendered="#{planoContaControle.planoContaSelecionado.tipo eq 'C'}"
+                                                         disabled="true"
+                                                         styleClass="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Tipo balanço</label>
+                                            <p:inputText value="Patrimônio" rendered="#{planoContaControle.planoContaSelecionado.tipoBalanco eq 'P'}"
+                                                         disabled="true"
+                                                         styleClass="form-control" />
+                                            <p:inputText value="Resultado" rendered="#{planoContaControle.planoContaSelecionado.tipoBalanco eq 'R'}"
+                                                         disabled="true"
+                                                         styleClass="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </p:row>
+                            <p:row rendered="#{planoContaControle.planoContaSelecionado.registroPadrao eq 'N'}">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Código conta pai</label>
+                                            <p:inputText value="#{planoContaControle.planoContaSelecionado.idContaPai.codigo}"
+                                                         disabled="true"
+                                                         styleClass="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Conta pai</label>
+                                            <p:inputText value="#{planoContaControle.planoContaSelecionado.idContaPai.descricao}"
+                                                         disabled="true"
+                                                         styleClass="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label"><span class="required">* </span> Tipo de conta</label>
+                                            <p:selectOneMenu  value="#{planoContaControle.planoContaSelecionado.idContaPai.tipo}"
+                                                              required="true"
+                                                              requiredMessage="Informe o tipo">
+                                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                <f:selectItem itemLabel="Débito" itemValue="D" />
+                                                <f:selectItem itemLabel="Crédito" itemValue="C" />
+                                            </p:selectOneMenu >
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label"><span class="required">* </span> Tipo balanço</label>
+                                            <p:selectOneMenu  value="#{planoContaControle.planoContaSelecionado.tipoBalanco}"
+                                                              required="true"
+                                                              requiredMessage="Informe o tipo de balanço">
+                                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                <f:selectItem itemLabel="Patrimônio" itemValue="P" />
+                                                <f:selectItem itemLabel="Resultado" itemValue="R" />
+                                            </p:selectOneMenu >
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label"><span class="required">* </span> Código</label>
+                                            <div class="input-group">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text" id="basic-addon1">
+                                                        #{planoContaControle.planoContaSelecionado.idContaPai.codigo}.
+                                                    </span>
+                                                    <p:inputMask value="#{planoContaControle.codigo}" mask="9?99" required="true"
+                                                                 requiredMessage="Informe o código do plano de conta">
+                                                        <p:ajax event="change" listener="#{planoContaControle.addCodigo()}" process="@this" />
+                                                    </p:inputMask>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label"><span class="required">* </span>Descricao</label>
+                                            <p:inputText value="#{planoContaControle.planoContaSelecionado.descricao}"
+                                                         required="true"
+                                                         requiredMessage="Informe a descrição"
+                                                         styleClass="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </p:row>
+                            <p:row rendered="#{planoContaControle.planoContaSelecionado.podeTerFilho eq 'S'}">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Permitir lançamento em contas de recebimento?</label>
+                                            <p:selectOneMenu  value="#{planoContaControle.planoContaSelecionado.bloqueiaFilhoContaReceber}" >
+                                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                <f:selectItem itemLabel="Sim" itemValue="N" />
+                                                <f:selectItem itemLabel="Não" itemValue="S" />
+                                            </p:selectOneMenu >
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Permitir lançamento em contas de pagamento?</label>
+                                            <p:selectOneMenu  value="#{planoContaControle.planoContaSelecionado.bloqueiaFilhoContaPagar}" >
+                                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                <f:selectItem itemLabel="Sim" itemValue="N" />
+                                                <f:selectItem itemLabel="Não" itemValue="S" />
+                                            </p:selectOneMenu >
+                                        </div>
+                                    </div>
+                                </div>
+                            </p:row>
+                            <div class="row">
+                                <p:row rendered="#{planoContaControle.planoContaSelecionado.tipoIndicador eq 'S'}">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Conta contrapartida</label>
+                                            <p:selectOneMenu id="auto2" value="#{planoContaControle.planoContaSelecionado.idContaContrapartida}"
+                                                             panelStyle="width:300px" effect="fade"
+                                                             var="t" filter="true" filterMatchMode="contains"
+                                                             converter="#{genericConverter}">
+                                                <p:column>
+                                                    <h:outputText value="#{t.codigo}" />
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{t.descricao}" />
+                                                </p:column>
+
+                                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                <f:selectItems value="#{planoContaControle.listarPlanosContaParaContrapartida()}"
+                                                               var="planoConta" itemLabel="#{planoConta.descricao}" itemValue="#{planoConta}"
+                                                               itemDisabled="#{planoConta.tipoIndicador ne 'S'}" />
+
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+                                </p:row>
+                                <div class="col-md-6">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label">Mostra na tela incial</label>
+                                        <p:selectOneMenu  value="#{planoContaControle.planoContaSelecionado.mostraTelaInicial}">
+                                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                            <f:selectItem itemLabel="Sim" itemValue="S" />
+                                            <f:selectItem itemLabel="Não" itemValue="N" />
+                                        </p:selectOneMenu >
+                                    </div>
+                                </div>
+                            </div>
+                            <p:row rendered="#{planoContaControle.planoContaSelecionado.registroPadrao eq 'N'}">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Código na contabilidade</label>
+                                            <p:inputText value="#{planoContaControle.planoContaSelecionado.codigoContabilidade}"
+                                                         styleClass="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </p:row>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <ui:composition template="/WEB-INF/templateModalCadastro.xhtml">
+
+        <f:metadata>
+            <f:event listener="#{veiculoControle.dtoCadastro.setTipo('COMBUSTIVEL')}" type="preRenderView"/>
+        </f:metadata>
+
+        <ui:define name="title">Cadastro de combustível</ui:define>
+
+        <ui:define name="content">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Nome"/>
+                            <p:inputText value="#{veiculoControle.dtoCadastro.descricao}" styleClass="form-control" required="true"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

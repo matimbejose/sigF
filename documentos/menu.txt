@@ -1,0 +1,22 @@
+
+-> Folha
+--> Gerar folha
+--> Previsão de pagamento
+--> Previsão de pagamento 13º
+--> Contra cheque
+
+-> cadastro
+--> Funcionário
+--> Empresa
+--> Departamento
+
+
+-> Configuração
+--> Tipo de trabalhador
+--> INSS
+--> IRRF
+--> Salário família
+--> Eventos
+
+-> Administração
+--> Parametros de configuração

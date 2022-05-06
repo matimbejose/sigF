@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <ui:composition template="/WEB-INF/templateModalCadastro.xhtml">
+
+        <ui:param name="title" value="Cadastro de transportadora"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="content">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Descrição"/>
+                            <p:inputText value="#{transportadoraControle.dtoCadastro.descricao}" styleClass="form-control" required="true"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="CNPJ"/>
+                            <p:inputMask value="#{transportadoraControle.dtoCadastro.cnpj}" styleClass="form-control" required="true"
+                                         mask="99.999.999/9999-99"/>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Isento ICMS"/>
+                            <p:selectOneMenu value="#{transportadoraControle.dtoCadastro.isentoIcms}" required="true">
+                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                <f:selectItem itemLabel="Sim" itemValue="S" />
+                                <f:selectItem itemLabel="Não" itemValue="N" />
+                            </p:selectOneMenu>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Valor do frete"/>
+                            <p:inputNumber value="#{transportadoraControle.dtoCadastro.valorFrete}" styleClass="form-control" required="true"
+                                           decimalPlaces="2" decimalSeparator="," thousandSeparator="."/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

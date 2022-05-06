@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite/components"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Conciliar extrato bancário"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Financeiro</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/integracaoBancaria/listaIntegracaoParcela.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteBack" action="listaIntegracaoBancaria.xhtml" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="formButtons">
+            <p:commandButton action="#{integracaoBancariaControle.criarTodasParcelasNaoConciliadas()}"
+                             rendered="#{integracaoBancariaControle.verificarSeExisteParcelasNaoEncontradas()}"
+                             value="Adicionar parcelas não concliadas"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <div class="row">
+                <div class="col">
+                    <p:dataTable value="#{integracaoBancariaControle.listIntagracaoParcelaDTOFiltrada}" rowStyleClass="#{item.rowStyle}" emptyMessage="Nenhum registro encontrado." var="item" id="tbl" widgetVar="tbl" lazy="true" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+                        <f:facet name="header">
+                            <div style="text-align: center;">Itens do extrato</div>
+                        </f:facet>
+
+                        <p:column headerText="Descricao" filterBy="#{item.transacaoIntegracaoBancaria.descricao}">
+                            <f:facet name="filter">
+                                <p:inputText value="#{integracaoBancariaControle.filtro.descricao}" onchange="PF('tbl').filter()"/>
+                            </f:facet>
+                            <h:outputText value="#{item.transacaoIntegracaoBancaria.descricao}"/>
+                        </p:column>
+
+                        <p:column headerText="Data" width="75">
+                            <h:outputText value="#{item.transacaoIntegracaoBancaria.data}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="Valor" width="95" style="text-align: right">
+                            <h:outputText value="#{item.transacaoIntegracaoBancaria.valor}" style="color: #{item.transacaoIntegracaoBancaria.valor >= 0? 'blue':'red'}">
+                                <f:convertNumber currencySymbol="R$" type="currency"/>
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="Situação" width="60" style="text-align: center;">
+                            <small>
+                                <cc:convertMoney value="#{item.valorRestante}"/>
+                            </small>
+                            <br/>
+                            <i class="#{item.icone}" title="#{item.title}"/>
+                        </p:column>
+
+                        <p:column width="40" headerText="Ações">
+                            <div class="actions">
+                                <p:commandLink rendered="#{item.transacaoIntegracaoBancaria.situacao eq 'N' or item.transacaoIntegracaoBancaria.situacao eq 'PN'}"
+                                               styleClass="btn btn-circle btn-icon-only btn-default icones" title="Adicionar conta" ajax="false"
+                                               action="#{integracaoBancariaControle.criarParcelaNova()}" process="@this">
+                                    <i class="fa fa-plus"></i>
+                                    <f:setPropertyActionListener value="#{item}" target="#{integracaoBancariaControle.integracaoParcelaDTO}"/>
+                                </p:commandLink>
+
+                                <p:commandLink rendered="#{item.transacaoIntegracaoBancaria.situacao ne 'N'}" action="#{integracaoBancariaControle.vincularParcelas(item)}"
+                                               styleClass="btn btn-circle btn-icon-only btn-default icones" title="Vincular conta" process="@this" update="form:tbl, form:tblCP">
+                                    <i class="fa fa-check-square-o"></i>
+                                </p:commandLink>
+                            </div>
+                        </p:column>
+
+                    </p:dataTable>
+                </div>
+                <div class="col">
+                    <p:dataTable id="tblCP" value="#{integracaoBancariaControle.parcelasSelecionaveis}" var="cp" emptyMessage="Nenhum resultado" lazy="true" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow"
+                                 selection="#{integracaoBancariaControle.integracaoParcelaDTO.parcelas}" disabledSelection="#{integracaoBancariaControle.disabled or (cp.porcentagem ge 1 and not cp.selecionada)}" rowKey="#{cp.id}"
+                                 rowsPerPageTemplate="10,20,30,50,100" rows="50" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}">
+
+                        <f:facet name="header">
+                            <div style="text-align: center;">
+                                <h:outputText rendered="#{not integracaoBancariaControle.disabled}" value="Selecione qual parcela será associada ao extrato - #{integracaoBancariaControle.integracaoParcelaDTO.transacaoIntegracaoBancaria.descricao}"/>
+                                <h:outputText rendered="#{integracaoBancariaControle.disabled}" value="Todas as parcelas"/>
+                            </div>
+                            <br/>
+                            <div class="row">
+                                <div class="col-6">
+                                    <span>
+                                        Período de
+                                        <p:calendar navigator="true" pattern="dd/MM/yyyy" styleClass="d-inline-block" style="width: 90px;" value="#{integracaoBancariaControle.dataFiltro.min}">
+                                            <p:ajax event="dateSelect" listener="#{integracaoBancariaControle.updateData}" update="tblCP"/>
+                                        </p:calendar>
+                                        até
+                                        <p:calendar navigator="true" pattern="dd/MM/yyyy" styleClass="d-inline-block" style="width: 90px;" value="#{integracaoBancariaControle.dataFiltro.max}">
+                                            <p:ajax event="dateSelect" listener="#{integracaoBancariaControle.updateData}" update="tblCP"/>
+                                        </p:calendar>
+                                    </span>
+                                </div>
+                                <div class="col-3">
+                                    <p:selectOneMenu value="#{integracaoBancariaControle.situacaoConta}" panelStyle="width:180px" effect="fade" >
+
+                                        <p:ajax event="change" process="@this"/>
+                                        <f:selectItem itemLabel=" Pago/Recebido " itemValue="PG" />
+                                        <f:selectItem itemLabel=" Em Aberto " itemValue="NP"/>
+                                        <f:selectItem itemLabel=" Todas " itemValue="" />
+
+                                        <p:ajax event="change" listener="#{integracaoBancariaControle.updateData}" update="tblCP"/>
+                                    </p:selectOneMenu>
+                                </div>
+                                <div class="col-3">
+                                    <p:selectOneMenu value="#{integracaoBancariaControle.centroCusto}" panelStyle="width:180px" effect="fade" var="t"
+                                                     style="width:160px" filter="true" filterMatchMode="startsWith" converter="#{genericConverter}">
+                                        <p:column>
+                                            <h:outputText value="#{t.descricao}"/>
+                                        </p:column>
+                                        <p:ajax event="change" process="@this"/>
+                                        <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                        <f:selectItems value="#{centroCustoControle.centroCustos}" var="centroCusto" itemLabel="#{centroCusto.descricao}"
+                                                       itemValue="#{centroCusto}"/>
+                                        <p:ajax event="itemSelect" listener="#{integracaoBancariaControle.updateData}" update="tblCP"/>
+                                        <p:ajax event="change" listener="#{integracaoBancariaControle.updateData}" update="tblCP"/>
+                                    </p:selectOneMenu>
+                                </div>
+                            </div>
+                        </f:facet>
+
+                        <f:facet name="footer">
+                            <div class="row">
+                                <div class="col-auto">
+                                    <p:commandButton action="#{integracaoBancariaControle.doFinishEscolherParcelaIntegracao()}" value="Salvar"
+                                                     disabled="#{integracaoBancariaControle.disabled}" process="@this, form:tblCP" update="form:tbl, form:tblCP, form:msgResultado"/>
+                                    <p:spacer width="7"/>
+                                    <p:commandButton action="#{integracaoBancariaControle.doCancelEscolherParcelaIntegracao()}" value="Cancelar"
+                                                     disabled="#{integracaoBancariaControle.disabled}" process="@this" update="form:tbl, form:tblCP, form:msgResultado"/>
+                                </div>
+                                <div class="col">
+                                    <p:selectOneMenu value="#{integracaoBancariaControle.formaPagamento}" converter="#{genericConverter}"
+                                                     required="true" requiredMessage="Informe o meio de pagamento" var="fp" disabled="#{integracaoBancariaControle.disabled}">
+                                        <p:column>
+                                            <h:outputText value="#{fp.descricao}"/>
+                                        </p:column>
+                                        <p:column rendered="#{false}">
+                                            <p:row rendered="#{fp.enumNfe.permiteLinkPagamento}">
+                                                <i class="fa fa-link font-green-jungle" title="Permite envio de link de pagamento"></i>
+                                            </p:row>
+                                            <p:row rendered="#{not fp.enumNfe.permiteLinkPagamento}">
+                                                <i class="fa fa-chain-broken font-red-mint" title="Não permite envio de link de pagamento"></i>
+                                            </p:row>
+                                        </p:column>
+                                        <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                        <f:selectItems value="#{formaPagamentoControle.formasPagamento}" var="meiodepagamento"
+                                                       itemLabel="#{meiodepagamento.descricao}" itemValue="#{meiodepagamento}"/>
+                                    </p:selectOneMenu>
+                                </div>
+                            </div>
+                        </f:facet>
+
+                        <p:column selectionMode="multiple" style="width:45px;text-align:center"/>
+
+                        <p:column headerText="Plano de conta">
+                            <h:outputText value="#{cp.idConta.idPlanoConta.descricao}"/>
+                        </p:column>
+
+                        <p:column headerText="Observação">
+                            <h:outputText value="#{cp.observacao}"/>
+                        </p:column>
+
+                        <p:column headerText="Data de vencimento" width="75">
+                            <h:outputText value="#{cp.dataVencimento}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="Data de pagamento" width="75">
+                            <h:outputText value="#{cp.dataPagamento}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="Situação" width="60" style="text-align: center;">
+                            <small>
+                                <cc:convertMoney value="#{cp.valorRestante}"/>
+                            </small>
+                            <br/>
+                            <i class="#{cp.icone}" title="#{cp.title}"/>
+                        </p:column>
+
+                        <p:column headerText="Valor total" width="95" style="text-align: right">
+                            <h:outputText value="#{cp.valorTotal * (cp.idConta.tipoTransacao eq 'R' ? 1 : -1)}" style="color: #{cp.idConta.tipoTransacao eq 'R' ? 'blue':'red'}">
+                                <f:convertNumber currencySymbol="R$" type="currency"/>
+                            </h:outputText>
+                        </p:column>
+                    </p:dataTable>
+                </div>
+            </div>
+            <style>
+                .ui-datatable tbody.ui-datatable-data > tr.ui-state-highlight i.fa {
+                    color: white !important;
+                }
+            </style>
+        </ui:define>
+    </ui:composition>
+
+</html>

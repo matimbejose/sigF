@@ -1,0 +1,21 @@
+<jboss-deployment-structure>
+<!-- Make sub deployments isolated by default, so they cannot see each others classes without a Class-Path entry -->
+
+<!--
+
+  <ear-subdeployments-isolated>true</ear-subdeployments-isolated>
+      
+    <deployment> 
+        <exclusions> 
+            <module name="org.dom4j" /> 
+            <module name="org.hibernate"/>
+            <module name="javax.persistence.api"/>
+            <module name="javaee.api"/>
+            <module name="org.jboss.as.jpa"/>
+            <module name="javaee.api"/>
+        </exclusions> 
+    </deployment> 
+    
+    -->
+    
+</jboss-deployment-structure>  

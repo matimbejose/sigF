@@ -1,0 +1,20 @@
+<arquillian xmlns="http://jboss.org/schema/arquillian"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://jboss.org/schema/arquillian
+        http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
+
+    <container qualifier="jbossas-managed" default="true">
+        <configuration>
+            <property name="jbossHome">C:\Users\desenvolvimento\Documents\wildfly-10.0.0.Final</property>
+            <property name="serverConfig">standalone-full-teste.xml</property>
+            <property name="javaVmArguments">-Xmx2048m -Xverify:none -XX:+UseFastAccessorMethods</property>
+            <property name="outputToConsole">true</property>
+        </configuration>
+    </container>
+
+    <extension qualifier="persistence-script">
+        <property name="scriptsToExecuteBeforeTest">scripts/carregaTabelasBasicas.sql</property>
+    </extension>
+
+
+</arquillian>

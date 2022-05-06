@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:p="http://primefaces.org/ui">
+
+    <div class="form-body">
+        <p:outputPanel rendered="#{parametroSistemaControle.parametroSistemaSelecionado.nfeMsToken ne null}">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group form-md-line-input">
+                        <label class="control-label">ID do token</label>
+                        <p:inputText value="#{parametroSistemaControle.parametroSistemaSelecionado.nfceToken}"
+                                     />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group form-md-line-input">
+                        <label class="control-label">Código de segurança do contribuinte (CSC)</label>
+                        <p:inputText value="#{parametroSistemaControle.parametroSistemaSelecionado.nfceCsc}"
+                                     />
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <strong class="text-danger">Atenção</strong>
+                    <br/>
+                    Para emitir a NFC-e é necessário que a aba NF-e esteja preenchida corretamente e
+                    solicitar na SEFAZ do seu estado a ID do token e o CSC.
+                    <br/>
+                    Após a solicitação <strong>não</strong> será possível desabilitar o envio de NFC-e.
+                    Portanto a empresa será obrigada a emitir a NFC-e ou o cupom fiscal.
+                </div>
+            </div>
+        </p:outputPanel>
+        <p:outputPanel rendered="#{parametroSistemaControle.parametroSistemaSelecionado.nfeMsToken eq null}">
+            <div style="text-align: center;">
+                Habilite a NF-e para ter acesso às configurações de NFC-e
+            </div>
+        </p:outputPanel>
+    </div>
+
+</html>

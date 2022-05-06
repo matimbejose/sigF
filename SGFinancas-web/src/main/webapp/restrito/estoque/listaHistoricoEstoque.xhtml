@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Estoque"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Estoque</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/estoque/listaHistoricoEstoque.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteCancel" action="listaEstoque.xhtml" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <h1>Movimentação do produto #{estoqueControle.produtoSelecionado.descricao}</h1>
+            <p:dataTable value="#{estoqueControle.listaEstoquePorProduto}" emptyMessage="Nenhum registro encontrado." var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+                <p:column headerText="Origem " style="text-align: right">
+                    <h:outputText rendered="#{item.idCompraProduto eq null and item.idVendaProduto eq null and item.idProducaoProduto ne null and item.primeiroCadastro ne 'S' and item.tipoOperacao eq 'EN'}"
+                                  value="Entrada producao"/>
+                    <h:outputText rendered="#{item.idCompraProduto eq null and item.idVendaProduto eq null and item.idProducaoProduto ne null and item.primeiroCadastro ne 'S' and item.tipoOperacao eq 'SA'}"
+                                  value="Saída produção"/>
+                    <h:outputText rendered="#{item.idCompraProduto eq null and item.idVendaProduto eq null and item.idProducaoProduto eq null and item.primeiroCadastro eq 'S'}"
+                                  value="Estoque inicial"/>
+                    <h:outputText rendered="#{item.idCompraProduto eq null and item.idVendaProduto eq null and item.idProducaoProduto eq null and item.idProduto.ultimaEntrada eq 'IE' and item.primeiroCadastro eq null}"
+                                  value="Inventário"/>
+                    <h:outputText rendered="#{item.idCompraProduto eq null and item.idVendaProduto eq null and item.idProducaoProduto eq null and item.idProduto.ultimaEntrada eq 'IS' and item.primeiroCadastro eq null}"
+                                  value="Saída lançada"/>
+                    <h:outputText rendered="#{item.idCompraProduto eq null and item.idVendaProduto ne null and item.idProducaoProduto eq null}"
+                                  value="Venda"/>
+                    <h:outputText rendered="#{item.idCompraProduto ne null and item.idVendaProduto eq null and item.idProducaoProduto eq null}"
+                                  value="Compra"/>
+                </p:column>
+
+                <p:column headerText="Quantidade" sortBy="#{item.quantidade}" style="text-align: right">
+                    <h:outputText value="#{item.quantidade}" rendered="#{item.tipoOperacao eq 'EN'}">
+                        <f:convertNumber minFractionDigits="2" maxFractionDigits="2"/>
+                    </h:outputText>
+                    <h:outputText value="#{-item.quantidade}" style="color: red" rendered="#{item.tipoOperacao eq 'SA'}">
+                        <f:convertNumber minFractionDigits="2" maxFractionDigits="2"/>
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Saldo anterior" sortBy="#{item.saldoAnterior}" style="text-align: right">
+                    <h:outputText value="#{item.saldoAnterior}">
+                        <f:convertNumber minFractionDigits="2" maxFractionDigits="2"/>
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Saldo" sortBy="#{item.saldo}" style="text-align: right">
+                    <h:outputText value="#{item.saldo}">
+                        <f:convertNumber minFractionDigits="2" maxFractionDigits="2"/>
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Data de atualização" sortBy="#{item.data}" style="text-align: right">
+                    <h:outputText value="#{item.data}" >
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </h:outputText>
+                </p:column>
+
+            </p:dataTable>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

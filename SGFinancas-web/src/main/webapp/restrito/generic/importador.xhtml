@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Importador"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>#{title}</li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteImport" action="#{cadastroControle.doFinishImport()}" />
+        </ui:define>
+
+        <ui:define name="formButtons">
+            <div style="display: inline-block;width: 200px;">
+                <div class="input-group">
+                    <div class="input-group-append justify-content-end">
+                        <p:fileUpload skinSimple="true" label="Escolher arquivo" mode="simple" id="fileUpload" styleClass="ui-button border-0" />
+                        <p:commandButton icon="fa fa-question-circle" onclick="return showFileHelp();" styleClass="px-2"/>
+                    </div>
+                </div>
+            </div>
+            <p:commandButton value="Baixar modelo" onclick="alert('O arquivo modelo vem com 3 linhas de cabeçalho, não é necessário removê-las.\n' +
+                        'Adicione abaixo do cabeçalho as linhas linhas que serão importadas.');
+                    return true;" action="#{cadastroControle.downloadModel}" ajax="false"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <div class="form-body">
+                <div class="card card-w-title">
+                    <h1>Importação de #{cadastroControle.importacaoDTO.nome}</h1>
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="accordion mb-3" style="display: none;">
+                                <div class="card">
+                                    <div class="card-header" data-name="codigoDeBarras">Geral</div>
+                                    <div class="collapse show">
+                                        <div class="card-body p-1">
+                                            <p:inputText type="hidden" value="#{cadastroControle.bidings}" id="jsonBidings" widgetVar="jsonBidings"/>
+                                            <p:inputText type="hidden" value="#{cadastroControle.delimitador}" id="delimiter" widgetVar="delimiter"/>
+                                            <table>
+                                                <tbody>
+                                                    <tr>
+                                                        <th>
+                                                            Pular linhas sem algum valor obrigatório:
+                                                            <small>As linhas que não possuirem um valor obrigatório não serão incluidas. </small>
+                                                        </th>
+                                                        <td>
+                                                            <p:inputSwitch onLabel="Sim" offLabel="Não" widgetVar="skipIncomplete" onchange="updateTable()"
+                                                                           value="#{cadastroControle.pularLinhasIncompletas}"/>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion" id="accordionExample"></div>
+                        </div>
+                        <div class="col-8">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="alert alert-warning hidden mt-3 encoding">
+                                        <h1>
+                                            Codificação do arquivo
+                                            <span class="pull-right"><i class="fa fa-times-circle" onclick="hideHelp(this);"></i></span>
+                                        </h1>
+                                        <span>Um arquivo de importação pode ser salvo em várias codificações diferentes, caso apareça algum ponto de
+                                            interrogação no lugar de uma letra, tente importar a tabela novamente com outra codificação selecionada.</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="alert alert-warning hidden mt-3 file">
+                                        <h1>
+                                            Tipo de arquivo
+                                            <span class="pull-right"><i class="fa fa-times-circle" onclick="hideHelp(this);"></i></span>
+                                        </h1>
+                                        <span>Para realizar a importação selecione um arquivo CSV separado por vírgula ou ponto e vírgula com os dados a seram importados.</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col ui-datatable">
+                                    <table id="inpTable" class="empty">
+                                        <thead>
+                                            <tr><th>Conteúdo do arquivo de importação</th></tr>
+                                            <tr><th>Nenhum arquivo selecionado.</th></tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                    <div class="wrapper">
+                                        <table id="contentTable" class="empty">
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <style>
+                .ui-fileupload-simple > span.ui-button {
+                    padding: 0;
+                }
+                .alert > h1 i {
+                    cursor: pointer;
+                }
+                .hidden {
+                    display: none;
+                }
+                .accordion > .card {
+                    padding: 0;
+                    margin: 0;
+                }
+                .accordion > .card:not(:first-child) {
+                    border-top: none;
+                    border-top-left-radius: 0;
+                    border-top-right-radius: 0;
+                }
+                .accordion > .card:not(:last-child) {
+                    border-bottom-left-radius: 0;
+                    border-bottom-right-radius: 0;
+                }
+                .card-header {
+                    color: #007bff;
+                    background: #eee;
+                    padding: 7px 7px 12px 7px !important;
+                }
+                table:not(.empty) > thead > tr:last-child {
+                    display: none;
+                }
+                .ui-fileupload-filename {
+                    display: none;
+                }
+                select {
+                    width: 100%;
+                }
+                .card-body > table th {
+                    text-align: right;
+                }
+                table {
+                    width: 100%;
+                }
+                .col.ui-datatable > table th {
+                    border-color: inherit;
+                }
+                .accordion[id] > .card table tr > th {
+                    width: 30%;
+                    vertical-align: top;
+                    line-height: 32px;
+                }
+                .accordion[id] > .card table tr > td {
+                    vertical-align: bottom;
+                    line-height: 32px;
+                }
+                input[type=number]::-webkit-inner-spin-button,
+                input[type=number]::-webkit-outer-spin-button {
+                    -webkit-appearance: none;
+                    margin: 0;
+                }
+                input[type=number] {
+                    -moz-appearance:textfield; /* Firefox */
+                }
+                .ui-fileupload-simple > .ui-button {
+                    display: block;
+                    padding: 3px 0;
+                }
+                #inpTable th, #inpTable td, #contentTable td.header {
+                    background-color: #eee;
+                }
+                td.header > select {
+                    min-width: 180px;
+                    width: 100%;
+                }
+                .col.ui-datatable > .wrapper {
+                    overflow-x: scroll;
+                }
+                .col.ui-datatable > .wrapper > table#contentTable {
+                    width: auto;
+                }
+            </style>
+            <script>
+                // <![CDATA[
+                let fileIndex = 0;
+                let files = [];
+                let config = {
+                    fields: JSON.parse('#{cadastroControle.importacaoDtoAsJson}'),
+                    select: '',
+                    bindings: {/* nomeDoCampoNoDto: posicaoDoCampoNoCsv */},
+                    csvFields: []
+                };
+                const fileName = `Modelo de importação de \${config.fields.nome}.csv`;
+
+                function showEncondingHelp() {
+                    document.querySelector('.alert.alert-warning.encoding').classList.remove('hidden');
+                    return false;
+                }
+                function showFileHelp() {
+                    document.querySelector('.alert.alert-warning.file').classList.remove('hidden');
+                    return false;
+                }
+                function hideHelp(elem) {
+                    elem.parentElement.parentElement.parentElement.classList.add('hidden');
+                }
+                function getBidingLabel(nome) {
+                    if (config.bindings[nome] === null) {
+                        return 'Nenhuma';
+                    }
+                    let field = config.csvFields[config.bindings[nome]];
+                    if (field !== undefined) {
+                        return field.nome;
+                    } else {
+                        return 'Nenhuma';
+                    }
+                }
+                function getTypeLabel(e) {
+                    switch (e.tipo) {
+                        case "STRING":
+                            return 'Texto';
+                        case "INTEGER":
+                            return 'Número';
+                        case "DOUBLE":
+                            return 'Número (com virgula)';
+                        case "ENUM":
+                            return 'Opção da lista';
+                        case "ID_TABELA":
+                            return 'Opção do banco';
+                        case "DATE":
+                            return 'Data';
+                        default:
+                            return '';
+                    }
+                }
+                function getTypeInput(e, index) {
+                    const disabled = getBidingEnabled(e.nomeCampo);
+                    const classStr = `class="ui-inputfield ui-inputtext ui-widget ui-state-default ui-corner-all" `;
+                    const change = `onchange="config.fields.campos[\${index}].padrao = this.value;updateTable();" `;
+                    const defaultValue = `value="\${e.padrao !== '' ? e.padrao : ''}" `;
+                    const allConsts = classStr + change + disabled + defaultValue;
+                    switch (e.tipo) {
+                        case "STRING":
+                            return `<input \${allConsts} type="text"/>`;
+                        case "INTEGER":
+                            return `<input \${allConsts} type="number" step="1"/>`;
+                        case "DOUBLE":
+                            return `<input \${allConsts} type="number" step="0.01"/>`;
+                        case "ENUM":
+                            return `<select \${change + disabled} class="ui-selectonemenu ui-inputtext ui-widget ui-state-default ui-corner-all">
+                                        \${e.opcoes.map(m => `<option value="\${m}" \${m.value === e.padrao ? 'selected' : ''}>\${m}</option>`)}
+                                </select>`;
+                        case "ID_TABELA":
+                            return `<input type="text" \${allConsts}/><br/>
+                                <small>Será buscado no sistema o valor informado, caso o mesmo não exista ele será criado!</small>`;
+                        case "DATE":
+                            return `<input \${allConsts} type="date"/>`;
+                        default:
+                            return '';
+                    }
+                }
+                function getBidingEnabled(nome) {
+                    if (config.bindings[nome] === null) {
+                        return '';
+                    }
+                    let field = config.csvFields[config.bindings[nome]];
+                    return (field === undefined || field.requireDefault) ? '' : ' disabled';
+                }
+                function updatePanel() {
+                    let html = '';
+                    config.fields.campos.forEach((e, i) => {
+                        html += `<div class="card">
+                                    <div class="card-header" data-name="\${e.nomeCampo}">\${e.nome}</div>
+                                    <div class="collapse show">
+                                        <div class="card-body p-1">
+                                            <table>
+                                                <tr>
+                                                    <th>Tipo:</th>
+                                                    <td>\${getTypeLabel(e)}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Obrigatório:</th>
+                                                    <td>
+                                                        <span style="color: \${e.obrigatorio ? 'red' : 'green'};">
+                                                             \${e.obrigatorio ? 'Sim' : 'Não'}
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Valor padrão:</th>
+                                                    <td>\${getTypeInput(e, i)}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Coluna vinculada:</th>
+                                                    <td class="binding">\${getBidingLabel(e.nomeCampo)}</td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                            </div>`;
+                    });
+                    accordionExample.innerHTML = html.replace(/ {2,}/g, '');
+                }
+                function validaTipo(campos) {
+                    return campos
+                        .every((e, i) => getTypeLabel(config.fields.campos[i]) === e);
+                }
+                function validaObrigatorio(campos) {
+                    return campos
+                        .map(m => m === "Obrigatório" ? true : m === "Opcional" ? false : m)
+                        .every((e, i) => config.fields.campos[i].obrigatorio === e);
+                }
+                function updateTable() {
+                    inpTable.classList.add('empty');
+                    let headTbody = inpTable.querySelector('tbody');
+                    let tbody = contentTable.querySelector('tbody');
+                    headTbody.innerHTML = tbody.innerHTML = '';
+                    const skipIncompleteLines = PF('skipIncomplete').input.val() === 'on';
+                    const obrigatorios = config.fields.campos.filter(f => f.obrigatorio).map(m => m.nomeCampo);
+                    let callUpdatePanel = false;
+                    files.map(e => {
+                        inpTable.classList.remove('empty');
+                        const content = e.content.split(/\r?\n/g);
+                        const delimiter = content[0].split(';').length === 1 ? ',' : ';';
+                        const popIt = content[0].split(delimiter).pop() === '';
+                        const length = content[0].split(delimiter).length + (popIt ? -1 : 0);
+                        PF('delimiter').jq.val(delimiter);
+                        let rowTr = headTbody.insertRow();
+                        rowTr.innerHTML = '<td class="header"><strong>Arquivo "' + e.name + '"</strong>' +
+                            '<i class="fa fa-times-circle text-danger pull-right" title="Remover da importação" onclick="removeFile(' + e.index + ')"></i></td>';
+
+                        const qteCampos = config.fields.campos.length;
+                        content.map(m => m.split(delimiter)).forEach((campos, i) => {
+                            campos = campos.map(removerAspas);
+                            if ((campos.length === 1 && length > 1 && campos[0] === '') || (i === 1 && validaTipo(campos)) || (i === 2 && validaObrigatorio(campos))) {
+                                return;
+                            }
+                            if (popIt) {
+                                campos.pop();
+                            }
+                            let csvRow = tbody.insertRow();
+                            if (i === 0) {
+                                csvRow.innerHTML = '<td class="header">' + campos.join(config.select + '</td><td class="header">') + config.select + '</td>';
+                                config.csvFields = campos.map((m, i) => ({nome: m, requireDefault: false, index: i}));
+                                const selects = Array.from(csvRow.querySelectorAll('select'));
+                                config.fields.campos.map(m => m.nome).forEach((e, i) => {
+                                    if (e === campos[i]) {
+                                        if (selects[i] !== undefined) {
+                                            selects[i].selectedIndex = i + 1;
+                                            const campo = config.fields.campos.filter(f => f.nome === e)[0];
+                                            config.bindings[campo.nomeCampo] = i;
+                                            callUpdatePanel = true;
+                                        }
+                                    }
+                                });//*/
+                            } else {
+                                if (isRowIncomplete(campos, obrigatorios, skipIncompleteLines)) {
+                                    csvRow.classList.add('bg-red-pink');
+                                }
+                                csvRow.innerHTML = campos.map((m, j) => {
+                                    let dto = getDtoField(m, j, obrigatorios);
+                                    return `<td\${dto.valid ? '' : ' class="auto-fill"'}>\${dto.override}</td>`;
+                                }).join('');
+                                campos.forEach((campo, index) => {
+                                    if (campo === '') {
+                                        config.csvFields.filter(f => f.index === index)[0].requireDefault = true;
+                                    }
+                                });
+                            }
+                            Array.from(csvRow.querySelectorAll('select')).forEach((sel, i) => {
+                                let eloCom = Object.keys(config.bindings).filter(f => config.bindings[f] === i);
+                                if (eloCom.length > 0) {
+                                    sel.value = eloCom[0];
+                                }
+                                sel.setAttribute('data-position', i);
+                            });
+                        });
+                    });
+                    updateBidings();
+                    if (callUpdatePanel) {
+                        updatePanel();
+                    }
+                }
+                function isRowIncomplete(row, obrigatorios, skip) {
+                    return row.some((s, i) => {
+                        const dto = getDtoField(s, i, obrigatorios);
+                        return !dto.valid && (!skip || dto.override !== s);
+                    });
+                }
+                function getDtoField(value, index, names) {
+                    if (value === '') {// Se o campo estiver vazio
+                        for (const name of names) {
+                            if (config.bindings[name] === index) {// Se ele tiver sido marcado pelo usuário
+                                let resp = config.fields.campos.filter(f => f.nomeCampo === name)[0];
+                                resp.valid = resp.padrao !== '';
+                                resp.override = `<strong class="font-red-thunderbird">\${resp.padrao}</strong>`;
+                                return resp;
+                            }
+                        }
+                    }
+                    return {valid: true, override: value};
+                }
+                function removeFile(index) {
+                    files = files.filter(f => f.index !== index);
+                    // config.select = '';
+                    config.bindings = [];
+                    config.csvFields = [];
+                    updateTable();
+                    updatePanel();
+                }
+                function valida(elem) {
+                    let dtoVal = elem.value;
+                    let csvVal = parseInt(elem.getAttribute('data-position'));
+                    let key = Object.keys(config.bindings).filter(k => k === dtoVal);
+                    if (key.length > 0) {
+                        let doIt = confirm('Já existe uma columa com esse vínculo. Deseja remover o vínculo atual antes?');
+                        if (!doIt) {
+                            alert('Cancelado');
+                            elem.value = '';
+                            return;
+                        } else {
+                            Array.from(inpTable.querySelectorAll('select'))[config.bindings[dtoVal]].value = '';
+                        }
+                    } else if (dtoVal === '') {
+                        Object.keys(config.bindings).forEach(e => {
+                            if (config.bindings[e] === csvVal) {
+                                delete config.bindings[e];
+                            }
+
+                        });
+                        updatePanel();
+                        updateTable();
+                        return;
+                    }
+                    key.forEach(e => config.bindings[e] = null);
+                    config.bindings[dtoVal] = csvVal;
+                    updatePanel();
+                    updateTable();
+                }
+                function updateBidings() {
+                    const bindings = Object.keys(config.bindings);
+                    const validIndex = bindings.map(m => config.bindings[m]);
+                    PF('jsonBidings').jq.val(JSON.stringify(convertFileds(Array.from(contentTable.querySelectorAll('tbody > tr'))
+                        .filter((row, i) => i >= 1 && !row.classList.contains('bg-red-pink') && row.querySelector("td") !== null)
+                        .map(row => Array.from(row.querySelectorAll('td'))
+                                .filter((cell, i) => validIndex.includes(i))
+                                .map(cell => cell.innerHTML.replace(/<\/?[a-z-]+.*?>/g, ''))
+                                .reduce((resp, content, i) => {
+                                    switch (config.fields.campos[i].tipo) {
+                                        case "DATE":
+                                            let partes = content.split(" ");
+                                            if (partes.length > 0) {
+                                                partes[0] = partes[0].split("/").reverse().join("-");
+                                                content = partes[0] + (partes.length > 1 ? (" " + partes[1]) : "");
+                                            }
+                                            break;
+                                        case "DOUBLE":
+                                            if (content.match(/,\d+$/)) {
+                                                content = content.replace(".", "").replace(",", ".");
+                                            }
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                    resp[bindings[i]] = content;
+                                    return resp;
+                                }, {})))));
+                }
+                function convertFileds(campos) {
+                    const mapper = campo => {
+                        let newObj = {};
+                        Object.keys(campo).forEach(key => {
+                            if (key.indexOf('.') === -1) {
+                                newObj[key] = campo[key];
+                            } else {
+                                const keys = key.split('.');
+                                const firstKey = keys[0];
+                                const secondKey = key.replace(firstKey + '.', '');
+                                if (newObj[firstKey] === undefined) {
+                                    newObj[firstKey] = {};
+                                }
+                                newObj[firstKey][secondKey] = campo[key];
+                            }
+                        });
+                        return newObj;
+                    };
+                    return campos.map(mapper);
+                }
+                function removerAspas(value) {
+                    if (value.indexOf('"') === 0 && value.lastIndexOf('"') === value.length - 1) {
+                        value = value.substring(1, value.length - 1).replace(/""/g, '"');
+                    }
+                    return value;
+                }
+                (() => {
+                    updatePanel();
+                    config.select = '<select onchange="valida(this);"><option value=""></option>' +
+                        config.fields.campos.map(m => '<option value="' + m.nomeCampo + '">' + m.nome + '</option>') + '</select>';
+                    document.getElementById('form:fileUpload_input').addEventListener('change', evt => {
+                        files = [];// Bloqueada a seleção de mais de um arquivo no momento
+                        const input = evt.target;
+                        const encoding = `ISO-8859-1`;
+                        for (let file of input.files) {
+                            let reader = new FileReader();
+                            reader.onload = () => {
+                                if (file.name.indexOf('.csv') === (file.name.length - 4)) {
+                                    files.push({name: file.name, index: fileIndex, content: reader.result});
+                                    updateTable();
+                                    fileIndex++;
+                                } else {
+                                    alert('Apenas arquivos CSV são suportados.');
+                                }
+                            };
+                            reader.readAsText(file, encoding);
+                        }
+                    }, {passive: true});
+                })();
+                // ]]>            </script>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

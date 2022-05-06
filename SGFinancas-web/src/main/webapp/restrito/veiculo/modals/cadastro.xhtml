@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <ui:composition template="/WEB-INF/templateModalCadastro.xhtml">
+
+        <f:metadata>
+            <f:event listener="#{veiculoControle.dtoCadastro.setTipo('VEICULO')}" type="preRenderView"/>
+        </f:metadata>
+
+        <ui:define name="title">Cadastro de veículo</ui:define>
+
+        <ui:define name="content">
+            <ui:param name="cv" value="#{veiculoControle.dtoCadastro.dadosVeiculo}"/>
+            <p:outputPanel id="dadosVeiculo" class="form-body" style="overflow: auto; height: auto">
+                <div class="row">
+                    <div class="col-3 form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Tipo de veículo"/>
+                        <p:selectOneMenu value="#{cv.tipo}" converter="#{genericConverter}">
+                            <f:selectItem itemValue="carros" itemLabel="Carros"/>
+                            <p:ajax process="@this" update="dadosVeiculo"/>
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="col-3 form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Marca"/>
+                        <p:selectOneMenu value="#{cv.marca}" converter="#{genericConverter}"
+                                         required="true" requiredMessage="Informe a marca" disabled="#{cv.tipo eq null}">
+                            <f:selectItem noSelectionOption="true" itemLabel="-- Selecione --"/>
+                            <f:selectItems value="#{veiculoControle.getListarMarcaByTipo(cv.tipo)}" var="marca"
+                                           itemLabel="#{marca.fipeNome}" itemValue="#{marca}"/>
+                            <p:ajax process="@this" update="dadosVeiculo"/>
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="col-3 form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Modelo"/>
+                        <p:selectOneMenu value="#{cv.modelo}" converter="#{genericConverter}" disabled="#{cv.marca eq null}"
+                                         required="true" requiredMessage="Informe o modelo">
+                            <f:selectItem noSelectionOption="true" itemLabel="-- Selecione --"/>
+                            <f:selectItems value="#{veiculoControle.getListaModelo(cv.marca, cv.tipo)}" var="marca"
+                                           itemLabel="#{marca.fipeNome}" itemValue="#{marca}"/>
+                            <p:ajax process="@this" update="dadosVeiculo"/>
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="col-3 form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Ano do modelo"/>
+                        <p:selectOneMenu value="#{cv.anoModelo}" disabled="#{cv.modelo eq null}"
+                                         required="true" requiredMessage="Informe o ano do modelo">
+                            <f:selectItem noSelectionOption="true" itemLabel="-- Selecione --"/>
+                            <f:selectItems value="#{veiculoControle.getAnosModelo(cv.modelo)}" var="anoM"
+                                           itemLabel="#{anoM}" itemValue="#{anoM}"/>
+                            <p:ajax process="@this" update="dadosVeiculo" listener="#{veiculoControle.atualizaVeiculoModelo()}"/>
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="col-3 form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Ano de fabricação"/>
+                        <p:inputNumber value="#{cv.anoFabricacao}" disabled="#{cv.modelo eq null}"
+                                       required="true" requiredMessage="Informe o ano de fabricação"
+                                       thousandSeparator="" decimalPlaces="0">
+                            <p:ajax process="@this"/>
+                        </p:inputNumber>
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Cor"/>
+                        <p:selectOneMenu value="#{cv.corVeiculo}" converter="#{genericConverter}"
+                                         required="true" requiredMessage="Informe a cor">
+                            <f:selectItem noSelectionOption="true" itemLabel="-- Selecione --"/>
+                            <f:selectItems value="#{veiculoControle.listaCorVeiculo}" var="cor"
+                                           itemLabel="#{cor.descricao}" itemValue="#{cor}"/>
+                            <p:ajax process="@this"/>
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Combustível"/>
+                        <p:selectOneMenu value="#{cv.combustivel}" converter="#{genericConverter}"
+                                         filter="true" filterMatchMode="contains" required="true">
+                            <f:selectItem noSelectionOption="true" itemLabel="-- Selecione --"/>
+                            <f:selectItems value="#{veiculoControle.listaCombustivel}" var="combustivel"
+                                           itemLabel="#{combustivel.descricao}" itemValue="#{combustivel}"/>
+                            <p:ajax process="@this"/>
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Cambio"/>
+                        <p:selectOneMenu value="#{cv.cambio}">
+                            <f:selectItem itemLabel="Manual" itemValue="M"/>
+                            <f:selectItem itemLabel="Automático" itemValue="A"/>
+                            <p:ajax process="@this"/>
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Numero de portas"/>
+                        <p:selectOneMenu value="#{cv.portas}">
+                            <f:selectItem itemLabel=" 2 portas" itemValue="2"/>
+                            <f:selectItem itemLabel=" 3 portas" itemValue="3"/>
+                            <f:selectItem itemLabel=" 4 portas" itemValue="4"/>
+                            <f:selectItem itemLabel=" 5 portas" itemValue="5"/>
+                            <f:selectItem itemLabel=" 6 portas" itemValue="6"/>
+                            <p:ajax process="@this"/>
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Numero passageiros"/>
+                        <p:inputNumber value="#{cv.numeroPassageiros}" >
+                            <p:ajax process="@this"/>
+                        </p:inputNumber>
+                    </div>
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Placa do veículo"/>
+                        <p:inputText value="#{cv.placa}" widgetVar="placa"
+                                     required="true" requiredMessage="Favor digitar a placa do veiculo">
+                            <p:ajax process="@this"/>
+                        </p:inputText>
+                    </div>
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Renavam"/>
+                        <p:inputText value="#{cv.renavam}">
+                            <p:ajax process="@this"/>
+                        </p:inputText>
+                    </div>
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Chassi"/>
+                        <p:inputText value="#{cv.chassi}">
+                            <p:ajax process="@this"/>
+                        </p:inputText>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-3 form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Valor Protegido"/>
+                        <p:inputNumber value="#{cv.valorProtegido}"
+                                       disabled="#{clienteControle.marcaSelecionada eq null}"
+                                       symbol="R$ " decimalSeparator=","
+                                       thousandSeparator="." decimalPlaces="2">
+                            <p:ajax process="@this"/>
+                        </p:inputNumber>
+                    </div>
+                </div>
+                <script>
+                    //<![CDATA[
+                    $(document).ready(() => {
+                        const mercosul = 'AAA9A99', padrao = 'AAA-9999';
+                        const elem = PF('placa').getJQ();
+                        elem.on('input', () => {
+                            const val = elem.val().toUpperCase().replace(/[^\dA-Z-]/g, '');
+                            let tipoPadrao = val.indexOf('-') !== -1 || (val.length > 4 && !isNaN(parseInt(val.charAt(4))));
+                            elem.val(VMasker.toPattern(val, tipoPadrao ? padrao : mercosul));
+                        });
+                    });
+                    //]]>
+                </script>
+            </p:outputPanel>
+            <script src="https://unpkg.com/vanilla-masker@1.1.1/build/vanilla-masker.min.js"></script>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

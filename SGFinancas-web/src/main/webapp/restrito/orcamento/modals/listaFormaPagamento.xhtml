@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/templateModal.xhtml">
+
+        <ui:define name="title">Selecione a forma de pagamento para imprimir o orçamento</ui:define>
+
+        <ui:define name="content">
+            <p:selectOneMenu value="#{orcamentoControle.formaDePagamentoSelecionada}" converter="#{genericConverter}" var="t">
+                <p:column>
+                    <h:outputText value=" #{t.descricao}"/>
+                </p:column>
+
+                <f:selectItem itemLabel="Apenas os itens" noSelectionOption="true"/>
+                <f:selectItems value="#{orcamentoControle.listFormasDePagamentoPrint}" var="fdep" itemLabel="#{fdep.descricao}" itemValue="#{fdep}"/>
+            </p:selectOneMenu>
+
+            <div class="mt-3">
+                <p:commandButton value="Imprimir" ajax="false">
+                    <p:fileDownload value="#{orcamentoControle.doPrint(orcamentoControle.formaDePagamentoSelecionada)}"/>
+                </p:commandButton>
+                <p:spacer width="10"/>
+                <p:commandButton ajax="false" value="Enviar orçamento por e-mail"
+                                 action="#{orcamentoControle.enviarOrcamentoPorEmail(orcamentoControle.formaDePagamentoSelecionada)}"/>
+            </div>
+
+        </ui:define>
+
+    </ui:composition>
+</html>

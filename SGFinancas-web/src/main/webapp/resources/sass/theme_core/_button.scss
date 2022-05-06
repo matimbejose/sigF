@@ -1,0 +1,215 @@
+body {
+    .ui-button {
+        background-color: $buttonBgColor;
+        color: $buttonTextColor;
+        border: $buttonBorder;
+        font-size: $fontSize;
+        margin: 0;
+        outline: 0 none;
+        @include transition($buttonTransition);
+    
+        &.ui-state-focus {
+            outline: $buttonFocusOutline;
+            outline-offset: $buttonFocusOutlineOffset;
+            background-color: darken($buttonHoverBgColor, 10%);
+        }
+        
+        &.ui-state-hover {
+            background-color: $buttonHoverBgColor;
+            border-color: $buttonHoverBorderColor;
+            color: $buttonHoverTextColor;
+        }
+    
+        &.ui-state-active, &.ui-state-down {
+            background-color: $buttonActiveBgColor;
+            border-color: $buttonActiveBorderColor;
+            color: $buttonActiveTextColor;
+        }
+                    
+        &.ui-button-text-only {
+            .ui-button-text {
+                padding: $buttonTextOnlyPadding;
+            }
+        }
+        
+        &.ui-button-text-icon-left {
+            .ui-button-text {
+                padding: $buttonWithLeftIconPadding;
+            }
+            
+            .ui-icon {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                margin-top: -1 * $iconHeight / 2;
+                left: $iconWidth / 2;
+            }
+        }
+        
+        &.ui-button-text-icon-right {
+            .ui-button-text {
+                padding: $buttonWithRightIconPadding;
+            }
+            
+            .ui-icon {
+                position: absolute;
+                top: 50%;
+                right: 50%;
+                margin-top: -1 * $iconHeight / 2;
+                right: $iconWidth / 2;
+            }
+        }
+        
+        &.ui-button-icon-only {
+            width: $buttonIconOnlyWidth;
+            
+            .ui-button-text {
+                padding: $buttonIconOnlyPadding;
+            }
+            
+            .ui-icon {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                margin-top: -1 * $iconHeight / 2;
+                margin-left:  -1 * $iconWidth / 2;
+            }
+        }
+
+        &.secondary-button {
+            background-color: $secondaryButtonBgColor;
+            color: $secondaryButtonTextColor;
+            border: $secondaryButtonBorder;
+        
+            &.ui-state-focus {
+                outline: $buttonFocusOutline;
+                outline-offset: $buttonFocusOutlineOffset;
+                background-color: darken($secondaryButtonHoverBgColor, 10%);
+            }
+            
+            &.ui-state-hover {
+                background-color: $secondaryButtonHoverBgColor;
+                border-color: $secondaryButtonHoverBorderColor;
+                color: $secondaryButtonHoverTextColor;
+            }
+        
+            &.ui-state-active {
+                background-color: $secondaryButtonActiveBgColor;
+                border-color: $secondaryButtonActiveBorderColor;
+                color: $secondaryButtonActiveTextColor;
+            }
+        }
+
+        &.raised-btn {
+            @include shadow($raisedButtonShadow);
+        }
+        
+        &.rounded-btn {
+            @include border-radius($roundedButtonBorderRadius);
+        }
+
+        .ui-icon-triangle-1-s {
+            @include icon_override("\f078");
+        }
+    }
+
+    .ui-selectbooleanbutton, 
+    .ui-buttonset:not(.ui-splitbutton) > .ui-button {
+        background-color: $toggleButtonBgColor;
+        color: $toggleButtonTextColor;
+        border: $toggleButtonBorder;
+        font-size: $fontSize;
+        margin: 0;
+        outline: 0 none;
+        @include transition($buttonTransition);
+
+        .ui-icon {
+            color: $toggleButtonIconColor;
+        }
+    
+        &.ui-state-hover {
+            background-color: $toggleButtonHoverBgColor;
+            border-color: $toggleButtonHoverBorderColor;
+            color: $toggleButtonHoverTextColor;
+
+            .ui-icon {
+                color: $toggleButtonHoverIconColor;
+            }
+        }
+    
+        &.ui-state-active {
+            background-color: $toggleButtonActiveBgColor;
+            border-color: $toggleButtonActiveBorderColor;
+            color: $toggleButtonActiveTextColor;
+
+            .ui-icon {
+                color: $toggleButtonActiveIconColor;
+            }
+
+            &.ui-state-focus {
+                background-color: $toggleButtonActiveFocusBgColor;
+                border-color: $toggleButtonActiveFocusBorderColor;
+                color: $toggleButtonActiveFocusTextColor;
+    
+                .ui-icon {
+                    color: $toggleButtonActiveFocusIconColor;
+                }
+            }
+
+            &:not(.ui-state-disabled):hover {
+                background-color: $toggleButtonActiveHoverBgColor;
+                border-color: $toggleButtonActiveHoverBorderColor;
+                color: $toggleButtonActiveHoverTextColor;
+    
+                .ui-icon {
+                    color: $toggleButtonActiveHoverIconColor;
+                }
+
+                &.ui-state-focus {
+                    border-color: $toggleButtonFocusBorderColor;
+                }
+            }
+        }
+
+        &.ui-state-focus {
+            outline: $toggleButtonFocusOutline;
+            background-color: $toggleButtonFocusBgColor;
+            border-color: $toggleButtonFocusBorderColor;
+            color: $toggleButtonFocusTextColor;
+
+            .ui-icon {
+                color: $toggleButtonFocusIconColor;
+            }
+        }
+    }
+
+    .ui-splitbutton.ui-buttonset {
+        .ui-splitbutton-menubutton {
+            @include border-radius(0);
+            border: 0 none;
+            cursor: pointer;
+            width: 2 * $fontSize;
+            height: 100%;
+            padding: 0;
+            position: absolute;
+            top: 0;
+            right: -1px;
+
+            .ui-icon.ui-icon-triangle-1-s {
+                position: absolute;
+                margin: auto;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                @include icon_override("\f078");
+            }
+        }
+    }
+
+    .ui-fluid {
+        .ui-splitbutton .ui-button.ui-splitbutton-menubutton {
+            width: 2 * $fontSize;
+        }
+    }
+}

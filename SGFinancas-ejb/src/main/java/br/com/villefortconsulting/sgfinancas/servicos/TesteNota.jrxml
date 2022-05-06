@@ -1,0 +1,2790 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="TesteNota" language="groovy" pageWidth="595" pageHeight="972000" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="eb5960dc-be15-46ac-9129-21bdb95b4303">
+    <property name="ireport.zoom" value="1.210000000000005"/>
+    <property name="ireport.x" value="0"/>
+    <property name="ireport.y" value="3521"/>
+    <parameter name="ChaveDeAcesso" class="java.lang.String"/>
+    <parameter name="numeroNF" class="java.lang.String"/>
+    <parameter name="Versao" class="java.lang.String"/>
+    <parameter name="Modelo" class="java.lang.String"/>
+    <parameter name="Serie" class="java.lang.String"/>
+    <parameter name="Numero" class="java.lang.String"/>
+    <parameter name="DataEmissao" class="java.lang.String"/>
+    <parameter name="DataHoraSaidaEntrada" class="java.lang.String"/>
+    <parameter name="ValorTotalNota" class="java.lang.String"/>
+    <parameter name="CNPJ" class="java.lang.String"/>
+    <parameter name="RazaoSocial" class="java.lang.String"/>
+    <parameter name="InscricaoEstadual" class="java.lang.String"/>
+    <parameter name="UF" class="java.lang.String"/>
+    <parameter name="CNPJDestinatario" class="java.lang.String"/>
+    <parameter name="RazaoSocialDestinatario" class="java.lang.String"/>
+    <parameter name="InscricaoEstadualDestinatario" class="java.lang.String"/>
+    <parameter name="UFDestinatario" class="java.lang.String"/>
+    <parameter name="DestinoOperacao" class="java.lang.String"/>
+    <parameter name="ConsumidorFinal" class="java.lang.String"/>
+    <parameter name="PresencaComprador" class="java.lang.String"/>
+    <parameter name="Processo" class="java.lang.String"/>
+    <parameter name="VersaoProcesso" class="java.lang.String"/>
+    <parameter name="TipoEmissao" class="java.lang.String"/>
+    <parameter name="Finalidade" class="java.lang.String"/>
+    <parameter name="NaturezaOperacao" class="java.lang.String"/>
+    <parameter name="TipoOperacao" class="java.lang.String"/>
+    <parameter name="FormaPagamento" class="java.lang.String"/>
+    <parameter name="DigestValueNF" class="java.lang.String"/>
+    <parameter name="EventoNFE" class="java.lang.String"/>
+    <parameter name="Protocolo" class="java.lang.String"/>
+    <parameter name="DataAutorizacao" class="java.lang.String"/>
+    <parameter name="DataInclusaoAN" class="java.lang.String"/>
+    <parameter name="EventoNFe2" class="java.lang.String"/>
+    <parameter name="Protocolo2" class="java.lang.String"/>
+    <parameter name="DataAutorizacao2" class="java.lang.String"/>
+    <parameter name="DataInclusaoAN2" class="java.lang.String"/>
+    <parameter name="EventoNfe3" class="java.lang.String"/>
+    <parameter name="Protocolo3" class="java.lang.String"/>
+    <parameter name="DataAutorizacao3" class="java.lang.String"/>
+    <parameter name="DataInclusaoAN3" class="java.lang.String"/>
+    <parameter name="NomeFantasia" class="java.lang.String"/>
+    <parameter name="Endereco" class="java.lang.String"/>
+    <parameter name="Bairro" class="java.lang.String"/>
+    <parameter name="Cep" class="java.lang.String"/>
+    <parameter name="Municipio" class="java.lang.String"/>
+    <parameter name="Telefone" class="java.lang.String"/>
+    <parameter name="Pais" class="java.lang.String"/>
+    <parameter name="InscEstSubsTri" class="java.lang.String"/>
+    <parameter name="InscricaoMunicipal" class="java.lang.String"/>
+    <parameter name="MuniOCICSM" class="java.lang.String"/>
+    <parameter name="Cnae" class="java.lang.String"/>
+    <parameter name="CodRegTributario" class="java.lang.String"/>
+    <parameter name="RazaoSocialDesti" class="java.lang.String"/>
+    <parameter name="CnpjDesti" class="java.lang.String"/>
+    <parameter name="EnderecoDesti" class="java.lang.String"/>
+    <parameter name="BairroDesti" class="java.lang.String"/>
+    <parameter name="CepDesti" class="java.lang.String"/>
+    <parameter name="MunicipioDesti" class="java.lang.String"/>
+    <parameter name="TelefoneDesti" class="java.lang.String"/>
+    <parameter name="UFDesti" class="java.lang.String"/>
+    <parameter name="PaisDesti" class="java.lang.String"/>
+    <parameter name="IndicadorIEDesti" class="java.lang.String"/>
+    <parameter name="InscricaoEstDesti" class="java.lang.String"/>
+    <parameter name="InscSuframaDesti" class="java.lang.String"/>
+    <parameter name="IMDesti" class="java.lang.String"/>
+    <parameter name="EmailDesti" class="java.lang.String"/>
+    <parameter name="Situacao" class="java.lang.String"/>
+    <parameter name="BaseCalculoICSM" class="java.lang.String"/>
+    <parameter name="ValorICMS" class="java.lang.String"/>
+    <parameter name="ValorICMSDesonerado" class="java.lang.String"/>
+    <parameter name="BaseCalculoICMSST" class="java.lang.String"/>
+    <parameter name="ValorICMSSubs" class="java.lang.String"/>
+    <parameter name="ValorTotalProduto" class="java.lang.String"/>
+    <parameter name="ValorFrete" class="java.lang.String"/>
+    <parameter name="ValorSeguro" class="java.lang.String"/>
+    <parameter name="OutrasDespesas" class="java.lang.String"/>
+    <parameter name="ValorTotalIpi" class="java.lang.String"/>
+    <parameter name="ValorTotalNFE" class="java.lang.String"/>
+    <parameter name="ValorTotalDesconto" class="java.lang.String"/>
+    <parameter name="ValorTotalII" class="java.lang.String"/>
+    <parameter name="ValorPis" class="java.lang.String"/>
+    <parameter name="ValorCofins" class="java.lang.String"/>
+    <parameter name="ValorAproxTributos" class="java.lang.String"/>
+    <parameter name="ValorTotalICMSFCP" class="java.lang.String"/>
+    <parameter name="ValorTotalICMSInterestadualDest" class="java.lang.String"/>
+    <parameter name="ValorTotalICMSInterestadualRem" class="java.lang.String"/>
+    <parameter name="ModalidadeFrete" class="java.lang.String"/>
+    <parameter name="CnpjTransportadora" class="java.lang.String"/>
+    <parameter name="RazaoSociTranspor" class="java.lang.String"/>
+    <parameter name="InsEstTranspor" class="java.lang.String"/>
+    <parameter name="EndTransporComp" class="java.lang.String"/>
+    <parameter name="MunicipioTranspor" class="java.lang.String"/>
+    <parameter name="UFTranspor" class="java.lang.String"/>
+    <parameter name="Placa" class="java.lang.String"/>
+    <parameter name="UfVeiculo" class="java.lang.String"/>
+    <parameter name="Rntc" class="java.lang.String"/>
+    <parameter name="Quantidade" class="java.lang.String"/>
+    <parameter name="Especie" class="java.lang.String"/>
+    <parameter name="MarcaVolume" class="java.lang.String"/>
+    <parameter name="Numeracao" class="java.lang.String"/>
+    <parameter name="PesoLiquido" class="java.lang.String"/>
+    <parameter name="PesoBruto" class="java.lang.String"/>
+    <field name="descricao" class="java.lang.String"/>
+    <field name="num" class="java.lang.String"/>
+    <field name="quantidade" class="java.lang.String"/>
+    <field name="unidadeComercial" class="java.lang.String"/>
+    <field name="valor" class="java.lang.String"/>
+    <field name="codProduto" class="java.lang.String"/>
+    <field name="codNcm" class="java.lang.String"/>
+    <field name="codCest" class="java.lang.String"/>
+    <field name="codExTpi" class="java.lang.String"/>
+    <field name="cfop" class="java.lang.String"/>
+    <field name="outrasDespesas" class="java.lang.String"/>
+    <field name="valorDesconto" class="java.lang.String"/>
+    <field name="valorTotalFrete" class="java.lang.String"/>
+    <field name="valorSeguro" class="java.lang.String"/>
+    <field name="codEanComercial" class="java.lang.String"/>
+    <field name="qntComercial" class="java.lang.String"/>
+    <field name="indCompValNFe" class="java.lang.String"/>
+    <field name="codEanTributavel" class="java.lang.String"/>
+    <field name="unidadeTributavel" class="java.lang.String"/>
+    <field name="qntTributavel" class="java.lang.String"/>
+    <field name="valorUniComercial" class="java.lang.String"/>
+    <field name="valorUniTribu" class="java.lang.String"/>
+    <field name="numPedidoCompra" class="java.lang.String"/>
+    <field name="itemPedidoCompra" class="java.lang.String"/>
+    <field name="valorAproxTributo" class="java.lang.String"/>
+    <field name="numFci" class="java.lang.String"/>
+    <field name="origemMercadoria" class="java.lang.String"/>
+    <field name="tribuICMS" class="java.lang.String"/>
+    <field name="valorBCIcmsRetido" class="java.lang.String"/>
+    <field name="valorIcmsSTRetido" class="java.lang.String"/>
+    <field name="cstPis" class="java.lang.String"/>
+    <field name="baseCalculoPis" class="java.lang.String"/>
+    <field name="aliquotaPis" class="java.lang.String"/>
+    <field name="valorPis" class="java.lang.String"/>
+    <field name="cstCofins" class="java.lang.String"/>
+    <field name="baseCalculoCofins" class="java.lang.String"/>
+    <field name="aliquotaCotins" class="java.lang.String"/>
+    <field name="valorCofins" class="java.lang.String"/>
+    <group name="Produto">
+        <groupExpression><![CDATA[$F{descricao}]]></groupExpression>
+    </group>
+    <background>
+        <band splitType="Stretch"/>
+    </background>
+    <title>
+        <band height="53" splitType="Stretch">
+            <rectangle>
+                <reportElement x="0" y="0" width="555" height="53" forecolor="#CC9900" uuid="4eb447c4-f663-4e61-8e2b-6abdee334d29"/>
+            </rectangle>
+            <textField isBlankWhenNull="true">
+                <reportElement x="13" y="28" width="257" height="20" forecolor="#CC9900" uuid="6405676a-5b91-43b1-a031-a83103446064"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{ChaveDeAcesso}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="305" y="28" width="100" height="20" forecolor="#CC9900" uuid="7161fe3b-ecd0-421f-ac6f-ecb76efc8426"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{numeroNF}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="440" y="28" width="100" height="20" forecolor="#CC9900" uuid="33f65095-e27e-443d-a483-08ff5c26290d"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{Versao}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="14" y="3" width="100" height="20" forecolor="#CC9900" uuid="5d16356a-5624-4d79-a02f-3ee4edad9fdf"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Chave de acesso]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="305" y="3" width="100" height="20" forecolor="#CC9900" uuid="3266ab46-cf1d-4dcb-a612-5fe5029f4dae"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Número da nota]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="441" y="3" width="100" height="20" forecolor="#CC9900" uuid="13f6eee4-f607-490d-a95a-c0cf57253aa7"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Versão da nota]]></text>
+            </staticText>
+        </band>
+    </title>
+    <pageHeader>
+        <band height="1410">
+            <line>
+                <reportElement x="13" y="15" width="527" height="1" forecolor="#CC9900" uuid="ecb3c068-ba88-495c-8fad-11ed77a9fa77"/>
+            </line>
+            <line>
+                <reportElement x="13" y="39" width="527" height="1" forecolor="#CC9900" uuid="6b79058e-c8b5-42b7-a51a-d02e973489ae"/>
+            </line>
+            <rectangle>
+                <reportElement x="14" y="53" width="526" height="81" forecolor="#CC9900" uuid="4ae27c63-867d-4b44-85fc-2cc040d2705f"/>
+            </rectangle>
+            <textField isBlankWhenNull="true">
+                <reportElement x="25" y="102" width="56" height="20" forecolor="#CC9900" uuid="fd699f13-2107-40f1-b0cf-5f3f6988efe8"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{Modelo}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="92" y="102" width="44" height="20" forecolor="#CC9900" uuid="b947cfb7-bcda-42c0-88d8-f38f6e9fd6dc"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{Serie}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="147" y="102" width="57" height="20" forecolor="#CC9900" uuid="273aad55-4dd3-4c19-9922-e4a5d523c79d"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{Numero}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="215" y="102" width="90" height="20" forecolor="#CC9900" uuid="e15456a6-d5a1-467a-bdbf-a75159348ae1"/>
+                <box>
+                    <pen lineWidth="1.0" lineColor="#CC9900"/>
+                    <topPen lineWidth="1.0" lineColor="#CC9900"/>
+                    <leftPen lineWidth="1.0" lineColor="#CC9900"/>
+                    <bottomPen lineWidth="1.0" lineColor="#CC9900"/>
+                    <rightPen lineWidth="1.0" lineColor="#CC9900"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{DataEmissao}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="316" y="102" width="100" height="20" forecolor="#CC9900" uuid="15b5d21f-e696-4c38-872d-10c128ef4c84"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{DataHoraSaidaEntrada}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="428" y="102" width="100" height="20" forecolor="#CC9900" uuid="01e91ceb-ac9e-4f25-8373-52da6462e721"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{ValorTotalNota}]]></textFieldExpression>
+            </textField>
+            <rectangle>
+                <reportElement x="14" y="164" width="526" height="52" forecolor="#CC9900" uuid="13a887f4-187d-4ef8-9335-f773a3db8dd3"/>
+            </rectangle>
+            <textField isBlankWhenNull="true">
+                <reportElement x="25" y="188" width="122" height="20" forecolor="#CC9900" uuid="64a3f62b-a82d-4ecd-8391-74d49952639f"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{CNPJ}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="158" y="188" width="158" height="20" forecolor="#CC9900" uuid="c75fb35c-51e5-46ff-90ab-85e30b8b6ac0"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{RazaoSocial}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="327" y="188" width="146" height="20" forecolor="#CC9900" uuid="bd9bb9e9-8166-402c-890f-12096e79b7de"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{InscricaoEstadual}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="485" y="188" width="43" height="20" forecolor="#CC9900" uuid="794090d5-b5e9-42d7-aca9-6c1050d475b0"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{UF}]]></textFieldExpression>
+            </textField>
+            <rectangle>
+                <reportElement x="13" y="246" width="526" height="95" forecolor="#CC9900" uuid="f48ba4af-6494-4fdb-a594-cf8801375446"/>
+            </rectangle>
+            <textField isBlankWhenNull="true">
+                <reportElement x="27" y="271" width="120" height="20" forecolor="#CC9900" uuid="27105d53-ff82-45b7-bd30-a54bfa138adb"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{CnpjDesti}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="158" y="271" width="158" height="20" forecolor="#CC9900" uuid="3582c403-e6b5-4171-85fd-9e456ac26ef6"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{RazaoSocialDesti}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="328" y="271" width="145" height="20" forecolor="#CC9900" uuid="54e46d8c-0dac-4f07-835f-d2cb0e7cf4b0"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{InscricaoEstDesti}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="485" y="271" width="43" height="20" forecolor="#CC9900" uuid="16a5952c-b238-4915-87ff-ef89887db773"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{UFDesti}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="27" y="316" width="155" height="20" forecolor="#CC9900" uuid="1c76b198-7580-48ae-a5fb-5b950cae5961"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{DestinoOperacao}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="193" y="316" width="154" height="20" forecolor="#CC9900" uuid="161c24a7-73fa-46f4-8951-791b49dea475"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{ConsumidorFinal}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="357" y="316" width="171" height="20" forecolor="#CC9900" uuid="2ff65bf6-8ba9-4f1b-aa0e-174675342b03"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{PresencaComprador}]]></textFieldExpression>
+            </textField>
+            <rectangle>
+                <reportElement x="13" y="372" width="526" height="89" forecolor="#CC9900" uuid="d2ae1560-db19-40b8-bc06-93e770ad1522"/>
+            </rectangle>
+            <textField isBlankWhenNull="true">
+                <reportElement x="27" y="390" width="155" height="20" forecolor="#CC9900" uuid="59a3a7f6-607c-4d2c-8d0a-ac4426efe8a0"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{Processo}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="193" y="390" width="93" height="20" forecolor="#CC9900" uuid="fe1b81cb-2939-4523-a93c-3df99de80d45"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{VersaoProcesso}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="296" y="390" width="87" height="20" forecolor="#CC9900" uuid="1101964f-e591-428b-9018-15c56e03ece2"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{TipoEmissao}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="394" y="390" width="134" height="20" forecolor="#CC9900" uuid="cc99752f-2030-4b91-90c4-fe75a9da2cfd"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{Finalidade}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="27" y="430" width="155" height="20" forecolor="#CC9900" uuid="c79f4ddf-da73-4c46-8956-f0ab46720b82"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{NaturezaOperacao}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="193" y="430" width="93" height="20" forecolor="#CC9900" uuid="342275cd-e720-4e69-bce5-09f4ea40f76a"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{TipoOperacao}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="296" y="430" width="87" height="20" forecolor="#CC9900" uuid="d3d79e9b-8c7c-45e2-9fc5-33dcda7a78ff"/>
+                <box>
+                    <pen lineWidth="1.0" lineColor="#CC9900"/>
+                    <topPen lineWidth="1.0" lineColor="#CC9900"/>
+                    <leftPen lineWidth="1.0" lineColor="#CC9900"/>
+                    <bottomPen lineWidth="1.0" lineColor="#CC9900"/>
+                    <rightPen lineWidth="1.0" lineColor="#CC9900"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{FormaPagamento}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="394" y="430" width="134" height="20" forecolor="#CC9900" uuid="10552a81-367c-4cf6-a800-a41c798558f7"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{DigestValueNF}]]></textFieldExpression>
+            </textField>
+            <rectangle>
+                <reportElement x="13" y="484" width="527" height="101" forecolor="#CC9900" uuid="d3b25178-929f-4b9a-af3b-f7e49a710995"/>
+            </rectangle>
+            <textField isBlankWhenNull="true">
+                <reportElement x="25" y="503" width="111" height="20" forecolor="#CC9900" uuid="c3e12cf9-a8c4-4c04-b03e-6a3cc5cbe60d"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{EventoNFE}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="147" y="503" width="112" height="20" forecolor="#CC9900" uuid="dc8bd10f-806c-465e-9155-ea61756ecc2c"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{Protocolo}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="270" y="503" width="113" height="20" forecolor="#CC9900" uuid="096c968e-185b-4030-9fad-d7d8af35cb1e"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{DataAutorizacao}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="394" y="503" width="134" height="20" forecolor="#CC9900" uuid="7b121520-2afe-4551-b7a2-489addf83635"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{DataInclusaoAN}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="25" y="530" width="110" height="20" forecolor="#CC9900" uuid="c380a6ff-95bb-4df2-9709-0275aaeb6b58"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{EventoNFe2}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="147" y="530" width="112" height="20" forecolor="#CC9900" uuid="f6e9642f-599d-4471-a55a-151a5c3fd6b1"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{Protocolo2}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="270" y="530" width="113" height="20" forecolor="#CC9900" uuid="f226f307-461b-46be-87df-6e223e82bb48"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{DataAutorizacao2}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="394" y="530" width="134" height="20" forecolor="#CC9900" uuid="a7654e67-202e-48fd-87c4-1c57cc911ef6"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{DataInclusaoAN2}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="25" y="557" width="110" height="20" forecolor="#CC9900" uuid="152faeff-7d15-4c19-a2cc-be0aa3b97219"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{EventoNfe3}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="147" y="557" width="112" height="20" forecolor="#CC9900" uuid="d898f958-0b0f-4b63-a276-4c15e5ed9a74"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{Protocolo3}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="270" y="557" width="113" height="20" forecolor="#CC9900" uuid="d026e4c8-c8ad-40d2-84b0-07359a441b51"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{DataAutorizacao3}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="394" y="557" width="134" height="20" forecolor="#CC9900" uuid="2582a681-5eb5-4a35-bcb6-d1b4349fa4d5"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{DataInclusaoAN3}]]></textFieldExpression>
+            </textField>
+            <rectangle>
+                <reportElement x="14" y="635" width="524" height="369" forecolor="#CC9900" uuid="08cf81e8-152c-40be-ac7d-e8559c93cb68"/>
+            </rectangle>
+            <line>
+                <reportElement x="14" y="600" width="527" height="1" forecolor="#CC9900" uuid="f0587606-44ab-48af-a3a8-ea381444b5d1"/>
+            </line>
+            <line>
+                <reportElement x="12" y="621" width="527" height="2" forecolor="#CC9900" uuid="6a4eed31-d65a-4bc8-ad39-faa555b8cecf"/>
+            </line>
+            <textField isBlankWhenNull="true">
+                <reportElement x="26" y="665" width="245" height="20" forecolor="#CC9900" uuid="2d41b04e-03ce-46de-83df-699ec24e07bf"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{InscricaoEstadual}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="284" y="665" width="245" height="20" forecolor="#CC9900" uuid="5ca6ed51-4f96-468e-9280-e673beffac58"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{NomeFantasia}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="26" y="708" width="245" height="20" forecolor="#CC9900" uuid="94053ec9-d73d-461e-a7bd-f123c435f3c9"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{CNPJ}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="284" y="708" width="245" height="20" forecolor="#CC9900" uuid="d28c6585-05a7-4ed4-b32e-9531497433d6"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{Endereco}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="25" y="751" width="245" height="20" forecolor="#CC9900" uuid="5c6d5f95-b277-4ba0-ad79-5e6300eed113"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{Bairro}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="283" y="751" width="245" height="20" forecolor="#CC9900" uuid="1fe0116c-e5b6-4e8f-b70c-d8044a7136f8"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{Cep}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="25" y="793" width="245" height="20" forecolor="#CC9900" uuid="aa455d18-40da-4817-bcbb-41a2e886ee0d"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{Municipio}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="283" y="793" width="245" height="20" forecolor="#CC9900" uuid="4635ef56-c71f-47ab-8eef-8779167c97b3"/>
+                <box>
+                    <pen lineWidth="1.0" lineColor="#CC9900"/>
+                    <topPen lineWidth="1.0" lineColor="#CC9900"/>
+                    <leftPen lineWidth="1.0" lineColor="#CC9900"/>
+                    <bottomPen lineWidth="1.0" lineColor="#CC9900"/>
+                    <rightPen lineWidth="1.0" lineColor="#CC9900"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{Telefone}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="25" y="835" width="245" height="20" forecolor="#CC9900" uuid="4c06bf26-1f7b-473b-bb78-6eec91f68bf7"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{UF}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="282" y="835" width="245" height="20" forecolor="#CC9900" uuid="c0a244f1-db35-49c9-9e3a-33ca66c88ff3"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{Pais}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="25" y="876" width="245" height="20" forecolor="#CC9900" uuid="608168a9-7aaa-44e5-b73f-54cfe86991f1"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{InscricaoEstadual}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="283" y="876" width="245" height="20" forecolor="#CC9900" uuid="7a65f541-104b-42cc-9b28-94a1200cbe4f"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{InscEstSubsTri}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="25" y="917" width="245" height="20" forecolor="#CC9900" uuid="5b448a2f-9d6b-4bfb-a306-4572ee856fad"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{InscricaoMunicipal}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="284" y="917" width="243" height="20" forecolor="#CC9900" uuid="fe602be5-90ef-40b7-8b3f-cd3e7579dba3"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{MuniOCICSM}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="25" y="961" width="245" height="20" forecolor="#CC9900" uuid="249042df-3fdd-4d7c-8e5b-7b60a0a3fbb4"/>
+                <box>
+                    <pen lineWidth="1.0" lineColor="#CC9900"/>
+                    <topPen lineWidth="1.0" lineColor="#CC9900"/>
+                    <leftPen lineWidth="1.0" lineColor="#CC9900"/>
+                    <bottomPen lineWidth="1.0" lineColor="#CC9900"/>
+                    <rightPen lineWidth="1.0" lineColor="#CC9900"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font isStrikeThrough="false"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{Cnae}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="284" y="961" width="243" height="20" forecolor="#CC9900" uuid="9b76dbc2-79ac-4219-a58f-2d71c4f6e858"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{CodRegTributario}]]></textFieldExpression>
+            </textField>
+            <line>
+                <reportElement x="14" y="1018" width="524" height="1" forecolor="#CC9900" uuid="2a05ce10-cb26-45ca-b644-95bd74a6fc34"/>
+            </line>
+            <line>
+                <reportElement x="14" y="1041" width="524" height="1" forecolor="#CC9900" uuid="9b0a6529-eecb-435b-93c2-6e1cd76a7b1a"/>
+            </line>
+            <rectangle>
+                <reportElement x="14" y="1053" width="524" height="295" forecolor="#CC9900" uuid="a2683ba9-97af-4b14-a535-c421f6b2a7b2"/>
+            </rectangle>
+            <textField isBlankWhenNull="true">
+                <reportElement x="25" y="1075" width="502" height="20" forecolor="#CC9900" uuid="45ea7ad3-b1c9-423f-9496-04d0e9aa6db2"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{RazaoSocialDesti}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="25" y="1116" width="245" height="20" forecolor="#CC9900" uuid="1f4c88a1-68ae-40b4-9260-08b6734a6781"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{CnpjDesti}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="284" y="1116" width="243" height="20" forecolor="#CC9900" uuid="de3fb4c9-adc4-49af-ba7e-6287d8c76579"/>
+                <box>
+                    <pen lineWidth="1.0" lineColor="#CC9900"/>
+                    <topPen lineWidth="1.0" lineColor="#CC9900"/>
+                    <leftPen lineWidth="1.0" lineColor="#CC9900"/>
+                    <bottomPen lineWidth="1.0" lineColor="#CC9900"/>
+                    <rightPen lineWidth="1.0" lineColor="#CC9900"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font isStrikeThrough="false"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{EnderecoDesti}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="25" y="1155" width="245" height="20" forecolor="#CC9900" uuid="2c439c34-21af-4af6-859f-12e8b302a307"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{BairroDesti}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="284" y="1155" width="243" height="20" forecolor="#CC9900" uuid="ac462473-347d-47d8-8bfa-2da55e70ce05"/>
+                <box>
+                    <pen lineWidth="1.0" lineColor="#CC9900"/>
+                    <topPen lineWidth="1.0" lineColor="#CC9900"/>
+                    <leftPen lineWidth="1.0" lineColor="#CC9900"/>
+                    <bottomPen lineWidth="1.0" lineColor="#CC9900"/>
+                    <rightPen lineWidth="1.0" lineColor="#CC9900"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{CepDesti}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="25" y="1195" width="245" height="20" forecolor="#CC9900" uuid="1cdcfe16-c2db-4fba-a840-7e4087a8daae"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{MunicipioDesti}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="284" y="1195" width="243" height="20" forecolor="#CC9900" uuid="ef4e84d4-fb72-4cba-b7ef-3ba93fefe82d"/>
+                <box>
+                    <pen lineWidth="1.0" lineColor="#CC9900"/>
+                    <topPen lineWidth="1.0" lineColor="#CC9900"/>
+                    <leftPen lineWidth="1.0" lineColor="#CC9900"/>
+                    <bottomPen lineWidth="1.0" lineColor="#CC9900"/>
+                    <rightPen lineWidth="1.0" lineColor="#CC9900"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{TelefoneDesti}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="25" y="1235" width="245" height="20" forecolor="#CC9900" uuid="14ec9bf1-356e-44d1-927e-f8e1ef653eac"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{UFDesti}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="284" y="1235" width="243" height="20" forecolor="#CC9900" uuid="e1578377-afcf-4739-8481-f9d3670e73a7"/>
+                <box>
+                    <pen lineWidth="1.0" lineColor="#CC9900"/>
+                    <topPen lineWidth="1.0" lineColor="#CC9900"/>
+                    <leftPen lineWidth="1.0" lineColor="#CC9900"/>
+                    <bottomPen lineWidth="1.0" lineColor="#CC9900"/>
+                    <rightPen lineWidth="1.0" lineColor="#CC9900"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{PaisDesti}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="26" y="1277" width="178" height="20" forecolor="#CC9900" uuid="e406473a-d15d-42ce-806a-201c7b5b7dcd"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{IndicadorIEDesti}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="215" y="1277" width="155" height="20" forecolor="#CC9900" uuid="22e71593-f1ae-48bb-ba31-1b3933b85ba4"/>
+                <box>
+                    <pen lineWidth="1.0" lineColor="#CC9900"/>
+                    <topPen lineWidth="1.0" lineColor="#CC9900"/>
+                    <leftPen lineWidth="1.0" lineColor="#CC9900"/>
+                    <bottomPen lineWidth="1.0" lineColor="#CC9900"/>
+                    <rightPen lineWidth="1.0" lineColor="#CC9900"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{InscricaoEstDesti}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="383" y="1277" width="144" height="20" forecolor="#CC9900" uuid="2929202b-e09d-4574-8345-40deb34922c5"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{InscSuframaDesti}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="26" y="1317" width="178" height="20" forecolor="#CC9900" uuid="65795972-ad98-459b-be25-1601bc06d4c7"/>
+                <box>
+                    <pen lineWidth="1.0" lineColor="#CC9900"/>
+                    <topPen lineWidth="1.0" lineColor="#CC9900"/>
+                    <leftPen lineWidth="1.0" lineColor="#CC9900"/>
+                    <bottomPen lineWidth="1.0" lineColor="#CC9900"/>
+                    <rightPen lineWidth="1.0" lineColor="#CC9900"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{IMDesti}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="216" y="1317" width="311" height="20" forecolor="#CC9900" uuid="2e09423c-1e37-4afb-a70e-bd287248e87d"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{EmailDesti}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="240" y="18" width="100" height="20" forecolor="#CC9900" uuid="d3d96943-71fc-4bc8-b91d-9372dc43d417"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="14"/>
+                </textElement>
+                <text><![CDATA[Dados da NF-e]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="25" y="71" width="56" height="20" forecolor="#CC9900" uuid="09b0cd21-e1b6-4d65-b2cc-4778135be6c1"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Modelo]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="93" y="71" width="42" height="20" forecolor="#CC9900" uuid="96e6fa0c-32c8-4493-bb72-0a157824a473"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Série]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="147" y="71" width="57" height="20" forecolor="#CC9900" uuid="519d07d3-920d-4654-b899-b58238fbf1e5"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Número NF]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="216" y="71" width="89" height="20" forecolor="#CC9900" uuid="f8ef7f4a-cf15-4918-b11e-82aef7338e86"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Data de emissão]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="316" y="59" width="55" height="15" forecolor="#CC9900" uuid="9624973a-0b4e-4392-8179-f971c4121101"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Data/Hora]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="316" y="74" width="100" height="20" forecolor="#CC9900" uuid="9203910b-b869-4d06-8cc4-ea8994a1920d"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[de saída/entrada]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="428" y="74" width="100" height="20" forecolor="#CC9900" uuid="44af480c-73c6-4b57-9143-69ce1e80cd0c"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Valor da NF-e]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="25" y="139" width="100" height="20" forecolor="#CC9900" uuid="79353949-72d1-4ed9-9503-f2c87ce68947"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="14"/>
+                </textElement>
+                <text><![CDATA[Emitente]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="26" y="168" width="100" height="20" forecolor="#CC9900" uuid="aece09ca-c0c8-4467-a360-18d008de7a3c"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[CNPJ]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="159" y="168" width="100" height="20" forecolor="#CC9900" uuid="4d5c8f6b-6351-47dd-8d94-794e8d1c2a6f"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Razão Social]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="326" y="168" width="100" height="20" forecolor="#CC9900" uuid="d4d9d902-63df-4025-90ae-3bf20ce6817a"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Inscrição Estadual]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="485" y="168" width="42" height="20" forecolor="#CC9900" uuid="172aa7bc-5d8c-4707-bb8a-154f5009d465"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[UF]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="25" y="221" width="100" height="20" forecolor="#CC9900" uuid="ef38d78c-d52b-4073-8236-18c553cc2ffc"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="14"/>
+                </textElement>
+                <text><![CDATA[Destinatário]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="26" y="251" width="100" height="20" forecolor="#CC9900" uuid="71da6cbf-60f2-4cd8-a74a-5b6a9864e5fc"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[CNPJ]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="158" y="251" width="100" height="20" forecolor="#CC9900" uuid="5c9dae0b-84eb-4797-84ee-b143864622f8"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Razão Social]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="328" y="251" width="100" height="20" forecolor="#CC9900" uuid="a2c130f6-f7b3-4ef6-8d2f-5d1c6a6c5dd3"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Inscrição Estadual]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="485" y="251" width="42" height="20" forecolor="#CC9900" uuid="5bc99503-fdb0-4e18-a1a1-03a18ebe79d8"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[UF]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="28" y="296" width="154" height="20" forecolor="#CC9900" uuid="32bb7122-dc27-441b-b0dc-2d5674c003b2"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Destino de Operação]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="193" y="296" width="154" height="20" forecolor="#CC9900" uuid="034ec7c7-ebc4-441c-b87f-47d43ed33472"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Consumidor Final]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="357" y="296" width="172" height="20" forecolor="#CC9900" uuid="0efaab69-4238-42e9-8882-266582e2fb58"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Presença do comprador]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="27" y="346" width="100" height="20" forecolor="#CC9900" uuid="00f78d13-f554-4511-8628-afa626ffd7d8"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="14"/>
+                </textElement>
+                <text><![CDATA[Emissão]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="25" y="372" width="134" height="20" forecolor="#CC9900" uuid="da393579-ef67-4465-909f-d1f35a13f8ad"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Processo]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="185" y="372" width="101" height="20" forecolor="#CC9900" uuid="30d99793-5d44-4f81-88b2-021b812706bb"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font isStrikeThrough="false"/>
+                </textElement>
+                <text><![CDATA[Versão do processo]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="286" y="372" width="100" height="20" forecolor="#CC9900" uuid="6fe69bb1-d636-4e06-a4d4-a37985a98749"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Tipo de emissão]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="416" y="372" width="100" height="20" forecolor="#CC9900" uuid="34ad087f-b57a-412b-a28c-1105ddca6610"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Finalidade]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="26" y="410" width="156" height="20" forecolor="#CC9900" uuid="0a0abb2c-b01d-44b9-a9a3-5e9246880e93"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Natureza de operação]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="193" y="410" width="78" height="20" forecolor="#CC9900" uuid="27321303-8521-4faa-96e5-803e038575d7"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Tipo de operação]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="296" y="410" width="98" height="20" forecolor="#CC9900" uuid="233ace6a-9871-4e25-8917-949651787b9b"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Forma de pagamento]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="405" y="410" width="100" height="20" forecolor="#CC9900" uuid="68192d46-e333-43e6-90ce-63aa4defc78b"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Digest NF]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="33" y="463" width="125" height="20" forecolor="#CC9900" uuid="a79e1949-4112-41d9-b6b6-441bc02736b5"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="14"/>
+                </textElement>
+                <text><![CDATA[Situação Atual: ]]></text>
+            </staticText>
+            <textField isBlankWhenNull="true">
+                <reportElement x="157" y="463" width="100" height="20" forecolor="#CC9900" uuid="0be93f3c-7e07-48cd-9943-deff27a7ab3b"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{Situacao}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="26" y="484" width="110" height="20" forecolor="#CC9900" uuid="b7f27b89-2b39-47f7-8bbc-1c4f7da2363c"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Evento NF-e]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="147" y="484" width="110" height="20" forecolor="#CC9900" uuid="51ad782f-a0ee-4db7-93ea-82454fb1c694"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Protocolo]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="271" y="484" width="112" height="20" forecolor="#CC9900" uuid="2b817c46-e71d-4dfb-a503-dae943ebfcc9"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Data de autorização]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="394" y="484" width="133" height="20" forecolor="#CC9900" uuid="6032569b-122d-4591-8722-15ffd9847a7a"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Data de inclusão AN]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="204" y="601" width="163" height="20" forecolor="#CC9900" uuid="e5cbb126-d096-4b93-a76e-bfb22e759fa5"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="14"/>
+                </textElement>
+                <text><![CDATA[Dados do emitente]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="25" y="645" width="245" height="20" forecolor="#CC9900" uuid="d84f65ef-c99e-4552-ad81-80f6ccd5ff4f"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Inscrição estadual]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="284" y="645" width="245" height="20" forecolor="#CC9900" uuid="f41b93a0-0f85-48f8-942a-ed53d3f95240"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Nome fantasia]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="28" y="688" width="242" height="20" forecolor="#CC9900" uuid="2d95731a-6bde-4f0a-af36-96a368594430"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Cnpj]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="284" y="688" width="244" height="20" forecolor="#CC9900" uuid="e827d58c-df52-4598-9234-635e134cfb26"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Endereço]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="26" y="731" width="245" height="20" forecolor="#CC9900" uuid="8b537069-accf-45bd-9507-ab6f5a8a0007"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Bairro]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="357" y="731" width="100" height="20" forecolor="#CC9900" uuid="0ca380e4-e6af-4ffd-9819-d45f239570bf"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Cep]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="104" y="773" width="100" height="20" forecolor="#CC9900" uuid="1978dea2-523d-4057-9f3c-bf7b1321800e"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Município]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="357" y="771" width="100" height="20" forecolor="#CC9900" uuid="6a5cf148-33f5-4c4f-8290-387423ffd4e8"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Telefone]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="104" y="813" width="100" height="20" forecolor="#CC9900" uuid="98e66160-5775-4e24-983d-aec5e3f20fff"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[UF]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="357" y="813" width="100" height="20" forecolor="#CC9900" uuid="d0c284d7-d740-478d-963f-5e2da18e3935"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[País]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="93" y="855" width="100" height="20" forecolor="#CC9900" uuid="b1f15453-13d2-494f-91f1-ced8ecb3a044"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Inscrição Estadual]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="282" y="856" width="245" height="20" forecolor="#CC9900" uuid="d8d0675c-820a-4aef-9329-5217b6882e7a"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Inscrição Estadual Substitutiva]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="104" y="895" width="100" height="20" forecolor="#CC9900" uuid="41e34038-cb03-433a-a060-9266b6a66fe1"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Inscrição Municípal]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="282" y="897" width="246" height="20" forecolor="#CC9900" uuid="fc8870e6-9032-4872-a0d5-b457f89a72c6"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Município da Ocorrência do Fato Gerador do ICMS]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="110" y="941" width="100" height="20" forecolor="#CC9900" uuid="10c38f4f-a3b7-4a81-9f40-e2cca3064978"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Cnae]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="286" y="941" width="241" height="20" forecolor="#CC9900" uuid="01458e22-2a45-4d08-bdde-48af4130fbf6"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Código de regime tributário]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="201" y="1021" width="170" height="20" forecolor="#CC9900" uuid="3f68811a-2b1a-46e0-b05a-c05de9cbf9bd"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="14"/>
+                </textElement>
+                <text><![CDATA[Dados do destinatário]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="226" y="1055" width="100" height="20" forecolor="#CC9900" uuid="499b44e6-3f5b-4a98-9bc5-a6ecf3a8a2d6"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Razão social]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="104" y="1096" width="100" height="20" forecolor="#CC9900" uuid="76614831-d0c0-45ac-ad3d-f6aa89bdd314"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Cnpj]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="357" y="1095" width="100" height="20" forecolor="#CC9900" uuid="345e712b-38b1-4196-a77a-87e0693a9046"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Endereço]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="104" y="1136" width="100" height="20" forecolor="#CC9900" uuid="595b5c66-5d4e-43ba-8f12-f83f138c4062"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Bairro]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="357" y="1135" width="100" height="20" forecolor="#CC9900" uuid="ac76a273-f0a9-4aa2-bebf-3f6849a52ed8"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Cep]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="101" y="1175" width="100" height="20" forecolor="#CC9900" uuid="f61f1a1d-82ad-432a-8792-d59d6919f98d"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Município]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="357" y="1175" width="100" height="20" forecolor="#CC9900" uuid="205f4c26-9acc-4f08-ab07-5611616a9fb4"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Telefone]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="367" y="1215" width="100" height="20" forecolor="#CC9900" uuid="ea72317a-f5ed-4127-bfe8-7bb7c5e22313"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[País]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="101" y="1215" width="100" height="20" forecolor="#CC9900" uuid="fd750c9b-fd5a-4cfa-8cc4-8f365b76e014"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[UF]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="51" y="1257" width="134" height="20" forecolor="#CC9900" uuid="1e7f99cb-cf2c-4173-963e-10138bf50eac"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Indicador inscrição estadual]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="226" y="1257" width="134" height="20" forecolor="#CC9900" uuid="2d6f8e0f-51e8-45de-8466-73ea47f8244f"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Inscrição estadual]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="388" y="1257" width="134" height="20" forecolor="#CC9900" uuid="6cb03a5c-710f-44de-a793-4a7503c19349"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Inscriçao Suframa]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="48" y="1297" width="134" height="20" forecolor="#CC9900" uuid="631f948f-2610-4e79-b7fa-02636507024a"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Inscriçao Municipal]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="307" y="1297" width="134" height="20" forecolor="#CC9900" uuid="2d5fff68-b031-469f-a990-ca977e18b2de"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Email]]></text>
+            </staticText>
+            <line>
+                <reportElement x="14" y="1394" width="524" height="1" forecolor="#CC9900" uuid="2a42e938-8a8e-407d-9e72-6bd8263c3f50"/>
+            </line>
+            <line>
+                <reportElement x="14" y="1371" width="524" height="1" forecolor="#CC9900" uuid="f58efb1b-c641-459a-a7db-7f77f4d6b280"/>
+            </line>
+            <staticText>
+                <reportElement x="210" y="1372" width="132" height="20" forecolor="#CC9900" uuid="5b216dd4-7bfb-4876-87fa-4c6d50fea139"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="14"/>
+                </textElement>
+                <text><![CDATA[Dados do produto]]></text>
+            </staticText>
+        </band>
+    </pageHeader>
+    <detail>
+        <band height="983" splitType="Stretch">
+            <rectangle>
+                <reportElement x="11" y="9" width="525" height="957" forecolor="#CC9900" uuid="c2cb529e-3f1a-4acd-8e53-8fbacf72d516"/>
+            </rectangle>
+            <line>
+                <reportElement x="11" y="31" width="525" height="1" forecolor="#CC9900" uuid="75fa9070-da70-423f-b3f7-132b0b10431a"/>
+            </line>
+            <textField isBlankWhenNull="true">
+                <reportElement x="25" y="36" width="44" height="20" forecolor="#CC9900" uuid="21e94a99-70d8-4a37-9a39-06d7a259a108"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{num}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="77" y="36" width="207" height="20" forecolor="#CC9900" uuid="52901fbe-cd09-492c-bb17-363048459ac2"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{descricao}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="292" y="36" width="122" height="20" forecolor="#CC9900" uuid="5c2da905-dce6-4123-b816-3123de157d42"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{unidadeComercial}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="422" y="36" width="100" height="20" forecolor="#CC9900" uuid="fde22015-5f2f-42f5-82d0-15e83b8bc3c0"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{valor}]]></textFieldExpression>
+            </textField>
+            <rectangle>
+                <reportElement x="25" y="70" width="496" height="146" forecolor="#CC9900" uuid="d5e48ca0-40e5-4ea1-a818-153631131f6a"/>
+            </rectangle>
+            <textField isBlankWhenNull="true">
+                <reportElement x="39" y="95" width="146" height="20" forecolor="#CC9900" uuid="62bff768-7947-473b-b15f-2b54173e0a6f"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{codProduto}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="199" y="95" width="146" height="20" forecolor="#CC9900" uuid="9ed53de0-dec8-43bd-bf91-2055ba9d3cf0"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{codNcm}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="359" y="95" width="146" height="20" forecolor="#CC9900" uuid="119feb6f-60d0-4197-a218-a99192d1bb5e"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{codCest}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="39" y="138" width="146" height="20" forecolor="#CC9900" uuid="3fc70fff-a8a1-4ae8-9284-d911d1a88c5f"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{codExTpi}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="199" y="138" width="146" height="20" forecolor="#CC9900" uuid="f8dbeb5c-3c70-4a0a-89d7-e95016a37db7"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center"/>
+                <textFieldExpression><![CDATA[$F{cfop}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="360" y="138" width="145" height="20" forecolor="#CC9900" uuid="da64c576-8525-4bdb-9d25-1e44be3913c8"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{outrasDespesas}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="39" y="180" width="146" height="20" forecolor="#CC9900" uuid="41b1af43-ced0-49e5-8886-3587982ff512"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{valorDesconto}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="199" y="180" width="146" height="20" forecolor="#CC9900" uuid="900ba4ef-eedc-4e60-8f89-238b15da8bb9"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{valorTotalFrete}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="360" y="180" width="145" height="20" forecolor="#CC9900" uuid="22835fa9-2ebc-4f0d-861d-c8ec05a568d7"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{valorSeguro}]]></textFieldExpression>
+            </textField>
+            <rectangle>
+                <reportElement x="25" y="231" width="496" height="719" forecolor="#CC9900" uuid="05defea2-e13e-4171-b67b-bfdda0f0d5c3"/>
+            </rectangle>
+            <textField isBlankWhenNull="true">
+                <reportElement x="41" y="254" width="464" height="20" forecolor="#CC9900" uuid="04dd91b4-9610-41b2-88fe-69d575100092"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{indCompValNFe}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="201" y="296" width="144" height="20" forecolor="#CC9900" uuid="dc73e2ae-dd36-45fc-9acc-3dd3cee7492a"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{unidadeComercial}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="41" y="296" width="144" height="20" forecolor="#CC9900" uuid="52cb9bc6-5d6e-4a8d-a346-4c6aae41b3c8"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{codEanComercial}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="360" y="296" width="145" height="20" forecolor="#CC9900" uuid="aac3f8ea-5b4b-4fef-8469-71d40b690a3e"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{qntComercial}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="41" y="338" width="144" height="20" forecolor="#CC9900" uuid="dcfb562b-1301-46af-b682-be9b45146e84"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{codEanTributavel}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="201" y="338" width="144" height="20" forecolor="#CC9900" uuid="59797103-baaf-4c5e-9991-630d5f318af1"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{unidadeTributavel}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="360" y="338" width="145" height="20" forecolor="#CC9900" uuid="15853089-c48b-41ca-9c1e-b694b02bf9ad"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{qntTributavel}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="41" y="382" width="224" height="20" forecolor="#CC9900" uuid="62a37632-26cc-466e-b8b1-1445b9d2007b"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{valorUniComercial}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="281" y="382" width="224" height="20" forecolor="#CC9900" uuid="460a7822-fede-4b1c-891f-5e38b0118696"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{valorUniTribu}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="41" y="425" width="144" height="20" forecolor="#CC9900" uuid="0eb65659-3e29-481a-a8d7-198c6349b0a7"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{numPedidoCompra}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="201" y="425" width="144" height="20" forecolor="#CC9900" uuid="585889cb-94df-4d56-b3fc-30e3c2dfb929"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{itemPedidoCompra}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="360" y="425" width="145" height="20" forecolor="#CC9900" uuid="69578696-c0ed-4660-bc7d-e0c920cec2a9"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{valorAproxTributo}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="41" y="469" width="144" height="20" forecolor="#CC9900" uuid="5672a6c1-64fa-4909-afd2-54b874a701c9"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{numFci}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="69" y="499" width="131" height="20" forecolor="#CC9900" uuid="d3a02817-a936-4a24-a7cf-3dea8363fb60"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="14"/>
+                </textElement>
+                <text><![CDATA[ICMS normal e ST]]></text>
+            </staticText>
+            <rectangle>
+                <reportElement x="43" y="531" width="462" height="100" forecolor="#CC9900" uuid="53032cf7-e166-462a-ad3f-7affb94d3910"/>
+            </rectangle>
+            <textField isBlankWhenNull="true">
+                <reportElement x="57" y="555" width="124" height="20" forecolor="#CC9900" uuid="b8b8bd9f-14b6-46fc-ab14-cf04e30eda2d"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{origemMercadoria}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="210" y="555" width="124" height="20" forecolor="#CC9900" uuid="0c81733a-1756-402a-b1f3-a5acd3529a8e"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{tribuICMS}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="359" y="555" width="124" height="20" forecolor="#CC9900" uuid="46a0ca47-4f23-422e-9e0d-9e3954d46f0e"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{valorBCIcmsRetido}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="57" y="599" width="124" height="20" forecolor="#CC9900" uuid="8f4cb884-de37-4199-a812-7940b22b4136"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{valorIcmsSTRetido}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="69" y="640" width="56" height="20" forecolor="#CC9900" uuid="608da63e-d0e0-4534-8dde-74eca9d91486"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="14"/>
+                </textElement>
+                <text><![CDATA[PIS]]></text>
+            </staticText>
+            <rectangle>
+                <reportElement x="42" y="669" width="462" height="100" forecolor="#CC9900" uuid="102b0f1c-3207-4815-8fee-e5d4d255cc70"/>
+            </rectangle>
+            <textField isBlankWhenNull="true">
+                <reportElement x="58" y="694" width="425" height="20" forecolor="#CC9900" uuid="71d7649f-db2d-4c72-b690-3fb884d8c59c"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{cstPis}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="58" y="738" width="124" height="20" forecolor="#CC9900" uuid="68526cf1-568c-4da8-b02f-cab725e3ae53"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{baseCalculoPis}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="210" y="738" width="124" height="20" forecolor="#CC9900" uuid="3b57e22d-da48-427c-9226-6458321cf3d6"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{aliquotaPis}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="358" y="738" width="124" height="20" forecolor="#CC9900" uuid="c8ec4dd3-7a27-439d-8940-42bf250e06f3"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{valorPis}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="70" y="783" width="56" height="20" forecolor="#CC9900" uuid="475dc9f3-604f-4c10-ad8b-7ff2735f7b0c"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="14"/>
+                </textElement>
+                <text><![CDATA[Cofins]]></text>
+            </staticText>
+            <rectangle>
+                <reportElement x="42" y="813" width="462" height="100" forecolor="#CC9900" uuid="c8db0a1a-36b0-411f-a8a2-639796ac97ef"/>
+            </rectangle>
+            <textField isBlankWhenNull="true">
+                <reportElement x="59" y="839" width="425" height="20" forecolor="#CC9900" uuid="ef97d2d6-94ba-4163-819d-2139794a2b53"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{cstCofins}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="58" y="883" width="124" height="20" forecolor="#CC9900" uuid="fc5febea-a090-4865-8c66-c2b5242efd83"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{baseCalculoCofins}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="210" y="883" width="124" height="20" forecolor="#CC9900" uuid="25f90369-c1a6-490c-a5c0-7ea1dce5ad79"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{aliquotaCotins}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="360" y="883" width="124" height="20" forecolor="#CC9900" uuid="66c0d881-7a81-4cc1-9c25-48506fcb3b80"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{valorCofins}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="21" y="9" width="48" height="20" forecolor="#CC9900" uuid="015d9c8f-c2ea-4013-814f-2fe8fcef3905"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Número]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="110" y="9" width="100" height="20" forecolor="#CC9900" uuid="be7648af-502b-41b2-96f8-af4dd82cf41d"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Descrição]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="302" y="9" width="100" height="20" forecolor="#CC9900" uuid="c896a642-dbc0-421b-bc15-94cba415fea1"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Unidade comercial]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="422" y="9" width="100" height="20" forecolor="#CC9900" uuid="8d834791-81b5-4c45-8885-378e28eeece3"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Valor]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="59" y="75" width="100" height="20" forecolor="#CC9900" uuid="00247bb5-87f3-4a96-a2c1-1e108db6ec8e"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Código do produto]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="222" y="75" width="100" height="20" forecolor="#CC9900" uuid="16ac17d3-08fc-484d-aaf6-7e68fe94be88"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Código do ncm]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="382" y="75" width="100" height="20" forecolor="#CC9900" uuid="0bb8c867-2b6e-4a02-a8b2-a6795e51a825"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Código do cest]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="62" y="117" width="100" height="20" forecolor="#CC9900" uuid="3c2211a2-047a-487e-92b0-34b1c5887296"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Código Ex tipi]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="222" y="118" width="100" height="20" forecolor="#CC9900" uuid="e192b908-4889-4966-9f48-22ab247a9191"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Código cfop]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="382" y="118" width="100" height="20" forecolor="#CC9900" uuid="4af7ffdd-773d-4ff4-a3a0-ab75a02b715a"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Outras despesas]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="61" y="160" width="100" height="20" forecolor="#CC9900" uuid="555f81c9-6139-4552-8409-aa6c36bf55b7"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Valor de desconto]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="224" y="160" width="100" height="20" forecolor="#CC9900" uuid="7c325542-4e01-49c0-a5be-929b3ed88d40"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Valor total do frete]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="382" y="160" width="100" height="20" forecolor="#CC9900" uuid="a08924d8-5ffa-42bc-8694-9df3952cb3c9"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Valor do seguro]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="43" y="234" width="252" height="20" forecolor="#CC9900" uuid="cb27fb47-9038-4261-9483-a23cff2801ac"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Indicador de Composição do Valor Total da NF­e]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="54" y="276" width="114" height="20" forecolor="#CC9900" uuid="3e25375c-5073-4a4e-85fb-2f9c328c9f28"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Código EAN comercial]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="216" y="276" width="114" height="20" forecolor="#CC9900" uuid="daff7d24-8304-442f-bebc-f540c855c845"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Unidade comercial]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="381" y="276" width="114" height="20" forecolor="#CC9900" uuid="098e66d0-d4b6-4f09-87fd-5c94d18ef5f0"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Quantidade comercial]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="56" y="319" width="114" height="20" forecolor="#CC9900" uuid="b7f27ba1-2268-4265-9770-d218bf5b2dac"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Código EAN tributável]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="217" y="319" width="114" height="20" forecolor="#CC9900" uuid="0ddd3121-3250-468e-b4ef-01e4fafc8af3"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Unidade tributável]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="376" y="320" width="114" height="20" forecolor="#CC9900" uuid="06143527-dcb7-4adc-8dd0-d66bbd6de25f"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Quantidade tributável]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="48" y="362" width="133" height="20" forecolor="#CC9900" uuid="e6c856fe-2596-4220-accf-0504f4e2c579"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Valor da unidade comercial]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="292" y="362" width="133" height="20" forecolor="#CC9900" uuid="e050ed05-6319-410a-8ae2-b34d27a53e8a"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Valor da unidade tributável]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="38" y="405" width="148" height="20" forecolor="#CC9900" uuid="4959bc97-9c6d-4a6f-a343-e72cb1390860"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Número do pedido de compra]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="194" y="405" width="148" height="20" forecolor="#CC9900" uuid="391e9dd0-8d32-41e5-b87c-93f41c6854c0"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Item do pedido de compra]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="358" y="406" width="148" height="20" forecolor="#CC9900" uuid="20bfd889-cb82-48d9-a4a2-c8ea3b777d63"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Valor aproximado do tributo]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="63" y="449" width="76" height="20" forecolor="#CC9900" uuid="fd21ea58-c763-455b-8dc7-040c5f7a4451"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Número FCI]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="61" y="535" width="116" height="20" forecolor="#CC9900" uuid="cd178d0b-91a4-46d2-8500-95a4ea99e8e0"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Origem da mercadoria]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="215" y="535" width="116" height="20" forecolor="#CC9900" uuid="7b9bbbfe-1d4d-4b9a-94e1-dc8f380792db"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Tributo do ICMS]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="363" y="535" width="116" height="20" forecolor="#CC9900" uuid="520bafad-f470-4bb4-979c-b87a91e868d9"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Valor do BC ICMS retido]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="60" y="579" width="116" height="20" forecolor="#CC9900" uuid="0c5768fc-9f4c-4db4-98b9-5ac58294cfb3"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Valor do ICMS ST retido]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="59" y="674" width="116" height="20" forecolor="#CC9900" uuid="a82a7352-52d4-4663-9a17-4bd3e1925624"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[CST PIS]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="61" y="719" width="116" height="20" forecolor="#CC9900" uuid="c407375e-6df5-422e-b752-a09b57cf196f"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Base de cálculo PIS]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="215" y="719" width="116" height="20" forecolor="#CC9900" uuid="2a980dea-b601-4745-8969-902c8a8a2c8c"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Aliquota PIS]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="362" y="720" width="116" height="20" forecolor="#CC9900" uuid="457b4ce5-2fcf-4ff0-bc79-f58e417420aa"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Valor do PIS]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="63" y="819" width="116" height="20" forecolor="#CC9900" uuid="725100db-89b3-45ea-bb26-4ee1a19f8cc3"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[CST COFINS]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="59" y="863" width="116" height="20" forecolor="#CC9900" uuid="dc9c2e22-7b5e-4cf5-8cb7-614c8ef627c5"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Base de cálculo COFINS]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="214" y="864" width="116" height="20" forecolor="#CC9900" uuid="3c87bfda-9c6f-4d64-acfc-0f4a0a3f23ec"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Aliquota COFINS]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="364" y="863" width="116" height="20" forecolor="#CC9900" uuid="ddb76cbf-c5f4-4c87-a74f-cafe68aa472e"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Valor do COFINS]]></text>
+            </staticText>
+        </band>
+    </detail>
+    <summary>
+        <band height="888" splitType="Stretch">
+            <line>
+                <reportElement x="13" y="11" width="524" height="1" forecolor="#CC9900" uuid="11e105f8-645b-4d51-bb0e-c40f492ff1b2"/>
+            </line>
+            <line>
+                <reportElement x="13" y="35" width="524" height="1" forecolor="#CC9900" uuid="b8f28b25-4ca9-4548-b5e6-eed2683eaae0"/>
+            </line>
+            <staticText>
+                <reportElement x="235" y="13" width="100" height="20" forecolor="#CC9900" uuid="6edbd1ae-c8ad-4604-afee-94b0792f7d4d"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="14"/>
+                </textElement>
+                <text><![CDATA[Totais]]></text>
+            </staticText>
+            <rectangle>
+                <reportElement x="13" y="76" width="524" height="224" forecolor="#CC9900" uuid="90d71f39-68eb-40e7-a1f5-94294bdf4b81"/>
+            </rectangle>
+            <staticText>
+                <reportElement x="25" y="48" width="100" height="20" forecolor="#CC9900" uuid="3cb667f9-4a90-4882-ad29-1debd44466ed"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="14"/>
+                </textElement>
+                <text><![CDATA[ICMS]]></text>
+            </staticText>
+            <textField isBlankWhenNull="true">
+                <reportElement x="22" y="98" width="122" height="20" forecolor="#CC9900" uuid="9374ac8a-7947-4202-bae8-6213a74a7b4a"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{BaseCalculoICSM}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="150" y="98" width="122" height="20" forecolor="#CC9900" uuid="3d90e793-b7d4-477d-8291-84b4d3fb1157"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{ValorICMS}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="278" y="98" width="122" height="20" forecolor="#CC9900" uuid="275ef1f2-bcc9-437e-a0e2-8b9c489bccdd"/>
+                <box>
+                    <pen lineWidth="1.0" lineColor="#CC9900"/>
+                    <topPen lineWidth="1.0" lineColor="#CC9900"/>
+                    <leftPen lineWidth="1.0" lineColor="#CC9900"/>
+                    <bottomPen lineWidth="1.0" lineColor="#CC9900"/>
+                    <rightPen lineWidth="1.0" lineColor="#CC9900"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{ValorICMSDesonerado}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="405" y="98" width="122" height="20" forecolor="#CC9900" uuid="63443a90-9a8f-4717-8a9b-48718b6f892d"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{BaseCalculoICMSST}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="22" y="138" width="122" height="20" forecolor="#CC9900" uuid="13a53eff-7ee4-45f8-b8a4-bf7434a48c01"/>
+                <box>
+                    <pen lineWidth="1.0" lineColor="#CC9900"/>
+                    <topPen lineWidth="1.0" lineColor="#CC9900"/>
+                    <leftPen lineWidth="1.0" lineColor="#CC9900"/>
+                    <bottomPen lineWidth="1.0" lineColor="#CC9900"/>
+                    <rightPen lineWidth="1.0" lineColor="#CC9900"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{ValorICMSSubs}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="150" y="138" width="121" height="20" forecolor="#CC9900" uuid="6d68756e-daa8-4f1f-95b1-4af2bbfce118"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{ValorTotalProduto}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="405" y="138" width="122" height="20" forecolor="#CC9900" uuid="c9ed4bf4-0c5e-419a-ab9f-c2ab035320cd"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{ValorFrete}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="278" y="138" width="122" height="20" forecolor="#CC9900" uuid="3a285d85-b8b0-4741-9667-1c33137fda40"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{ValorSeguro}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="22" y="179" width="122" height="20" forecolor="#CC9900" uuid="e98520aa-fdf3-4589-a8a0-369ce0821185"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{OutrasDespesas}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="150" y="179" width="120" height="20" forecolor="#CC9900" uuid="2684e549-d82b-426e-a3ec-823a7d480130"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{ValorTotalIpi}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="278" y="179" width="122" height="20" forecolor="#CC9900" uuid="1f2505ea-4ab8-4834-ab5b-8827eb392183"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{ValorTotalNFE}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="405" y="179" width="122" height="20" forecolor="#CC9900" uuid="554766cf-5a6e-4c48-9c2d-c788fc9f10e1"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{ValorTotalDesconto}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="22" y="222" width="122" height="20" forecolor="#CC9900" uuid="44b88d44-8a57-445d-9d2c-fe1ad45680d8"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{ValorTotalII}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="150" y="223" width="120" height="20" forecolor="#CC9900" uuid="84a5bd90-2292-4c6d-a281-bf1a60d8cae2"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{ValorPis}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="278" y="223" width="122" height="20" forecolor="#CC9900" uuid="b0a7ce9c-669e-4e2d-a606-c2a98a912557"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{ValorCofins}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="405" y="223" width="122" height="20" forecolor="#CC9900" uuid="aa2a40e9-844d-4737-b3a9-4e12d9a57717"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{ValorAproxTributos}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="22" y="266" width="128" height="20" forecolor="#CC9900" uuid="c3bd7ae7-4cb1-4862-9040-e3852077d65e"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{ValorTotalICMSFCP}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="182" y="266" width="128" height="20" forecolor="#CC9900" uuid="9e70786d-d7d0-416d-952b-8e4b06ed85e3"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{ValorTotalICMSInterestadualDest}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="339" y="266" width="128" height="20" forecolor="#CC9900" uuid="125770d5-6902-4283-9657-e82fe5fdfbaa"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{ValorTotalICMSInterestadualRem}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="32" y="78" width="100" height="20" forecolor="#CC9900" uuid="6f5d0183-1ef0-4a00-bb7b-ad38e50b8286"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Base de cálculo ICMS]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="158" y="78" width="100" height="20" forecolor="#CC9900" uuid="db8a4e76-4ccf-4ab8-8d37-8e17c24f4710"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Valor ICMS]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="282" y="78" width="117" height="20" forecolor="#CC9900" uuid="8bceb862-5eef-4129-98e1-1b3f555dc490"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Valor ICMS desonerado]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="410" y="78" width="117" height="20" forecolor="#CC9900" uuid="4126ba3e-6ef9-4ac4-b7bb-d7e7cb7e8b5d"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Base de cáculo ICMS ST]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="31" y="118" width="100" height="20" forecolor="#CC9900" uuid="130f9592-e936-4588-b900-1f73ff424385"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Valor ICMS substituto]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="154" y="118" width="113" height="20" forecolor="#CC9900" uuid="ea89d0f5-79bc-4980-9090-98dd574d75de"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Valor total dos produtos]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="281" y="118" width="113" height="20" forecolor="#CC9900" uuid="4bba11c5-f04c-47e9-916d-12cbcbc44069"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Valor do seguro]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="409" y="118" width="113" height="20" forecolor="#CC9900" uuid="6e5a8c3f-3271-4bc3-bf96-e5b2ff2bafec"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Valor do frete]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="32" y="159" width="100" height="20" forecolor="#CC9900" uuid="3171fdf5-43e2-4701-8091-51928012bfb3"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Outras despesas]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="159" y="159" width="100" height="20" forecolor="#CC9900" uuid="51890b7b-e3c0-46dc-8373-143acf73f124"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Valor total do IPI]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="288" y="158" width="100" height="20" forecolor="#CC9900" uuid="6b8d1e90-7da9-4854-8875-46ef3daa820b"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Valor total da NF-e]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="409" y="159" width="113" height="20" forecolor="#CC9900" uuid="73f46e59-7bce-465b-8adb-693abbd34206"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Valor total de desconto]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="26" y="203" width="113" height="20" forecolor="#CC9900" uuid="bbb6a872-bf12-45c7-a8d2-6f8cfd76f43f"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Valor total II]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="154" y="203" width="113" height="20" forecolor="#CC9900" uuid="11eaefa4-6593-4026-882b-d8de0099b8e6"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Valor do pis]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="282" y="202" width="113" height="20" forecolor="#CC9900" uuid="f474c515-ddd5-4a4e-a43f-386c72fb38bd"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Valor do Cofins]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="397" y="202" width="137" height="20" forecolor="#CC9900" uuid="ab3be190-ad17-4de7-afa1-61155ef626da"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Valor aproximado de tributos]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="18" y="246" width="137" height="20" forecolor="#CC9900" uuid="739a5f8e-fc0f-4c31-8073-5e09ff37b6be"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Valor total ICMS FCP]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="164" y="246" width="158" height="20" forecolor="#CC9900" uuid="9cb730d2-1a55-4dc2-a47f-47557fada620"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Valor total ICMS Interestadual Rem]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="324" y="246" width="158" height="20" forecolor="#CC9900" uuid="6520c329-b9de-43eb-956e-290ecd01bd25"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Valor total ICMS Interestadual dest]]></text>
+            </staticText>
+            <line>
+                <reportElement x="14" y="317" width="523" height="1" forecolor="#CC9900" uuid="dd281005-128b-4ebf-b9e1-9e18d0eae1dd"/>
+            </line>
+            <line>
+                <reportElement x="13" y="343" width="524" height="1" forecolor="#CC9900" uuid="5b7f3d7e-703b-4e1f-b1e0-72a849eb89ee"/>
+            </line>
+            <staticText>
+                <reportElement x="200" y="321" width="165" height="20" forecolor="#CC9900" uuid="45b4eea6-537d-4468-b214-47364ac5dac7"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="14"/>
+                </textElement>
+                <text><![CDATA[Dados do transporte]]></text>
+            </staticText>
+            <rectangle>
+                <reportElement x="14" y="360" width="523" height="52" forecolor="#CC9900" uuid="ef828e12-e159-40da-a906-a45a5c621893"/>
+            </rectangle>
+            <textField isBlankWhenNull="true">
+                <reportElement x="22" y="380" width="506" height="20" forecolor="#CC9900" uuid="d4ffeea4-e49e-4d49-8162-2fb7f070fdad"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{ModalidadeFrete}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="22" y="360" width="100" height="20" forecolor="#CC9900" uuid="e299e036-eefd-40c9-857a-eaaf4f18efa1"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Modalide do frete]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="26" y="423" width="100" height="20" forecolor="#CC9900" uuid="62c67522-6433-43e4-8436-f45a029b0e1b"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="14"/>
+                </textElement>
+                <text><![CDATA[Transportador]]></text>
+            </staticText>
+            <rectangle>
+                <reportElement x="14" y="457" width="523" height="141" forecolor="#CC9900" uuid="03be46f5-fb2b-490f-be95-2c5aa5d27c36"/>
+            </rectangle>
+            <textField isBlankWhenNull="true">
+                <reportElement x="22" y="477" width="159" height="20" forecolor="#CC9900" uuid="97641b31-5e66-40ab-8482-45b7b7658337"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{CnpjTransportadora}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="190" y="477" width="338" height="20" forecolor="#CC9900" uuid="15e2540c-0126-4e51-a5dc-03e4cdc14485"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{RazaoSociTranspor}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="22" y="523" width="142" height="20" forecolor="#CC9900" uuid="66bcc3e5-9405-40d2-9f9f-0af703e73adc"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{InsEstTranspor}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="181" y="523" width="171" height="20" forecolor="#CC9900" uuid="b1cb82af-3929-4b34-be4d-df6ae1707c6f"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{EndTransporComp}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="371" y="523" width="156" height="20" forecolor="#CC9900" uuid="448c6df9-18cd-48a8-a21e-9f34bc94dfd9"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{MunicipioTranspor}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="22" y="567" width="100" height="20" forecolor="#CC9900" uuid="f68b2d4f-02bf-43eb-bdd6-2e0e09152658"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{UFTranspor}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="48" y="457" width="100" height="20" forecolor="#CC9900" uuid="8ac359e9-ecd9-4bbc-ae8a-d2f24fe731fc"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Cnpj]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="316" y="457" width="100" height="20" forecolor="#CC9900" uuid="fe7718b4-d2cf-46f1-b9fb-239622f4c3b8"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Razão social]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="41" y="503" width="100" height="20" forecolor="#CC9900" uuid="9031a120-66e3-429c-bfaf-243a6ba4787e"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Inscriçao estadual]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="219" y="503" width="100" height="20" forecolor="#CC9900" uuid="be50517c-7203-4c2a-a0b2-47f6ad6c78ce"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Endereço completo]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="400" y="503" width="100" height="20" forecolor="#CC9900" uuid="e5f4670d-3519-48c4-b45b-b4ffc0f10b61"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Município]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="22" y="547" width="100" height="20" forecolor="#CC9900" uuid="1b63b64e-fd60-4262-b487-ba3a5942d6cd"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[UF]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="27" y="609" width="100" height="20" forecolor="#CC9900" uuid="81faee25-28dc-42d6-8e97-ae4fc531aaf9"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="14"/>
+                </textElement>
+                <text><![CDATA[Veículo]]></text>
+            </staticText>
+            <rectangle>
+                <reportElement x="14" y="641" width="523" height="51" forecolor="#CC9900" uuid="5b679da5-4119-4d3d-a175-9764c2f59228"/>
+            </rectangle>
+            <textField isBlankWhenNull="true">
+                <reportElement x="22" y="664" width="142" height="20" forecolor="#CC9900" uuid="90d22c47-bbd9-42cc-8d62-ed3f8c109b36"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{Placa}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="181" y="664" width="171" height="20" forecolor="#CC9900" uuid="da719ef0-cd72-4ba7-842b-6febfeaaa876"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{UfVeiculo}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="371" y="664" width="156" height="20" forecolor="#CC9900" uuid="67049804-abcf-4919-8ae1-cea8bf79c481"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{Rntc}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="44" y="644" width="100" height="20" forecolor="#CC9900" uuid="2bfa3efd-2a91-4b96-be8b-d806d4b9bd04"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Placa]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="216" y="644" width="100" height="20" forecolor="#CC9900" uuid="d8de13a4-5b12-4965-b0ac-65696965e315"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[UF]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="400" y="644" width="100" height="20" forecolor="#CC9900" uuid="716c7e3a-4088-41e7-9a43-0b35b13ce148"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[RNTC]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="28" y="706" width="100" height="20" forecolor="#CC9900" uuid="da7dc0c1-4749-4277-96be-72751cfd3d36"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="14"/>
+                </textElement>
+                <text><![CDATA[Volume]]></text>
+            </staticText>
+            <rectangle>
+                <reportElement x="14" y="745" width="523" height="103" forecolor="#CC9900" uuid="701638c2-5ff1-4aed-8c4d-3b432d3ef261"/>
+            </rectangle>
+            <textField isBlankWhenNull="true">
+                <reportElement x="22" y="770" width="142" height="20" forecolor="#CC9900" uuid="a54a97c5-9f9c-4078-8a8c-e83940fb4580"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{Quantidade}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="181" y="770" width="171" height="20" forecolor="#CC9900" uuid="0b113ca0-b358-4770-974a-f271c05b8e1a"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{Especie}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="371" y="770" width="156" height="20" forecolor="#CC9900" uuid="9d3e8659-c3f3-425d-ab71-aadaa2440236"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{MarcaVolume}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="22" y="816" width="142" height="20" forecolor="#CC9900" uuid="434a7dc7-3ea4-4dc1-8dce-16407d4678c7"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{Numeracao}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="371" y="816" width="156" height="20" forecolor="#CC9900" uuid="72b7efca-f4f0-42ff-a2b3-c8164b96a3fa"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{PesoBruto}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="182" y="816" width="170" height="20" forecolor="#CC9900" uuid="4b4fc2c5-a0be-48f0-9bd0-337527ff86d5"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{PesoLiquido}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="41" y="750" width="100" height="20" forecolor="#CC9900" uuid="f870868a-dce0-44fb-aeea-a1770d10f263"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Quantidade]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="219" y="750" width="100" height="20" forecolor="#CC9900" uuid="986e7907-806d-4467-8063-09786daa4eeb"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Espécie]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="399" y="750" width="100" height="20" forecolor="#CC9900" uuid="a5b7029f-7006-4e4d-b8ff-1dfda51e6448"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Marca do volume]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="44" y="796" width="100" height="20" forecolor="#CC9900" uuid="8e37f8af-29b2-4c00-a0a4-4dfb1c0155f9"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Numeração]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="213" y="796" width="100" height="20" forecolor="#CC9900" uuid="b45d155d-7a41-4e09-ad21-78715314b844"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Peso líquido]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="399" y="796" width="100" height="20" forecolor="#CC9900" uuid="20c909a1-4390-411f-9750-3f844e8ed8ee"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Peso bruto]]></text>
+            </staticText>
+        </band>
+    </summary>
+</jasperReport>

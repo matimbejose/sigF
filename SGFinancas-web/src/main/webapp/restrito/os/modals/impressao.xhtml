@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <ui:composition template="/WEB-INF/templateModal.xhtml">
+
+        <ui:define name="title">Impressão da OS</ui:define>
+
+        <ui:define name="content">
+            <p:menu style="width: 100%">
+                <p:menuitem action="#{osControle.doPrintOSVeiculo}" ajax="false" value="Imprimir Ordem de Serviço" rendered="#{osControle.ehOficina(empresaControle.empresaLogada)}"/>
+                <p:menuitem action="#{osControle.doStartPrintForClient}" ajax="false" value="Imprimir OS com valores" rendered="#{osControle.ehOficina(empresaControle.empresaLogada)}"/>
+                <p:menuitem action="#{osControle.doPrintOS()}" ajax="false" value="Imprimir Ordem de Serviço"  rendered="#{!osControle.ehOficina(empresaControle.empresaLogada)}"/>
+                <p:menuitem action="#{osControle.doPrintGarantia()}" ajax="false" value="Imprimir termo de garantia" rendered="#{osControle.ehOficina(empresaControle.empresaLogada) and osControle.vendaSelecionada.statusOS eq 'F'}"/>
+                <p:menuitem action="#{osControle.doPrintPermanencia()}" ajax="false" value="Imprimir declaração de permanência" rendered="#{osControle.ehOficina(empresaControle.empresaLogada) and osControle.vendaSelecionada.statusOS eq 'F'}"/>
+                <p:menuitem action="#{osControle.enviarOSMecanicaPorEmail()}" value="Enviar ordem de serviço por email" rendered="#{osControle.ehOficina(empresaControle.empresaLogada)}" update="msgResultado"/>
+                <p:menuitem action="#{osControle.enviarGarantiaOSPorEmail()}" value="Enviar termo de garantia por email" rendered="#{osControle.ehOficina(empresaControle.empresaLogada) and osControle.vendaSelecionada.statusOS eq 'F'}" update="msgResultado"/>
+                <p:menuitem action="#{osControle.enviarDeclaracaoPermanenciaPorEmail()}" value="Enviar declaração de permanência  por email" rendered="#{osControle.ehOficina(empresaControle.empresaLogada) and osControle.vendaSelecionada.statusOS eq 'F'}" update="msgResultado"/>
+                <p:menuitem action="#{osControle.enviarOSPorEmail()}" update="@form" value="Enviar ordem de serviço por email" rendered="#{!osControle.ehOficina(empresaControle.empresaLogada)}"/>
+            </p:menu>
+        </ui:define>
+
+    </ui:composition>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <div class="row">
+        <div class="col my-4 mx-4">
+            <div class="balao">
+                <p>...Quer gerenciar suas contas a pagar? Então você deve cadastrar seus fornecedores. Com o cadastro de Fornecedores, você pode cadastrar compras, contratos de fornecedor e contas a pagar... Então você deve cadastrar seus fornecedores. Com o cadastro de Fornecedores, você pode cadastrar compras, contratos de fornecedor e contas a pagar...</p>
+                <p>...Vamos cadastrar um Fornecedor para começar a usar esses módulos...</p>
+                <p>...Para cadastrar novos ou editar seus fornecedores cadastrados, acesse na lateral esquerda do SG Finanças, MENU->CADASTRO->PESSOAS->FORNECEDOR->BOTAO NOVO (PARA NOVOS FORNECEDORES) OU BOTÃO ALTERAR FORNECEDOR (PARA ALTERAR INFORMAÇÕES DE FORNECEDORES CADASTRADOS)...</p>
+                <p>...Caso você opte por não gerenciar suas compras e suas contas a pagar, clique no botão PULAR... </p>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h4>Cadastro de fornecedor</h4>
+            <div class="row">
+                <div class="col-5 form-group form-md-line-input">
+                    <label class="control-label"><span class="required">* </span>Nome do fornecedor</label>
+                    <p:inputText value="#{wizardControle.tela7Fornecedor.razaoSocial}"
+                                 required="true" requiredMessage="Informe a descrição"/>
+                </div>
+                <div class="col-3 form-group form-md-line-input">
+                    <label class="control-label"><span class="required">* </span> Tipo de pessoa</label>
+                    <p:selectOneMenu value="#{wizardControle.tela7Fornecedor.tipoPessoa}"
+                                     required="true" requiredMessage="Informe o tipo de pessoa">
+                        <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                        <f:selectItem itemLabel="Pessoa Júridica" itemValue="PJ"/>
+                        <f:selectItem itemLabel="Pessoa Física" itemValue="PF"/>
+                        <p:ajax update="temCpf, temInscricao" event="change" process="@this"/>
+                    </p:selectOneMenu>
+                </div>
+                <p:outputPanel id="temCpf" styleClass="col-4 form-group form-md-line-input">
+                    <p:row rendered="#{wizardControle.tela7Fornecedor.tipoPessoa eq null}">
+                        <label class="control-label"><span class="required">* </span>CNPJ/CPF</label>
+                        <p:inputText disabled="true" readonly="true" styleClass="form-control"/>
+                    </p:row>
+                    <p:row rendered="#{wizardControle.tela7Fornecedor.tipoPessoa eq 'PJ'}">
+                        <label class="control-label"><span class="required">* </span>CNPJ</label>
+                        <p:inputMask mask="99.999.999/9999-99" value="#{wizardControle.tela7Fornecedor.cpfCnpj}" autocomplete="off" styleClass="form-control"/>
+                    </p:row>
+                    <p:row rendered="#{wizardControle.tela7Fornecedor.tipoPessoa eq 'PF'}">
+                        <label class="control-label"><span class="required">* </span>CPF</label>
+                        <p:inputMask mask="999.999.999-99" value="#{wizardControle.tela7Fornecedor.cpfCnpj}" autocomplete="off" styleClass="form-control"/>
+                    </p:row>
+                </p:outputPanel>
+            </div>
+            <div class="row">
+                <p:outputPanel id="temInscricao" styleClass="col-4 form-group form-md-line-input">
+                    <label class="control-label"><span class="required">* </span>Tem inscrição estadual?</label>
+                    <p:selectOneMenu disabled="#{wizardControle.tela7Fornecedor.tipoPessoa eq null or wizardControle.tela7Fornecedor.tipoPessoa eq 'PF'}"
+                                     value="#{wizardControle.tela7Fornecedor.usaInscricaoEstadual}"
+                                     required="true" requiredMessage="Informe se usa inscrição estadual">
+                        <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                        <f:selectItem itemLabel="Sim" itemValue="S"/>
+                        <f:selectItem itemLabel="Não" itemValue="N"/>
+                    </p:selectOneMenu>
+                </p:outputPanel>
+                <div class="col-5 form-group form-md-line-input">
+                    <label class="control-label">Email</label>
+                    <p:inputText value="#{wizardControle.tela7Fornecedor.email}"/>
+                </div>
+                <div class="col-3 form-group form-md-line-input">
+                    <label class="control-label">Telefone celular</label>
+                    <p:inputMask value="#{wizardControle.tela7Fornecedor.celular}" mask="(99) 99999-9999"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</html>

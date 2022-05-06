@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <ui:composition template="/restrito/generic/auditoria.xhtml">
+        <ui:define name="remotes">
+            <h:commandButton id="remoteBack" action="listaUnidade.xhtml"/>
+        </ui:define>
+
+        <ui:param name="descricaoMenu" value="Cadastro"/>
+        <ui:param name="title" value="Unidade"/>
+        <ui:param name="caminhoAuditoria" value="/restrito/modulos/condominio/bloco/listaAuditoriaUnidade.xhtml"/>
+        <ui:param name="objetoSelecionado" value="#{unidadeControle.unidadeSelecionada.descricao}"/>
+
+        <ui:param name="model" value="#{unidadeControle.dadosAuditoria}"/>
+        <ui:define name="colunas">
+
+            <p:column headerText="Descrição" sortBy="#{item[0].descricao}">
+                <h:outputText value="#{item[0].descricao}"/>
+            </p:column>
+
+            <p:column headerText="Data aquisição" sortBy="#{item[0].dataAquisicao}">
+                <h:outputText value="#{item[0].dataAquisicao}">
+                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                </h:outputText>
+
+            </p:column>
+
+        </ui:define>
+    </ui:composition>
+
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <div class="form-body">
+        <h5>Usuários que podem alterar preço dos produtos</h5>
+        <div class="row">
+            <div class="col">
+                <p:dataTable value="#{parametroSistemaControle.usuarioList}" id="tblPesquisa" emptyMessage="Nenhum usuário localizado"
+                             var="itemPesquisa" styleClass="card p-0 ui-datatable-striped ui-datatable-sm ui-datatable-gridlines">
+
+                    <p:column headerText="Nome">
+                        <h:outputText value="#{itemPesquisa.nome}"/>
+                    </p:column>
+
+                    <p:column headerText="" style="width: 40px;">
+                        <f:facet name="header">
+                            <p:commandLink class="btn btn-circle btn-icon-only btn-default icones" title="Selecionar todos usuários" immediate="true"
+                                           action="#{parametroSistemaControle.doAceitarTodasUsuario()}" update="form:tabs:tblUsuario, form:tabs:tblPesquisa">
+                                <i class="fa fa-angle-double-right"></i>
+                            </p:commandLink>
+                        </f:facet>
+                        <p:commandLink class="btn btn-circle btn-icon-only btn-default icones" title="Selecionar usuário" immediate="true"
+                                       action="#{parametroSistemaControle.doAdicionaUsuario()}" update="form:tabs:tblUsuario, form:tabs:tblPesquisa">
+                            <i class="fa fa-angle-double-right"></i>
+                            <f:setPropertyActionListener value="#{itemPesquisa}" target="#{parametroSistemaControle.usuarioSelecionado}"/>
+                        </p:commandLink>
+                    </p:column>
+                </p:dataTable>
+            </div>
+            <div class="col">
+                <p:dataTable value="#{parametroSistemaControle.usuariosSelecionados}" id="tblUsuario"
+                             emptyMessage="Nenhum usuário selecionado" var="itemUsuario"
+                             styleClass="card p-0 ui-datatable-striped ui-datatable-sm ui-datatable-gridlines">
+
+                    <p:column headerText="Nome">
+                        <h:outputText value="#{itemUsuario.nome}"/>
+                    </p:column>
+
+                    <p:column headerText="" style="width: 40px;">
+                        <f:facet name="header">
+                            <p:commandLink title="Remover todas permissões" styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                           action="#{parametroSistemaControle.doRemoverTodosUsuarios()}" update="form:tabs:tblUsuario, form:tabs:tblPesquisa" immediate="true">
+                                <i class="icon-trash"></i>
+                            </p:commandLink>
+                        </f:facet>
+                        <p:commandLink title="Remover permissão"  styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                       action="#{parametroSistemaControle.doRemoverUsuario()}" update="form:tabs:tblUsuario, form:tabs:tblPesquisa" immediate="true">
+                            <i class="icon-trash"></i>
+                            <f:setPropertyActionListener value="#{itemUsuario}" target="#{parametroSistemaControle.usuarioSelecionado}"/>
+                        </p:commandLink>
+                    </p:column>
+
+                </p:dataTable>
+            </div>
+        </div>
+        <h5>Usuários que devem receber notificação de falta de Fatura IUGU</h5>
+        <p>
+                
+            </p>
+        <div class="row">
+            <div class="col">
+                <p:dataTable value="#{parametroSistemaControle.usuarioNotificacaoList}" id="tblPesquisaUserNotificacao" emptyMessage="Nenhum usuário localizado"
+                             var="itemPesquisaUserNotificacao" styleClass="card p-0 ui-datatable-striped ui-datatable-sm ui-datatable-gridlines">
+
+                    <p:column headerText="Nome">
+                        <h:outputText value="#{itemPesquisaUserNotificacao.nome}"/>
+                    </p:column>
+
+                    <p:column headerText="" style="width: 40px;">
+                        <f:facet name="header">
+                            <p:commandLink class="btn btn-circle btn-icon-only btn-default icones" title="Selecionar todos usuários" immediate="true"
+                                           action="#{parametroSistemaControle.doAceitarTodasUsuarioNotificacao()}" update="form:tabs:tblUsuarioNotificacao, form:tabs:tblPesquisaUserNotificacao">
+                                <i class="fa fa-angle-double-right"></i>
+                            </p:commandLink>
+                        </f:facet>
+                        <p:commandLink class="btn btn-circle btn-icon-only btn-default icones" title="Selecionar usuário" immediate="true"
+                                       action="#{parametroSistemaControle.doAdicionaUsuarioNotificacao()}" update="form:tabs:tblUsuarioNotificacao, form:tabs:tblPesquisaUserNotificacao">
+                            <i class="fa fa-angle-double-right"></i>
+                            <f:setPropertyActionListener value="#{itemPesquisaUserNotificacao}" target="#{parametroSistemaControle.usuarioSelecionadoNotificacao}"/>
+                        </p:commandLink>
+                    </p:column>
+                </p:dataTable>
+            </div>
+            <div class="col">
+                <p:dataTable value="#{parametroSistemaControle.usuariosSelecionadosNotificacao}" id="tblUsuarioNotificacao"
+                             emptyMessage="Nenhum usuário selecionado" var="itemUsuarioNotificacao"
+                             styleClass="card p-0 ui-datatable-striped ui-datatable-sm ui-datatable-gridlines">
+
+                    <p:column headerText="Nome">
+                        <h:outputText value="#{itemUsuarioNotificacao.nome}"/>
+                    </p:column>
+
+                    <p:column headerText="" style="width: 40px;">
+                        <f:facet name="header">
+                            <p:commandLink title="Remover todos os usuários" styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                           action="#{parametroSistemaControle.doRemoverTodosUsuariosNotificacao()}" update="form:tabs:tblUsuarioNotificacao, form:tabs:tblPesquisaUserNotificacao" immediate="true">
+                                <i class="icon-trash"></i>
+                            </p:commandLink>
+                        </f:facet>
+                        <p:commandLink title="Remover usuário"  styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                       action="#{parametroSistemaControle.doRemoverUsuarioNotificacao()}" update="form:tabs:tblUsuarioNotificacao, form:tabs:tblPesquisaUserNotificacao" immediate="true">
+                            <i class="icon-trash"></i>
+                            <f:setPropertyActionListener value="#{itemUsuarioNotificacao}" target="#{parametroSistemaControle.usuarioSelecionadoNotificacao}"/>
+                        </p:commandLink>
+                    </p:column>
+
+                </p:dataTable>
+            </div>
+        </div>
+    </div>
+</html>

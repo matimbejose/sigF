@@ -1,0 +1,44 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"
+      lang="pt" class="no-js"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite/components"
+      xmlns:p="http://primefaces.org/ui">
+
+    <f:metadata >
+        <f:event listener="#{pagamentoControle.iniciar()}" type="preRenderView"/>
+    </f:metadata>
+
+    <ui:composition template="/WEB-INF/templateUser.xhtml">
+
+        <ui:define name="title">SG Finanças - Link pagamento</ui:define>
+
+        <ui:define name="content">
+            <ui:param name="isBoleto" value="#{pagamentoControle.transacao.linkBoleto ne null}"/>
+            <div class="row">
+                <div class="col" style="background: white; box-shadow: 5px 0 #eeeeee;">
+                    <h3 class="text-center">Comprovante do pagamento</h3>
+                    <hr class="divider-dark"/>
+                    <div class="p-3">
+                        <p>Valor#{isBoleto ? '' : ' pago'}: <small class="text-muted"><cc:convertMoney value="#{pagamentoControle.valor}"/></small></p>
+                        <p:row rendered="#{not isBoleto}">
+                            <p>Codigo pagamento: <small class="text-muted">#{pagamentoControle.transacao.idPagamento}</small></p>
+                            <p>Data do pagamento: <small class="text-muted">#{pagamentoControle.retornarDataHora()}</small></p>
+                            <p>Nome do cartão: <small class="text-muted">#{pagamentoControle.transacao.nomeCartao}</small></p>
+                            <p>Nº cartão: <small class="text-muted">XXXX.XXXX.XXXX.#{pagamentoControle.transacao.numeroCartao}</small></p>
+                        </p:row>
+                        <p:row rendered="#{isBoleto}">
+                            <p>Linha digitável: <small class="text-muted">#{pagamentoControle.transacao.linhaDigitavel}</small></p>
+                            <a target="_BLANK" href="#{pagamentoControle.transacao.linkBoleto}" class="btn btn-md btn-success ri" style="text-decoration: none;">
+                                <i class="fa fa-download"></i> Baixar o boleto
+                            </a>
+                        </p:row>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

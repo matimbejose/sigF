@@ -1,0 +1,55 @@
+.layout-wrapper {
+    .layout-footer {
+        width: 100%;
+        float: right;
+        background-color: $footerBgColor;
+        padding: 24px;
+        color: $footerTextColor;
+
+        .logo-container {            
+            img {
+                height: 48px;
+                vertical-align: middle;
+            }
+    
+            .app-name {
+                font-weight: 700;
+                font-size: 24px;
+                vertical-align: middle;
+                margin-left: 14px;
+                color: $footerTextColor;
+            }
+        }
+
+        .footer-icons {
+            list-style: none;
+            float: right;
+
+            ul {
+                margin: 0;
+                padding: 0;
+
+                li {
+                    display: inline-block;
+
+                    a {
+                        color: $footerIconColor;
+                        display: inline-block;
+                        height: 64px;
+                        width: 64px;
+                        text-align: center;
+                        line-height: 64px;
+                        cursor: pointer;
+
+                        i {
+                            width: auto;
+                            font-size: 24px;
+                            line-height: inherit;
+                            text-align: left;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

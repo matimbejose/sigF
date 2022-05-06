@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+
+    <f:metadata >
+        <f:event listener="#{vendaControle.initPDV()}" type="preRenderView" />
+        <f:event listener="#{usuarioControle.controleMenu.setMenuProcessoPdv()}" type="preRenderView" />
+    </f:metadata>
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Venda"/>
+        <ui:define name="title">#{title}</ui:define>
+        <ui:define name="viewname">
+            <li>Venda/Compra</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/venda/pdv.xhtml"> #{title}</p:link></li>
+        </ui:define>
+            
+
+        <ui:define name="content">
+            <style>
+                tbody#form\:listaVenda_data {
+                    max-height: 300px;
+                    overflow-y: auto;
+                }
+            </style>
+
+            <h:messages class="alertMessage" id="msgResultado" errorClass="alert alert-danger" />
+            <div class="row">
+                <div class="col-md-12 ">
+                    <!-- BEGIN SAMPLE FORM PORTLET-->
+                    <div class="portlet light bordered">
+                        <div class="portlet-title">
+                            <div class="caption">
+                                <i class="fa fa-shopping-basket"></i>
+                                <span class="caption-subject font-dark sbold uppercase">Lançamento de venda</span>
+                            </div>
+                            <ui:remove>
+                                <div class="tools">
+                                </div>
+                                <div class="actions">
+                                    <h:form>
+                                        <h:commandLink styleClass="btn blue btn-circle btn-outline sbold" action="#{vendaControle.mostrarAjudaPDV()}">
+                                            <i class="icon-question"></i>
+                                        </h:commandLink>
+                                    </h:form>
+                                </div>
+                            </ui:remove>
+                        </div>
+                        <div class="portlet-body form">
+                            <h:form id="form" acceptcharset="ISO-8859-1" role="form" enctype="multipart/form-data">
+                                <div class="form-body">
+                                    <div class="row" style="display: flex;">
+                                        <div class="col-md-5">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label">Cod. barra</label>
+                                                <p:inputText id="proCodBar" value="#{vendaControle.codigoDeBarras}" onfocus="this.setSelectionRange(0, this.value.length);">
+                                                    <p:ajax event="change" listener="#{vendaControle.doStartAddProdutoPDV()}"
+                                                            process="@this" update="proCodBar, proNome, quantidade, proPreco, vlrTotal"/>
+                                                </p:inputText>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label">Produto</label>
+                                                <p:inputText styleClass="form-control" disabled="true" id="proNome"
+                                                             value="#{vendaControle.vendaProdutoSelecionado.idProduto.descricao}"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label">Qte.</label>
+                                                <p:inputNumber decimalPlaces="2" decimalSeparator="," thousandSeparator="." id="quantidade"
+                                                               value="#{vendaControle.vendaProdutoSelecionado.quantidade}" minValue="0.01"
+                                                               onfocus="this.setSelectionRange(0, this.value.length);">
+                                                    <p:ajax event="change" process="@this" update="proPreco, vlrTotal"/>
+                                                </p:inputNumber>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label">Preço</label>
+                                                <p:inputNumber decimalPlaces="2" decimalSeparator="," thousandSeparator="." symbol="R$ " disabled="true"
+                                                               value="#{vendaControle.vendaProdutoSelecionado.idProduto.valorVenda}" id="proPreco"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label">Total</label>
+                                                <p:inputNumber decimalPlaces="2" decimalSeparator="," thousandSeparator="."
+                                                               symbol="R$ " disabled="true" id="vlrTotal"
+                                                               value="#{vendaControle.vendaProdutoSelecionado.quantidade * vendaControle.vendaProdutoSelecionado.idProduto.valorVenda}"/>
+                                            </div>
+                                        </div>
+                                        <div style="width: auto;padding-right: 15px;">
+                                            <p:commandButton action="#{vendaControle.addProdutoToList()}" icon="fa fa-plus" update="listaVenda"
+                                                             styleClass="btn" style="margin-top: 25px;" oncomplete="$('#form\\:proCodBar').focus();"/>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <p:dataTable first="#{vendaControle.first}" id="listaVenda" emptyMessage="Sem itens" lazy="true"
+                                                         styleClass="table table-bordered table-condensed table-striped"
+                                                         value="#{vendaControle.listVendaProduto}" var="item">
+                                                <f:facet name="header">
+                                                    Itens no carrinho
+                                                </f:facet>
+                                                <!--
+                                                    <p:columnGroup type="header">
+                                                        <p:row>
+                                                            <p:column colspan="2" headerText="Produto" />
+                                                            <p:column colspan="4" headerText="Preço" style="width: 200px;"/>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column headerText="#" style="width: 20px;"/>
+                                                            <p:column headerText="Nome"/>
+
+                                                            <p:column headerText="Qte." style="width: 60px;"/>
+                                                            <p:column headerText="Vlr." style="width: 60px;"/>
+                                                            <p:column headerText="Total" style="width: 60px;"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                -->
+
+                                                <p:column headerText="#" style="width: 20px;padding: 0;text-align: center;">
+                                                    <h:outputText value="#{vendaControle.getIndex(item)}"/>
+                                                </p:column>
+                                                <p:column headerText="Nome">
+                                                    <h:outputText value="#{item.idProduto.descricao}"/>
+                                                </p:column>
+                                                <p:column headerText="Qte." style="min-width: 60px;max-width: 100px;text-align: right;">
+                                                    <h:outputText value="#{item.quantidade}">
+                                                        <f:convertNumber locale="pt_BR" type="number"/>
+                                                    </h:outputText>
+                                                </p:column>
+                                                <p:column headerText="Vlr." style="min-width: 80px;max-width: 100px;">
+                                                    <h:outputText value="#{item.idProduto.valorVenda}">
+                                                        <f:convertNumber locale="pt_BR" type="currency"/>
+                                                    </h:outputText>
+                                                </p:column>
+                                                <p:column headerText="Total" style="min-width: 80px;max-width: 100px;">
+                                                    <h:outputText value="#{item.quantidade * item.idProduto.valorVenda}">
+                                                        <f:convertNumber locale="pt_BR" type="currency"/>
+                                                    </h:outputText>
+                                                </p:column>
+
+                                                <f:facet name="footer">
+                                                    <h:outputText value="#{vendaControle.listVendaProduto.size()}"/>
+                                                    produto<h:outputText value="#{vendaControle.listVendaProduto.size() eq 1 ? '' : 's'}"/>,
+                                                    <h:outputText value="#{vendaControle.quantidadeTotalCarrinho}">
+                                                        <f:convertNumber locale="pt_BR" type="number"/>
+                                                    </h:outputText>
+                                                    iten<h:outputText value="#{vendaControle.quantidadeTotalCarrinho eq 1 ? '' : 's'}"/>,
+                                                    <h:outputText value="#{vendaControle.valorTotalCarrinho}">
+                                                        <f:convertNumber locale="pt_BR" type="currency"/>
+                                                    </h:outputText>
+                                                </f:facet>
+                                            </p:dataTable>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label">Forma de pagamento</label>
+                                                <p:selectOneMenu value="#{vendaControle.formaPagamentoSelecionado}" filter="true" filterMatchMode="contains"
+                                                                 converter="#{genericConverter}">
+                                                    <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                    <f:selectItems value="#{vendaControle.formaPagamentoParaNFeList}" var="fp"
+                                                                   itemLabel="#{fp.descricao}" itemValue="#{fp}"/>
+                                                </p:selectOneMenu>
+                                            </div>
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label">Desconto</label>
+                                                <p:inputNumber decimalPlaces="2" decimalSeparator="," thousandSeparator="."
+                                                               symbol="R$ " value="#{vendaControle.vendaSelecionada.desconto}"/>
+                                            </div>
+                                            <p:commandButton value="Efetuar venda" icon="fa fa-check-circle" styleClass="btn"
+                                                             action="#{vendaControle.doFinishAddPDV()}"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </h:form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+    </ui:composition>
+</html>

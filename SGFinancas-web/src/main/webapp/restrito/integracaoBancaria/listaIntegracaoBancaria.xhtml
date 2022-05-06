@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Integração bancária"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Financeiro</li>
+            <li>/</li>
+            <li>Apoio</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/integracaoBancaria/listaIntegracaoBancaria.xhtml"> #{title}</p:link></li>
+        </ui:define>
+        <ui:define name="remotes">
+            <h:commandButton id="remoteImport" action="#{integracaoBancariaControle.doStartAdd()}"/>
+        </ui:define>
+
+        <ui:define name="formButtons">
+            <p:commandButton type="button" value="Limpar filtros" onclick="clearDataTableFilters('tbl');"/>
+            <p:commandButton id="toggler" type="button" value="Colunas"/>
+            <p:columnToggler datasource="tbl" trigger="toggler"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <ui:include src="/WEB-INF/msgErro.xhtml"/>
+            <p:dataTable value="#{integracaoBancariaControle.model}" emptyMessage="Nenhum registro encontrado." 
+                         var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" 
+                         paginator="true" paginatorPosition="bottom" sortBy="#{item.idDocumentoAnexo}" sortOrder="DESCENDING"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
+                         currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+                <p:column headerText="#" width="55" sortBy="#{item.id}" visible="false">
+                    <h:outputText value="#{item.id}"/>
+                </p:column>
+
+                <p:column width="150" headerText="Arquivo">
+                    <h:outputText value="#{item.idDocumentoAnexo.nomeArquivo}"/>
+                </p:column>
+
+                <p:column width="100" headerText="Agencia">
+                    <h:outputText value="#{item.agencia}"/>
+                </p:column>
+
+                <p:column width="100" headerText="Conta">
+                    <h:outputText value="#{item.conta}"/>
+                </p:column>
+
+                <p:column width="150" headerText="Situação" >
+                    <h:outputText rendered="#{item.situacao eq 'N'}" value="Novo"/>
+                    <h:outputText rendered="#{item.situacao eq 'PO'}" value="Processado OK"/>
+                    <h:outputText rendered="#{item.situacao eq 'AI'}" value="Aguardando inspeção"/>
+                    <h:outputText rendered="#{item.situacao eq 'AP'}" value="Aguardando processamento"/>
+                    <h:outputText rendered="#{item.situacao eq 'PE'}" value="Processamento com erro"/>
+                </p:column>
+
+                <p:column headerText="Responsável">
+                    <h:outputText value="#{item.idDocumentoAnexo.idUsuarioEnvio.nome}"/>
+                </p:column>
+
+                <p:column headerText="Envio">
+                    <h:outputText value="#{item.idDocumentoAnexo.dataEnvio}">
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Processamento" >
+                    <h:outputText value="#{item.dataProcessamento}">
+                        <f:convertDateTime pattern="dd/MM/yy HH:mm" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Competência" >
+                    <h:outputText value="#{item.competencia}">
+                        <f:convertDateTime pattern="MM/yyyy" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column width="177" headerText="Ações">
+
+                    <p:commandLink rendered="#{item.situacao ne 'PO'}" update="form:msgResultado" styleClass="btn btn-circle btn-icon-only btn-default icones" title="Conciliar parcela" action="#{integracaoBancariaControle.vincularConta()}"  ajax="false">
+                        <i class="fa fa-retweet"></i>
+                        <f:setPropertyActionListener value="#{item}" target="#{integracaoBancariaControle.integracaoBancariaSelecionada}"/>
+                    </p:commandLink>
+
+                    <p:commandLink title="Download arquivo" ajax="false" class="btn btn-circle btn-icon-only btn-default icones">
+                        <i class="fa fa-arrow-down"></i>
+                        <p:fileDownload  value="#{integracaoBancariaControle.downloadArquivo(item)}" />
+                    </p:commandLink>
+
+                    <h:commandLink rendered="#{item.situacao ne 'PO'}"  styleClass="btn btn-circle btn-icon-only btn-default icones" title="Remover arquivo" action="#{integracaoBancariaControle.doFinishExcluir()}" onclick="return confirm('Tem certeza que deseja excluir este arquivo ?');">
+                        <i class="icon-trash"></i>
+                        <f:setPropertyActionListener value="#{item}" target="#{integracaoBancariaControle.integracaoBancariaSelecionada}"/>
+                    </h:commandLink>
+
+                    <h:commandLink  title="Auditoria" styleClass="btn btn-circle btn-icon-only btn-default icones" action="#{integracaoBancariaControle.doShowAuditoria()}" >
+                        <i class="fa fa-history"></i>
+                        <f:setPropertyActionListener value="#{item}" target="#{integracaoBancariaControle.integracaoBancariaSelecionada}"/>
+                    </h:commandLink>
+
+                </p:column>
+
+            </p:dataTable>
+        </ui:define>
+    </ui:composition>
+
+</html>

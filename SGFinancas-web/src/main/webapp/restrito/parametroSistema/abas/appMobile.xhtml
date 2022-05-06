@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <div class="form-body">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group form-md-line-input">
+                    <label class="control-label">Conta bancária padrão</label>
+                    <p:selectOneMenu value="#{parametroSistemaControle.parametroSistemaSelecionado.appContaBancariaPadrao}"
+                                     var="t" converter="#{genericConverter}">
+                        <p:column>
+                            <h:outputText value="#{t.descricao}" />
+                        </p:column>
+
+                        <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                        <f:selectItems value="#{contaBancariaControle.contaBancarias}"  var="contaBancaria" itemLabel="#{contaBancaria.descricao}" itemValue="#{contaBancaria}"/>
+                    </p:selectOneMenu>
+                </div>
+            </div>
+        </div>
+    </div>
+</html>

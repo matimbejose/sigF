@@ -1,0 +1,236 @@
+<nfeProc versao="3.10" xmlns="http://www.portalfiscal.inf.br/nfe">
+    <NFe xmlns="http://www.portalfiscal.inf.br/nfe">
+        <infNFe Id="NFe31161133041260146371550000033084971173130920" versao="3.10">
+            <ide>
+                <cUF>31</cUF>
+                <cNF>17313092</cNF>
+                <natOp>VENDA SUBST.TRIB.</natOp>
+                <indPag>0</indPag>
+                <mod>55</mod>
+                <serie>0</serie>
+                <nNF>3308497</nNF>
+                <dhEmi>2016-11-03T17:29:53-02:00</dhEmi>
+                <dhSaiEnt>2016-11-03T17:29:53-02:00</dhSaiEnt>
+                <tpNF>1</tpNF>
+                <idDest>1</idDest>
+                <cMunFG>3118601</cMunFG>
+                <tpImp>2</tpImp>
+                <tpEmis>1</tpEmis>
+                <cDV>0</cDV>
+                <tpAmb>1</tpAmb>
+                <finNFe>1</finNFe>
+                <indFinal>1</indFinal>
+                <indPres>9</indPres>
+                <procEmi>0</procEmi>
+                <verProc>SisTranfe 1.0.0.0</verProc>
+            </ide>
+            <emit>
+                <CNPJ>33041260146371</CNPJ>
+                <xNome>VIA VAREJO S/A</xNome>
+                <xFant>VIAVAREJO</xFant>
+                <enderEmit>
+                    <xLgr>VIA VEREADOR JOAQUIM COSTA</xLgr>
+                    <nro>2000</nro>
+                    <xCpl>BARRO PRETO</xCpl>
+                    <xBairro>CAMPINA VERDE</xBairro>
+                    <cMun>3118601</cMun>
+                    <xMun>CONTAGEM</xMun>
+                    <UF>MG</UF>
+                    <CEP>32150240</CEP>
+                    <cPais>1058</cPais>
+                    <xPais>BRASIL</xPais>
+                    <fone>3134796300</fone>
+                </enderEmit>
+                <IE>0020503484148</IE>
+                <CRT>3</CRT>
+            </emit>
+            <dest>
+                <CNPJ>08644984000155</CNPJ>
+                <xNome>WEA VILLEFORT C T LTDA</xNome>
+                <enderDest>
+                    <xLgr>R S PAULO</xLgr>
+                    <nro>1106</nro>
+                    <xCpl>4 ANDAR</xCpl>
+                    <xBairro>CENTRO</xBairro>
+                    <cMun>3106200</cMun>
+                    <xMun>BELO HORIZONTE</xMun>
+                    <UF>MG</UF>
+                    <CEP>30170131</CEP>
+                    <fone>3130470848</fone>
+                </enderDest>
+                <indIEDest>9</indIEDest>
+                <email>financeiro@villefortconsulting.com</email>
+            </dest>
+            <det nItem="1">
+                <prod>
+                    <cProd>001-003459101</cProd>
+                    <cEAN>7898626572475</cEAN>
+                    <xProd>SPLIT 12.000B SPRINGER INV 42MBCA12M5 FRIO 220</xProd>
+                    <NCM>84151011</NCM>
+                    <CFOP>5405</CFOP>
+                    <uCom>PC</uCom>
+                    <qCom>5.000</qCom>
+                    <vUnCom>900.5000</vUnCom>
+                    <vProd>4502.50</vProd>
+                    <cEANTrib>7898626572475</cEANTrib>
+                    <uTrib>PC</uTrib>
+                    <qTrib>5.000</qTrib>
+                    <vUnTrib>900.5000</vUnTrib>
+                    <vFrete>12.50</vFrete>
+                    <vDesc>515.04</vDesc>
+                    <indTot>1</indTot>
+                </prod>
+                <imposto>
+                    <ICMS>
+                        <ICMS60>
+                            <orig>0</orig>
+                            <CST>60</CST>
+                            <vBCSTRet>0.00</vBCSTRet>
+                            <vICMSSTRet>0.00</vICMSSTRet>
+                        </ICMS60>
+                    </ICMS>
+                    <PIS>
+                        <PISAliq>
+                            <CST>01</CST>
+                            <vBC>3999.96</vBC>
+                            <pPIS>1.65</pPIS>
+                            <vPIS>65.99</vPIS>
+                        </PISAliq>
+                    </PIS>
+                    <COFINS>
+                        <COFINSAliq>
+                            <CST>01</CST>
+                            <vBC>3999.96</vBC>
+                            <pCOFINS>7.60</pCOFINS>
+                            <vCOFINS>303.99</vCOFINS>
+                        </COFINSAliq>
+                    </COFINS>
+                </imposto>
+            </det>
+            <det nItem="2">
+                <prod>
+                    <cProd>001-003459110</cProd>
+                    <cEAN>7898626572550</cEAN>
+                    <xProd>COND 12.000B SPRINGER INV 338MBCA12M5 FRIO 220</xProd>
+                    <NCM>84151011</NCM>
+                    <CFOP>5405</CFOP>
+                    <uCom>PC</uCom>
+                    <qCom>5.000</qCom>
+                    <vUnCom>900.5000</vUnCom>
+                    <vProd>4502.50</vProd>
+                    <cEANTrib>7898626572550</cEANTrib>
+                    <uTrib>PC</uTrib>
+                    <qTrib>5.000</qTrib>
+                    <vUnTrib>900.5000</vUnTrib>
+                    <vFrete>12.50</vFrete>
+                    <vDesc>514.96</vDesc>
+                    <indTot>1</indTot>
+                </prod>
+                <imposto>
+                    <ICMS>
+                        <ICMS60>
+                            <orig>0</orig>
+                            <CST>60</CST>
+                            <vBCSTRet>0.00</vBCSTRet>
+                            <vICMSSTRet>0.00</vICMSSTRet>
+                        </ICMS60>
+                    </ICMS>
+                    <PIS>
+                        <PISAliq>
+                            <CST>01</CST>
+                            <vBC>4000.04</vBC>
+                            <pPIS>1.65</pPIS>
+                            <vPIS>66.00</vPIS>
+                        </PISAliq>
+                    </PIS>
+                    <COFINS>
+                        <COFINSAliq>
+                            <CST>01</CST>
+                            <vBC>4000.04</vBC>
+                            <pCOFINS>7.60</pCOFINS>
+                            <vCOFINS>304.00</vCOFINS>
+                        </COFINSAliq>
+                    </COFINS>
+                </imposto>
+            </det>
+            <total>
+                <ICMSTot>
+                    <vBC>0.00</vBC>
+                    <vICMS>0.00</vICMS>
+                    <vICMSDeson>0.00</vICMSDeson>
+                    <vBCST>0.00</vBCST>
+                    <vST>0.00</vST>
+                    <vProd>9005.00</vProd>
+                    <vFrete>25.00</vFrete>
+                    <vSeg>0.00</vSeg>
+                    <vDesc>1030.00</vDesc>
+                    <vII>0.00</vII>
+                    <vIPI>0.00</vIPI>
+                    <vPIS>131.99</vPIS>
+                    <vCOFINS>607.99</vCOFINS>
+                    <vOutro>0.00</vOutro>
+                    <vNF>8000.00</vNF>
+                </ICMSTot>
+            </total>
+            <transp>
+                <modFrete>1</modFrete>
+                <transporta>
+                    <CNPJ>12893918000196</CNPJ>
+                    <xNome>MD TRANSPORTES E LOGISTICA LTD</xNome>
+                    <IE>0016951230099</IE>
+                    <xEnder>R JOAQUIM JOSE  1315  FONTE GRANDE</xEnder>
+                    <xMun>CONTAGEM</xMun>
+                    <UF>MG</UF>
+                </transporta>
+                <veicTransp>
+                    <placa>HBG8630</placa>
+                    <UF>MG</UF>
+                    <RNTC>044021626</RNTC>
+                </veicTransp>
+                <vol>
+                    <qVol>10</qVol>
+                    <pesoL>140.000</pesoL>
+                    <pesoB>155.000</pesoB>
+                </vol>
+            </transp>
+            <infAdic>
+                <infCpl>FILIAL VENDA: 1260 N.PEDIDO:245370075 1 VV VENDEDOR: 1943472 CARGA: 67635334 BOX: 63 MICRO ZONA: MG M 0049 CARTAO CREDITO NUM.SEQUENCIAL: 1260-0096511-8 DATA DE ENTREGA: 05.11.2016 TELEF.CLIENTE: CELULAR (31 ) 9232-9967 LOCALIZACAO: 1 QUARTEIRAO ABAIXO DO SHOPP CIDADE ICMS REC.POR SUBST.TRIB.CONF.ANEXO XV PARTE 2 21 ITEM 93.0 DO RICMS-MG Trib aprox R$: 709 77 Federal e 1.435 49 Estadual Fonte:IBPT - Continue comprando em www.casasbahia.com.br ou televendas 4003-2773 - MD-5: 123465465465465465</infCpl>
+                <obsCont xCampo="SAC">
+                    <xTexto>30038889</xTexto>
+                </obsCont>
+            </infAdic>
+        </infNFe>
+        <Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
+            <SignedInfo>
+                <CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315" />
+                <SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" />
+                <Reference URI="#NFe31161133041260146371550000033084971173130920">
+                    <Transforms>
+                        <Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" />
+                        <Transform Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315" />
+                    </Transforms>
+                    <DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+                    <DigestValue>hBCeUnTBaZW4pvSjLascoOgtv5A=</DigestValue>
+                </Reference>
+            </SignedInfo>
+            <SignatureValue>bfmZ1L2jPKUOoFdlgtMASkCI51hGkR0LLCD5mqk8IyKfOgotQ5xw5G5CwlpwpNgEP73OgusElBfh/Wdo00+T7p99VDmQrfVPKlZoRTdcITI/GiHZ9DuONw00/B+/3MSAH6Ovxw4uerzvwCI0PNESk8MqdoFTuTpw/iEN5uTpBj6tUlCPnShXleHB1z9NBm+xH/Wkna8P/+mIuC4PrKlS/MOcPne5o1C/PVr6GlmW4UN8SzMelvPHt0neAB0C6m+uygI8ygeSkYzm6k+u/+ecZ0Nc/7nTmkCHEqs8eCMOKawmssa90cuvP1tDs49nbWualpqMN5vGsvFbHGsVpbpwYA==</SignatureValue>
+            <KeyInfo>
+                <X509Data>
+                    <X509Certificate>MIIIMDCCBhigAwIBAgIQKNUetUbg3Ho2awtZ9F6xXDANBgkqhkiG9w0BAQsFADB0MQswCQYDVQQGEwJCUjETMBEGA1UEChMKSUNQLUJyYXNpbDEtMCsGA1UECxMkQ2VydGlzaWduIENlcnRpZmljYWRvcmEgRGlnaXRhbCBTLkEuMSEwHwYDVQQDExhBQyBDZXJ0aXNpZ24gTXVsdGlwbGEgRzUwHhcNMTYwMTIyMDAwMDAwWhcNMTcwMTIwMjM1OTU5WjCBvjELMAkGA1UEBhMCQlIxEzARBgNVBAoUCklDUC1CcmFzaWwxIDAeBgNVBAsUF0F1dGVudGljYWRvIHBvciBBUiBUQVJDMRswGQYDVQQLFBJBc3NpbmF0dXJhIFRpcG8gQTExFTATBgNVBAsUDElEIC0gOTgyMzg2NzEWMBQGA1UEAxMNVklBIFZBUkVKTyBTQTEsMCoGCSqGSIb3DQEJARYda2VsbHkuYXJhdWpvQHZpYXZhcmVqby5jb20uYnIwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDiqxg9CIrLbVcKV4lFRowof7HVUaFcBTTApv/Elib+J5GtlXBwR+nnmcwrUEsO22Iyfo7aEUx/7Jgso2NMwa01StMdAxAPuRT469byJXaglE4vG5HReKmEyssxqF5/uAgBi6g1xTGpSfBn84QAgrCdz8oKFlJvnGKOivQZYkoczkSQEUfFKfZZKhleaH4KK2IeSnMU/r1sa9xnM91Kuz7N/F6oXedVMlpVklv7esjP8GwdXPg+MGNcFLMOAzaV12v5EyhYczTCKC3GULi63QNHQUpQqno9g4M8yLucIzdlod1wqB2wiOo29dtPB4b1/t5jXXtMMNeSqHMC5hjEbhGJAgMBAAGjggNxMIIDbTCBtwYDVR0RBIGvMIGsoD0GBWBMAQMEoDQEMjAxMDkxOTY3MDc0Nzg4NTc4ODQwMDAwMDAwMDAwMDAwMDAwMDAxNTgyMjY1MlNTUFNQoBgGBWBMAQMCoA8EDU1BUkNFTE8gTE9QRVOgGQYFYEwBAwOgEAQOMzMwNDEyNjAwNjUyOTCgFwYFYEwBAwegDgQMMDAwMDAwMDAwMDAwgR1rZWxseS5hcmF1am9AdmlhdmFyZWpvLmNvbS5icjAJBgNVHRMEAjAAMB8GA1UdIwQYMBaAFJ1Qz73/JMqvsTPrF+JCeo5pKo5TMA4GA1UdDwEB/wQEAwIF4DCBiQYDVR0gBIGBMH8wfQYGYEwBAgELMHMwcQYIKwYBBQUHAgEWZWh0dHA6Ly9pY3AtYnJhc2lsLmNlcnRpc2lnbi5jb20uYnIvcmVwb3NpdG9yaW8vZHBjL0FDX0NlcnRpc2lnbl9NdWx0aXBsYS9EUENfQUNfQ2VydGlTaWduTXVsdGlwbGEucGRmMIIBJQYDVR0fBIIBHDCCARgwXKBaoFiGVmh0dHA6Ly9pY3AtYnJhc2lsLmNlcnRpc2lnbi5jb20uYnIvcmVwb3NpdG9yaW8vbGNyL0FDQ2VydGlzaWduTXVsdGlwbGFHNS9MYXRlc3RDUkwuY3JsMFugWaBXhlVodHRwOi8vaWNwLWJyYXNpbC5vdXRyYWxjci5jb20uYnIvcmVwb3NpdG9yaW8vbGNyL0FDQ2VydGlzaWduTXVsdGlwbGFHNS9MYXRlc3RDUkwuY3JsMFugWaBXhlVodHRwOi8vcmVwb3NpdG9yaW8uaWNwYnJhc2lsLmdvdi5ici9sY3IvQ2VydGlzaWduL0FDQ2VydGlzaWduTXVsdGlwbGFHNS9MYXRlc3RDUkwuY3JsMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcDBDCBoAYIKwYBBQUHAQEEgZMwgZAwZAYIKwYBBQUHMAKGWGh0dHA6Ly9pY3AtYnJhc2lsLmNlcnRpc2lnbi5jb20uYnIvcmVwb3NpdG9yaW8vY2VydGlmaWNhZG9zL0FDX0NlcnRpc2lnbl9NdWx0aXBsYV9HNS5wN2MwKAYIKwYBBQUHMAGGHGh0dHA6Ly9vY3NwLmNlcnRpc2lnbi5jb20uYnIwDQYJKoZIhvcNAQELBQADggIBAGBWau7dzCxIFDi0eHhtbjoD33aNiZqiKSHkgR75v4g+PLBXVNV8svFPrnhGWbEOPqNa6Z3FTTX45wuFBn71mPATCT4Ffz0uv1uKZ2lJah6uV5aJWukZ0m3/gZBgHY/0xOQlMSa7tXBk0DC/vjukQcVMl4Um6nEtAYH3pO6pI/lkHdFFqjMf6yU8xCYQWWvBcpa0gXZPgdr70z7Kwo6gmLBI4h0hcB8AirrzPb5yNCgaNqbzmtQv9HxXQHM2eNxRrL9Ut3CsyAKSkU8sIJDxbAwWdLke4UQrfZTlrTXSBabJ9kVq72KNmLE76/BPI36Vgp2YK2dm28jZnZ1p0EGyfzTW8O686h8pSPGgbc+kydoHVP8QYkCjThhvxXuRJE2L4ENUyOqw1k9AGUO/L9pRYDPHxG7pO2yxhpgyotyhbDNE0CRjorjb4sRzu03rkK7eRPd/oGNL7YpYlanHC0P2So4Xe67XNY6FAjWDokbXvL/mxnBkMB2WTyh0PezwwXFlX48bwxzVzx2Yb5d5/jGn0mM1J1Z4ByfAv2d8N89bB7aAlxppIqqAMBaWWMtwTAVMdZtq+zDZ3+A4Q6s3bszL2b1NMFLy/tptAr7R7rVx0DF0+IVRghWqE3NQfxNW2JSFJNVbngo2PUo97Hk3ufWUtj00Temd8BPnrq/awAfe7TwZ</X509Certificate>
+                </X509Data>
+            </KeyInfo>
+        </Signature>
+    </NFe>
+    <protNFe versao="3.10">
+        <infProt Id="ID131162347728572">
+            <tpAmb>1</tpAmb>
+            <verAplic>14_0_8</verAplic>
+            <chNFe>31161133041260146371550000033084971173130920</chNFe>
+            <dhRecbto>2016-11-03T17:31:31-02:00</dhRecbto>
+            <nProt>131162347728572</nProt>
+            <digVal>hBCeUnTBaZW4pvSjLascoOgtv5A=</digVal>
+            <cStat>100</cStat>
+            <xMotivo>Autorizado o uso da NF-e</xMotivo>
+        </infProt>
+    </protNFe>
+</nfeProc>

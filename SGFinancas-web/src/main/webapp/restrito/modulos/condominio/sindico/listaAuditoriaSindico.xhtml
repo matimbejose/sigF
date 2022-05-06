@@ -1,0 +1,26 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <ui:composition template="/restrito/generic/auditoria.xhtml">
+        <ui:define name="remotes">
+            <h:commandButton id="remoteBack" action="listaSindico.xhtml"/>
+        </ui:define>
+
+        <ui:param name="descricaoMenu" value="Cadastro"/>
+        <ui:param name="title" value="Produto"/>
+        <ui:param name="caminhoAuditoria" value="/restrito/modulos/condominio/sindico/listaAuditoriaSindico.xhtml"/>
+        <ui:param name="objetoSelecionado" value="#{sindicoControle.sindicoSelecionada.idSindico.nome}"/>
+
+        <ui:param name="model" value="#{sindicoControle.dadosAuditoria}"/>
+        <ui:define name="colunas">
+            <p:column headerText="Descrição">
+                <h:outputText value="#{item[0].idSindico.nome}"/>
+                <!-- FIXME Aqui da erro por causa do join -->
+            </p:column>
+        </ui:define>
+    </ui:composition>
+
+</html>

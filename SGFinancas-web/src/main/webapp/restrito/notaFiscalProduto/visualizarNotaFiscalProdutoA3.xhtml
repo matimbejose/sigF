@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:define name="cssInicial">
+            <link href="#{facesContext.externalContext.requestContextPath}/resources/metronic/assets/pages/css/invoice.min.css" rel="stylesheet" type="text/css" />
+        </ui:define>
+
+        <ui:param name="title" value="Nota fiscal de produto"/>
+        <ui:define name="title">#{title}</ui:define>
+        <ui:define name="viewname">
+            <li>Nota fiscal</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/notaFiscalProduto/listaNotaFiscalProduto.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+
+        <ui:define name="content">
+
+            <h:messages class="alertMessage" id="msgResultado" errorClass="alert alert-danger" infoClass="alert alert-success" />
+            <h:form id="form" acceptcharset="ISO-8859-1" prependId="false">
+
+                <p:remoteCommand
+                    name="atualizaRetornoNfe"
+                    update=":form:textoRetorno, :form:botoes, :form:botoes1"
+                    actionListener="#{notaFiscalProdutoControle.processaRetornoA3()}"/>
+
+                <div class="invoice">
+                    <div class="row invoice-logo">
+                        <div class="col-xs-6 invoice-logo-space">
+                            <p:graphicImage id="foto" value="#{empresaControle.getLogoEmpresaLogada()}" style="width: 100px; height: 100px;" cache="false" />
+                        </div>
+                        <p:outputPanel id ="textoRetorno">
+                            <div class="col-xs-6">
+                                <p style="font-size: 18px; color: #{notaFiscalProdutoControle.envioOK ? '' :'red'}"><strong> #{notaFiscalProdutoControle.textoChave}</strong>
+                                    <span class="muted"> #{notaFiscalProdutoControle.textoAcesso} </span>
+                                </p>
+                            </div>
+                        </p:outputPanel>
+                    </div>
+                    <hr/>
+                    <div class="row">
+                        <div class="col-xs-4">
+                            <h3>Cliente:</h3>
+                            <ul class="list-unstyled" >
+                                <li>
+                                    <strong>Nome:</strong> #{notaFiscalProdutoControle.nfSelecionado.nomeCliente}
+                                </li>
+                                <li>
+                                    <strong>CNPJ:</strong> #{notaFiscalProdutoControle.nfSelecionado.cpfCnpjCliente}
+                                </li>
+                                <li>
+                                    <strong>Endereço:</strong> #{notaFiscalProdutoControle.nfSelecionado.enderecoCliente},  #{notaFiscalProdutoControle.nfSelecionado.numeroCliente}
+                                </li>
+                                <li>
+                                    <strong>Bairro:</strong> #{notaFiscalProdutoControle.nfSelecionado.bairroCliente}
+                                </li>
+                                <li>
+                                    <strong>Cidade:</strong> #{notaFiscalProdutoControle.nfSelecionado.cidadeCliente}
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-xs-4 invoice-payment">
+                            <h3>Dados da NF:</h3>
+                            <ul class="list-unstyled">
+                                <li>
+                                    <strong>Número:</strong> #{notaFiscalProdutoControle.nfSelecionado.numeroNotaFiscal}
+                                </li>
+                                <li>
+                                    <strong>Protocolo:</strong> #{notaFiscalProdutoControle.nfSelecionado.protocolo}
+                                </li>
+                                <li>
+                                    <strong>Emissão:</strong>
+                                    <h:outputText value="#{notaFiscalProdutoControle.nfSelecionado.dataEmissao}">
+                                        <f:convertDateTime pattern="dd/MM/yy HH:mm"/>
+                                    </h:outputText>
+                                </li>
+                                <li>
+                                    <strong>Autorização:</strong>
+                                    <h:outputText value="#{notaFiscalProdutoControle.nfSelecionado.dataRetornoProcessamento}">
+                                        <f:convertDateTime pattern="dd/MM/yy HH:mm"/>
+                                    </h:outputText>
+                                </li>
+                                <li>
+                                    <strong>Inscrição estadual:</strong> #{notaFiscalProdutoControle.nfSelecionado.inscricaoEstadual}
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-xs-4">
+                            <h3>Impostos NF:</h3>
+                            <ul class="list-unstyled">
+                                <li>
+                                    <strong>Valor do COFINS:</strong>
+                                    <h:outputText value="#{notaFiscalProdutoControle.nfSelecionado.valorConfins}">
+                                        <f:convertNumber currencySymbol="" type="currency" />
+                                    </h:outputText>
+                                </li>
+                                <li>
+                                    <strong>Valor do ISS:</strong>
+                                    <h:outputText value="#{notaFiscalProdutoControle.nfSelecionado.valorIss}">
+                                        <f:convertNumber currencySymbol="" type="currency" />
+                                    </h:outputText>
+                                </li>
+                                <li>
+                                    <strong>Valor do PIS:</strong>
+                                    <h:outputText value="#{notaFiscalProdutoControle.nfSelecionado.valorPis}">
+                                        <f:convertNumber currencySymbol="" type="currency" />
+                                    </h:outputText>
+                                </li>
+                                <li>
+                                    <strong>Valor do frete:</strong>
+                                    <h:outputText value="#{notaFiscalProdutoControle.nfSelecionado.valorFrete}">
+                                        <f:convertNumber currencySymbol="" type="currency" />
+                                    </h:outputText>
+                                </li>
+                                <li>
+                                    <strong>Valor do seguro:</strong>
+                                    <h:outputText value="#{notaFiscalProdutoControle.nfSelecionado.valorSeguro}">
+                                        <f:convertNumber currencySymbol="" type="currency" />
+                                    </h:outputText>
+                                </li>
+
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <h:dataTable value="#{notaFiscalProdutoControle.produtosNf}" var="item" styleClass="table table-striped table-hover">
+                                <h:column>
+                                    <f:facet name="header">
+                                        Descrição
+                                    </f:facet>
+                                    #{item.dadosProduto.idProduto.descricao}
+                                </h:column>
+                                <h:column>
+                                    <f:facet name="header">
+                                        Quantidade
+                                    </f:facet>
+                                    #{item.dadosProduto.quantidade}
+                                </h:column>
+                                <h:column>
+                                    <f:facet name="header">
+                                        Valor da venda
+                                    </f:facet>
+                                    <h:outputText value="#{item.dadosProduto.valor}">
+                                        <f:convertNumber currencySymbol="" type="currency"/>
+                                    </h:outputText>
+                                </h:column>
+                                <h:column>
+                                    <f:facet name="header">
+                                        Valor total
+                                    </f:facet>
+                                    <h:outputText value="#{item.dadosProduto.valorTotal}">
+                                        <f:convertNumber currencySymbol="" type="currency"/>
+                                    </h:outputText>
+                                </h:column>
+                            </h:dataTable>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-4">
+                            <div class="well">
+                                <address>
+                                    <strong>#{notaFiscalProdutoControle.empresa.descricao}</strong>
+                                    <br/> #{notaFiscalProdutoControle.empresa.endereco} #{notaFiscalProdutoControle.empresa.endereco.complemento}, #{notaFiscalProdutoControle.empresa.endereco.numero} - #{notaFiscalProdutoControle.empresa.endereco.bairro}
+                                    <br/> #{notaFiscalProdutoControle.empresa.endereco.idCidade.descricao} / #{notaFiscalProdutoControle.empresa.endereco.idCidade.idUF.descricao}
+                                    <br/>
+                                    Phone: #{notaFiscalProdutoControle.empresa.fone} </address>
+                                <address>
+                                    <strong>Email:</strong>
+                                    <br/>
+                                    <a href="mailto:#"> #{notaFiscalProdutoControle.empresa.email} </a>
+                                </address>
+                            </div>
+                        </div>
+                        <div class="col-xs-8 invoice-block">
+                            <ul class="list-unstyled amounts">
+                                <li>
+                                    Sub - Total:
+                                    <h:outputText value="#{notaFiscalProdutoControle.nfSelecionado.idVenda.valor}">
+                                        <f:convertNumber currencySymbol="" type="currency" />
+                                    </h:outputText>
+                                </li>
+                                <li>
+                                    Desconto:
+                                    <h:outputText value="#{notaFiscalProdutoControle.nfSelecionado.idVenda.valorDesconto eq null ? 0 : notaFiscalProdutoControle.nfSelecionado.idVenda.valorDesconto}">
+                                        <f:convertNumber currencySymbol="%" type="currency" />
+                                    </h:outputText>
+                                </li>
+                                <li>
+                                    Valor total da nota:
+                                    <h:outputText value="#{notaFiscalProdutoControle.nfSelecionado.idVenda.valor}">
+                                        <f:convertNumber currencySymbol="" type="currency" />
+                                    </h:outputText>
+                                </li>
+                            </ul>
+                            <br/>
+                            <br/>
+                            <br/>
+
+                            <p:outputPanel id ="botoes" >
+                                <p:row rendered="#{notaFiscalProdutoControle.envioBotoesOK}">
+                                    <h:commandLink id="gerarDanfe" styleClass="btn btn-md blue hidden-print margin-left-5" value="Gerar danfe">
+                                        <i class="fa fa-newspaper-o"></i>
+                                        <p:fileDownload  value="#{notaFiscalProdutoControle.gerarDanfe()}" />
+                                    </h:commandLink>
+
+                                    <h:commandLink id="gerarRelatorio" styleClass="btn btn-md blue hidden-print margin-left-5" value="Gerar nota fiscal">
+                                        <i class="fa fa-sticky-note"></i>
+                                        <p:fileDownload  value="#{notaFiscalProdutoControle.gerarNota()}" />
+                                    </h:commandLink>
+
+                                    <h:commandLink id="enviarEmail" styleClass="btn btn-md green hidden-print margin-left-5" value="Enviar xml por email" action="#{notaFiscalProdutoControle.enviarXmlPorEmail()}">
+                                        <i class="fa fa-envelope"></i>
+                                    </h:commandLink>
+
+                                    <h:commandLink styleClass="btn btn-md grey hidden-print margin-left-5" value="Voltar" action="listaNotaFiscalProduto.xhtml" />
+                                </p:row>
+                            </p:outputPanel>
+
+                            <p:outputPanel id ="botoes1">
+                                <p:row rendered="#{!notaFiscalProdutoControle.envioBotoesOK}">
+                                    <h:commandLink styleClass="btn btn-md grey hidden-print margin-left-5" value="Voltar" action="listaNotaFiscalProduto.xhtml" />
+                                </p:row>
+                            </p:outputPanel>
+
+
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </h:form>
+            <script type="text/javascript">
+                $("#btnFechar").removeClass("ui-state-default");
+                $("#btnFechar").removeClass("ui-button-text-only");
+                $("#auto").find("label").removeClass("ui-inputfield");
+                $("#auto").find(".ui-state-default ").removeClass("ui-state-default");
+                $("#municipio").find("label").removeClass("ui-inputfield");
+                $("#municipio").find(".ui-state-default ").removeClass("ui-state-default");
+            </script>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

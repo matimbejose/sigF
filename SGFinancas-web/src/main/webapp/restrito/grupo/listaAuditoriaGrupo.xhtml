@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html">
+
+    <ui:composition template="/restrito/generic/auditoria.xhtml">
+        <ui:define name="remotes">
+            <h:commandButton id="remoteBack" action="listaGrupo.xhtml"/>
+        </ui:define>
+
+        <ui:param name="title" value="Grupo"/>
+        <ui:param name="descricaoMenu" value="Segurança"/>
+        <ui:param name="caminhoAuditoria" value="/restrito/grupo/listaAuditoriaGrupo.xhtml"/>
+        <ui:param name="objetoSelecionado" value="#{grupoControle.grupoEmpresaSelecionado.idGrupo.descricao}"/>
+
+        <ui:param name="model" value="#{grupoControle.dadosAuditoria}"/>
+
+        <ui:define name="colunas">
+        </ui:define>
+
+    </ui:composition>
+
+</html>

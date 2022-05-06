@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite/components"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Acessos por empresa"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Administração</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/administracao/acessosPorEmpresa.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="content">
+            <p:outputPanel>
+                <div class="card mb-3 bg-light">
+                    <div class="row">
+                        <div class="col-auto pr-1">
+                            <p:outputLabel value="Flags"/>
+                            <br/>
+                            <p:selectBooleanButton value="#{acessosPorEmpresaControle.showSuporte}" onLabel="Mostrar suporte" offLabel="Ocultar suporte"/>
+                        </div>
+                        <div class="col-auto px-1">
+                            <br/>
+                            <p:selectBooleanButton value="#{acessosPorEmpresaControle.showContabilidade}" onLabel="Mostrar contabilidade" offLabel="Ocultar contabilidade"/>
+                        </div>
+                        <div class="col-auto px-1">
+                            <p:outputLabel value="Tipo de conta"/>
+                            <br/>
+                            <p:selectCheckboxMenu value="#{acessosPorEmpresaControle.tipoPagamento.value}"
+                                                  emptyLabel="Todas" updateLabel="true" style="width: 200px">
+                                <f:selectItem itemLabel="Grátis" itemValue="G"/>
+                                <f:selectItem itemLabel="Pago" itemValue="P"/>
+                                <f:selectItem itemLabel="Expirado" itemValue="E"/>
+                            </p:selectCheckboxMenu>
+                        </div>
+                        <div class="col-auto px-1">
+                            <p:outputLabel value="Período"/>
+                            <div class="row">
+                                <div class="col-auto" style="width: 120px">
+                                    <p:calendar value="#{acessosPorEmpresaControle.periodo.min}" navigator="true" pattern="dd/MM/yyyy"/>
+                                </div>
+                                <div class="col-auto px-0 pt-2">
+                                    até
+                                </div>
+                                <div class="col-auto" style="width: 120px">
+                                    <p:calendar value="#{acessosPorEmpresaControle.periodo.max}" navigator="true" pattern="dd/MM/yyyy"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col"></div>
+                        <div class="col-auto mt-3">
+                            <p:commandButton action="#{acessosPorEmpresaControle.refresh}" icon="fa fa-refresh" process="@parent" update="tbl"/>
+                            <p:spacer width="10"/>
+                            <p:commandButton action="#{acessosPorEmpresaControle.baixarExcel}" icon="fa fa-file-excel-o" process="@this" ajax="false"/>
+                        </div>
+                    </div>
+                </div>
+            </p:outputPanel>
+            <p:dataTable value="#{acessosPorEmpresaControle.listaAcesso}" sortBy="#{item.empresa}" emptyMessage="Nenhum registro encontrado." var="item" id="tbl" widgetVar="tbl" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+                <f:facet name="header">
+                    <h5>Listagem de acessos por empresa</h5>
+                    <h:outputText value="#{acessosPorEmpresaControle.getTotalEmpresas()} empresas acessaram o sistema, logando em #{acessosPorEmpresaControle.getTotalUsuarios('')} usuários"/>
+                    <h:outputText value=", com um total de #{acessosPorEmpresaControle.getTotalAcessos('')} acessos no período informado e pagando um total de "/>
+                    <cc:convertMoney value="#{acessosPorEmpresaControle.getTotalValor('')}"/>
+                </f:facet>
+
+                <p:column headerText="Empresa" groupRow="true" style="text-align: center">
+                    <h:outputText value="#{item.empresa}"/>
+                </p:column>
+                <p:column headerText="Usuário" groupRow="true" style="font-weight: #{item.fix ? 'bold' : 'normal'};">
+                    <h:outputText value="#{item.usuario}"/>
+                    <br/>
+                    <small><h:outputText value="#{item.perfil}"/></small>
+                </p:column>
+                <p:column headerText="Competência" width="100" style="text-align: right;">
+                    <h:outputText value="#{item.data}"/>
+                </p:column>
+                <p:column headerText="Valor pago" width="100" style="text-align: right;">
+                    <cc:convertMoney value="#{item.valor}"/>
+                </p:column>
+                <p:column headerText="Acessos" width="100" style="text-align: right;">
+                    <h:outputText value="#{item.quantidade}"/>
+                </p:column>
+
+                <p:summaryRow>
+                    <p:column style="background-color: #eee;text-align: right;">
+                        <h:outputText value="Totais"/>
+                    </p:column>
+                    <p:column style="background-color: #eee">
+                        <h:outputText value="#{acessosPorEmpresaControle.getTotalUsuarios(item.empresa)}"/>
+                    </p:column>
+                    <p:column style="background-color: #eee;text-align: right;">
+                        --
+                    </p:column>
+                    <p:column style="background-color: #eee;text-align: right;">
+                        <cc:convertMoney value="#{acessosPorEmpresaControle.getTotalValor(item.empresa)}"/>
+                    </p:column>
+                    <p:column style="background-color: #eee;text-align: right;">
+                        <h:outputText value="#{acessosPorEmpresaControle.getTotalAcessos(item.empresa)}"/>
+                    </p:column>
+                </p:summaryRow>
+
+            </p:dataTable>
+
+        </ui:define>
+
+    </ui:composition>
+
+</html>

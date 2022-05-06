@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Importação do XML da Nota fiscal"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Compra</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/compra/listaCompra.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteProcess" action="#{compraControle.doStartProcessamento()}"/>
+            <h:commandButton id="remoteBack" action="listaCompra.xhtml" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <h1>Selecione o arquivo XML da nota fiscal e clique em iniciar processamento</h1>
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <p:fileUpload value="#{compraControle.file}" mode="simple" required="true" requiredMessage="Informe o arquivo XML da nota fiscal"
+                                          invalidFileMessage="Informe um arquivo xml." skinSimple="true" label="Procurar XML" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+</html>

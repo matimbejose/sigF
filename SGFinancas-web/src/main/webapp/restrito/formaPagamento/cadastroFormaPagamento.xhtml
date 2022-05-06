@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Forma pagamento"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Cadastro</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/formaPagamento/listaFormaPagamento.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteSave" action="#{formaPagamentoControle.doFinishAdd()}"/>
+            <h:commandButton id="remoteCancel" action="listaFormaPagamento.xhtml" immediate="true"/>
+            <h:commandButton id="remoteHelp" rendered="false" action="#{formaPagamentoControle.mostrarAjuda()}" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <div class="col-md-6 ml-auto mr-auto">
+                <div class="card">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label"><span class="required">* </span>Descrição</label>
+                                <p:inputText value="#{formaPagamentoControle.formaPagamentoSelecionado.descricao}"
+                                             required="true" requiredMessage="Informe a descrição" styleClass="form-control"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label">Forma de pagamento para NF-e</label>
+                                <p:selectOneMenu value="#{formaPagamentoControle.formaPagamentoSelecionado.enumNfe}" converter="#{genericConverter}"
+                                                 var="fp">
+                                    <p:column>
+                                        <h:outputText value="#{fp.descricao}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <p:row rendered="#{fp.permiteLinkPagamento}">
+                                            <i class="fa fa-link font-green-jungle" title="Permite envio de link de pagamento"></i>
+                                        </p:row>
+                                        <p:row rendered="#{not fp.permiteLinkPagamento}">
+                                            <i class="fa fa-chain-broken font-red-mint" title="Não permite envio de link de pagamento"></i>
+                                        </p:row>
+                                    </p:column>
+                                    <f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+                                    <f:selectItems value="#{formaPagamentoControle.enumMeioDePagamentoList}" var="efp"
+                                                   itemLabel="#{efp.descricao}" itemValue="#{efp}"/>
+                                    <p:ajax process="@this" update="pnlBandeiras"/>
+                                </p:selectOneMenu>
+                            </div>
+                        </div>
+                    </div>
+                    <p:outputPanel id="pnlBandeiras">
+                        <p:row rendered="#{formaPagamentoControle.isCartao()}">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label">Bandeiras</label>
+                                        <p:chips value="#{formaPagamentoControle.formaPagamentoSelecionado.bandeirasList}"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </p:row>
+                    </p:outputPanel>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+</html>

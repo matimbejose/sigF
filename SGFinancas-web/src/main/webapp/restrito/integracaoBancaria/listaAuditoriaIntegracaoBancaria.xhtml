@@ -1,0 +1,103 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Conciliação bancária"/>
+        <ui:define name="title">#{title}</ui:define>
+        <ui:define name="viewname">
+            <li>Financeiro</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/integracaoBancaria/listaAuditoriaIntegracaoBancaria.xhtml"> #{title}</p:link></li>
+        </ui:define>
+        <ui:define name="content">
+            <h:messages class="alertMessage" id="msgResultado" errorClass="alert alert-danger" />
+            <div class="row">
+                <div class="col-md-12 ">
+                    <!-- BEGIN SAMPLE FORM PORTLET-->
+                    <div class="portlet light bordered">
+                        <div class="portlet-title">
+                            <div class="caption">
+                                <i class="fa fa-list-ol"></i>
+
+                                <span class="caption-subject font-dark sbold uppercase">Auditoria</span>
+
+                            </div>
+                            <div class="tools">
+                            </div>
+                        </div>
+                        <div class="portlet-body form">
+                            <h:form acceptcharset="ISO-8859-1" role="form">
+
+                                <div class="form-body">
+
+                                    <div class="row">
+                                        <div class="col-md-5">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label">Descrição</label>
+                                                <p:inputText value="#{integracaoBancariaControle.filtro.descricao}" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <label class="control-label"><font style="color: white">.</font></label>
+                                            <div class="form-group form-md-line-input">
+                                                <p:commandLink  title="Consultar" styleClass="btn btn-circle btn-icon-only blue-hoki" update="tbl" >
+                                                    <i class="fa fa-search"></i>
+                                                </p:commandLink>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="portlet-body flip-scroll">
+                                        <p:dataTable value="#{integracaoBancariaControle.dadosAuditoria}" var="item" emptyMessage="Nenhma alteração encontrada."
+                                                     rows="10" paginator="true" paginatorPosition="bottom"
+                                                     rowsPerPageTemplate="10,20,30"
+                                                     class="table table-striped table-bordered table-hover table-striped table-condensed flip-content" id="tbl">
+
+                                            <p:column headerText="#" width="50" sortBy="#{item[0].id}">
+                                                <h:outputText value="#{item[0].id}"/>
+                                            </p:column>
+
+                                            <p:column headerText="Usuário" sortBy="#{item[1].usuario}">
+                                                <h:outputText value="#{item[1].usuario}"/>
+                                            </p:column>
+
+                                            <p:column headerText="Data de atualização" sortBy="#{item[1].dataAtualizacao}">
+                                                <h:outputText value="#{item[1].dataAtualizacao}" >
+                                                    <f:convertDateTime pattern="dd/MM/yy HH:mm"/>
+                                                </h:outputText>
+                                            </p:column>
+
+                                            <p:column headerText="IP" sortBy="#{item[1].ip}">
+                                                <h:outputText value="#{item[1].ip}"/>
+                                            </p:column>
+
+                                            <p:column headerText="Ação" sortBy="#{item[2].getRepresentation()}">
+                                                <h:outputText value="Adicionado" rendered="#{item[2].getRepresentation() eq '0'}"/>
+                                                <h:outputText value="Modificado" rendered="#{item[2].getRepresentation() eq '1'}"/>
+                                                <h:outputText value="Excluído" rendered="#{item[2].getRepresentation() eq '2'}"/>
+                                            </p:column>
+
+                                        </p:dataTable>
+                                    </div>
+                                </div>
+                                <div class="form-actions">
+                                    <h:panelGrid columns="4" >
+                                        <h:commandButton action="listaIntegracaoBancaria.xhtml" immediate="true" styleClass="btn default" value="Voltar" />
+                                    </h:panelGrid>
+                                </div>
+                            </h:form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+    <ui:composition template="/WEB-INF/templateUser.xhtml">
+
+        <ui:define name="title">#{empresaControle.empresaLogada.descricao} - Agendamento</ui:define>
+
+        <ui:define name="head">
+            <link href="#{facesContext.externalContext.requestContextPath}/resources/css/toast/toastr.min.css" rel="stylesheet" type="text/css"/>
+            <script src="#{facesContext.externalContext.requestContextPath}/resources/js/toast/toastr.min.js" type="text/javascript"></script>
+            <script src="#{facesContext.externalContext.requestContextPath}/resources/js/toast/toast.js" type="text/javascript"></script>
+        </ui:define>
+
+        <ui:define name="content">
+            <style>
+                .login-bg {
+                    position: fixed;
+                }
+                .card {
+                    overflow: visible;
+                    margin-top: 150px;
+                }
+                .card img.logo {
+                    height: 150px;
+                    margin-top: -150px;
+                    margin-bottom: 10px;
+                }
+                .card .content {
+                    height: calc(100% - 50px);
+                }
+                .ui-dialog .ui-dialog-content {
+                    overflow-x: hidden;
+                }
+                .login-container, .dropdown-menu {
+                    margin: 3px;
+                    border: 2px solid #bbb;
+                    background-color: #bbb4;
+                    border-radius: 5px;
+                    position: fixed;
+                    top: 5px;
+                    right: 5px;
+                    padding: 5px;
+                    color: #bbb;
+                }
+                .login-container {
+                    display: flex;
+                    border-radius: 32px 5px 5px 32px;
+                }
+                .dropdown-menu {
+                    background-color: #426d78;
+                }
+                .dropdown-menu a {
+                    color: #bbb;
+                    font-weight: bold;
+                }
+                .dropdown-item:hover, .dropdown-item:focus {
+                    background-color: #bbb8;
+                }
+                .login-container > .logo-container {
+                    height: 50px;
+                    width: 50px;
+                    border: 2px solid #bbb;
+                    border-radius: 50%;
+                    text-align: center;
+                    font-size: 40px;
+                    overflow: hidden;
+                }
+                .login-container > .logo-container > img {
+                    height: 100%;
+                }
+                .login-container > .separator {
+                    border: 1px solid #bbba;
+                    width: 0;
+                    height: 50px;
+                    margin: 0 5px;
+                }
+                .login-container > .user-details {
+                    min-width: 175px;
+                }
+                .action-arrow {
+                    cursor: pointer;
+                }
+                .dropdown-toggle {
+                    border: none;
+                    background-color: transparent;
+                    color: #bbb;
+                    cursor: pointer;
+                    float: right;
+                    font-weight: bold;
+                    padding: 17px 0px;
+                    width: 100%;
+                }
+                .dropleft > .dropdown-toggle::before {
+                    display: none;
+                }
+                .dropleft > .dropdown-toggle::after {
+                    display: inline-block;
+                    width: 0;
+                    height: 0;
+                    margin-left: 0.255em;
+                    vertical-align: 0.255em;
+                    content: "";
+                    border-top: 0.3em solid;
+                    border-right: 0.3em solid transparent;
+                    border-bottom: 0;
+                    border-left: 0.3em solid transparent;
+                }
+            </style>
+            <script>
+                function scheduler() {
+                    this.cfg = $.extend(true, this.cfg, {
+                        validRange: {
+                            start: `#{agendamentoControle.inicioMes}`
+                        }
+                    });
+                }
+            </script>
+            <div class="login-container">
+                <div class="logo-container">
+                    <p:graphicImage value="#{usuarioControle.imagemPerfil}" rendered="#{usuarioControle.usuarioLogado ne null and usuarioControle.usuarioLogado.foto ne null}"/>
+                    <p:row rendered="#{usuarioControle.usuarioLogado eq null or usuarioControle.usuarioLogado.foto eq null}">?</p:row>
+                </div>
+                <div class="separator"></div>
+                <div class="user-details">
+                    <div class="dropleft">
+                        <button type="button" class="dropdown-toggle" data-toggle="dropdown">
+                            <h:outputText rendered="#{usuarioControle.usuarioLogado ne null}" value="#{usuarioControle.usuarioLogado.nome}"/>
+                            <h:outputText rendered="#{usuarioControle.usuarioLogado eq null}" value="Usuário anonimo"/>
+                        </button>
+                        <div class="dropdown-menu action-arrow">
+                            <p:row rendered="#{usuarioControle.usuarioLogado eq null}">
+                                <a class="dropdown-item" href="#">Entrar</a>
+                            </p:row>
+                            <p:row rendered="#{usuarioControle.usuarioLogado ne null}">
+                                <a class="dropdown-item" href="#">Histórico de serviços</a>
+                            </p:row>
+                            <p:row rendered="#{usuarioControle.usuarioLogado ne null}">
+                                <a class="dropdown-item" href="/loginLogout.xhtml">Sair</a>
+                            </p:row>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="text-align: center;height: 0;">
+                <p:graphicImage alt="logo" value="#{empresaControle.getLogoEmpresaLogada()}" styleClass="logo" rendered="#{empresaControle.empresaLogada.logo ne null}"/>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <h1>Agendamento</h1>
+                        <div class="content">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label">Serviço</label>
+                                        <p:selectOneMenu value="#{agendamentoControle.servicoSelecionado}" converter="#{genericConverter}" filter="true">
+                                            <f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+                                            <f:selectItems value="#{agendamentoControle.listaServicos}" var="serv"
+                                                           itemLabel="#{serv.descricao}" itemValue="#{serv}"/>
+                                            <p:ajax process="@this" update="funcList, calendar"/>
+                                        </p:selectOneMenu>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <p:outputPanel id="funcList">
+                                        <p:row rendered="#{agendamentoControle.servicoSelecionado ne null and agendamentoControle.servicoSelecionado.permiteSelecaoProfissional eq 'S'}">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label">Funcionário</label>
+                                                <p:selectOneMenu value="#{agendamentoControle.funcionarioSelecionado}" converter="#{genericConverter}" filter="true">
+                                                    <f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+                                                    <f:selectItems value="#{agendamentoControle.listaFuncionarios}" var="func"
+                                                                   itemLabel="#{func.nome}" itemValue="#{func}"/>
+                                                    <p:ajax process="@this" update="calendar"/>
+                                                </p:selectOneMenu>
+                                            </div>
+                                        </p:row>
+                                    </p:outputPanel>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <p:schedule id="calendar" widgetVar="schedule" timeZone="GMT-3" draggable="false" value="#{agendamentoControle.model}"
+                                                rightHeaderTemplate="" displayEventEnd="true" allDaySlot="false" extender="scheduler">
+                                        <p:ajax event="dateSelect" listener="#{agendamentoControle.addEvent}"
+                                                update="eventDetails"/>
+                                    </p:schedule>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p:dialog widgetVar="eventDialog" header="Escolha de horário" width="700" modal="true">
+                <p:outputPanel id="eventDetails" styleClass="pb-2">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label">Serviço</label>
+                                <p:inputText disabled="true" value="#{agendamentoControle.servicoSelecionado.descricao}"/>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label">Tempo estimado</label>
+                                <p:calendar navigator="true" disabled="true" value="#{agendamentoControle.servicoSelecionado.tempoExecucao}" pattern="HH:mm"
+                                            rendered="#{agendamentoControle.servicoSelecionado.tempoExecucao ne null}"/>
+                                <p:inputText disabled="true" value="Não definido"
+                                             rendered="#{agendamentoControle.servicoSelecionado.tempoExecucao eq null}"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-auto">
+                            <p:row rendered="#{agendamentoControle.servicoSelecionado.permiteSelecaoProfissional eq 'S'}">
+                                <div class="form-group form-md-line-input">
+                                    <label class="control-label">Funcionário</label>
+                                    <p:selectOneMenu value="#{agendamentoControle.funcionarioSelecionado}" converter="#{genericConverter}" filter="true">
+                                        <f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+                                        <f:selectItems value="#{agendamentoControle.listaFuncionariosDisponiveis}" var="func"
+                                                       itemLabel="#{func.nome}" itemValue="#{func}"/>
+                                    </p:selectOneMenu>
+                                </div>
+                            </p:row>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label">Observação</label>
+                                <p:inputText value="#{agendamentoControle.vendaSelecionada.observacao}"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label">Telefone de contato</label>
+                                <p:inputMask mask="(99) 9999-9999?9" value="#{agendamentoControle.vendaSelecionada.telefoneCliente}"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-auto ml-auto">
+                            <p:commandButton value="Agendar" action="#{agendamentoControle.doFinishAdd()}"/>
+                        </div>
+                    </div>
+                </p:outputPanel>
+            </p:dialog>
+        </ui:define>
+
+    </ui:composition>
+</html>

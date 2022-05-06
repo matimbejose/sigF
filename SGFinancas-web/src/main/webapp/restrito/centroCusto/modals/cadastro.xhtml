@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <ui:composition template="/WEB-INF/templateModalCadastro.xhtml">
+
+        <ui:param name="title" value="Cadastro de centro de custo"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="content">
+            <div class="row">
+                <div class="col-5">
+                    <label class="control-label"><span class="required">* </span>Descrição</label>
+                    <p:inputText value="#{centroCustoControle.dtoCadastro.descricao}"
+                                 required="true"
+                                 requiredMessage="Informe a descrição"
+                                 styleClass="form-control" />
+                </div>
+                <div class="col-4">
+                    <div class="form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Responsável"/>
+                        <p:inputText value="#{centroCustoControle.dtoCadastro.responsavel}" />
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Celular do responsável"/>
+                        <p:inputMask mask="(99) 9999-9999?9" value="#{centroCustoControle.dtoCadastro.celularResponsavel}"
+                                     styleClass="telefone"/>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-3">
+                    <div class="form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Telefone comercial"/>
+                        <p:inputMask mask="(99) 9999-9999?9" value="#{centroCustoControle.dtoCadastro.fone}"
+                                     styleClass="telefone"/>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Celular"/>
+                        <p:inputMask mask="(99) 9999-9999?9" value="#{centroCustoControle.dtoCadastro.celular}"
+                                     styleClass="telefone"/>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Email"/>
+                        <p:inputText value="#{centroCustoControle.dtoCadastro.email}"/>
+                    </div>
+                </div>
+
+                <div class="col-3">
+                    <div class="form-group form-md-line-input">
+                        <p:outputLabel for="inpCep" value="CEP"/>
+                        <div class="input-group">
+                            <div class="input-group-append">
+                                <p:inputMask value="#{centroCustoControle.dtoCadastro.cep}" mask="99.999-999" id="inpCep"/>
+                                <span class="input-group-btn">
+                                    <p:commandLink action="#{centroCustoControle.buscarEnderecoPorCepDTO()}" process="@this, inpCep"
+                                                   styleClass="btn blue btn-outline sbold" update="pnlEndereco">
+                                        <i class="fa fa-search"></i>
+                                    </p:commandLink>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <p:outputPanel id="pnlEndereco">
+                <div class="row">
+
+                    <div class="col">
+                        <div class="form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Logradouro"/>
+                            <p:inputText value="#{centroCustoControle.dtoCadastro.logradouro}"/>
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        <div class="form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Número"/>
+                            <p:inputMask value="#{centroCustoControle.dtoCadastro.numero}" mask="9?9999999"/>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Complemento"/>
+                            <p:inputText value="#{centroCustoControle.dtoCadastro.complemento}"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        <div class="form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Bairro"/>
+                            <p:inputText value="#{centroCustoControle.dtoCadastro.bairro}"/>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Estado"/>
+                            <p:selectOneMenu value="#{centroCustoControle.ufSelecionado}" converter="#{genericConverter}">
+                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                <f:selectItems value="#{centroCustoControle.UFs}" var="uf"
+                                               itemLabel="#{uf.descricao}" itemValue="#{uf}"/>
+                                <p:ajax event="change" process="@this" update="@this, cidade"/>
+                            </p:selectOneMenu>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Cidade"/>
+                            <p:selectOneMenu id="cidade" value="#{centroCustoControle.dtoCadastro.cidade}"
+                                             panelStyle="width:180px" effect="fade" var="t" 
+                                             filter="true" filterMatchMode="contains">
+                                <p:column>
+                                    <h:outputText value="#{t}"/>
+                                </p:column>
+
+                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                <f:selectItems value="#{centroCustoControle.cidades}" var="cidade"
+                                               itemLabel="#{cidade.descricao}" itemValue="#{cidade.descricao}"/>
+                            </p:selectOneMenu>
+                        </div>
+                    </div>
+                </div>
+            </p:outputPanel>
+
+
+
+        </ui:define>
+
+    </ui:composition>
+
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:p="http://primefaces.org/ui">
+
+    <div class="form-body">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group form-md-line-input">
+                    <label class="control-label"><span class="required">* </span> Início da jornada</label>
+                    <p:inputMask value="#{parametroSistemaControle.parametroSistemaSelecionado.horaInicioJornada}"
+                                 mask="99:99" required="true" requiredMessage="Informe a hora de início da jornada." />
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group form-md-line-input">
+                    <label class="control-label"><span class="required">* </span> Fim da jornada</label>
+                    <p:inputMask value="#{parametroSistemaControle.parametroSistemaSelecionado.horaFimJornada}"
+                                 mask="99:99" required="true" requiredMessage="Informe a hora fim da jornada."/>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group form-md-line-input">
+                    <label class="control-label"><span class="required">* </span> Período intervalo almoço(min.)</label>
+                    <p:inputNumber value="#{parametroSistemaControle.parametroSistemaSelecionado.periodoAlmoco}"
+                                   required="true" requiredMessage="Informe o período de intervalo do funcionário em minutos."
+                                   maxValue="180" decimalPlaces="0" />
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group form-md-line-input">
+                    <label class="control-label"><span class="required">* </span> Período intervalo almoço estagiário(min.)</label>
+                    <p:inputNumber value="#{parametroSistemaControle.parametroSistemaSelecionado.periodoAlmocoEstagiario}"
+                                   required="true" requiredMessage="Informe o período de intervalo do estagiário em minutos."
+                                   maxValue="60" decimalPlaces="0" />
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group form-md-line-input">
+                    <label class="control-label"><span class="required">* </span> Período intervalo almoço menor aprendiz(min.)</label>
+                    <p:inputNumber value="#{parametroSistemaControle.parametroSistemaSelecionado.periodoAlmocoMenorAprendiz}"
+                                   required="true" requiredMessage="Informe o período de intervalo do menor aprendiz em minutos."
+                                   maxValue="60" decimalPlaces="0" />
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group form-md-line-input">
+                    <label class="control-label"><span class="required">* </span> Horas trabalhadas funcionário </label>
+                    <p:inputMask value="#{parametroSistemaControle.parametroSistemaSelecionado.horaTrabalhadaFuncionario}"
+                                 required="true" requiredMessage="Informe o período de horas trabalhadas do funcionário."
+                                 mask="99:99"/>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group form-md-line-input">
+                    <label class="control-label"><span class="required">* </span> Horas trabalhadas estagiário </label>
+                    <p:inputMask value="#{parametroSistemaControle.parametroSistemaSelecionado.horaTrabalhadaEstagiario}"
+                                 required="true" requiredMessage="Informe o período de horas trabalhadas do estagiário."
+                                 mask="99:99" />
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group form-md-line-input">
+                    <label class="control-label"><span class="required">* </span> Horas trabalhadas menor aprendiz </label>
+                    <p:inputMask value="#{parametroSistemaControle.parametroSistemaSelecionado.horaTrabalhadaMenorAprendiz}"
+                                 required="true" requiredMessage="Informe o período de horas trabalhadas do menor aprendiz."
+                                 mask="99:99"/>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</html>

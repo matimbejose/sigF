@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Grupo de usuário"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Segurança</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/grupo/listaGrupo.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteSave" action="#{grupoControle.doFinishAdd()}"/>
+            <h:commandButton id="remoteCancel" action="listaGrupo.xhtml" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <style type="text/css">
+                select option[disabled] { display: none; }
+                maxHeight400 {
+                    max-height: 400px;
+                }
+            </style>
+            <div class="form-body">
+                <div class="card">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label"><span class="required">* </span>Nome do grupo</label>
+                                <p:inputText value="#{grupoControle.grupoEmpresaSelecionado.idGrupo.descricao}"
+                                             required="true" requiredMessage="Informe um nome para o grupo"/>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label"><span class="required">* </span>Tipo</label>
+
+                                <p:inputText rendered="#{grupoControle.grupoEmpresaSelecionado.id ne null and grupoControle.grupoEmpresaSelecionado.idGrupo.tipo eq 'AD'}" value="Suporte"  disabled="true" readonly="true"/>
+                                <p:inputText rendered="#{grupoControle.grupoEmpresaSelecionado.id ne null and grupoControle.grupoEmpresaSelecionado.idGrupo.tipo eq 'MV'}" value="Master vendedor"  disabled="true" readonly="true"/>
+                                <p:inputText rendered="#{grupoControle.grupoEmpresaSelecionado.id ne null and grupoControle.grupoEmpresaSelecionado.idGrupo.tipo eq 'MU'}" value="Master usuário"  disabled="true" readonly="true"/>
+                                <p:inputText rendered="#{grupoControle.grupoEmpresaSelecionado.id ne null and grupoControle.grupoEmpresaSelecionado.idGrupo.tipo eq 'UC'}" value="Usuário comum"  disabled="true" readonly="true"/>
+                                <p:inputText rendered="#{grupoControle.grupoEmpresaSelecionado.id ne null and grupoControle.grupoEmpresaSelecionado.idGrupo.tipo eq 'V'}" value="Vendedor"  disabled="true" readonly="true"/>
+
+                                <p:selectOneMenu value="#{grupoControle.grupoEmpresaSelecionado.idGrupo.tipo}"
+                                                 rendered="#{grupoControle.grupoEmpresaSelecionado.id eq null and usuarioControle.usuarioLogado.idPerfil.ehSuporte}"
+                                                 required="true" requiredMessage="Selecione o tipo do grupo">
+                                    <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                    <f:selectItem itemLabel="Suporte" itemValue="AD"/>
+                                    <f:selectItem itemLabel="Master vendedor" itemValue="MV"/>
+                                    <f:selectItem itemLabel="Master usuário" itemValue="MU"/>
+                                    <f:selectItem itemLabel="Master contador" itemValue="MC"/>
+                                    <f:selectItem itemLabel="Usuário comum" itemValue="UC"/>
+                                    <f:selectItem itemLabel="Vendedor" itemValue="V"/>
+                                    <f:selectItem itemLabel="Contador" itemValue="C"/>
+                                    <p:ajax event="change" update="tblUsuario, form:tblPermissao, tblPesquisaUsuario, tblPesquisa" process="@this" listener="#{grupoControle.clearUsuariosAndPermissoes()}" />
+                                </p:selectOneMenu>
+
+                                <p:selectOneMenu value="#{grupoControle.grupoEmpresaSelecionado.idGrupo.tipo}"
+                                                 rendered="#{grupoControle.grupoEmpresaSelecionado.id eq null and usuarioControle.usuarioLogado.idPerfil.ehUsuarioMaster}"
+                                                 required="true" requiredMessage="Selecione o tipo do grupo">
+                                    <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                    <f:selectItem itemLabel="Master usuário" itemValue="MU"/>
+                                    <f:selectItem itemLabel="Usuário comum" itemValue="UC"/>
+                                    <p:ajax event="change" update="tblUsuario, tblPermissao, tblPesquisaUsuario, tblPesquisa" process="@this" listener="#{grupoControle.clearUsuariosAndPermissoes()}" />
+                                </p:selectOneMenu>
+
+                                <p:selectOneMenu value="#{grupoControle.grupoEmpresaSelecionado.idGrupo.tipo}"
+                                                 rendered="#{grupoControle.grupoEmpresaSelecionado.id eq null and usuarioControle.usuarioLogado.idPerfil.ehMasterVendedor}"
+                                                 required="true" requiredMessage="Selecione o tipo do grupo">
+                                    <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                    <f:selectItem itemLabel="Master vendedor" itemValue="MV"/>
+                                    <f:selectItem itemLabel="Vendedor" itemValue="V"/>
+                                    <p:ajax event="change" update="tblUsuario, tblPermissao, tblPesquisaUsuario, tblPesquisa" process="@this" listener="#{grupoControle.clearUsuariosAndPermissoes()}" />
+                                </p:selectOneMenu>
+
+                                <p:selectOneMenu value="#{grupoControle.grupoEmpresaSelecionado.idGrupo.tipo}"
+                                                 rendered="#{grupoControle.grupoEmpresaSelecionado.id eq null and usuarioControle.usuarioLogado.idPerfil.ehMasterContabilidade}"
+                                                 required="true" requiredMessage="Selecione o tipo do grupo">
+                                    <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                    <f:selectItem itemLabel="Master contabilidade" itemValue="MC"/>
+                                    <f:selectItem itemLabel="Contabilidade" itemValue="C"/>
+                                    <p:ajax event="change" update="tblUsuario, tblPermissao, tblPesquisaUsuario, tblPesquisa" process="@this" listener="#{grupoControle.clearUsuariosAndPermissoes()}" />
+                                </p:selectOneMenu>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <p:fieldset legend="Permissões" style="margin-bottom:20px"  toggleable="true" toggleSpeed="500">
+                        <div class="row">
+                            <div class="col-6 form-group form-md-line-input">
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <p:inputText  id="descricaoPesquisaPermissao" value="#{grupoControle.descricaoPesquisa}"
+                                                      placeholder="Informe parte da descrição..." style="min-width: 400px !important;"/>
+                                        <p:commandLink  action="#{grupoControle.doPesquisaPermissao()}" class="btn blue btn-outline sbold" update="tblPesquisa" process="@this, descricaoPesquisaPermissao" >
+                                            <i class="fa fa-search"></i>
+                                        </p:commandLink>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <p:dataTable value="#{grupoControle.permissaoList}" id="tblPesquisa" scrollable="true" scrollHeight="400"
+                                             emptyMessage="Nenhuma permissão localizada" var="itemPermissaoSelecionada"
+                                             styleClass="card p-0 ui-datatable-striped ui-datatable-sm ui-datatable-gridlines">
+
+                                    <p:column headerText="Permissões" >
+                                        <h:outputText value="#{itemPermissaoSelecionada.descricaoDetalhada}"/>
+                                    </p:column>
+
+                                    <p:column headerText="" style="width: 40px;">
+                                        <f:facet name="header">
+                                            <div class="pesquisa-list .pesquisa-dois .pesquisa-tres">
+                                                <p:commandLink  class="btn btn-circle btn-icon-only btn-default icones" title="Selecionar todas permissões" action="#{grupoControle.doAceitarTodasPermissoes()}" update="form:tblPermissao, form:tblPesquisa"  immediate="true">
+                                                    <i class="fa fa-angle-double-right"></i>
+                                                </p:commandLink>
+                                            </div>
+                                        </f:facet>
+                                        <p:commandLink  class="btn btn-circle btn-icon-only btn-default icones" title="Selecionar permissão" action="#{grupoControle.doAdicionaPermissao()}" update="form:tblPermissao, form:tblPesquisa"  immediate="true">
+                                            <i class="fa fa-angle-double-right"></i>
+                                            <f:setPropertyActionListener value="#{itemPermissaoSelecionada}" target="#{grupoControle.permissaoSelecionada}"/>
+                                        </p:commandLink>
+                                    </p:column>
+
+
+                                </p:dataTable>
+                            </div>
+                            <div class="col">
+                                <p:dataTable value="#{grupoControle.grupoEmpresaSelecionado.idGrupo.grupoPermissaoList}" id="tblPermissao"
+                                             ariaRowLabel="" scrollable="true" scrollHeight="400"
+                                             emptyMessage="Nenhuma permissão localizada" var="itemPermissao" editable="true" editMode="cell"
+                                             styleClass="card p-0 ui-datatable-striped ui-datatable-sm ui-datatable-gridlines">
+
+                                    <p:column headerText="Permissões vinculadas" >
+                                        <h:outputText value="#{itemPermissao.idPermissao.descricaoDetalhada}"/>
+                                    </p:column>
+
+                                    <p:column headerText="" style="width: 40px;">
+                                        <f:facet name="header">
+                                            <div class="pesquisa-list .pesquisa-dois .pesquisa-tres">
+                                                <p:commandLink  title="Remover todas permissões"  styleClass="btn btn-circle btn-icon-only btn-default icones" action="#{grupoControle.doRemoverPermissaoTodas()}" update="form:tblPermissao, form:tblPesquisa" immediate="true" >
+                                                    <i class="icon-trash"></i>
+                                                </p:commandLink>
+                                            </div>
+                                        </f:facet>
+                                        <p:commandLink  title="Remover permissão"  styleClass="btn btn-circle btn-icon-only btn-default icones" action="#{grupoControle.doRemoverPermissao()}" update="form:tblPermissao, form:tblPesquisa" immediate="true" >
+                                            <i class="icon-trash"></i>
+                                            <f:setPropertyActionListener value="#{itemPermissao}" target="#{grupoControle.grupoPermissaoSelecionada}"/>
+                                        </p:commandLink>
+                                    </p:column>
+
+                                </p:dataTable>
+                            </div>
+                        </div>
+                    </p:fieldset>
+                    <p:fieldset legend="Usuários" style="margin-bottom:20px" toggleable="true" toggleSpeed="500" >
+                        <div class="row">
+                            <div class="col-6 form-group form-md-line-input">
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <p:inputText value="#{grupoControle.descricaoPesquisaUsuario}" placeholder="Informe parte do nome"/>
+                                        <p:commandLink action="#{grupoControle.doPesquisaUsuario()}" class="btn blue btn-outline sbold"
+                                                       update="tblPesquisaUsuario" process="@this, @previous">
+                                            <i class="fa fa-search"></i>
+                                        </p:commandLink>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <p:dataTable value="#{grupoControle.usuarioList}" id="tblPesquisaUsuario" scrollable="true" scrollHeight="400"
+                                             emptyMessage="Nenhuma usuário localizado" var="itemUsuarioSelecionado"
+                                             styleClass="card p-0 ui-datatable-striped ui-datatable-sm ui-datatable-gridlines">
+
+                                    <p:column headerText="Usuários" >
+                                        <h:outputText value="#{itemUsuarioSelecionado.nome}"/>
+                                    </p:column>
+
+                                    <p:column headerText="" style="width: 40px;">
+                                        <p:commandLink class="btn btn-circle btn-icon-only btn-default icones" title="Selecionar usuário"
+                                                       action="#{grupoControle.doAdicionaUsuario()}" update="form:tblUsuario, tblPesquisaUsuario"
+                                                       immediate="true">
+                                            <i class="fa fa-angle-double-right"></i>
+                                            <f:setPropertyActionListener value="#{itemUsuarioSelecionado}" target="#{grupoControle.usuarioSelecionado}"/>
+                                        </p:commandLink>
+                                    </p:column>
+
+                                </p:dataTable>
+                            </div>
+                            <div class="col">
+                                <p:dataTable value="#{grupoControle.grupoEmpresaSelecionado.usuarioEmpresaGrupoList}" id="tblUsuario" scrollable="true"
+                                             scrollHeight="400" emptyMessage="Nenhum usuário selecionado" var="user" editable="true" editMode="cell"
+                                             styleClass="card p-0 ui-datatable-striped ui-datatable-sm ui-datatable-gridlines">
+
+                                    <p:column headerText="Usuários vinculados" >
+                                        <h:outputText value="#{user.idUsuario.nome}"/>
+                                    </p:column>
+
+                                    <p:column headerText="" style="width: 40px;" >
+                                        <p:commandLink title="Remover usuário" styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                                       action="#{grupoControle.doRemoveUsuario()}" update="tblUsuario, form:tblPesquisaUsuario"
+                                                       immediate="true" >
+                                            <i class="icon-trash"></i>
+                                            <f:setPropertyActionListener value="#{user}" target="#{grupoControle.usuarioGrupoEmpresaSelecionado}"/>
+                                        </p:commandLink>
+                                    </p:column>
+
+                                </p:dataTable>
+                            </div>
+                        </div>
+                    </p:fieldset>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

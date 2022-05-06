@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite/components">
+    <ui:composition template="/restrito/generic/auditoria.xhtml">
+        <ui:define name="remotes">
+            <h:commandButton id="remoteBack" action="listaProducao.xhtml"/>
+        </ui:define>
+
+        <ui:param name="descricaoMenu" value="Cadastro"/>
+        <ui:param name="title" value="Produção"/>
+        <ui:param name="caminhoAuditoria" value="/restrito/producao/listaAuditoriaProducao.xhtml"/>
+        <ui:param name="objetoSelecionado" value="Produção Nº#{producaoControle.producaoSelecionado.numero}"/>
+
+        <ui:param name="model" value="#{producaoControle.dadosAuditoria}"/>
+        <ui:define name="colunas">
+
+            <p:column headerText="Data do pedido" width="140" sortBy="#{item[0].dataPedido}" visible="true">
+                <cc:convertDateTime value="#{item[0].dataPedido}"/>
+            </p:column>
+
+            <p:column headerText="Data de produção" width="140" sortBy="#{item[0].dataProducao}" visible="true">
+                <cc:convertDateTime value="#{item[0].dataProducao}"/>
+            </p:column>
+
+            <p:column headerText="Data limite" width="140" sortBy="#{item[0].dataPedido}" visible="true">
+                <cc:convertDateTime value="#{item[0].dataLimite}"/>
+            </p:column>
+
+            <p:column headerText="Data de cancelamento" width="140" sortBy="#{item[0].dataProducao}" visible="true">
+                <cc:convertDateTime value="#{item[0].dataCancelamento}"/>
+            </p:column>
+
+            <p:column headerText="Status" width="55" sortBy="#{item[0].status}">
+                <h:outputText value="#{item[0].statusName}"/>
+            </p:column>
+
+        </ui:define>
+    </ui:composition>
+
+</html>

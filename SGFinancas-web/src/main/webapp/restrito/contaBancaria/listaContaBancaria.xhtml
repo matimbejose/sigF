@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:sec="http://www.springframework.org/security/facelets/tags"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Conta bancária"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <p:row rendered="#{empresaControle.isLogadoComoCredor()}">
+                <li>Cadastro</li>
+            </p:row>
+            <p:row rendered="#{empresaControle.isLogadoComoEmpresa()}">
+                <li>Financeiro</li>
+                <li>/</li>
+                <li>Apoio</li>
+            </p:row>
+            <li>/</li>
+            <li><p:link outcome="/restrito/contaBancaria/listaContaBancaria.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <sec:ifAnyGranted roles ="CONTA_BANCARIA_GERENCIAR" >
+                <h:commandButton id="remoteAdd" action="#{contaBancariaControle.doStartAdd()}"/>
+            </sec:ifAnyGranted>
+        </ui:define>
+
+        <ui:define name="formButtons">
+            <p:commandButton type="button" value="Limpar filtros" onclick="clearDataTableFilters('tbl');"/>
+            <p:commandButton id="toggler" type="button" value="Colunas"/>
+            <p:columnToggler datasource="tbl" trigger="toggler"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <p:dataTable value="#{contaBancariaControle.model}" emptyMessage="Nenhum registro encontrado." var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+                <p:column headerText="#" width="55" sortBy="#{item.id}" visible="false">
+                    <h:outputText value="#{item.id}"/>
+                </p:column>
+
+                <p:column headerText="Descrição" sortBy="#{item.descricao}" filterBy="#{item.descricao}">
+                    <f:facet name="filter">
+                        <p:inputText value="#{contaBancariaControle.filtro.descricao}" onchange="PF('tbl').filter()"/>
+                    </f:facet>
+                    <h:outputText value="#{item.descricao} - (NÃO ATUALIZADO)" rendered="#{item.idPlanoConta eq null}"/>
+                    <h:outputText value="#{item.descricao}" rendered="#{item.idPlanoConta ne null}"/>
+                </p:column>
+
+                <p:column headerText="Banco" filterBy="#{item.idBanco}">
+                    <f:facet name="filter">
+                        <p:selectOneMenu onchange="PF('tbl').filter()" styleClass="custom-filter" panelStyle="width:180px" var="t" effect="fade"
+                                         filter="true" filterMatchMode="contains" converter="#{genericConverter}" value="#{contaBancariaControle.filtro.banco}">
+                            <p:column>
+                                <h:outputText value="#{t.numero}" />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{t.descricao}" />
+                            </p:column>
+
+                            <f:selectItem itemLabel="Todos" noSelectionOption="true"/>
+                            <f:selectItems value="#{contaBancariaControle.bancos}" var="banco" itemLabel="#{banco.numero} - #{banco.descricao}"
+                                           itemValue="#{banco}"/>
+                        </p:selectOneMenu>
+                    </f:facet>
+                    <h:outputText value="#{item.idBanco.descricao}"/>
+                </p:column>
+
+                <p:column headerText="Tipo de Conta" width="140" sortBy="#{item.tipoConta}" filterBy="#{item.tipoConta}">
+                    <f:facet name="filter">
+                        <p:selectOneMenu onchange="PF('tbl').filter()" styleClass="custom-filter" value="#{contaBancariaControle.filtro.tipoConta}">
+                            <f:selectItem itemLabel="Todos" noSelectionOption="true"/>
+                            <f:selectItem itemLabel="Corrente" itemValue="C"/>
+                            <f:selectItem itemLabel="Poupança" itemValue="P"/>
+                            <f:selectItem itemLabel="Salário" itemValue="S"/>
+                        </p:selectOneMenu>
+                    </f:facet>
+
+                    <h:outputText value="Corrente" rendered="#{item.tipoConta eq 'C'}"/>
+                    <h:outputText value="Poupança" rendered="#{item.tipoConta eq 'P'}"/>
+                    <h:outputText value="Salário" rendered="#{item.tipoConta eq 'S'}"/>
+                </p:column>
+
+                <p:column headerText="Situação" width="100" sortBy="#{item.situacao}" filterBy="#{item.situacao}">
+                    <f:facet name="filter">
+                        <p:selectOneMenu onchange="PF('tbl').filter()" styleClass="custom-filter" value="#{contaBancariaControle.filtro.situacao}">
+                            <f:selectItem itemLabel="Todos" noSelectionOption="true"/>
+                            <f:selectItem itemLabel="Ativa" itemValue="A"/>
+                            <f:selectItem itemLabel="Cancelada" itemValue="C"/>
+                        </p:selectOneMenu>
+                    </f:facet>
+
+                    <h:outputText value="Ativa" rendered="#{item.situacao eq 'A'}"/>
+                    <h:outputText value="Cancelada" rendered="#{item.situacao eq 'C'}"/>
+                </p:column>
+
+                <p:column headerText="Agencia" width="130" sortBy="#{item.agencia}" filterBy="#{item.agencia}">
+                    <f:facet name="filter">
+                        <p:inputText value="#{contaBancariaControle.filtro.agencia}" onchange="PF('tbl').filter()"/>
+                    </f:facet>
+                    <h:outputText value="#{item.agenciaCompleta}"/>
+                </p:column>
+
+                <p:column headerText="Conta"  width="110" sortBy="#{item.conta}" filterBy="#{item.conta}">
+                    <f:facet name="filter">
+                        <p:inputText value="#{contaBancariaControle.filtro.conta}" onchange="PF('tbl').filter()"/>
+                    </f:facet>
+                    <h:outputText value="#{item.contaCompleta}"/>
+                </p:column>
+
+                <sec:ifAnyGranted roles ="CONTA_BANCARIA_GERENCIAR" >
+                    <p:column width="117" headerText="Ações" >
+                        <div class="actions">
+                            <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Alterar Conta Bancaria" action="#{contaBancariaControle.doStartAlterar()}"
+                                           rendered="#{item.situacao eq 'A'}">
+                                <i class="fa fa-edit"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{contaBancariaControle.contaBancariaSelecionado}"/>
+                            </h:commandLink>
+
+                            <h:commandLink  title="Cancelar conta" styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                            rendered="#{item.situacao eq 'A'}"
+                                            action="#{contaBancariaControle.cancelarConta()}" >
+                                <i class="fa fa-times"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{contaBancariaControle.contaBancariaSelecionado}"/>
+                            </h:commandLink>
+
+                            <ui:remove>
+                                <h:commandLink  styleClass="btn btn-circle btn-icon-only btn-default icones" title="Remover Conta Bancaria" action="#{contaBancariaControle.doFinishExcluir()}" onclick="return confirm('Tem certeza que deseja excluir este Conta Bancaria?');" >
+                                    <i class="icon-trash"></i>
+                                    <f:setPropertyActionListener value="#{item}" target="#{contaBancariaControle.contaBancariaSelecionado}"/>
+                                </h:commandLink>
+                            </ui:remove>
+
+                            <h:commandLink  title="Auditoria" styleClass="btn btn-circle btn-icon-only btn-default icones" action="#{contaBancariaControle.doShowAuditoria()}" >
+                                <i class="fa fa-history"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{contaBancariaControle.contaBancariaSelecionado}"/>
+                            </h:commandLink>
+
+                        </div>
+                    </p:column>
+                </sec:ifAnyGranted>
+
+            </p:dataTable>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

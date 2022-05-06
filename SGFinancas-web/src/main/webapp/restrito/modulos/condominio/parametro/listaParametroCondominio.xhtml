@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:sec="http://www.springframework.org/security/facelets/tags"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Parâmetros do sistema"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Condomínio</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/modulos/condominio/parametro/listaParametroCondominio.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="content">
+            <ui:include src="/WEB-INF/msgErro.xhtml"/>
+            <h:messages class="alertMessage" id="msgResultado" errorClass="alert alert-danger" infoClass="alert alert-success"/>
+            <h:form acceptcharset="ISO-8859-1">
+                <div class="row">
+                    <div class="col-md-12">
+                        <!-- BEGIN EXAMPLE TABLE PORTLET-->
+                        <div class="portlet light bordered">
+
+                            <div class="portlet-title">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <sec:ifAnyGranted roles ="PARAMETRO_CONDOMINIO_GERENCIAR" >
+                                            <div class="btn-group" >
+                                                <h:commandLink action="#{parametroCondominioControle.doStartAdd() }" rendered="#{parametroCondominioControle.parametroCondominioSelecionado.id eq null}" title="Novo parametro do sistema" class="btn btn-circle default blue-stripe">
+                                                    <i class="fa fa-plus"></i> Novo parâmetro do sistema </h:commandLink>
+                                            </div>
+                                        </sec:ifAnyGranted>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="portlet-body">
+
+                                <div class="portlet-body flip-scroll">
+                                    <p:dataTable value="#{parametroCondominioControle.model}" emptyMessage="Nenhum registro encontrado." var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+                                        <p:column headerText="Valor condomínio" sortBy="#{item.valorCondominio}"  >
+                                            <h:outputText value="#{item.valorCondominio}" >
+                                                <f:convertNumber type="currency" currencySymbol="R$ "  />
+                                            </h:outputText>
+                                        </p:column>
+
+                                        <p:column headerText="Vencimento mensalidade" sortBy="#{item.diaVencimentoMensalidade}"  >
+                                            <h:outputText value="#{item.diaVencimentoMensalidade}" >
+                                            </h:outputText>
+                                        </p:column>
+
+                                        <p:column headerText="Valor taxa extra" sortBy="#{item.valorTaxaExtra}"  >
+                                            <h:outputText value="#{item.valorTaxaExtra}" >
+                                                <f:convertNumber type="currency" currencySymbol="R$ "  />
+                                            </h:outputText>
+                                        </p:column>
+
+                                        <p:column headerText="Valor juros mora por dia" sortBy="#{item.valorJurosMoraDia}"  >
+                                            <h:outputText value="#{item.valorJurosMoraDia}" >
+                                                <f:convertNumber type="currency" currencySymbol="R$ "  />
+                                            </h:outputText>
+                                        </p:column>
+
+                                        <sec:ifAnyGranted roles ="PARAMETRO_CONDOMINIO_GERENCIAR" >
+                                            <p:column width="117" headerText="Ações" >
+
+                                                <div class="actions">
+                                                    <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Alterar parâmetro" action="#{parametroCondominioControle.doStartAlterar()}"  >
+                                                        <i class="fa fa-edit"></i>
+                                                        <f:setPropertyActionListener value="#{item}" target="#{parametroCondominioControle.parametroCondominioSelecionado}"/>
+                                                    </h:commandLink>
+
+                                                    <h:commandLink  title="Auditoria"  styleClass="btn btn-circle btn-icon-only btn-default icones" action="#{parametroCondominioControle.doShowAuditoria()}" >
+                                                        <i class="fa fa-history"></i>
+                                                        <f:setPropertyActionListener value="#{item}" target="#{parametroCondominioControle.parametroCondominioSelecionado}"/>
+                                                    </h:commandLink>
+
+                                                </div>
+
+                                            </p:column>
+                                        </sec:ifAnyGranted>
+
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </h:form>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.18.1.final using JasperReports Library version 6.18.1-9d75d1969e774d4f179fb3be8401e98a0e6d1611  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="venda_vendedor" pageWidth="595" pageHeight="842" whenNoDataType="BlankPage" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryNewPage="true" whenResourceMissingType="Empty" uuid="dbf1ee1e-2fac-41b7-9215-1776f546f95d">
+	<property name="ireport.zoom" value="2.1435888100000025"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<parameter name="relatorioDto" class="br.com.villefortconsulting.sgfinancas.entidades.dto.RelatorioDTO"/>
+	<parameter name="titulo" class="java.lang.String"/>
+	<parameter name="data" class="java.lang.String"/>
+	<parameter name="nomeQuebra" class="java.lang.String"/>
+	<parameter name="nomeEmpresa" class="java.lang.String"/>
+	<parameter name="logo" class="java.io.InputStream">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+	</parameter>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="descricaoProduto" class="java.lang.String"/>
+	<field name="origem" class="java.lang.String"/>
+	<field name="saldoAnterior" class="java.lang.Double"/>
+	<field name="quantidade" class="java.lang.Double"/>
+	<field name="saldo" class="java.lang.Double"/>
+	<field name="dataMovimentacao" class="java.util.Date"/>
+	<variable name="SomaQtd" class="java.lang.Long" resetType="Group" resetGroup="Vendedor" calculation="Sum">
+		<variableExpression><![CDATA[$F{quantidade}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="SomaValor" class="java.lang.Double" resetType="Group" resetGroup="Vendedor" calculation="Sum">
+		<variableExpression><![CDATA[$F{saldoAnterior}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="estoqueInicial" class="java.lang.Double" resetType="Group" resetGroup="Vendedor" calculation="Sum">
+		<variableExpression><![CDATA[$F{origem}.equalsIgnoreCase( "Estoque inicial" )?$F{quantidade}:0d]]></variableExpression>
+	</variable>
+	<variable name="inventario" class="java.lang.Double" resetType="Group" resetGroup="Vendedor" calculation="Sum">
+		<variableExpression><![CDATA[$F{origem}.equalsIgnoreCase( "Inventário" )?$F{quantidade}:0d]]></variableExpression>
+	</variable>
+	<variable name="saidaLancada" class="java.lang.Double" resetType="Group" resetGroup="Vendedor" calculation="Sum">
+		<variableExpression><![CDATA[$F{origem}.equalsIgnoreCase( "Saída lançada" )?$F{quantidade}:0d]]></variableExpression>
+	</variable>
+	<variable name="venda" class="java.lang.Double" resetType="Group" resetGroup="Vendedor" calculation="Sum">
+		<variableExpression><![CDATA[$F{origem}.equalsIgnoreCase( "Venda" )?$F{quantidade}:0d]]></variableExpression>
+	</variable>
+	<variable name="entradaLancada" class="java.lang.Double" resetType="Group" resetGroup="Vendedor" calculation="Sum">
+		<variableExpression><![CDATA[$F{origem}.equalsIgnoreCase( "Entrada lançada" )?$F{quantidade}:0d]]></variableExpression>
+	</variable>
+	<variable name="compra" class="java.lang.Double" resetType="Group" resetGroup="Vendedor" calculation="Sum">
+		<variableExpression><![CDATA[$F{origem}.equalsIgnoreCase( "Compra" )?$F{quantidade}:0d]]></variableExpression>
+	</variable>
+	<group name="Vendedor">
+		<groupExpression><![CDATA[$F{descricaoProduto}]]></groupExpression>
+		<groupHeader>
+			<band height="28">
+				<textField pattern="">
+					<reportElement x="110" y="-4" width="170" height="15" uuid="e402552d-1c8d-4268-91e9-127af833e29e"/>
+					<box leftPadding="2">
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Left">
+						<font size="11" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{descricaoProduto}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement mode="Opaque" x="180" y="11" width="100" height="15" backcolor="#D4D2D2" uuid="88b65ac2-90e5-4424-80db-9bb5ae46dd09"/>
+					<box leftPadding="0">
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[SALDO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="24" y="11" width="156" height="15" backcolor="#D4D2D2" uuid="2de0b656-b027-4ea4-94e4-6a5f296dc3c4"/>
+					<box leftPadding="0">
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[DATA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="24" y="-4" width="86" height="15" backcolor="#D4D2D2" uuid="20c2c2fb-a2d1-4c95-9c16-426e682df196"/>
+					<box leftPadding="0">
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[PRODUTO]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="11"/>
+		</groupFooter>
+	</group>
+	<pageHeader>
+		<band height="61">
+			<image scaleImage="FillFrame" hAlign="Center" vAlign="Middle" isUsingCache="true" onErrorType="Blank" evaluationTime="Page">
+				<reportElement x="0" y="0" width="80" height="61" uuid="62304d43-9f8c-408c-b132-95d86f55c6bf"/>
+				<imageExpression><![CDATA[$P{logo}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="80" y="0" width="392" height="19" uuid="a9e1320e-dfb3-4366-a59b-15c7f87d588c"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="13" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{nomeEmpresa}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="472" y="0" width="59" height="19" uuid="877d8289-ee98-4cb1-82ba-671a8397813d"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+"/"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="532" y="0" width="23" height="19" uuid="f5751a27-558c-4415-a8ff-d66b4453288a">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isItalic="true"/>
+					<paragraph lineSpacing="1_1_2" lineSpacingSize="0.0"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" pattern="dd/MM/yyyy HH:mm">
+				<reportElement x="472" y="19" width="83" height="19" uuid="1430b769-158a-4247-9f4e-9d754548631a"/>
+				<box leftPadding="5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="false"/>
+					<paragraph lineSpacingSize="0.0"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="80" y="19" width="392" height="19" uuid="9ae12463-f57a-4530-9bcf-1768b34e4b09"/>
+				<box leftPadding="5"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Arial" size="13" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{titulo}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="11">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<textField>
+				<reportElement x="180" y="-2" width="100" height="15" uuid="bfdc1ae7-aba8-4da3-838f-3d889effb88e"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{saldo}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="24" y="-2" width="156" height="15" uuid="31a85e58-48d3-422b-91ca-5203363f52ea"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{dataMovimentacao}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="10" splitType="Stretch">
+			<printWhenExpression><![CDATA[$F{descricaoProduto}!=null]]></printWhenExpression>
+			<textField>
+				<reportElement mode="Opaque" x="0" y="0" width="555" height="10" forecolor="#000000" backcolor="#FFFFFF" uuid="548ea2f0-56cc-4742-a0d1-e3f0cc25dd57"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Arial" size="8" isBold="false" isItalic="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["SGFinanças  © 2007-2017 Villefortconsulting.com | Todos os direitos reservados. "]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

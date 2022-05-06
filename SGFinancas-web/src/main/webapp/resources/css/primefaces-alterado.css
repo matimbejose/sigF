@@ -1,0 +1,181 @@
+.semBorda tr, .semBorda td {  
+    border: none !important;  
+}  
+
+ul.ui-widget-content.ui-picklist-list.ui-picklist-source.ui-corner-all.ui-sortable {
+    width: 400px !important;
+}
+
+ul.ui-widget-content.ui-picklist-list.ui-picklist-target.ui-corner-all.ui-sortable {
+    width: 400px !important;
+}
+
+.prime-duallist > table {
+    width: 100%;
+}
+
+.ui-selectonemenu{
+    min-width: 100% !important;
+    width: 100% !important;
+}
+
+.ui-selectonemenu-label{
+    min-width: 100% !important;
+    width: 100% !important;
+}
+
+.ui-selectonemenu-items {
+    min-width: 100% !important;
+    width: 100% !important;
+}
+
+.ui-selectonemenu-list {
+    width: 100% !important;
+    min-width: 100% !important;
+}
+
+.ui-inputfield {
+    box-shadow:none!important
+        background: 0 0;
+    border: 0;
+    border-bottom: 1px solid #c2cad8;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    -ms-border-radius: 0;
+    -o-border-radius: 0;
+    border-radius: 0;
+    color: #4d6b8a;
+    box-shadow: none;
+    padding-left: 0;
+    padding-right: 0;
+    font-size: 14px;
+    width: 100%;
+    height: 34px;
+    padding: 6px 12px;
+    background-color: #fff;
+}
+
+.ui-widget-header .ui-inputfield, .ui-widget-content .ui-inputfield {
+    box-shadow:none!important
+        background: 0 0;
+    border: 0;
+    border-bottom: 1px solid #c2cad8;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    -ms-border-radius: 0;
+    -o-border-radius: 0;
+    border-radius: 0;
+    color: #4d6b8a;
+    box-shadow: none;
+    padding-left: 0;
+    padding-right: 0;
+    font-size: 14px;
+    width: 100%;
+    height: 34px;
+    padding: 6px 12px;
+    background-color: #fff;
+}
+
+.ui-autocomplete-input{ 
+    display: block;
+    width: 100%;
+}
+
+.ui-autocomplete{
+    width: auto;
+    zoom: 1;
+    cursor: pointer;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    position: relative;
+
+    display: block;
+}
+
+
+.ui-fieldset-toggleable .ui-fieldset-legend {
+    width: 16% !important;
+    font-size: 13px !important;
+    font-weight: normal;
+    padding: .5em 1em .5em .5em;
+    cursor: pointer;
+    outline: 0;
+    font-weight: normal;
+
+}
+
+.ui-selectonemenu {
+    background: 0 0;
+    border: 0;
+    border-bottom: 1px solid #c2cad8;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    -ms-border-radius: 0;
+    -o-border-radius: 0;
+    border-radius: 0;
+    color: #4d6b8a;
+    box-shadow: none;
+    padding-left: 0;
+    padding-right: 0;
+    font-size: 16px;
+}
+
+.ui-fieldset .ui-fieldset-toggler {
+    padding-right: .1em;
+    margin-top: 0.1em;
+    float: left;
+}
+
+.widget-thumb .widget-thumb-body .widget-thumb-body-stat {
+    display: block;
+    font-size: 25px;
+    font-weight: 600;
+    color: #3e4f5e;
+
+}
+
+.ui-fileupload-buttonbar {
+    font-size: 14px !important;
+}
+
+.prime-min-width {
+    min-width: 0px !important;
+}
+
+/*.ui-chkbox-box {
+    margin-bottom: -3px!important;
+}*/
+
+.ui-inputswitch .ui-inputswitch-on, .ui-inputswitch .ui-inputswitch-off {
+    white-space: nowrap;
+    display: block;
+    position: absolute;
+    top: 0;
+    width: auto;
+    overflow: hidden;
+    user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    font-weight: bold;
+    height: 20px;
+    font-size: 14px;
+    padding-top: 3px; 
+    color: #555555;
+}
+
+.ui-inputswitch .ui-inputswitch-on {
+    /*background-color: blue;*/
+}
+
+.ui-inputswitch-off {
+    /*background-color: red;*/
+}
+
+.ui-styleGreen {    
+    border: 1px solid #d9168d;
+    color: #FFF;
+    font-size: 12px;
+    box-shadow: 0 1px 0 #53bcff inset, 0 1px 2px 
+}

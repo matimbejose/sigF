@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:sec="http://www.springframework.org/security/facelets/tags"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Venda"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Venda</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/venda/listaVenda.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <sec:ifAnyGranted roles ="VENDA_GERENCIAR" >
+                <h:commandButton id="remoteAdd" action="#{vendaControle.doStartAdd()}">
+                    <f:setPropertyActionListener value="#{null}" target="#{vendaControle.controleEdicao}"/>
+                </h:commandButton>
+            </sec:ifAnyGranted>
+        </ui:define>
+
+        <ui:define name="formButtons">
+            <p:commandButton type="button" value="Limpar filtros" onclick="clearDataTableFilters('tbl');"/>
+            <p:commandButton id="toggler" type="button" value="Colunas"/>
+            <p:columnToggler datasource="tbl" trigger="toggler"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <script src="https://unpkg.com/vanilla-masker@1.1.1/build/vanilla-masker.min.js"></script>
+             <script>
+                //<![CDATA[
+                function aplicaFiltroPlaca() {
+                    const mercosul = 'AAA9A99', padrao = 'AAA-9999';
+                    const elem = PF('placa').getJQ();
+                    if (elem.attr('mascarado') == 'true'){
+                        return;
+                    }
+                    elem.attr('mascarado','true');
+                    elem.on('input', () => {
+                        const val = elem.val().toUpperCase().replace(/[^\dA-Z-]/g, '');
+                        let tipoPadrao = val.indexOf('-') !== -1 || (val.length > 4 && !isNaN(parseInt(val.charAt(4))));
+                        elem.val(VMasker.toPattern(val, tipoPadrao ? padrao : mercosul));
+                    });
+                }
+                //]]>
+            </script>
+            <ui:include src="/WEB-INF/msgErro.xhtml"/>
+            <div class="layout-dashboard mb-3">
+                <div class="row">
+                    <div class="col intro-text">
+                        <span>
+                            Período de
+                            <p:calendar navigator="true" pattern="dd/MM/yyyy" styleClass="top-calendar m-0" value="#{vendaControle.filtro.data.min}">
+                                <p:ajax event="dateSelect" update="tbl"/>
+                            </p:calendar>
+                            até
+                            <p:calendar navigator="true" pattern="dd/MM/yyyy" styleClass="top-calendar m-0" value="#{vendaControle.filtro.data.max}">
+                                <p:ajax event="dateSelect" update="tbl"/>
+                            </p:calendar>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+            <p:dataTable value="#{vendaControle.model}" sortBy="#{item.dataVencimento}" sortOrder="descending" emptyMessage="Nenhum registro encontrado." var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+                <p:column headerText="#" width="55" sortBy="#{item.id}" visible="false">
+                    <h:outputText value="#{item.id}"/>
+                </p:column>
+
+                <p:column headerText="Descrição" filterBy="#{item.descricao}">
+                    <f:facet name="filter">
+                        <p:inputText value="#{vendaControle.filtro.descricao}" onchange="PF('tbl').filter()"/>
+                    </f:facet>
+                    <h:outputText value="#{item.idPlanoConta.descricao}"/>
+                </p:column>
+
+                <p:column headerText="Cliente" sortBy="#{item.idCliente}" filterBy="#{item.cliente}">
+                    <f:facet name="filter">
+                        <p:selectOneMenu onchange="PF('tbl').filter()" filter="true" filterMatchMode="contains"
+                                         value="#{vendaControle.filtro.cliente}" converter="#{genericConverter}">
+                            <f:selectItem itemLabel="Todos" noSelectionOption="true"/>
+                            <f:selectItems value="#{clienteControle.clientes}" var="cliente"
+                                           itemLabel="#{cliente.nome}" itemValue="#{cliente}"/>
+                        </p:selectOneMenu>
+                    </f:facet>
+
+                    <h:outputText value="#{item.idCliente.nome}"/>
+                </p:column>
+
+                <p:column headerText="Parc."  width="100" style="text-align: right" filterBy="#{item.parcelas}">
+                    <f:facet name="filter">
+                        <p:inputNumber decimalPlaces="0" decimalSeparator="," thousandSeparator="." onchange="PF('tbl').filter()"
+                                       value="#{vendaControle.filtro.parcelas}"/>
+                    </f:facet>
+                    <h:outputText value="#{item.numParcela}"/>
+                </p:column>
+
+                <p:column headerText="Valor" width="100" style="text-align: right" sortBy="#{item.valor}" filterBy="#{item.valor}">
+                    <f:facet name="filter">
+                        <p:inputNumber decimalPlaces="2" decimalSeparator="," thousandSeparator="." onchange="PF('tbl').filter()"
+                                       value="#{vendaControle.filtro.valor}"/>
+                    </f:facet>
+
+                    <h:outputText value="#{item.valor}">
+                        <f:convertNumber locale="pt_BR" type="currency"/>
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Pago" width="100" style="text-align: right" sortBy="#{item.idConta.valorPago}" >
+                    <h:outputText value="#{item.idConta.valorPago}">
+                        <f:convertNumber currencySymbol="R$" type="currency" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Venc." sortBy="#{item.dataVencimento}" width="100">
+                    <h:outputText value="#{item.dataVencimento}">
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Placa" width="120" rendered="#{empresaControle.empresaLogada.idCategoriaEmpresa.descricao eq 'Oficina mecânica'}" filterBy="#{item.placa}">
+                    <f:facet name="filter">
+                        <p:inputText value="#{vendaControle.filtro.placa}" onchange="PF('tbl').filter()" widgetVar="placa" onfocus="aplicaFiltroPlaca();"/>
+                    </f:facet>
+                    <h:outputText value="#{item.idClienteVeiculo.placa}"/>
+                </p:column>
+
+                <p:column headerText="Ativo" sortBy="#{item.situacao}" filterBy="#{item.ativo}" width="100">
+                    <f:facet name="filter">
+                        <p:selectOneMenu onchange="PF('tbl').filter()" styleClass="custom-filter"
+                                         value="#{vendaControle.filtro.ativo}">
+                            <f:selectItem itemLabel="Todos" noSelectionOption="true"/>
+                            <f:selectItem itemLabel="Sim" itemValue="S"/>
+                            <f:selectItem itemLabel="Não" itemValue="N"/>
+                        </p:selectOneMenu>
+                    </f:facet>
+
+                    <h:outputText value="Sim" rendered="#{item.situacao eq 'A'}"/>
+                    <h:outputText value="Não" rendered="#{item.situacao eq 'C'}"/>
+                </p:column>
+
+                <p:column headerText="Situação" width="100" >
+                    <h:outputText value="#{contaReceberControle.buscarSituacao(item.idConta.situacao)}"/>
+                </p:column>
+
+                <ui:remove>
+                    <p:column headerText="Pontos" width="70" style="text-align: right">
+                        <h:outputText style="color: blue" rendered="#{item.pontuacao ne null}" value="+#{item.pontuacao}"/>
+                        <h:outputText style="color: red" rendered="#{item.pontosUtilizados ne null}" value="-#{item.pontosUtilizados}"/>
+                    </p:column>
+                </ui:remove>
+
+                <sec:ifAnyGranted roles ="VENDA_GERENCIAR" >
+                    <p:column width="110" headerText="Ações" >
+
+                        <div class="actions">
+                            <h:commandLink rendered="#{item.situacao eq 'A' and item.idConta.situacao eq 'NP' and item.idTransacao ne null}"
+                                           styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                           title="Enviar link de pagamento" action="#{vendaControle.doStartSendPaymentLink}"  >
+                                <i class="fa fa-paper-plane"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{vendaControle.vendaSelecionada}"/>
+                            </h:commandLink>
+
+                            <h:commandLink rendered="#{item.situacao eq 'A' and item.statusNegociacao ne 'OR'}"
+                                           styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                           title="Alterar venda" action="#{vendaControle.doStartAlterar}"  >
+                                <i class="fa fa-edit"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{vendaControle.vendaSelecionada}"/>
+                            </h:commandLink>
+
+                            <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                           title="Duplicar venda" action="#{vendaControle.doStartDuplicar}">
+                                <i class="fa fa-copy"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{vendaControle.vendaSelecionada}"/>
+                            </h:commandLink>
+
+                            <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Emitir nota fiscal de produto"
+                                           action="#{notaFiscalProdutoControle.doStartAdd()}"
+                                           rendered="#{item.idFormaPagamento ne null and vendaControle.vendaPossuiItensNF(item) and (!vendaControle.vendaPossuiNF(item) and item.statusNegociacao ne 'OR' and item.tipoItemVenda eq 'P' or item.tipoItemVenda eq 'PS' )}">
+                                <i class="fa fa-file-text"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{notaFiscalProdutoControle.vendaSelecionada}"/>
+                            </h:commandLink>
+
+                            <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Emitir nota fiscal de produto"
+                                           onclick="alert('Esta venda não possui meio de pagamento selecionado.');return false;"
+                                           rendered="#{item.idFormaPagamento eq null and (!vendaControle.vendaPossuiNF(item)and item.statusNegociacao ne 'OR' and item.tipoItemVenda eq 'P' or item.tipoItemVenda eq 'PS' )}">
+                                <i class="fa fa-file-text"></i>
+                            </h:commandLink>
+
+
+                            <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Emitir nota fiscal de serviço"
+                                           action="#{notaFiscalServicoControle.doStartAdd()}"
+                                           rendered="#{!vendaControle.vendaPossuiNFServico(item)and item.statusNegociacao ne 'OR' and item.tipoItemVenda eq 'S' or item.tipoItemVenda eq 'PS'}">
+                                <i class="fa fa-file-text-o"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{notaFiscalServicoControle.vendaSelecionada}"/>
+                            </h:commandLink>
+
+                            <h:commandLink rendered="#{item.situacao eq 'A' and item.statusNegociacao eq 'OR'}"
+                                           styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                           title="Efetuar venda"
+                                           action="#{vendaControle.alteraVendaOrcamento}"  >
+                                <i class="fa fa-check"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{vendaControle.vendaSelecionada}"/>
+                            </h:commandLink>
+
+                            <h:commandLink  title="Imprimir" styleClass="btn btn-circle btn-icon-only btn-default icones">
+                                <i class="fa fa-print"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{vendaControle.vendaSelecionada}"/>
+                                <p:fileDownload value="#{vendaControle.doPrint()}"/>
+                            </h:commandLink>
+
+                            <h:commandLink title="Remover" styleClass="btn btn-circle btn-icon-only btn-default icones" action="#{vendaControle.doFinishExcluir()}"
+                                           onclick="return confirm('Tem certeza que deseja excluir esta venda?');">
+                                <i class="icon-trash"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{vendaControle.vendaSelecionada}"/>
+                            </h:commandLink>
+
+                            <h:commandLink  title="Cancelar venda" styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                            rendered="#{item.situacao ne 'C'}" onclick="return confirm('Tem certeza que deseja cancelar esta venda?');"
+                                            action="#{vendaControle.cancelarVenda()}" >
+                                <i class="fa fa-times"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{vendaControle.vendaSelecionada}"/>
+                            </h:commandLink>
+
+                            <h:commandLink  title="Auditoria" styleClass="btn btn-circle btn-icon-only btn-default icones" action="#{vendaControle.doShowAuditoria()}" >
+                                <i class="fa fa-history"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{vendaControle.vendaSelecionada}"/>
+                            </h:commandLink>
+
+                            <h:commandLink  title="Recibo" styleClass="btn btn-circle btn-icon-only btn-default icones" rendered="#{item.idConta.valorPago gt 0}">
+                                <i class="fa fa-file-text-o"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{vendaControle.vendaSelecionada}"/>
+                                <p:fileDownload value="#{vendaControle.doPrintRecibo()}"/>
+                            </h:commandLink>
+
+                        </div>
+
+                    </p:column>
+                </sec:ifAnyGranted>
+
+            </p:dataTable>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:sec="http://www.springframework.org/security/facelets/tags"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Parcelas fechamento contábil"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Contábil</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/fechamentoContabil/listaParcelaFechamentoContabil.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteBack" action="listaFechamentoContabil.xhtml" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <h1>
+                Parcelas #{fechamentoContabilControle.fechada eq 'S'? 'fechadas' : 'abertas' }
+                #{fechamentoContabilControle.buscarMes(fechamentoContabilControle.mes)} de #{fechamentoContabilControle.ano}
+            </h1>
+            <div class="card p-0">
+                <div class="card-body">
+                    <p:dataTable value="#{fechamentoContabilControle.parcelasSelecionadas}" emptyMessage="Nenhum registro encontrado." var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+                        <p:column headerText="Plano de conta" sortBy="#{idConta.idPlanoConta.descricao}" >
+                            <h:outputText value="#{item.idConta.idPlanoConta.descricao} (#{item.numParcela}/#{item.idConta.numeroParcelas})"/>
+                        </p:column>
+
+                        <p:column headerText="Obs." sortBy="#{idConta.observacao}">
+                            <h:outputText value="#{item.idConta.observacao}"/>
+                        </p:column>
+
+                        <p:column headerText="Transação" >
+                            <h:outputText rendered="#{item.idConta.tipoTransacao eq 'R'}" value="Recebimento" />
+                            <h:outputText rendered="#{item.idConta.tipoTransacao eq 'P'}" value="Pagamento" />
+                        </p:column>
+
+                        <p:column headerText="Origem" >
+                            <h:outputText value="#{contaPagarControle.mostraOrigem(item.idConta)}"/>
+                        </p:column>
+
+                        <p:column headerText="Venc." sortBy="#{item.dataVencimento}" width="95">
+                            <h:outputText value="#{item.dataVencimento}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="Valor"  sortBy="#{item.valor}" style="text-align: right">
+                            <h:outputText value="#{item.valor}">
+                                <f:convertNumber currencySymbol="R$" type="currency" />
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="Total" sortBy="#{item.valorTotal}" style="text-align: right">
+                            <h:outputText value="#{item.valorTotal}">
+                                <f:convertNumber currencySymbol="R$" type="currency" />
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="Pago" sortBy="#{item.valorPago}" style="text-align: right">
+                            <h:outputText value="#{item.valorPago}">
+                                <f:convertNumber currencySymbol="R$" type="currency" />
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="Situação" sortBy="#{item.situacao}">
+                            <h:outputText value="#{contaPagarControle.buscarSituacao(item.situacao)}"/>
+                        </p:column>
+
+                    </p:dataTable>
+                </div>
+                <div class="card-footer">
+                    <p:row rendered="#{fechamentoContabilControle.fechada eq 'S'}">
+                        <p:commandButton value="Gerar excel" ajax="false" icon="fa fa-file-excel-o">
+                            <p:fileDownload value="#{fechamentoContabilControle.gerarRelatorioFechamentoContabil()}"/>
+                        </p:commandButton>
+
+                        <p:spacer width="10" height="10"/>
+
+                        <p:commandButton action="#{fechamentoContabilControle.doFinishEstornarParcela()}" value="Estornar parcelas"/>
+                    </p:row>
+
+                    <p:commandButton action="#{fechamentoContabilControle.doFinishFecharParcela()}"
+                                     rendered="#{fechamentoContabilControle.fechada ne 'S'}" value="Fechar parcelas"/>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

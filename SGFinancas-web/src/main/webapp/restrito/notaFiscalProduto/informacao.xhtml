@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Emissão de nota fiscal"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Nota fiscal</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/notaFiscalProduto/listaNotaFiscalProduto.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="content">
+            <div class="card card-w-title m-0 mx-2" style="height: 100%;">
+                <h1>Precisamos de algumas informações antes de emitir nota fiscal</h1>
+                <div class="row mb-3">
+                    <div class="pl-3">
+                        <img src="#{facesContext.externalContext.requestContextPath}/resources/images/SGFinancas.png" />
+                    </div>
+                    <div class="col pt-2">
+                        <span class="mt-comment-author">Consultor SGFinanças</span>
+                        <span class="mt-comment-date">
+                            <h:outputText value="#{empresaControle.obterDataHora()}">
+                                <f:convertDateTime pattern="dd/MM/yy HH:mm" />
+                            </h:outputText>
+                        </span>
+                        <div class="mt-comment-text"> Verificamos que você ainda não forneceu as informações necessárias para emissão da nota fiscal. Vamos revisá-las?</div>
+                    </div>
+                </div>
+                <div class="d-flex align-items-end flex-column" style="height: 100%;">
+                    <div style="width: 100%;">
+                        <div class="mt-comment-text">
+                            <div class="icon">
+                                <i class="#{notaFiscalProdutoControle.getSituacao('CE')}"></i> - Certificado digital
+                            </div>
+                        </div>
+                        <div class="mt-comment-text">
+                            <div class="icon">
+                                <i class="#{notaFiscalProdutoControle.getSituacao('II')}"></i> - Indicador de inscrição estadual
+                            </div>
+                        </div>
+                        <div class="mt-comment-text">
+                            <div class="mt-action-icon ">
+                                <i class="#{notaFiscalProdutoControle.getSituacao('IE')}"></i> - Instrição estadual
+                            </div>
+                        </div>
+                        <div class="mt-comment-text">
+                            <div class="icon">
+                                <i class="#{notaFiscalProdutoControle.getSituacao('IM')}"></i> - Inscrição municipal
+                            </div>
+                        </div>
+                        <div class="mt-comment-text">
+                            <div class="icon">
+                                <i class="#{notaFiscalProdutoControle.getSituacao('PE')}"></i> - Porte da empresa
+                            </div>
+                        </div>
+                        <div class="mt-comment-text">
+                            <div class="icon">
+                                <i class="#{notaFiscalProdutoControle.getSituacao('RT')}"></i> - Regime tributário
+                            </div>
+                        </div>
+                        <div class="mt-comment-text">
+                            <div class="mt-action-icon ">
+                                <i class="#{notaFiscalProdutoControle.getSituacao('ED')}"></i> - Endereço da sua empresa
+                            </div>
+                        </div>
+                        <div class="mt-comment-text">
+                            <div class="mt-action-icon ">
+                                <i class="#{notaFiscalProdutoControle.getSituacao('NF')} "></i> - Número de última NF-e emitida fora do SGFinanças
+                            </div>
+                        </div>
+                        <div class="mt-comment-text">
+                            <div class="mt-action-icon ">
+                                <i class="#{notaFiscalProdutoControle.getSituacao('SE')}"></i> - Série de entrada e saída de suas NF-e
+                            </div>
+                        </div>
+                    </div>
+                    <div style="width: 100%;" class="mt-auto">
+                        <div class="mt-comment-text"> Dica: informe o seu logotipo para sair na impressão da nota  </div>
+                        <br/>
+                        <h:commandLink action="#{empresaControle.doStartAlterarInf()}" immediate="true" value="Clique aqui para atualizar o cadastro da empresa." />
+                        <br/>
+                        <h:commandLink action="#{parametroSistemaControle.doStartAlterarInf()}" immediate="true" value="Clique aqui para atualizar o número e série da NF-e." />
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

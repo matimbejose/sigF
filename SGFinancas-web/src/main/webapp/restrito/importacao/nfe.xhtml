@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite/components">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteCancel" action="#{importacaoNfeControle.doCancel()}"/>
+            <h:commandButton id="remoteImport" action="#{importacaoNfeControle.doImport()}" rendered="#{importacaoNfeControle.listaImportacao ne null}"
+                             onclick="showProcess()"/>
+            <h:commandButton id="remoteNext" action="#{importacaoNfeControle.doReadFile()}" rendered="#{importacaoNfeControle.listaImportacao eq null}"
+                             onclick="showUpload('file-archive-o')"/>
+        </ui:define>
+
+        <ui:define name="formButtons">
+            <p:commandButton type="button" value="Colunas" rendered="#{importacaoNfeControle.file ne null}"/>
+            <p:columnToggler datasource="tbl" trigger="@previous"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <ui:include src="/WEB-INF/msgErro.xhtml"/>
+            <p:row rendered="#{importacaoNfeControle.file eq null}">
+                <h5>Selecione o arquivo XML da NF-e ou um zip com os XML da NF-e e clique em avançar</h5>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <p:fileUpload value="#{importacaoNfeControle.file}" mode="simple" skinSimple="true" label="Procurar"
+                                          required="true" requiredMessage="Informe o arquivo XML da nota fiscal"/>
+                        </div>
+                    </div>
+                </div>
+            </p:row>
+            <p:row rendered="#{importacaoNfeControle.file ne null}">
+                <h5>Verifique as informações abaixo e clique em importar</h5>
+                <p:dataTable value="#{importacaoNfeControle.listaImportacao}" var="im" id="tbl" emptyMessage="Nenhum item com problema"
+                             styleClass="card p-0 ui-datatable-striped ui-datatable-sm ui-datatable-gridlines" rowsPerPageTemplate="50,100" rows="50"
+                             paginator="true" paginatorPosition="bottom" currentPageReportTemplate="Total de registros: {totalRecords}"
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+
+                    <f:facet name="header">
+                        <div class="row">
+                            <div class="col-auto">
+                                Exibir itens
+                            </div>
+                            <div class="col">
+                                <p:selectBooleanCheckbox value="#{importacaoNfeControle.exibirComCliente}" itemLabel="com cliente">
+                                    <p:ajax process="@this" update="tbl"/>
+                                </p:selectBooleanCheckbox>
+                                <br/>
+                                <p:selectBooleanCheckbox value="#{importacaoNfeControle.exibirSemErroImportacao}" itemLabel="sem erro de importação">
+                                    <p:ajax process="@this" update="tbl"/>
+                                </p:selectBooleanCheckbox>
+                            </div>
+                            <div class="col-auto">
+                                <p:commandLink styleClass="btn btn-sm" process="@this" action="#{cadastroControle.showAddModal('cliente', null)}">
+                                    <p:ajax event="dialogReturn" update="tbl"/>
+                                    <i class="fa fa-plus"></i> Cadastrar cliente
+                                </p:commandLink>
+                            </div>
+                        </div>
+                    </f:facet>
+
+                    <p:column width="40" style="text-align: center;">
+                        <p:rowToggler/>
+                    </p:column>
+
+                    <p:column headerText="Gerar financeiro" width="70" style="text-align: center;">
+                        <p:selectBooleanCheckbox value="#{im.geraFinanceiro}"/>
+                    </p:column>
+
+                    <p:column headerText="Cliente vinculado" width="70" style="text-align: center;">
+                        <i class="#{im.tipoVinculo.icone}" title="#{im.tipoVinculo.titulo}"></i>
+                    </p:column>
+
+                    <p:column headerText="Origem" width="60">
+                        <h:outputText value="#{im.origem.descricao}"/>
+                    </p:column>
+
+                    <p:column headerText="Destinatário" width="250">
+                        <h:outputText value="#{im.nomeDestinatario}"/>
+                        <p:selectOneMenu value="#{im.cliente}" converter="#{genericConverter}" var="c"
+                                         filter="true" filterMatchMode="startsWith" rendered="#{not im.tipoVinculo.finalState and not im.origem.cancelamento}">
+                            <p:column>
+                                <h:outputText value="#{c.nome}"/>
+                            </p:column>
+
+                            <f:selectItem itemLabel="-- cadastrar cliente --" noSelectionOption="true"/>
+                            <f:selectItems value="#{clienteControle.clientes}" var="cliente" itemLabel="#{cliente.nome}" itemValue="#{cliente}"/>
+                            <p:ajax process="@this" update="tbl" listener="#{importacaoNfeControle.processaCliente(im)}"/>
+                        </p:selectOneMenu>
+                    </p:column>
+
+                    <p:column headerText="CPF/CNPJ" width="130">
+                        <h:outputText value="#{im.cpfCnpjDestinatario}"/>
+                    </p:column>
+
+                    <p:column headerText="Valor" width="80" style="text-align: right;">
+                        <cc:convertMoney value="#{im.valor}"/>
+                    </p:column>
+
+                    <p:column headerText="Data" width="75" style="text-align: center;">
+                        <cc:convertDate value="#{im.dataMovimentacao}"/>
+                    </p:column>
+
+                    <p:column headerText="Erro">
+                        <h:outputText value="#{im.motivoErro}"/>
+                    </p:column>
+
+                    <p:rowExpansion>
+                        <div class="row">
+                            <div class="col-6 form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="ID da nota"/>
+                                <p:inputText value="#{im.idIntegracao}" readonly="true"/>
+                            </div>
+                            <div class="col form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Centro de custo"/>
+                                <p:inputText value="#{im.centroCusto.descricao}" readonly="true"/>
+                            </div>
+                            <div class="col form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Plano de contas"/>
+                                <p:inputText value="#{im.planoConta.descricao}" readonly="true"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Informação complementar"/>
+                                <p:inputTextarea value="#{im.observacao}" readonly="true"/>
+                            </div>
+                        </div>
+                    </p:rowExpansion>
+
+                </p:dataTable>
+            </p:row>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

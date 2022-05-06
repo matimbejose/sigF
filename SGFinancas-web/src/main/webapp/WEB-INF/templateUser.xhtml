@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      >    <h:head>
+        <meta charset="utf-8" />
+        <title><ui:insert name="title">SG Finanças</ui:insert></title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        <meta content="width=device-width, initial-scale=1" name="viewport" />
+        <meta content="" name="description" />
+        <meta content="" name="author" />
+        <link rel="shortcut icon" href="resources/images/favicon.png" />
+        <link href="#{facesContext.externalContext.requestContextPath}/resources/css/main.css?v=#{usuarioControle.revNumber}" rel="stylesheet" type="text/css"/>
+        <link type="text/css" rel="stylesheet" href="/javax.faces.resource/css/layout-absolution.css.xhtml?ln=rain-layout"/>
+        <h:outputScript name="js/layout.js" library="rain-layout" />
+        <script src="#{facesContext.externalContext.requestContextPath}/resources/js/main.js?v=#{usuarioControle.revNumber}"/>
+        <link href="https://fonts.googleapis.com/css?family=Signika:400,700" rel="stylesheet" type="text/css"/>
+        <link href="/resources/metronic/assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css" />
+        <link href="/resources/metronic/assets/global/css/components.css" rel="stylesheet" id="style_components" type="text/css" />
+        <link rel="stylesheet" href="/resources/bootstrap-4.3.1/css/bootstrap.css" />
+        <script src="https://unpkg.com/popper.js@1.15.0/dist/umd/popper.min.js"></script>
+        <script src="https://unpkg.com/popper.js@1.15.0/dist/umd/popper-utils.min.js"></script>
+        <script src="/resources/bootstrap-4.3.1/js/bootstrap.min.js"></script>
+        <style type="text/css">
+            .forgot {
+                color: #a0a9b4;
+                padding-top: 20px;
+                margin-right: 1em;
+                display: inline-block;
+            }
+            .msg {
+                border-width: 1px ;
+                border-color: #fbe1e3;
+                color: #e73d4a;
+                padding: 15px;
+                text-align: center;
+            }
+            #canvas {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                width: 100vw;
+            }
+            .login-footer {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                height: 45px;
+                width: 100vw;
+                background-color: #0003;
+                color: white;
+            }
+            .login-social {
+                list-style: none;
+            }
+            .image-panel {
+                margin: -16px -1px -16px 0;
+                background-image: url(resources/images/logo_aplicacao3d.jpg);
+                background-size: 100%;
+                background-position-y: -50px;
+                height: 450px;
+                color: #aaa;
+                font-weight: bold;
+                text-align: center;
+            }
+            body {
+                overflow-x:hidden;
+                background: #134E5E;  /* fallback for old browsers */
+                background: -webkit-linear-gradient(to right, #71B280, #134E5E);  /* Chrome 10-25, Safari 5.1-6 */
+                background: linear-gradient(to right, #71B280, #134E5E); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+                /*background-image: linear-gradient(to top, #134E5E, #71B280);*/
+            }
+            .card {
+                overflow: hidden;
+                border-width: 3px;
+                padding: 0px;
+            }
+            .quote {
+                background-color: #d4d4d4d4;
+                color: #4a4a4a;
+                border: none;
+                border-left: 5px solid #185460;
+                border-radius: 0 5px 5px 0;
+                font-size: 18px;
+            }
+            p.title-capt{
+                font-size: 11px;
+                color: #536976
+            }
+            ul#msgResultado {
+                list-style-type: circle !important;
+                list-style-position: inside;
+            }
+            label {
+                margin-top: 5px;
+            }
+            .ui-selectonemenu.ui-widget, .ui-selectcheckboxmenu.ui-widget, .ui-inputfield.ui-widget:not(.ui-selectmanymenu) {
+                padding-right: 6px;
+            }
+            .well {
+                border-radius: .25rem;
+                background-color: #0002;
+                padding: 6px;
+            }
+            #screenBlocker {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                z-index: 9999999;
+                cursor: progress;
+                transition: background-color .4s;
+                background-color: #0002;
+            }
+            #screenBlocker:not(.visible) {
+                background-color: #0000;
+            }
+        </style>
+        <ui:insert name="head"></ui:insert>
+    </h:head>
+    <h:body>
+        <p:ajaxStatus style="position: fixed;bottom: 10px;right: 10px;z-index: 9999999;" onstart="lockScreen();" oncomplete="unlockScreen();" onerror="unlockScreen();" onsuccess="unlockScreen();">
+            <f:facet name="start">
+                <i class="fa fa-circle-o-notch fa-spin fa-2x" style="color: #88c657;"></i>
+            </f:facet>
+            <f:facet name="complete">
+                <h:outputText value=""/>
+            </f:facet>
+        </p:ajaxStatus>
+        <div id="screenBlocker" style="display: none;"></div>
+        <div class="p-4">
+            <div class="login-bg" style="background-image:url('logo_SG_Financas_menor.png')">
+                <img class="login-logo" src="/resources/images/logo_grande_branca.png" style="height: 30px;"/>
+            </div>
+        </div>
+        <div class="row px-3">
+            <div class="col-lg-2 col-md-1 col"></div>
+            <div class="col-lg-8 col-md-10 col-12 mt-1" style="width: 800px;">
+                <div class="row">
+                    <div class="col mx-auto" style="max-width: 900px;">
+                        <div class="card">
+                            <h:form acceptcharset="ISO-8859-1" id="form" prependId="false">
+                                <ui:insert name="content"></ui:insert>
+                            </h:form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </h:body>
+</html>

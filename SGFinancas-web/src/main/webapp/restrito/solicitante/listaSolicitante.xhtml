@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:sec="http://www.springframework.org/security/facelets/tags"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Solicitante"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Escola</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/solicitante/listaSolicitante.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <sec:ifAnyGranted roles="SOLICITANTE_GERENCIAR">
+                <h:commandButton id="remoteAdd" action="#{solicitanteControle.doStartAdd()}"/>
+            </sec:ifAnyGranted>
+        </ui:define>
+
+        <ui:define name="formButtons">
+            <p:commandButton action="#{solicitanteControle.doStartGerarPanorama()}" value="Relatório panorama" />
+            <p:commandButton action="#{solicitanteControle.gerarRelatorioSolicitantes()}" value="Relatório solicitantes" />
+            <p:commandButton type="button" value="Limpar filtros" onclick="clearDataTableFilters('tbl');"/>
+            <p:commandButton id="toggler" type="button" value="Colunas"/>
+            <p:columnToggler datasource="tbl" trigger="toggler"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <p:dataTable value="#{solicitanteControle.model}" emptyMessage="Nenhum registro encontrado." var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+                <p:column headerText="#" width="55" sortBy="#{item.id}" visible="false">
+                    <h:outputText value="#{item.id}"/>
+                </p:column>
+
+                <p:column headerText="Nome" sortBy="#{item.nome}">
+                    <h:outputText value="#{item.nome}"/>
+                </p:column>
+
+                <p:column headerText="Email"  sortBy="#{item.email}">
+                    <h:outputText value="#{item.email}"/>
+                </p:column>
+
+                <p:column headerText="Celular"  sortBy="#{item.telefoneCelular}">
+                    <h:outputText value="#{item.telefoneCelular}"/>
+                </p:column>
+
+                <p:column headerText="Curso interesse"  sortBy="#{idCurso.descricao}">
+                    <h:outputText value="#{item.idCurso.descricao}"/>
+                </p:column>
+
+                <p:column headerText="Status"  sortBy="#{item.status}">
+                    <h:outputText value="#{solicitanteControle.buscarStatusSolicitante(item.status)}"/>
+                </p:column>
+
+                <p:column headerText="Turma interesse"  sortBy="#{idTurma.descricao}">
+                    <h:outputText value="#{item.idTurma.descricao}"/>
+                </p:column>
+
+                <sec:ifAnyGranted roles ="SOLICITANTE_GERENCIAR" >
+                    <p:column width="140" headerText="Ações" >
+                        <div class="actions">
+                            <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Alterar solicitante" action="#{solicitanteControle.doStartAlterar()}"  >
+                                <i class="fa fa-edit"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{solicitanteControle.solicitanteSelecionado}"/>
+                            </h:commandLink>
+
+                            <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Histórico" action="#{solicitanteHistoricoControle.doListarHistorico()}"  >
+                                <i class="fa fa-book"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{solicitanteHistoricoControle.solicitanteSelecionado}"/>
+                            </h:commandLink>
+
+                            <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                           rendered="#{item.idCliente eq null}"
+                                           title="Excluir solicitante" action="#{solicitanteControle.doFinishExcluir()}"  >
+                                <i class="icon-trash"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{solicitanteControle.solicitanteSelecionado}"/>
+                            </h:commandLink>
+
+                            <h:commandLink  title="Auditoria" styleClass="btn btn-circle btn-icon-only btn-default icones" action="#{solicitanteControle.doShowAuditoria()}" >
+                                <i class="fa fa-history"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{solicitanteControle.solicitanteSelecionado}"/>
+                            </h:commandLink>
+
+                        </div>
+                    </p:column>
+                </sec:ifAnyGranted>
+
+            </p:dataTable>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

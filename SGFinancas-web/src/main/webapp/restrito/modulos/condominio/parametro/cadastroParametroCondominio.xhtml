@@ -1,0 +1,99 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Parâmetros do sistemas"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Condomínio</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/modulos/condominio/parametro/listaParametroCondominio.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteHelp" rendered="false" immediate="true" action="#{produtoControle.mostrarAjuda()}"/>
+            <h:commandButton id="remoteSave" action="#{parametroCondominioControle.doFinishAdd()}"/>
+            <h:commandButton id="remoteCancel" action="listaParametroCondominio.xhtml" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <ui:include src="/WEB-INF/msgErro.xhtml"/>
+            <div class="card">
+                <div class="row">
+                    <div class="col form-group form-md-line-input">
+                        <label class="control-label"><span class="required">* </span>Valor do condomínio</label>
+                        <p:inputNumber value="#{parametroCondominioControle.parametroCondominioSelecionado.valorCondominio}" minValue="0"
+                                       required="true" requiredMessage="Informe o valor."
+                                       decimalPlaces="2" symbol="R$ " decimalSeparator="," thousandSeparator="." />
+                    </div>
+                    <div class="col form-group form-md-line-input">
+                        <label class="control-label"><span class="required">* </span>Valor de multa</label>
+                        <p:inputNumber value="#{parametroCondominioControle.parametroCondominioSelecionado.valorMutaAtrasoPagamento}"
+                                       symbol="R$ " minValue="0" decimalSeparator="," thousandSeparator="." decimalPlaces="2"/>
+                    </div>
+                    <div class="col form-group form-md-line-input">
+                        <label class="control-label"><span class="required">* </span>Valor juros de mora/dia</label>
+                        <p:inputNumber value="#{parametroCondominioControle.parametroCondominioSelecionado.valorJurosMoraDia}" minValue="0"
+                                       required="true" requiredMessage="Informe o valor."
+                                       symbol="R$ " decimalSeparator="," thousandSeparator="." decimalPlaces="2"/>
+                    </div>
+                    <div class="col form-group form-md-line-input">
+                        <label class="control-label">Valor taxa extra</label>
+                        <p:inputNumber value="#{parametroCondominioControle.parametroCondominioSelecionado.valorTaxaExtra}"
+                                       minValue="0"
+                                       symbol="R$ " decimalSeparator="," thousandSeparator="." decimalPlaces="2" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-3 form-group form-md-line-input">
+                        <label class="control-label"><span class="required">* </span>Dia de vencimento da mensalidade</label>
+                        <p:inputNumber value="#{parametroCondominioControle.parametroCondominioSelecionado.diaVencimentoMensalidade}"
+                                       required ="true" requiredMessage="Informe o valor." minValue="1" maxValue="31"/>
+                    </div>
+                    <div class="col-3 form-group form-md-line-input">
+                        <label class="control-label">Data final da taxa extra</label>
+                        <p:calendar navigator="true" value="#{parametroCondominioControle.parametroCondominioSelecionado.dataFimTaxaExtra}" pattern="dd/MM/yyyy" mask="true" />
+                    </div>
+                    <div class="col form-group form-md-line-input">
+                        <label class="control-label"><span class="required">* </span>Quantidade de mensalidades atrasadas que configura inadimplência</label>
+                        <p:inputNumber value="#{parametroCondominioControle.parametroCondominioSelecionado.qtdMensalidadesInadimplencia}"
+                                       required ="true" requiredMessage="Informe o valor." minValue="0"/>
+                    </div>
+                </div>
+
+                <p:fieldset legend="Instrução para boleto" style="margin-bottom:20px" toggleable="true" toggleSpeed="500">
+                    <div class="row">
+                        <div class="col form-group form-md-line-input">
+                            <label class="control-label">Instrução 1</label>
+                            <p:inputText value="#{parametroCondominioControle.parametroCondominioSelecionado.instrucaoBoleto1}" styleClass="form-control" />
+                        </div>
+                        <div class="col form-group form-md-line-input">
+                            <label class="control-label">Instrução 2</label>
+                            <p:inputText value="#{parametroCondominioControle.parametroCondominioSelecionado.instrucaoBoleto2}" styleClass="form-control" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col form-group form-md-line-input">
+                            <label class="control-label">Instrução 3</label>
+                            <p:inputText value="#{parametroCondominioControle.parametroCondominioSelecionado.instrucaoBoleto3}" styleClass="form-control" />
+                        </div>
+                        <div class="col form-group form-md-line-input">
+                            <label class="control-label">Instrução 4</label>
+                            <p:inputText value="#{parametroCondominioControle.parametroCondominioSelecionado.instrucaoBoleto4}" styleClass="form-control" />
+                        </div>
+                    </div>
+                </p:fieldset>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

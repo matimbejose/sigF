@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Rotinas"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Segurança</li>
+            <li>/</li>
+            <li>Administração</li>
+            <li>/</li>
+            <li>
+                <p:link outcome="/restrito/administracao/atualizaCache.xhtml"> #{title}</p:link>
+            </li>
+        </ui:define>
+
+        <ui:define name="content">
+            <p:dataTable value="#{administracaoControle.rotinas}" var="sa" id="tbl" styleClass="card p-0 ui-datatable-striped ui-datatable-sm ui-datatable-gridlines">
+
+                <f:facet name="header">
+                    <p:commandButton value="Atualizar" action="#{administracaoControle.preencherMetodos()}" process="@this" update="tbl"/>
+                </f:facet>
+
+                <p:column width="40" style="text-align: center;">
+                    <p:rowToggler/>
+                </p:column>
+
+                <p:column headerText="Nome" width="300">
+                    #{sa.name}
+                </p:column>
+
+                <p:column headerText="Descricao">
+                    #{sa.description}
+                </p:column>
+
+                <p:column headerText="Ações" width="80">
+                    <p:commandButton value="Executar" action="#{administracaoControle.executaRotina(sa)}"
+                                     process="@this" update="form:msgResultado"/>
+                </p:column>
+
+                <p:rowExpansion>
+                    #{sa.config}
+                </p:rowExpansion>
+
+            </p:dataTable>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

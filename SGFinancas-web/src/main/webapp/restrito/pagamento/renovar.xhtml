@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite/components"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+    <f:metadata >
+        <f:event listener="#{meuPlanoControle.init()}" type="preRenderView"/>
+    </f:metadata>
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="#{meuPlanoControle.title}"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Pagamentos</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/pagamento/assineJa.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes"/>
+
+        <ui:define name="content">
+            <style>
+                tr.obrigatorio, th .ui-chkbox-box {
+                    pointer-events: none;
+                    cursor: default;
+                    opacity: .85;
+                }
+                .selector {
+                    width:16px;
+                    text-align:center;
+                }
+                tr.obrigatorio .selector > .ui-chkbox {
+                    opacity: .4;
+                }
+                tr.adquirido .adesao {
+                    text-decoration: line-through;
+                }
+                .money {
+                    text-align: right;
+                    width: 100px;
+                }
+            </style>
+            <script>
+                // <![CDATA[
+                function showDiv(elem) {
+                    elem.classList.add('d-none');
+                    document.querySelector('.card.dadosPagamento').classList.remove('d-none');
+                }
+                function getSenderHash(callback = () => {}) {
+                    const senderhashElem = PF('senderHash');
+                    PagSeguroDirectPayment.onSenderHashReady(res => {
+                        if (res.status === 'error') {
+                            senderhashElem.getJQ().val('');
+                            return false;
+                        }
+                        senderhashElem.getJQ().val(res.senderHash);
+                    });
+                }
+                function getCardToken() {
+                    const cardNumber = document.querySelector('.card-field.num').value;
+                    const cvv = document.querySelector('.card-field.cvv > input').value;
+                    const data = document.querySelector('.card-field.data > input').value;
+                    const nome = document.querySelector('.card-field.nome').value;
+
+                    if ((data ?? '') === '' || (cardNumber ?? '') === '' || (cvv ?? '') === '') {
+                        return;
+                    }
+                    const expirationMonth = data.split('/')[0];
+                    const expirationYear = data.split('/')[1];
+                    const callback = (where, data, status) => {
+                        console.log('callback', where, data, status);
+                        alert('Ocorreu um erro ao recuperar os dados do cartão, verifique se os mesmos estão corretos e tente novamente.');
+                    };
+
+                    PagSeguroDirectPayment.getBrand({
+                        cardBin: cardNumber.replace(/\D/g, '').substring(0, 6), success: brand => {
+                            PagSeguroDirectPayment.createCardToken({
+                                cardNumber: cardNumber.replace(/\D/g, ''),
+                                brand: brand.brand.name,
+                                cvv,
+                                expirationMonth,
+                                expirationYear,
+                                success: card => {
+                                    PF('cardToken').getJQ().val(card.card.token);
+                                },
+                                error: err => callback('createCardToken', err, false)
+                            });
+                            PagSeguroDirectPayment.getInstallments({
+                                amount: #{meuPlanoControle.valorTotal},
+                                maxInstallmentNoInterest: 2,
+                                brand: brand.brand.name,
+                                success: installment => {
+                                    const brandInstallment = installment.installments[brand.brand.name];
+                                    if (brandInstallment) {
+                                        PF('cardInstallment').getJQ().val(brandInstallment.filter(f => f.quantity === 1)[0].totalAmount);
+                                    }
+                                },
+                                error: err => callback('getInstallments', err, false)
+                            });
+                        },
+                        error: err => callback('', err, false)
+                    });
+                }
+                function validateFields() {
+                    const senderHash = PF('senderHash');
+                    const cardInstallment = PF('cardInstallment');
+                    if ((senderHash && senderHash.getJQ().val() === '') || (cardInstallment && cardInstallment.getJQ().val() === '')) {
+                        alert('Preencha todos os dados do cartão antes de continuar.');
+                        return false;
+                    }
+                    return true;
+                }
+                $(document).ready(() => {
+                    PagSeguroDirectPayment.setSessionId(`#{fitPagControle.session}`);
+                });
+                // ]]>
+            </script>
+            <p:outputPanel rendered="#{meuPlanoControle.ehExpirada()}">
+                <div class="alert alert-danger" role="alert">
+                    Seu período de acesso expirou, clique no botão RENOVAR para continuar utilizando o SG Finanças. Você também pode contratar outros módulos se desejar, bastar seleciona-lo (s) e clicar no botão RENOVAR
+                </div>
+            </p:outputPanel>
+            <div class="row">
+                <div class="col-10 mx-auto">
+                    <p:dataTable id="tbl" value="#{meuPlanoControle.modulos}" var="modulo" styleClass="card p-0 ui-datatable-striped ui-datatable-gridlines"
+                                 selection="#{meuPlanoControle.selection}" rowKey="#{modulo.id}" sortBy="#{modulo.foo}" rowStyleClass="#{modulo.styleClass}">
+
+                        <p:ajax event="rowSelect" process="tbl" update="tbl"/>
+                        <p:ajax event="rowUnselect" process="tbl" update="tbl"/>
+                        <p:ajax event="toggleSelect" process="tbl" update="tbl"/>
+                        <p:ajax event="rowSelectCheckbox" process="tbl" update="tbl"/>
+                        <p:ajax event="rowUnselectCheckbox" process="tbl" update="tbl"/>
+
+                        <p:column selectRow="false" selectionMode="multiple" styleClass="selector" style="width:25px"/>
+
+                        <p:column selectRow="false" headerText="Módulo" style="width:400px">
+                            #{modulo.nome}
+                        </p:column>
+
+                        <p:column selectRow="false" headerText="Valor de adesão" styleClass="money adesao">
+                            <cc:convertMoney value="#{modulo.valorAdesao}"/>
+                        </p:column>
+
+                        <p:column selectRow="false" headerText="Valor da mensalidade" styleClass="money">
+                            <cc:convertMoney value="#{(modulo.valorMensalidade / 30) * meuPlanoControle.quantidadeDiasRestantes}"/>
+                        </p:column>
+
+                        <p:summaryRow>
+                            <p:column colspan="2" style="text-align: right;">
+                                Total:
+                            </p:column>
+                            <p:column style="text-align: right;">
+                                <cc:convertMoney value="#{meuPlanoControle.adesaoTotal}"/>
+                            </p:column>
+                            <p:column style="text-align: right;">
+                                <cc:convertMoney value="#{(meuPlanoControle.mensalidadeTotal/30)* meuPlanoControle.quantidadeDiasRestantes}"/>
+                            </p:column>
+                        </p:summaryRow>
+
+                        <f:facet name="footer">
+                            <div class="row">
+                                <div class="col-auto ml-auto">
+                                    Total geral: <cc:convertMoney value="#{meuPlanoControle.valorTotal}"/>
+                                </div>
+                            </div>
+                        </f:facet>
+
+                    </p:dataTable>
+                    <div class="row">
+                        <div class="col-auto ml-auto">
+                            <p:row rendered="#{meuPlanoControle.exibeBotaoExportarDados()}">
+                                <p:commandButton value="Solicitar exportação de dados" action="#{meuPlanoControle.solictarExportacaoDados()}" process="@this" update="msgResultado"/>
+                                <i class="fa fa-info-circle info-msg" data-toggle="tooltip" data-placement="top"
+                                   title="Essa funcionalidade serve para solicitar automaticamente, a exportação em PDF ou Excel dos dados de cadastro que realizou no SG Finanças"/>
+                            </p:row>
+                            <p:spacer width="10"/>
+                            <p:commandButton value="#{meuPlanoControle.titleAcao}" onclick="showDiv(this);return false;" type="button"/>
+                        </div>
+                    </div>
+                    <div class="card dadosPagamento d-none">
+                        <div class="row">
+                            <div class="col-3 form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Meio de pagamento"/>
+                                <p:selectOneMenu value="#{meuPlanoControle.dadosPagamento.tipoPagamento}" required="true">
+                                    <f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+                                    <f:selectItem itemLabel="Cartão de crédito" itemValue="CC"/>
+                                    <f:selectItem itemLabel="Boleto bancário" itemValue="BB" itemDisabled="#{true}"/>
+                                    <p:ajax process="@this" update="campos"/>
+                                </p:selectOneMenu>
+                            </div>
+                        </div>
+                        <p:outputPanel id="campos">
+                            <p:inputText value="#{meuPlanoControle.dadosPagamento.hash}" widgetVar="senderHash" type="hidden"/>
+                            <p:row rendered="#{meuPlanoControle.dadosPagamento.tipoPagamento eq 'CC'}">
+                                <p:inputText value="#{meuPlanoControle.dadosPagamento.cartao.token}" widgetVar="cardToken" type="hidden"/>
+                                <p:inputText value="#{meuPlanoControle.dadosPagamento.cartao.installment}" widgetVar="cardInstallment" type="hidden"/>
+                                <div class="row">
+                                    <div class="col">
+                                        <h5 class="mt-2">Dados do cartão</h5>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-auto pr-0 form-group form-md-line-input" style="width: 200px;">
+                                        <p:outputLabel for="@next" value="Número"/>
+                                        <p:inputMask mask="9999-9999-9999-9999" required="true" styleClass="card-field num"
+                                                     value="#{meuPlanoControle.dadosPagamento.cartao.numero}" onchange="getCardToken()"/>
+                                    </div>
+                                    <div class="col-auto pl-0 form-group form-md-line-input" style="width: 80px;">
+                                        <p:outputLabel for="@next" value="CVV"/>
+                                        <p:inputNumber decimalPlaces="0" thousandSeparator="" required="true" styleClass="card-field cvv"
+                                                       value="#{meuPlanoControle.dadosPagamento.cartao.cvv}" onchange="getCardToken()"/>
+                                    </div>
+                                    <div class="col-auto form-group form-md-line-input" style="width: 120px;">
+                                        <p:outputLabel for="@next" value="Validade"/>
+                                        <p:calendar navigator="true" pattern="MM/yyyy" mask="true" required="true" styleClass="card-field data"
+                                                    value="#{meuPlanoControle.dadosPagamento.cartao.dataValidade}" onchange="getCardToken()"/>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-auto form-group form-md-line-input" style="width: 400px;">
+                                        <p:outputLabel for="@next" value="Nome no cartão"/>
+                                        <p:inputText value="#{meuPlanoControle.dadosPagamento.cartao.nome}" styleClass="card-field nome"
+                                                     required="true" onchange="getCardToken()"/>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <h5 class="mt-2">Dados do titular</h5>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-auto form-group form-md-line-input" style="width: 200px;">
+                                        <p:outputLabel for="@next" value="CPF"/>
+                                        <p:inputMask value="#{meuPlanoControle.dadosPagamento.cartao.cpfTitular}" styleClass="card-field cpf-titular"
+                                                     required="true" mask="999.999.999-99"/>
+                                    </div>
+                                    <div class="col-auto form-group form-md-line-input" style="width: 200px;">
+                                        <p:outputLabel for="@next" value="Data de nascimento"/>
+                                        <p:calendar navigator="true" pattern="dd/MM/yyyy" mask="true" required="true" styleClass="card-field nascimento-titular"
+                                                    value="#{meuPlanoControle.dadosPagamento.cartao.nascimentoTitular}"/>
+                                    </div>
+                                </div>
+                            </p:row>
+                            <p:outputPanel rendered="#{meuPlanoControle.dadosPagamento.tipoPagamento ne null}" id="dadosFatura">
+                                <div class="row">
+                                    <div class="col">
+                                        <h5 class="mt-2">Dados de fatura</h5>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-auto form-group form-md-line-input" style="width: 200px;">
+                                        <p:outputLabel for="@next" value="CNPJ/CPF"/>
+                                        <p:inputText styleClass="form-control input-mask" widgetVar="cpfCnpj" required="true"
+                                                     value="#{meuPlanoControle.dadosPagamento.fatura.cpfCnpj}"/>
+                                    </div>
+                                    <div class="col form-group form-md-line-input">
+                                        <p:outputLabel for="@next" value="Nome"/>
+                                        <p:inputText required="true" value="#{meuPlanoControle.dadosPagamento.fatura.nome}"/>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-auto form-group form-md-line-input" style="width: 200px;">
+                                        <p:outputLabel for="inpCep" value="CEP"/>
+                                        <div class="input-group">
+                                            <div class="input-group-append">
+                                                <p:inputMask id="inpCep" mask="99.999-999" required="true" style="width: 140px !important;"
+                                                             value="#{meuPlanoControle.dadosPagamento.fatura.endereco.cep}"/>
+                                                <span class="input-group-btn">
+                                                    <p:commandLink action="#{meuPlanoControle.buscarEnderecoPorCep()}" process="@this, inpCep"
+                                                                   styleClass="btn blue btn-outline sbold" update="dadosFatura">
+                                                        <i class="fa fa-search"></i>
+                                                    </p:commandLink>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col pr-0 form-group form-md-line-input">
+                                        <p:outputLabel for="@next" value="Endereço"/>
+                                        <p:inputText required="true" value="#{meuPlanoControle.dadosPagamento.fatura.endereco.rua}"/>
+                                    </div>
+                                    <div class="col-auto px-0 form-group form-md-line-input" style="width: 100px;">
+                                        <p:outputLabel for="@next" value="Número"/>
+                                        <p:inputText required="true" value="#{meuPlanoControle.dadosPagamento.fatura.endereco.numero}"/>
+                                    </div>
+                                    <div class="col-auto pl-0 form-group form-md-line-input" style="width: 120px;">
+                                        <p:outputLabel for="@next" value="Complemento"/>
+                                        <p:inputText  value="#{meuPlanoControle.dadosPagamento.fatura.endereco.complemento}"/>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col form-group form-md-line-input">
+                                        <p:outputLabel for="@next" value="Bairro"/>
+                                        <p:inputText required="true" value="#{meuPlanoControle.dadosPagamento.fatura.endereco.bairro}"/>
+                                    </div>
+                                    <div class="col-auto form-group form-md-line-input" style="width: 120px;">
+                                        <p:outputLabel for="@next" value="UF"/>
+                                        <p:selectOneMenu required="true" converter="#{genericConverter}"
+                                                         value="#{meuPlanoControle.dadosPagamento.fatura.endereco.uf}">
+                                            <f:selectItem itemLabel="--" noSelectionOption="true"/>
+                                            <f:selectItems value="#{empresaControle.UFs}" var="uf" itemLabel="#{uf.descricao}" itemValue="#{uf.descricao}"/>
+                                        </p:selectOneMenu>
+                                    </div>
+                                    <div class="col form-group form-md-line-input">
+                                        <p:outputLabel for="@next" value="Cidade"/>
+                                        <p:inputText required="true" value="#{meuPlanoControle.dadosPagamento.fatura.endereco.cidade}"/>
+                                    </div>
+                                </div>
+                                <div class="mb-3" style="height: 1px; background-color: #ccc;"></div>
+                                <div class="row">
+                                    <div class="col-auto ml-auto text-right my-auto" style="width: 250px;">
+                                        <small>
+                                            Ao clicar em confirmar você concorda com nossos
+                                            <p:commandLink ajax="false" value="termos de uso" immediate="true" style="color: #4cb77a;font-size: 12px;">
+                                                <p:fileDownload value="#{empresaControle.baixaTermo()}"/>
+                                            </p:commandLink> e
+                                            <p:commandLink ajax="false" value="Política de privacidade" immediate="true" style="color: #4cb77a;font-size: 12px;">
+                                                <p:fileDownload value="#{empresaControle.baixaPoliticaPrivacidade()}"/>
+                                            </p:commandLink>.
+                                        </small>
+                                    </div>
+                                    <div class="col-auto">
+                                        <p:commandButton value="Confirmar" action="#{meuPlanoControle.geraCobranca()}" onclick="return validateFields()"
+                                                         styleClass="btn btn-lg btn-success" process="campos" update="msgResul"/>
+                                    </div>
+                                </div>
+                                <h:messages class="alertMessage" id="msgResul"
+                                            errorClass="alert alert-danger" infoClass="alert alert-success" warnClass="alert alert-warning"/>
+                                <script>
+                                    //<![CDATA[
+                                    $(document).ready(() => {
+                                        getSenderHash();
+                                        const elem = PF('cpfCnpj').getJQ();
+                                        elem.on('input', () => {
+                                            const val = elem.val().replace(/\D/g, '');
+                                            elem.val(VMasker.toPattern(val, val.length <= 11 ? '999.999.999-99' : '99.999.999/9999-99'));
+                                        }).trigger('input');
+                                    });
+                                    //]]>
+                                </script>
+                            </p:outputPanel>
+                        </p:outputPanel>
+                    </div>
+                </div>
+            </div>
+            <script type="text/javascript" src="https://stc.pagseguro.uol.com.br/pagseguro/api/v2/checkout/pagseguro.directpayment.js"></script>
+            <script src="https://unpkg.com/vanilla-masker@1.1.1/build/vanilla-masker.min.js"></script>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

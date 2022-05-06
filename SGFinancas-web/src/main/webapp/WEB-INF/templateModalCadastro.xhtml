@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      lang="pt_br">
+
+    <h:head>
+        <f:facet name="first">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+        </f:facet>
+        <title><ui:insert name="title">SG Finanças</ui:insert></title>
+        <link rel="icon" type="image/png" href="/resources/images/favicon.png" />
+        <h:outputScript name="js/layout.js" library="rain-layout" />
+        <ui:insert name="head"/>
+        <ui:insert name="cssInicial"/>
+        <script src="#{facesContext.externalContext.requestContextPath}/resources/js/main.js"/>
+        <h:outputStylesheet name="css/primeicons.css" library="rain-layout" />
+    </h:head>
+
+    <h:body>
+        <h:form role="form" id="form" enctype="multipart/form-data" acceptcharset="ISO-8859-1">
+            <div class="card p-0 m-0 rounded-0 border-0">
+                <div class="card-body" style="height: 288px;overflow-y: scroll;">
+                    <h:messages class="alertMessage" id="msgResultado"
+                                errorClass="alert alert-danger" infoClass="alert alert-success" warnClass="alert alert-warning"/>
+                    <ui:insert name="content"></ui:insert>
+                </div>
+                <div class="card-footer">
+                    <p:commandButton value="Salvar" action="#{cadastroControle.doFinishModal}" update="form" widgetVar="salvarBtn"/>
+                    <p:commandLink value="Cancelar" action="#{cadastroControle.closeModal}" immediate="true" styleClass="btn btn-sm"/>
+                    <p:inputText type="hidden" value="#{cadastroControle.id}"/>
+                    <p:inputText type="hidden" value="#{cadastroControle.type}"/>
+                </div>
+            </div>
+        </h:form>
+
+        <h:outputStylesheet name="main.css" library="css" />
+        <link href="#{facesContext.externalContext.requestContextPath}/resources/metronic/assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css" />
+        <link href="#{facesContext.externalContext.requestContextPath}/resources/metronic/assets/global/css/components.css" rel="stylesheet" id="style_components" type="text/css" />
+        <h:outputStylesheet name="css/layout-chateau-green-light.css" library="rain-layout" />
+
+        <link rel="stylesheet" href="#{facesContext.externalContext.requestContextPath}/resources/bootstrap-4.3.1/css/bootstrap.css"></link>
+        <script src="#{facesContext.externalContext.requestContextPath}/resources/bootstrap-4.3.1/js/bootstrap.min.js"></script>
+
+        <p:ajaxStatus style="position: fixed;bottom: 10px;right: 10px;z-index: 9999999;" onstart="lockScreen();" oncomplete="unlockScreen();" onerror="unlockScreen();" onsuccess="unlockScreen();">
+            <f:facet name="start">
+                <i class="fa fa-circle-o-notch fa-spin fa-2x" style="color: #88c657;"></i>
+            </f:facet>
+            <f:facet name="complete">
+                <h:outputText value=""/>
+            </f:facet>
+        </p:ajaxStatus>
+
+        <div id="screenBlocker" style="display: none;"></div>
+
+        <ui:insert name="script"/>
+    </h:body>
+
+</html>

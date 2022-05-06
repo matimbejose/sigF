@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <div class="form-body">
+        <div class="row">
+            <div class="col-auto">
+                <label class="control-label">Habilitar uso do agendamento</label>
+                <p:selectOneMenu value="#{parametroSistemaControle.parametroSistemaSelecionado.habilitaAgenda}">
+                    <f:selectItem itemLabel="Sim" itemValue="S"/>
+                    <f:selectItem itemLabel="Não" itemValue="N"/>
+
+                    <p:ajax update="panelAgenda"/>
+                </p:selectOneMenu>
+            </div>
+        </div>
+        <p:outputPanel id="panelAgenda">
+            <p:row rendered="#{parametroSistemaControle.parametroSistemaSelecionado.habilitaAgenda eq 'S'}">
+                <div class="row">
+                    <div class="col">
+                        <p:tabView>
+                            <p:tab title="Envio de SMS">
+                                <div class="row align-items-end">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Enviar SMS para o cliente no agendamento</label>
+                                            <p:selectOneMenu value="#{parametroSistemaControle.parametroSistemaSelecionado.enviaSmsClienteAgendamento}">
+                                                <f:selectItem itemLabel="Sim" itemValue="S"/>
+                                                <f:selectItem itemLabel="Não" itemValue="N"/>
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Enviar SMS para o cliente ao alterar o agendamento</label>
+                                            <p:selectOneMenu value="#{parametroSistemaControle.parametroSistemaSelecionado.enviaSmsClienteAlteracaoAgendamento}">
+                                                <f:selectItem itemLabel="Sim" itemValue="S"/>
+                                                <f:selectItem itemLabel="Não" itemValue="N"/>
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row align-items-end">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Enviar SMS para o cliente de alerta um dia antes</label>
+                                            <p:selectOneMenu value="#{parametroSistemaControle.parametroSistemaSelecionado.enviaSmsClienteUmDiaAntes}">
+                                                <f:selectItem itemLabel="Sim" itemValue="S"/>
+                                                <f:selectItem itemLabel="Não" itemValue="N"/>
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Enviar SMS para o funcionário ao confirmar o serviço</label>
+                                            <p:selectOneMenu value="#{parametroSistemaControle.parametroSistemaSelecionado.enviaSmsFuncionarioConfirmacao}">
+                                                <f:selectItem itemLabel="Sim" itemValue="S"/>
+                                                <f:selectItem itemLabel="Não" itemValue="N"/>
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row align-items-end">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Enviar SMS para a empresa ao solicitar serviço</label>
+                                            <p:selectOneMenu value="#{parametroSistemaControle.parametroSistemaSelecionado.enviaSmsEmpresaSolicitacao}">
+                                                <f:selectItem itemLabel="Sim" itemValue="S"/>
+                                                <f:selectItem itemLabel="Não" itemValue="N"/>
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Celular para envio do SMS</label>
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label">Telefone</label>
+                                                <p:inputMask mask="(99) 99999-9999" value="#{parametroSistemaControle.parametroSistemaSelecionado.celularEnvioSms}" styleClass="form-control telefone"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </p:tab>
+                        </p:tabView>
+                        <p:tabView>
+                            <p:tab title="Geral">
+                                <div class="row align-items-end">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label"><span class="required">* </span>Intervalo entre horários</label>
+                                            <p:inputNumber value="#{parametroSistemaControle.parametroSistemaSelecionado.agendaIntervaloHorario}"
+                                                           decimalPlaces="0" thousandSeparator="." required="true" symbol=" minutos" symbolPosition="s" requiredMessage="Informe o intervalo entre horários."/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </p:tab>
+                        </p:tabView>
+                    </div>
+                    <div class="col">
+                        <p:tabView>
+                            <p:tab title="Confirmação de agendamento">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group form-md-line-input mb-0">
+                                            <p:importEnum type="br.com.villefortconsulting.sgfinancas.util.EnumTipoConfirmacaoAgendamento"/>
+                                            <label class="control-label">Tipo de confirmação de agendamento</label>
+                                            <p:selectOneMenu value="#{parametroSistemaControle.parametroSistemaSelecionado.tipoConfirmacaoAgendamento}">
+                                                <f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+                                                <f:selectItems value="#{EnumTipoConfirmacaoAgendamento.ALL_VALUES}" var="enum"
+                                                               itemLabel="#{enum.descricao}" itemValue="#{enum.tipo}"/>
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+                                </div>
+                            </p:tab>
+                        </p:tabView>
+                        <p:tabView styleClass="mb-3">
+                            <p:tab title="Prazo para alerta de recorrência de serviço">
+                                <p:dataTable value="#{parametroSistemaControle.parametroSistemaSelecionado.recorrenciaAgendamentoList}" var="item"
+                                             emptyMessage="Recorrência não definida."
+                                             styleClass="card p-0 mb-2 ui-datatable-striped ui-datatable-sm ui-datatable-gridlines">
+                                    <p:column headerText="Quantidade de dias">
+                                        <p:inputNumber value="#{item.quatidadeDias}" thousandSeparator="." decimalPlaces="0"/>
+                                    </p:column>
+
+                                    <p:column headerText="Envia Email" width="60" style="text-align: center;">
+                                        <p:selectBooleanCheckbox value="#{item.enviaEmailBool}"/>
+                                    </p:column>
+
+                                    <p:column headerText="Envia SMS" width="60" style="text-align: center;">
+                                        <p:selectBooleanCheckbox value="#{item.enviaSmsBool}"/>
+                                    </p:column>
+
+                                    <p:column headerText="Remover" width="60" style="text-align: center;">
+                                        <p:commandButton action="#{parametroSistemaControle.removeRecorrencia(item)}" icon="fa fa-fw fa-trash-o"
+                                                         update="@parent" process="@this" styleClass="outlined-button border-0"/>
+                                    </p:column>
+                                </p:dataTable>
+                                <p:commandLink value="Adicionar" update="@previous" process="@this" styleClass="btn btn-sm pull-right"
+                                               action="#{parametroSistemaControle.addRecorrencia}"/>
+                            </p:tab>
+                        </p:tabView>
+                    </div>
+                </div>
+            </p:row>
+        </p:outputPanel>
+
+    </div>
+</html>

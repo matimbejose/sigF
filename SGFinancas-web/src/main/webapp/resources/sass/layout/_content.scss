@@ -1,0 +1,94 @@
+.layout-wrapper {
+    .layout-main {
+        padding-top: 64px;
+
+        .route-bar {
+            background-color: #eaeaea;
+            border-bottom: 1px solid #d0d0d0;
+            @include clearfix();
+
+            .route-bar-breadcrumb {
+                display: inline-block;
+                padding: 14px;
+                
+                i {
+                    font-size: 14px;
+                	color: #a6a6a6;
+                }
+
+                span {
+                    font-size: 14px;
+                	color: #a6a6a6;
+                }
+
+                li {
+                    list-style: none;
+                    display: inline-block;
+                }
+            }
+
+            .route-bar-menu {
+                float: right;
+                list-style-type: none;
+                margin: 0;
+                padding: 0;
+
+                li {
+                    height: 100%;
+                    display: inline-block;
+
+                    a {
+                        font-size: 14px;
+                        display: block;
+                        height: 100%;
+                        padding: 14px 16px;
+                        text-align: center;
+                        color: #333333;
+
+                        i {
+                            font-size: 16px;
+                            color: #333333;
+                            margin-right: 6px;
+                        }
+
+                        &:hover {
+                            background-color: #c8c8c8;
+                            color: #212121;
+                        }
+                    }
+                }
+            }
+        }
+
+        .layout-content {
+            padding: 24px 16px;
+            background-color: #f4f4f4;
+        }
+    }
+}
+
+@media (max-width: $breakpoint) {
+    .layout-wrapper {
+        .layout-main {
+            padding-top: 128px;
+               
+            .route-bar {    
+                .route-bar-menu {    
+                    li {    
+                        a {
+                            padding: 14px 11px;
+                            
+                            i {
+                                margin-right: 0px;
+                            }
+
+                            span {
+                                display: none;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

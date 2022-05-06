@@ -1,0 +1,39 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/restrito/generic/auditoria.xhtml">
+        <ui:define name="remotes">
+            <h:commandButton id="remoteBack" action="listaOrdemDeServico.xhtml"/>
+        </ui:define>
+
+        <ui:param name="title" value="OS"/>
+        <ui:param name="descricaoMenu" value="Venda"/>
+        <ui:param name="caminhoAuditoria" value="/restrito/venda/listaAuditoriaVenda.xhtml"/>
+        <ui:param name="objetoSelecionado" value="OS - #{ordemDeServicoControle.osSelecionada.idCliente.nome}"/>
+
+        <ui:param name="model" value="#{ordemDeServicoControle.dadosAuditoria}"/>
+        
+        <ui:define name="colunas">
+            <p:column headerText="Forma de pagamento" sortBy="#{item[0].formaPagamento}">
+                <h:outputText value="#{item[0].formaPagamento}"/>
+            </p:column>
+
+            <p:column headerText="Observação">
+                <h:outputText value="#{item[0].observacao}"/>
+            </p:column>
+
+            <p:column headerText="Valor" width="110" style="text-align: right" sortBy="#{item[0].valor}">
+                <h:outputText value="#{item[0].valor}">
+                    <f:convertNumber locale="pt_BR" type="currency" />
+                </h:outputText>
+            </p:column>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

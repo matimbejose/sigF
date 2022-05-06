@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite/components"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Recebimento de conta"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Financeiro</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/contaReceber/listaContaReceber.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteSave" action="#{contaReceberControle.doFinishAddParcelaParcial()}"/>
+            <h:commandButton id="remoteCancel" action="listaContaReceber.xhtml" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <h1>
+                #{contaReceberControle.contaParcelaSelecionada.idConta.idPlanoConta.descricao}
+                (#{contaReceberControle.contaParcelaSelecionada.numParcela}/#{contaReceberControle.contaParcelaSelecionada.idConta.numeroParcelas}) -
+                <h:outputText value="#{contaReceberControle.contaParcelaSelecionada.dataVencimento}" >
+                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                </h:outputText>
+            </h1>
+            <div class="row">
+                <div class="col-md-12 col-sm-12">
+                    <div class="card card-w-title">
+                        <h1>Detalhes</h1>
+                        <div class="row">
+
+                            <div class="col-md-3">
+                                <div class="form-group form-md-line-input">
+                                    <label class="control-label">
+                                        <span class="required">* </span>
+                                        Tipo pagamento
+                                    </label>
+
+                                    <p:selectOneMenu  value="#{contaReceberControle.contaParcelaSelecionada.pagamentoParcial}"
+                                                      required="true" requiredMessage="Informe se o pagamento é parcial">
+                                        <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                        <f:selectItem itemLabel="Pagamento integral" itemValue="N"
+                                                      itemDisabled="#{contaReceberControle.contaParcelaSelecionada.pagamentoParcial eq 'S'}"/>
+                                        <f:selectItem itemLabel="Pagamento parcial" itemValue="S" />
+                                        <p:ajax update="pnlValorPago" event="change" process="@this" listener="#{contaReceberControle.updateValorRecebido()}"/>
+                                    </p:selectOneMenu >
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group form-md-line-input">
+                                    <cc:addButton label="Forma de pagamento" entityName="formaPagamento">
+                                        <p:selectOneMenu value="#{contaReceberControle.contaParcelaSelecionada.idFormaPagamento}"
+                                                         panelStyle="width:180px" effect="fade"
+                                                         var="t" style="width:160px" filter="true" filterMatchMode="contains"
+                                                         required="true" requiredMessage="Informa a forma de pagamento"
+                                                         converter="#{genericConverter}">
+                                            <p:column>
+                                                <h:outputText value="#{t.descricao}" />
+                                            </p:column>
+
+                                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                            <f:selectItems value="#{formaPagamentoControle.formasPagamento}"  var="formaPagamento" itemLabel="#{formaPagamento.descricao}" itemValue="#{formaPagamento}"/>
+
+                                        </p:selectOneMenu>
+                                    </cc:addButton>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group form-md-line-input">
+                                    <label class="control-label">
+                                        <span class="required">* </span>
+                                        Data pagamento
+                                    </label>
+                                    <p:calendar navigator="true" value="#{contaReceberControle.contaParcelaSelecionada.dataPagamento}"
+                                                maxdate="#{contaReceberControle.hoje}" required="true" mask="true"
+                                                requiredMessage="Informe a data de pagamento" pattern="dd/MM/yyyy">
+                                        <f:passThroughAttribute name="autocomplete" value="off"/>
+                                    </p:calendar>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <p:outputPanel id="pnlValorPago">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label">
+                                            <span class="required">* </span>
+                                            Valor do pagamento
+                                        </label>
+
+                                        <p:inputText value=""
+                                                     rendered="#{contaReceberControle.contaParcelaSelecionada.pagamentoParcial eq null}"
+                                                     disabled="true" readonly="true"
+                                                     styleClass="form-control" />
+
+                                        <p:inputText value="#{contaReceberControle.contaParcelaSelecionada.valorTotal}"
+                                                     rendered="#{contaReceberControle.contaParcelaSelecionada.pagamentoParcial eq 'N'}"
+                                                     disabled="true" readonly="true" styleClass="form-control"
+                                                     >
+                                            <f:convertNumber type="currency" locale="pt_BR" />
+                                        </p:inputText>
+
+
+                                        <p:inputNumber value="#{contaReceberControle.valorRecebido}"
+                                                       minValue="#{0.0}"
+                                                       rendered="#{contaReceberControle.contaParcelaSelecionada.pagamentoParcial eq 'S'}"
+                                                       maxValue="#{contaReceberControle.contaParcelaSelecionada.valorRestante}"
+                                                       symbol="R$ " decimalSeparator="," thousandSeparator="." decimalPlaces="2" >
+                                            <p:ajax event="change" global="false" process="@this" update="pnlTotais" listener="#{contaReceberControle.preencherTotalMaisTributosMaisRestanteParcela()}" />
+                                        </p:inputNumber>
+                                    </div>
+                                </p:outputPanel>
+                            </div>
+                        </div>
+                        <p:outputPanel id="pnlTributos">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label">Juros</label>
+                                        <p:inputNumber value="#{contaReceberControle.contaParcelaSelecionada.juros}"
+                                                       symbol="R$ " decimalSeparator="," thousandSeparator="." decimalPlaces="2" >
+                                            <p:ajax event="change" global="false" process="@this"  update="pnlTotais, pnlValorPago" listener="#{contaReceberControle.preencherTotalMaisTributosMaisRestanteParcela()}" />
+                                        </p:inputNumber>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label">Multa</label>
+                                        <p:inputNumber value="#{contaReceberControle.contaParcelaSelecionada.multa}"
+                                                       symbol="R$ " decimalSeparator="," thousandSeparator="." decimalPlaces="2" >
+                                            <p:ajax event="change" global="false" process="@this"  update="pnlTotais, pnlValorPago"  listener="#{contaReceberControle.preencherTotalMaisTributosMaisRestanteParcela()}" />
+                                        </p:inputNumber>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label">Encargos</label>
+                                        <p:inputNumber value="#{contaReceberControle.contaParcelaSelecionada.encargos}"
+                                                       symbol="R$ " decimalSeparator="," thousandSeparator="." decimalPlaces="2" >
+                                            <p:ajax event="change" global="false" process="@this" update="pnlTotais, pnlValorPago" listener="#{contaReceberControle.preencherTotalMaisTributosMaisRestanteParcela()}" />
+                                        </p:inputNumber>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label">IR</label>
+                                        <p:inputNumber value="#{contaReceberControle.contaParcelaSelecionada.valorIR}"
+                                                       symbol="R$ " decimalSeparator="," thousandSeparator="." decimalPlaces="2" >
+                                            <p:ajax event="change" global="false" process="@this" update="pnlTotais, pnlValorPago" listener="#{contaReceberControle.preencherTotalMaisTributosMaisRestanteParcela()}" />
+                                        </p:inputNumber>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="row">
+
+                                <div class="col-md-3">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label">PIS</label>
+                                        <p:inputNumber value="#{contaReceberControle.contaParcelaSelecionada.valorPIS}"
+                                                       symbol="R$ " decimalSeparator="," thousandSeparator="." decimalPlaces="2" >
+                                            <p:ajax event="change" global="false" process="@this" update="pnlTotais, pnlValorPago" listener="#{contaReceberControle.preencherTotalMaisTributosMaisRestanteParcela()}" />
+                                        </p:inputNumber>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label">CSLL</label>
+                                        <p:inputNumber value="#{contaReceberControle.contaParcelaSelecionada.valorCSLL}"
+                                                       symbol="R$ " decimalSeparator="," thousandSeparator="." decimalPlaces="2" >
+                                            <p:ajax event="change" global="false" process="@this" update="pnlTotais, pnlValorPago" listener="#{contaReceberControle.preencherTotalMaisTributosMaisRestanteParcela()}" />
+                                        </p:inputNumber>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label">INSS</label>
+                                        <p:inputNumber value="#{contaReceberControle.contaParcelaSelecionada.valorINSS}"
+                                                       symbol="R$ " decimalSeparator="," thousandSeparator="." decimalPlaces="2" >
+                                            <p:ajax event="change" global="false" process="@this" update="pnlTotais, pnlValorPago" listener="#{contaReceberControle.preencherTotalMaisTributosMaisRestanteParcela()}" />
+                                        </p:inputNumber>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label">COFINS</label>
+                                        <p:inputNumber value="#{contaReceberControle.contaParcelaSelecionada.valorCOFINS}"
+                                                       symbol="R$ " decimalSeparator="," thousandSeparator="." decimalPlaces="2" >
+                                            <p:ajax event="change" global="false" process="@this" update="pnlTotais, pnlValorPago" listener="#{contaReceberControle.preencherTotalMaisTributosMaisRestanteParcela()}" />
+                                        </p:inputNumber>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+
+                                <div class="col-md-3">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label">ISS</label>
+                                        <p:inputNumber value="#{contaReceberControle.contaParcelaSelecionada.valorISS}"
+                                                       symbol="R$ " decimalSeparator="," thousandSeparator="." decimalPlaces="2" >
+                                            <p:ajax event="change" global="false" process="@this" update="pnlTotais, pnlValorPago" listener="#{contaReceberControle.preencherTotalMaisTributosMaisRestanteParcela()}" />
+                                        </p:inputNumber>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label">Outros custos</label>
+                                        <p:inputNumber value="#{contaReceberControle.contaParcelaSelecionada.outrosCustos}"
+                                                       symbol="R$ " decimalSeparator="," thousandSeparator="." decimalPlaces="2" >
+                                            <p:ajax event="change" global="false" process="@this" update="pnlTotais, pnlValorPago" listener="#{contaReceberControle.preencherTotalMaisTributosMaisRestanteParcela()}" />
+                                        </p:inputNumber>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label">Descontos</label>
+                                        <p:inputNumber value="#{contaReceberControle.contaParcelaSelecionada.desconto}"
+                                                       symbol="R$ " decimalSeparator="," thousandSeparator="." decimalPlaces="2" >
+                                            <p:ajax event="change" global="false" process="@this" update="pnlTotais, pnlValorPago"  listener="#{contaReceberControle.preencherTotalMaisTributosMaisRestanteParcela()}" />
+                                        </p:inputNumber>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label">Número documento</label>
+                                        <p:inputText value="#{contaReceberControle.contaParcelaSelecionada.numNf}" maxlength="10"/>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label">ICMS</label>
+                                        <p:inputNumber value="#{contaReceberControle.contaParcelaSelecionada.valorICMS}"
+                                                       symbol="R$ " decimalSeparator="," thousandSeparator="." decimalPlaces="2" >
+                                            <p:ajax event="change" global="false" process="@this" update="pnlTotais, pnlValorPago" listener="#{contaReceberControle.preencherTotalMaisTributosMaisRestanteParcela()}" />
+                                        </p:inputNumber>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label">Tarifa</label>
+                                        <p:inputNumber value="#{contaReceberControle.contaParcelaSelecionada.tarifa}"  symbol="R$ " thousandSeparator="." decimalSeparator="," decimalPlaces="2" >
+                                            <p:ajax event="change" process="@this" global="false" update="pnlTotais, pnlValorPago" listener="#{contaReceberControle.preencherTotalMaisTributosMaisRestanteParcela()}"/>
+                                        </p:inputNumber>
+                                    </div>
+                                </div>
+                            </div>
+                        </p:outputPanel>
+                    </div>
+                </div>
+            </div>
+
+            <p:outputPanel id="pnlTotais">
+                <div class="row">
+                    <div class="col-md-6 ml-auto">
+                        <div class="card">
+                            <div class="row static-info align-reverse">
+                                <div class="col-md-7 name"> Valor da parcela </div>
+                                <div class="col-md-4 value">
+                                    <h:outputText value="#{contaReceberControle.contaParcelaSelecionada.valor}" >
+                                        <f:convertNumber type="currency" locale="pt_BR" />
+                                    </h:outputText>
+                                </div>
+                            </div>
+                            <div class="row static-info align-reverse">
+                                <div class="col-md-7 name"> Juros / Descontos </div>
+                                <div class="col-md-4 value">
+                                    <h:outputText value="#{contaReceberControle.contaParcelaSelecionada.tributosTotais}" >
+                                        <f:convertNumber type="currency" locale="pt_BR" />
+                                    </h:outputText>
+                                </div>
+                            </div>
+                            <div class="row static-info align-reverse">
+                                <div class="col-md-7 name"> Valor pago parcialmente </div>
+                                <div class="col-md-4 value">
+                                    <h:outputText value="#{contaReceberControle.contaParcelaSelecionada.valorPago}" >
+                                        <f:convertNumber type="currency" locale="pt_BR" />
+                                    </h:outputText>
+                                </div>
+                            </div>
+                            <div class="row static-info align-reverse">
+                                <div class="col-md-7 name"> Valor restante </div>
+                                <div class="col-md-4 value">
+                                    <h:outputText value="#{contaReceberControle.contaParcelaSelecionada.valorRestante}" >
+                                        <f:convertNumber type="currency" locale="pt_BR" />
+                                    </h:outputText>
+                                </div>
+                            </div>
+                            <div class="row static-info align-reverse">
+                                <div class="col-md-7 name"> Valor total </div>
+                                <div class="col-md-4 value">
+                                    <h:outputText value="#{contaReceberControle.contaParcelaSelecionada.valorTotal}" >
+                                        <f:convertNumber type="currency" locale="pt_BR" />
+                                    </h:outputText>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </p:outputPanel>
+            <style>
+                .name {
+                    text-align: right;
+                }
+            </style>
+        </ui:define>
+
+    </ui:composition>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Parâmetros do sistema"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Cadastro</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/parametroSistema/cadastroParametroSistema.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteSave" action="#{parametroSistemaControle.doFinishAdd()}"/>
+            <h:commandButton id="remoteCancel" action="#{parametroSistemaControle.doCancelAdd()}" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <style>
+                div.ui-tabs > ul.ui-tabs-nav {
+                    background: linear-gradient(180deg, transparent, transparent 42px, #DFE3EA 42px, #DFE3EA 44px, transparent 44px);
+                }
+            </style>
+            <ui:include src="/WEB-INF/msgErro.xhtml"/>
+            <div class="card p-0">
+                <p:tabView style="z-index: 2;" widgetVar="tabs" id="tabs" activeIndex="#{parametroSistemaControle.activeIndex}">
+                    <p:tab title="NF-e">
+                        <ui:include src="./abas/nfe.xhtml"/>
+                    </p:tab>
+                    <p:tab title="NFS-e">
+                        <ui:include src="./abas/nfse.xhtml"/>
+                    </p:tab>
+                    <p:tab title="Controle de ponto">
+                        <ui:include src="./abas/ponto.xhtml"/>
+                    </p:tab>
+                    <p:tab title="Boleto">
+                        <ui:include src="./abas/boleto.xhtml"/>
+                    </p:tab>
+                    <p:tab title="Plano de conta">
+                        <ui:include src="./abas/planoConta.xhtml"/>
+                    </p:tab>
+                    <p:tab title="Notificações">
+                        <ui:include src="./abas/notificacao.xhtml"/>
+                    </p:tab>
+                    <p:tab title="Produtos">
+                        <ui:include src="./abas/produto.xhtml"/>
+                    </p:tab>
+                    <p:tab title="Orçamento">
+                        <ui:include src="./abas/orcamento.xhtml"/>
+                    </p:tab>
+                    <p:tab title="Venda">
+                        <ui:include src="./abas/venda.xhtml"/>
+                    </p:tab>
+                    <ui:remove>
+                        <p:tab title="PDV">
+                            <ui:include src="./abas/pdv.xhtml"/>
+                        </p:tab>
+                    </ui:remove>
+                    <p:tab title="Recibo">
+                        <ui:include src="./abas/recibo.xhtml"/>
+                    </p:tab>
+                    <p:tab title="APP mobile">
+                        <ui:include src="./abas/appMobile.xhtml"/>
+                    </p:tab>
+                    <p:tab title="Agendamento">
+                        <ui:include src="./abas/agenda.xhtml"/>
+                    </p:tab>
+                    <p:tab title="Vistoria">
+                        <ui:include src="./abas/vistoria.xhtml"/>
+                    </p:tab>
+                </p:tabView>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

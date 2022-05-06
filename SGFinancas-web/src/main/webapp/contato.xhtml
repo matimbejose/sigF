@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <!-- Basic -->
+        <meta charset="utf-8"/>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        <title>Contato - SGFinanças</title>
+        <meta name="keywords" content="SGFinanças" />
+        <meta name="description" content="Sistema de gestão financeira"/>
+        <meta name="author" content="Villefort Consulting"/>
+        <link rel="shortcut icon" href="resources/site/img/favicon.png" type="image/x-icon" />
+        <link rel="apple-touch-icon" href="resources/site/img/apple-touch-icon.png"/>
+        <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800%7CShadows+Into+Light" rel="stylesheet" type="text/css"/>
+        <link rel="stylesheet" href="resources/site/vendor/bootstrap/css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="resources/site/vendor/font-awesome/css/font-awesome.min.css"/>
+        <link rel="stylesheet" href="resources/site/vendor/simple-line-icons/css/simple-line-icons.min.css"/>
+        <link rel="stylesheet" href="resources/site/vendor/owl.carousel/assets/owl.carousel.min.css"/>
+        <link rel="stylesheet" href="resources/site/vendor/owl.carousel/assets/owl.theme.default.min.css"/>
+        <link rel="stylesheet" href="resources/site/vendor/magnific-popup/magnific-popup.min.css"/>
+        <link rel="stylesheet" href="resources/site/css/theme.css"/>
+        <link rel="stylesheet" href="resources/site/css/theme-elements.css"/>
+        <link rel="stylesheet" href="resources/site/css/theme-blog.css"/>
+        <link rel="stylesheet" href="resources/site/css/theme-shop.css"/>
+        <link rel="stylesheet" href="resources/site/css/theme-animate.css"/>
+        <link rel="stylesheet" href="resources/site/css/skins/sgfinancas.css"/>
+        <link rel="stylesheet" href="resources/site/css/custom.css"/>
+        <script src="resources/site/vendor/modernizr/modernizr.min.js"></script>
+
+    </h:head>
+    <h:body>
+        <div class="body">
+            <header id="header" data-plugin-options='{"stickyEnabled": true, "stickyEnableOnBoxed": true, "stickyEnableOnMobile": true, "stickyStartAt": 57, "stickySetTop": "-57px", "stickyChangeLogo": true}'>
+                <div class="header-body">
+                    <div class="header-container container">
+                        <div class="header-row">
+                            <div class="header-column">
+                                <div class="header-logo">
+                                    <a href="index.html">
+                                        <img width="80%" height="70%" data-sticky-width="120" data-sticky-height="65" data-sticky-top="40" src="resources/site/img/rrr.png"/>
+
+                                        <!--
+                                        <img width="111" height="54" data-sticky-width="82" data-sticky-height="40" data-sticky-top="33" src="img/tt.png">
+                                        -->
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="header-column">
+                                <div class="header-row">
+                                    <nav class="header-nav-top">
+                                        <ul class="nav nav-pills">
+                                            <li class="active">
+                                                <a href="login.xhtml" style="color: #eee;font-weight: bold;padding: 6px 18px;">
+                                                    Entrar
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </nav>
+                                </div>
+                                <div class="header-row">
+                                    <div class="header-nav">
+                                        <button class="btn header-btn-collapse-nav" data-toggle="collapse" data-target=".header-nav-main">
+                                            <i class="fa fa-bars"></i>
+                                        </button>
+                                        <div class="header-nav-main header-nav-main-effect-1 header-nav-main-sub-effect-1 collapse">
+                                            <nav>
+                                                <ul class="nav nav-pills" id="mainNav">
+
+                                                    <li class="dropdown">
+                                                        <a href="index.html">
+                                                            Início
+                                                        </a>
+                                                    </li>
+                                                    <li class="dropdown">
+                                                        <a class="bmenu" href="index.html#funcionalidade">
+                                                            Funcionalidades
+                                                        </a>
+                                                    </li>
+                                                    <li class="dropdown">
+                                                        <a class="bmenu" href="planos.xhtml">
+                                                            Planos e preços
+                                                        </a>
+                                                    </li>
+                                                    <li class="dropdown">
+                                                        <a class="bmenu" href="cadastro.xhtml" style=" color: #c00">
+                                                            Experimente grátis
+                                                        </a>
+                                                    </li>
+                                                    <li class="dropdown">
+                                                        <a href="sobre-nos.html">
+                                                            Sobre nós
+                                                        </a>
+                                                    </li>
+                                                    <li class="dropdown active">
+                                                        <a  href="contato.xhtml">
+                                                            Contato
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </nav>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div role="main" class="main">
+                <section class="page-header">
+                    <div class="container">
+                        <div class="row">
+                            <div class="ui-md-12">
+                                <ul class="breadcrumb">
+                                    <li><a href="index.html">Inicio</a></li>
+                                    <li class="active">Entre em Contato</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Google Maps - Go to the bottom of the page to change settings and map location. -->
+                <div id="googlemaps" class="google-map"></div>
+
+                <div class="container">
+
+                    <div class="row">
+                        <div class="ui-md-6">
+                            <h:form prependId="false">
+                                <h:messages class="alert msgc"/>
+                                <h5 class="mb-sm mt-sm"><strong>Contate</strong> Nos</h5>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="ui-md-6">
+                                            <label>Seu nome *</label>
+                                            <p:inputText value="#{contatoSiteControle.nome}"
+                                                         required="true"
+                                                         requiredMessage="Favor informar o seu nome."
+                                                         styleClass="form-control" />
+                                        </div>
+                                        <div class="ui-md-6">
+                                            <label>Seu e-mail *</label>
+                                            <p:inputText value="#{contatoSiteControle.email}"
+                                                         required="true"
+                                                         requiredMessage="Favor informar o seu e-mail."
+                                                         styleClass="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="ui-md-12">
+                                            <label>Assunto</label>
+                                            <p:inputText value="#{contatoSiteControle.assunto}"
+                                                         required="true"
+                                                         requiredMessage="Favor informar o assunto."
+                                                         styleClass="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="ui-md-12">
+                                            <label>Mensagem *</label>
+                                            <p:inputTextarea value ="#{contatoSiteControle.mensagem}"
+                                                             maxlength="5000" rows="10" class="form-control" required="true"
+                                                             requiredMessage="Favor informar a mensagem do e-mail." />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="ui-md-12">
+                                        <div class="form-actions">
+                                            <h:commandButton action="#{contatoSiteControle.doFinishEnviaEmailContato()}"  styleClass="btn btn-primary btn-lg mb-xlg" value="Enviar Mensagem"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </h:form>
+                        </div>
+                        <div class="ui-md-6">
+
+                            <h4 class="heading-primary mt-lg">Atendimento <strong>Suporte</strong></h4>
+                            <p>Conte conosco para ajudá-lo. Contamos com um suporte de qualidade.<br></br>Agradecemos seu interesse por nossos serviços. Por favor preencha o formulário ao lado, envie-o email e entraremos em contato contigo em breve.</p>
+
+                            <h4 class="heading-primary"><strong>Escritorio</strong></h4>
+                            <ul class="list list-icons list-icons-style-3 mt-xlg">
+                                <li><i class="fa fa-map-marker"></i> <strong>Endereço</strong> Rua Ouro Preto, 718 - 3° andar, Barro Preto - Belo Horizonte, MG</li>
+                                <li><i class="fa fa-phone"></i> <strong>Telefones</strong> 0800 449 1015</li>
+                                <li><i class="fa fa-envelope"></i> <strong>Email</strong> <a href="mailto:mail@comercial@sgfinancas.com">comercial@sgfinancas.com</a></li>
+                            </ul>
+
+                            <h4 class="heading-primary">Horário de <strong>Funcionamento</strong></h4>
+                            <ul class="list list-icons list-dark mt-xlg">
+                                <li><i class="fa fa-clock-o"></i> Segunda a Sexta - 08:00 às 18:00</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <footer id="footer">
+                <div class="container">
+                    <div class="row">
+                        <div class="footer-ribbon">
+                            <span>Entre em contato</span>
+                        </div>
+                        <div class="ui-md-3">
+                            <div class="newsletter">
+                                <h4>Newsletter</h4>
+                                <p>Fique por dentro das novidades do SGFinanças. Assine nossa newsletter.</p>
+
+                                <div class="alert alert-success hidden" id="newsletterSuccess">
+                                    <strong>Success!</strong> You've been added to our email list.
+                                </div>
+
+                                <div class="alert alert-danger hidden" id="newsletterError"></div>
+
+                                <form id="newsletterForm" >
+                                    <div class="input-group">
+                                        <input class="form-control" placeholder="Email Address" name="newsletterEmail" id="newsletterEmail" type="text"/>
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default" type="submit">Ok!</button>
+                                        </span>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="ui-md-3">
+                        </div>
+                        <div class="ui-md-4">
+                            <div class="contact-details">
+                                <h4>Contato</h4>
+                                <ul class="contact">
+                                    <li><p><i class="fa fa-map-marker"></i> <strong>Endereço:</strong> Rua Ouro Preto, 718 - 3° andar, Barro Preto - BH - MG. CEP 30.170-040</p></li>
+                                    <li><p><i class="fa fa-phone"></i> <strong>Telefones:</strong> 0800 449 1015</p></li>
+                                    <li><p><i class="fa fa-envelope"></i> <strong>Email:</strong> <a href="mailto:comercial@sgfinancas.com">comercial@sgfinancas.com</a></p></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer-copyright">
+                    <div class="container">
+                        <div class="row">
+                            <div class="ui-md-2">
+                                <a href="http://www.villefortconsulting.com" target="_blank"  class="logo">
+                                    <img alt="Villefort Consulting" class="img-responsive" src="img/logo_ville.png" />
+                                </a>
+                            </div>
+                            <div class="ui-md-6">
+                                <p>© Copyright 2016. Todos os direitos reservados. Mais um produto da Villefort Consulting.</p>
+                            </div>
+                            <div class="ui-md-4">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+        <script src="#{facesContext.externalContext.requestContextPath}/resources/site/vendor/jquery/jquery.min.js"></script>
+        <script src="#{facesContext.externalContext.requestContextPath}/resources/site/vendor/jquery.appear/jquery.appear.min.js"></script>
+        <script src="#{facesContext.externalContext.requestContextPath}/resources/site/vendor/jquery.easing/jquery.easing.min.js"></script>
+        <script src="#{facesContext.externalContext.requestContextPath}/resources/site/vendor/jquery-cookie/jquery-cookie.min.js"></script>
+        <script src="#{facesContext.externalContext.requestContextPath}/resources/site/vendor/bootstrap/js/bootstrap.min.js"></script>
+        <script src="#{facesContext.externalContext.requestContextPath}/resources/site/vendor/common/common.min.js"></script>
+        <script src="#{facesContext.externalContext.requestContextPath}/resources/site/vendor/jquery.validation/jquery.validation.min.js"></script>
+        <script src="#{facesContext.externalContext.requestContextPath}/resources/site/vendor/jquery.stellar/jquery.stellar.min.js"></script>
+        <script src="#{facesContext.externalContext.requestContextPath}/resources/site/vendor/jquery.easy-pie-chart/jquery.easy-pie-chart.min.js"></script>
+        <script src="#{facesContext.externalContext.requestContextPath}/resources/site/vendor/jquery.gmap/jquery.gmap.min.js"></script>
+        <script src="#{facesContext.externalContext.requestContextPath}/resources/site/vendor/jquery.lazyload/jquery.lazyload.min.js"></script>
+        <script src="#{facesContext.externalContext.requestContextPath}/resources/site/vendor/isotope/jquery.isotope.min.js"></script>
+        <script src="#{facesContext.externalContext.requestContextPath}/resources/site/vendor/owl.carousel/owl.carousel.min.js"></script>
+        <script src="#{facesContext.externalContext.requestContextPath}/resources/site/vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
+        <script src="#{facesContext.externalContext.requestContextPath}/resources/site/vendor/vide/vide.min.js"></script>
+
+        <!-- Theme Base, Components and Settings -->
+        <script src="#{facesContext.externalContext.requestContextPath}/resources/site/js/theme.js"></script>
+
+        <!-- Current Page Vendor and Views -->
+        <script src="#{facesContext.externalContext.requestContextPath}/resources/site/js/views/view.contact.js"></script>
+
+        <!-- Theme Custom -->
+        <script src="#{facesContext.externalContext.requestContextPath}/resources/site/js/custom.js"></script>
+
+        <!-- Theme Initialization Files -->
+        <script src="#{facesContext.externalContext.requestContextPath}/resources/site/js/theme.init.js"></script>
+
+        <script src="https://maps.google.com/maps/api/js?key=AIzaSyBIecuwoJSFy7mJh_YPLaNtdRACcYwUzhg"></script>
+        <script>
+            // Map Markers
+            var mapMarkers = [{
+                    address: "Belo Horizonte, Ouro Preto, 718",
+                    html: `<strong><img src='resources/site/img/logo-menor.png'/></strong><br/>Rua Ouro Preto, 718, Barro Preto - Belo horizonte - MG`,
+                    icon: {
+                        image: "resources/site/img/pin-sg3.png",
+                        iconsize: [26, 46],
+                        iconanchor: [12, 46]
+                    },
+                    popup: true
+                }];
+
+            // Map Initial Location
+            var initLatitude = -19.922865;
+            var initLongitude = -43.941247;
+
+            // Map Extended Settings
+            var mapSettings = {
+                controls: {
+                    draggable: (($.browser.mobile) ? false : true),
+                    panControl: true,
+                    zoomControl: true,
+                    mapTypeControl: true,
+                    scaleControl: true,
+                    streetViewControl: true,
+                    overviewMapControl: true
+                },
+                scrollwheel: false,
+                markers: mapMarkers,
+                latitude: initLatitude,
+                longitude: initLongitude,
+                zoom: 16
+            };
+
+            var map = $("#googlemaps").gMap(mapSettings);
+
+            // Map Center At
+            var mapCenterAt = function (options, e) {
+                e.preventDefault();
+                $("#googlemaps").gMap("centerAt", options);
+            };
+        </script>
+    </h:body>
+</html>

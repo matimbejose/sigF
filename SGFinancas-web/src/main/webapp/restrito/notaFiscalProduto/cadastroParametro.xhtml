@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Parametro nota fiscal "/>
+        <ui:define name="title">#{title}</ui:define>
+        <ui:define name="viewname">
+            <li>Nota fiscal</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/notaFiscalProduto/listaNotaFiscalProduto.xhtml"> #{title}</p:link></li>
+        </ui:define>
+            
+
+        <ui:define name="content">
+            <h:messages class="alertMessage" id="msgResultado" errorClass="alert alert-danger" warnClass="alert alert-info" />
+            <div class="row">
+                <div class="col-md-12 ">
+                    <!-- BEGIN SAMPLE FORM PORTLET-->
+                    <div class="portlet light bordered">
+                        <div class="portlet-title">
+                            <div class="actions">
+                                <h:form>
+                                    <h:commandLink styleClass="btn blue btn-circle btn-outline sbold" immediate="true" action="#{empresaControle.mostrarAjuda()}">
+                                        <i class="icon-question"></i>
+                                    </h:commandLink>
+                                </h:form>
+                            </div> 
+                            <div class="tools">
+                            </div>
+                        </div>
+                        <div class="portlet-body form">
+                            <h:form acceptcharset="ISO-8859-1" role="form" enctype="multipart/form-data">
+                                <div class="form-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label"><span class="required">* </span>CNPJ</label>
+                                                <p:inputMask mask="99.999.999/9999-99" value="#{empresaControle.empresaSelecionada.cnpj}"  
+                                                             autocomplete="off" 
+                                                             validatorMessage="CNPJ inválido"
+                                                             styleClass="form-control" >
+                                                </p:inputMask>
+
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label"> <span class="required">* </span>Email</label>
+                                                <p:inputText value="#{empresaControle.empresaSelecionada.email}" 
+                                                             required="true"
+                                                             requiredMessage="Informe o email de contato"
+                                                             styleClass="form-control" />
+                                            </div>
+                                        </div>         
+                                    </div>   
+                                      <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label"> <span class="required">* </span>Número da nota fiscal</label>
+                                                <p:inputNumber value="#{parametroSistemaControle.parametroSistemaSelecionado.numNotaFiscal}" 
+                                                               maxValue="999999999" decimalPlaces="0" thousandSeparator=""
+                                                               required="true"
+                                                               requiredMessage="Informe o número da nota fiscal"/>
+
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label"> <span class="required">* </span>Série entrada</label>
+                                                <p:inputNumber value="#{parametroSistemaControle.parametroSistemaSelecionado.serieEntrada}" 
+                                                               maxValue="999"
+                                                               decimalPlaces="0" 
+                                                               required="true"
+                                                               requiredMessage="Informe a série de entrada"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label"> <span class="required">* </span>Série saída</label>
+                                                <p:inputNumber value="#{parametroSistemaControle.parametroSistemaSelecionado.serieSaida}" 
+                                                               maxValue="999"
+                                                               decimalPlaces="0" 
+                                                               required="true"
+                                                               requiredMessage="Informe a série de saída"/>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <p:outputPanel id="pnlAnexo">                                        
+                                        <p:outputPanel rendered="#{empresaControle.empresaSelecionada.idDocumento eq null}">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group form-md-line-input">
+                                                        <label class="control-label">Certificado digital</label>
+                                                        <h:inputFile value="#{empresaControle.part}"  />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group form-md-line-input">
+                                                        <label class="control-label">Senha certificado digital</label>
+                                                        <p:password value="#{empresaControle.empresaSelecionada.senhaCertificado}"
+                                                                    styleClass="form-control" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </p:outputPanel>
+                                        <p:outputPanel id="pnlAlterarAnexo" rendered="#{empresaControle.empresaSelecionada.idDocumento ne null}">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p:commandLink  styleClass="btn default btn-circle btn-sm" 
+                                                                    immediate="false"
+                                                                    ajax="false" >
+                                                        <i class="fa fa-arrow-down"></i> Baixar certificado
+
+                                                        <p:fileDownload  value="#{documentoControle.downloadAnexo(empresaControle.empresaSelecionada.idDocumento)}" />
+                                                    </p:commandLink>
+
+                                                    <h:outputText value=" " />
+
+                                                    <p:commandLink  action="#{empresaControle.deletarAnexo()}" 
+                                                                    styleClass="btn default btn-circle btn-sm" 
+                                                                    immediate="false"
+                                                                    update="pnlAnexo" 
+                                                                    process="@this">
+                                                        <i class="fa fa-eraser"></i> Remover certificado
+                                                    </p:commandLink>
+                                                </div>
+
+                                            </div>
+                                        </p:outputPanel>
+                                    </p:outputPanel>
+                                </div>
+                                <div class="form-actions">
+                                    <h:commandButton action="#{empresaControle.doFinishAdd()}"  styleClass="btn blue " value="Salvar" />
+                                    <h:commandButton action="listaEmpresa.xhtml" immediate="true" styleClass="btn default" value="Cancelar" />
+                                </div>
+                            </h:form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script type="text/javascript">
+                $("#somCnae").find("label").removeClass("ui-inputfield");
+                $("#somCnae").find(".ui-state-default ").removeClass("ui-state-default");
+                $("#somCnaeSecundario").find("label").removeClass("ui-inputfield");
+                $("#somCnaeSecundario").find(".ui-state-default ").removeClass("ui-state-default");
+            </script>
+        </ui:define>
+
+    </ui:composition>
+
+</html>
+

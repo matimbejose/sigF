@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:sec="http://www.springframework.org/security/facelets/tags"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Ordem de serviço"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Venda/Compra</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/os/listaOrdemDeServico.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <sec:ifAnyGranted roles ="VENDA_GERENCIAR" >
+                <h:commandButton id="remoteAdd" action="#{ordemDeServicoControle.doStartAdd()}"/>
+            </sec:ifAnyGranted>
+        </ui:define>
+
+        <ui:define name="formButtons">
+            <p:commandButton type="button" value="Limpar filtros" onclick="clearDataTableFilters('tbl');"/>
+            <p:commandButton id="toggler" type="button" value="Colunas"/>
+            <p:columnToggler datasource="tbl" trigger="toggler"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <p:dataTable value="#{ordemDeServicoControle.model}" emptyMessage="Nenhum registro encontrado." var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+                <p:column headerText="#" width="55" sortBy="#{item.id}" visible="false">
+                    <h:outputText value="#{item.id}"/>
+                </p:column>
+
+                <p:column headerText="Cliente" sortBy="#{item.idCliente}" filterBy="#{item.cliente}">
+                    <f:facet name="filter">
+                        <p:selectOneMenu onchange="PF('tbl').filter()" styleClass="custom-filter" filter="true" filterMatchMode="contains">
+                            <f:selectItem itemLabel="Todos" noSelectionOption="true"/>
+                            <f:selectItems value="#{clienteControle.clientes}" var="cliente"
+                                           itemLabel="#{cliente.nome}" itemValue="#{cliente}"/>
+                        </p:selectOneMenu>
+                    </f:facet>
+
+                    <h:outputText value="#{item.idCliente.nome}"/>
+                </p:column>
+
+                <p:column headerText="Email" filterBy="#{item.email}">
+                    <f:facet name="filter">
+                        <p:inputText value="#{ordemDeServicoControle.filtro.email}" onchange="PF('tbl').filter()"/>
+                    </f:facet>
+                    <h:outputText value="#{item.idCliente.email}"/>
+                </p:column>
+
+                <p:column headerText="Telefone" filterBy="#{item.telefone}">
+                    <f:facet name="filter">
+                        <p:inputMask mask="(99) 9999-9999?9" value="#{ordemDeServicoControle.filtro.telefone}" onchange="PF('tbl').filter()"/>
+                    </f:facet>
+                    <h:outputText value="#{item.idCliente.telefoneCelular}"/>
+                </p:column>
+
+                <p:column headerText="Valor" width="110" style="text-align: right" sortBy="#{item.valor}" filterBy="#{item.valor}">
+                    <h:outputText value="#{item.valor}">
+                        <f:convertNumber locale="pt_BR" type="currency" />
+                    </h:outputText>
+                </p:column>
+
+                <sec:ifAnyGranted roles ="OS_GERENCIAR" >
+                    <p:column width="110" headerText="Ações" >
+
+                        <div class="actions">
+                            <h:commandLink rendered="#{item.idFuncionarioSaida eq null}"
+                                           styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                           title="Alterar ordem de serviço"
+                                           action="#{ordemDeServicoControle.doStartAlterar()}"  >
+                                <i class="fa fa-edit"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{ordemDeServicoControle.osSelecionada}"/>
+                            </h:commandLink>
+
+                            <h:commandLink rendered="#{item.idFuncionarioSaida eq null}"
+                                           styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                           title="Finalizar ordem de serviço"
+                                           action="#{ordemDeServicoControle.doCloseOS()}">
+                                <i class="fa fa-check"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{ordemDeServicoControle.osSelecionada}"/>
+                            </h:commandLink>
+
+                            <h:commandLink rendered="#{item.idFuncionarioSaida ne null}"
+                                           styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                           title="Visualizar ordem de serviço"
+                                           action="#{ordemDeServicoControle.doStartAlterar()}"  >
+                                <i class="fa fa-eye"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{ordemDeServicoControle.osSelecionada}"/>
+                            </h:commandLink>
+
+                            <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Remover"
+                                           action="#{ordemDeServicoControle.doFinishExcluir()}" rendered="#{item.idFuncionarioSaida eq null}"
+                                           onclick="return confirm('Tem certeza que deseja excluir esta ordem de serviço?');">
+                                <i class="icon-trash"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{ordemDeServicoControle.osSelecionada}"/>
+                            </h:commandLink>
+
+                            <h:commandLink title="Auditoria" styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                           action="#{ordemDeServicoControle.doShowAuditoria()}" >
+                                <i class="fa fa-history"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{ordemDeServicoControle.osSelecionada}"/>
+                            </h:commandLink>
+
+                            <p:commandLink title="Imprimir" class="btn icones" ajax="false" action="#{ordemDeServicoControle.doStartPrint}">
+                                <i class="fa fa-print"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{ordemDeServicoControle.osSelecionada}"/>
+                            </p:commandLink>
+                        </div>
+                    </p:column>
+                </sec:ifAnyGranted>
+
+            </p:dataTable>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

@@ -1,0 +1,29 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/restrito/generic/auditoria.xhtml">
+        <ui:define name="remotes">
+            <h:commandButton id="remoteBack" action="listaLancamento.xhtml"/>
+        </ui:define>
+
+        <ui:param name="title" value="Lançamento"/>
+        <ui:param name="descricaoMenu" value="Módulos / Contábil"/>
+        <ui:param name="caminhoAuditoria" value="/restrito/contratoSaida/listaAuditoriaContratoFornecedor.xhtml"/>
+        <ui:param name="objetoSelecionado" value="Lançamento"/>
+
+        <ui:param name="model" value="#{planoContaLancamentoControle.dadosAuditoria}"/>
+
+        <ui:define name="colunas">
+
+            <p:column headerText="Data de lançamento" sortBy="#{item[0].data}">
+                <h:outputText value="#{item[0].data}"/>
+            </p:column>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

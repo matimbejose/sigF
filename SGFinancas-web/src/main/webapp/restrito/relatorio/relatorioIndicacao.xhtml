@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <f:metadata>
+        <f:event listener="#{empresaControle.preecherData()}" type="preRenderView"/>
+    </f:metadata>
+
+
+    <ui:composition template="/WEB-INF/templateReport.xhtml">
+
+        <ui:param name="title" value="Relatório Indicações do SG Finanças"/>
+
+        <ui:param name="link" value="/restrito/relatorio/relatorioIndicacao.xhtml"/>
+
+        <ui:param name="fileDownload" value="#{empresaControle.gerarRelatorioIndicacao()}"/>
+
+        <ui:define name="config">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label class="control-label"> <span class="required"> * </span>Início do periodo</label>
+                        <p:calendar navigator="true" value="#{empresaControle.dataInicioRelatorio}" pattern="dd/MM/yyyy" mask="true"
+                                    required="true" requiredMessage="Favor informar uma data para início do período."/>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label class="control-label"> <span class="required"> * </span>Fim do periodo</label>
+                        <p:calendar navigator="true" value="#{empresaControle.dataFimRelatorio}" pattern="dd/MM/yyyy" mask="true"
+                                    required="true" requiredMessage="Favor informar uma data para final do período."/>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+</html>

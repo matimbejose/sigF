@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:sec="http://www.springframework.org/security/facelets/tags"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Nota fiscal de produto"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Nota fiscal</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/notaFiscalProduto/listaNotaFiscalProduto.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteAdd" action="#{notaFiscalProdutoControle.doStartAdd()}">
+                <f:setPropertyActionListener value="#{null}" target="#{notaFiscalProdutoControle.nfSelecionado}"/>
+                <f:setPropertyActionListener value="#{null}" target="#{notaFiscalProdutoControle.vendaSelecionada}"/>
+                <f:setPropertyActionListener value="#{null}" target="#{notaFiscalProdutoControle.compraSelecionada}"/>
+            </h:commandButton>
+        </ui:define>
+
+        <ui:define name="formButtons">
+            <p:commandButton value="Inutilizar numeração" action="#{notaFiscalProdutoControle.doStartDisablement(empresaControle.empresaLogada.cnpj, empresaControle.empresaLogada.endereco.idCidade.idUF.cuf)}" title="Inutilizar numeração"/>
+            <p:commandButton type="button" value="Limpar filtros" onclick="clearDataTableFilters('tbl');"/>
+            <p:commandButton id="toggler" type="button" value="Colunas"/>
+            <p:columnToggler datasource="tbl" trigger="toggler"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <ui:include src="/WEB-INF/msgErro.xhtml"/>
+            <div class="layout-dashboard mb-3">
+                <div class="row">
+                    <div class="col intro-text">
+                        <span>
+                            Período de
+                            <p:calendar navigator="true" pattern="dd/MM/yyyy" styleClass="top-calendar m-0" value="#{notaFiscalProdutoControle.filtro.dataGeracao.min}">
+                                <p:ajax event="dateSelect" update="tbl"/>
+                            </p:calendar>
+                            até
+                            <p:calendar navigator="true" pattern="dd/MM/yyyy" styleClass="top-calendar m-0" value="#{notaFiscalProdutoControle.filtro.dataGeracao.max}">
+                                <p:ajax event="dateSelect" update="tbl"/>
+                            </p:calendar>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+            <p:inputText class="retornoEnvioNfe" type="hidden" value="#{notaFiscalProdutoControle.retornoEnvioNfe}" />
+            <p:dataTable value="#{notaFiscalProdutoControle.model}" emptyMessage="Nenhum registro encontrado." var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+                <f:facet name="header">
+                    <div style="font-weight: normal;margin-top: 7px;">
+                        <i class="fa fa-wifi"></i>
+                        #{notaFiscalProdutoControle.consultaSituacaoAmbiente()}
+                    </div>
+                </f:facet>
+
+                <p:column headerText="#" width="55" sortBy="#{item.id}" visible="false">
+                    <h:outputText value="#{item.id}"/>
+                </p:column>
+
+                <p:column headerText="Nº"  sortBy="#{item.numeroNotaFiscal}" width="75" filterBy="#{item.numeroNotaFiscal}">
+                    <f:facet name="filter">
+                        <p:inputNumber value="#{notaFiscalProdutoControle.filtro.numero}" decimalPlaces="0"
+                                       decimalSeparator="," thousandSeparator="." onchange="PF('tbl').filter()"/>
+                    </f:facet>
+
+                    <h:outputText value="#{item.numeroNotaFiscal}"/>
+                </p:column>
+
+                <p:column headerText="Cliente" sortBy="#{item.nomeCliente}" filterBy="#{item.cliente}">
+                    <f:facet name="filter">
+                        <p:selectOneMenu onchange="PF('tbl').filter()" styleClass="custom-filter" filter="true" filterMatchMode="contains"
+                                         value="#{notaFiscalProdutoControle.filtro.cliente}" converter="#{genericConverter}">
+                            <f:selectItem itemLabel="Todos" noSelectionOption="true"/>
+                            <f:selectItems value="#{clienteControle.clientes}" var="cliente"
+                                           itemLabel="#{cliente.nome}" itemValue="#{cliente}"/>
+                        </p:selectOneMenu>
+                    </f:facet>
+
+                    <h:outputText value="#{item.idCliente.nome}"/>
+                </p:column>
+
+                <p:column headerText="Fornecedor" filterBy="#{item.fornecedor}">
+                    <f:facet name="filter">
+                        <p:selectOneMenu onchange="PF('tbl').filter()" styleClass="custom-filter" filter="true" filterMatchMode="contains"
+                                         value="#{notaFiscalProdutoControle.filtro.fornecedor}" converter="#{genericConverter}">
+                            <f:selectItem itemLabel="Todos" noSelectionOption="true"/>
+                            <f:selectItems value="#{fornecedorControle.fornecedores}" var="fornecedor"
+                                           itemLabel="#{fornecedor.razaoSocial}" itemValue="#{fornecedor}"/>
+                        </p:selectOneMenu>
+                    </f:facet>
+
+                    <h:outputText value="#{item.idFornecedor.razaoSocial}"/>
+                </p:column>
+
+                <p:column headerText="Valor" sortBy="#{item.valorNota}" width="100" style="text-align: right" filterBy="#{item.valorNota}">
+                    <f:facet name="filter">
+                        <p:inputNumber value="#{notaFiscalProdutoControle.filtro.valor}" decimalPlaces="2" decimalSeparator="," thousandSeparator="." onchange="PF('tbl').filter()"/>
+                    </f:facet>
+                    <h:outputText value="#{item.valorNota}" >
+                        <f:convertNumber type="currency" currencySymbol="R$ "  />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Email" filterBy="#{item.email}">
+                    <f:facet name="filter">
+                        <p:inputText value="#{notaFiscalProdutoControle.filtro.email}" onchange="PF('tbl').filter()"/>
+                    </f:facet>
+                    <h:outputText value="#{notaFiscalProdutoControle.getEmail(item)}"/>
+                </p:column>
+
+                <p:column headerText="Emissão" sortBy="#{item.dataEmissao}" width="100">
+                    <h:outputText value="#{item.dataEmissao}">
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Modelo" sortBy="#{item.modeloNota}" filterBy="#{item.modeloNota}">
+                    <f:facet name="filter">
+                        <p:importEnum type="br.com.villefortconsulting.sgfinancas.util.nf.EnumModeloEmissaoNF"/>
+                        <p:selectCheckboxMenu onchange="PF('tbl').filter()" value="#{notaFiscalProdutoControle.filtro.modelos}"
+                                              emptyLabel="Todos" updateLabel="true">
+                            <f:selectItems value="#{EnumModeloEmissaoNF.ALL_VALUES}" var="enum" itemLabel="#{enum.descricao}" itemValue="#{enum.modelo}"/>
+                        </p:selectCheckboxMenu>
+                    </f:facet>
+                    <h:outputText value="#{item.enumModelo.descricao}"/>
+                </p:column>
+
+                <p:column headerText="Situação" sortBy="#{item.situacao}" filterBy="#{item.situacao}">
+                    <f:facet name="filter">
+                        <p:importEnum type="br.com.villefortconsulting.sgfinancas.util.nf.EnumSituacaoNF"/>
+                        <p:selectCheckboxMenu onchange="PF('tbl').filter()" value="#{notaFiscalProdutoControle.filtro.situacoes}"
+                                              emptyLabel="Todos" updateLabel="true">
+                            <f:selectItems value="#{EnumSituacaoNF.ALL_VALUES}" var="enum" itemLabel="#{enum.descricao}" itemValue="#{enum.situacao}"/>
+                        </p:selectCheckboxMenu>
+                    </f:facet>
+                    <h:outputText value="Transmitida" rendered="#{item.situacao eq 'E'}" style="color: blue"/>
+                    <h:outputText value="Rejeitada: #{item.mensagemErroEnvio}"  style="color: red" rendered="#{item.situacao eq 'J'}"/>
+                    <h:outputText value="Rascunho" rendered="#{item.situacao eq 'R'}"/>
+                    <h:outputText value="Cancelada" rendered="#{item.situacao eq 'C'}" style="color: red"/>
+
+                    <h:outputText value="Rascunho de devolução" rendered="#{item.situacao eq 'B'}"/>
+                    <h:outputText value="Devolvida" rendered="#{item.situacao eq 'D'}"/>
+                    <h:outputText value="Devolução rejeitada: #{item.mensagemErroEnvio}"  style="color: red" rendered="#{item.situacao eq 'K'}"/>
+                    <h:outputText value="Cancelamento rejeitado" rendered="#{item.situacao eq 'F'}" style="color: red"/>
+                </p:column>
+
+                <sec:ifAnyGranted roles ="NOTA_FISCAL_PRODUTO_GERENCIAR" >
+                    <p:column width="190" headerText="Ações" >
+                        <div class="actions">
+
+                            <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" rendered="#{item.situacao ne 'D' and item.situacao ne 'E' and item.situacao ne 'C' }"
+                                           title="Alterar nota fiscal" action="#{notaFiscalProdutoControle.doStartAlterar()}"  >
+                                <i class="fa fa-edit"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{notaFiscalProdutoControle.nfSelecionado}"/>
+                            </h:commandLink>
+
+                            <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" rendered="#{item.situacao eq 'D' or item.situacao eq 'E' or item.situacao eq 'C' }"
+                                           title="Visualizar nota fiscal" action="#{notaFiscalProdutoControle.visualizarNF()}"  >
+                                <i class="fa fa-eye"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{notaFiscalProdutoControle.nfSelecionado}"/>
+                            </h:commandLink>
+
+                            <p:commandLink title="Transmitir nota fiscal" rendered="#{item.situacao ne 'E' and item.situacao ne 'D' and item.situacao ne 'C' }" ajax="false"
+                                           class="btn btn-circle btn-icon-only btn-default icones" action="#{notaFiscalProdutoControle.enviarNF()}" >
+                                <i class="fa fa-send-o"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{notaFiscalProdutoControle.nfSelecionado}"/>
+                            </p:commandLink>
+
+                            <h:commandLink title="Cancelar NF"
+                                           rendered="#{item.situacao eq 'E' or item.situacao eq 'D'}"
+                                           class="btn btn-circle btn-icon-only btn-default icones"
+                                           action="#{notaFiscalProdutoControle.doStartCancelarNF()}"  >
+                                <i class="fa fa-close"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{notaFiscalProdutoControle.nfSelecionado}"/>
+                            </h:commandLink>
+
+                            <p:commandLink title="Gerar Danfe" rendered="#{item.situacao eq 'E'}" ajax="false" class="btn btn-circle btn-icon-only btn-default icones">
+                                <i class="fa fa-newspaper-o"></i>
+                                <p:fileDownload  value="#{notaFiscalProdutoControle.gerarDanfe(item)}" />
+                            </p:commandLink>
+
+                            <p:commandLink title="Relatório da nota fiscal" rendered="#{item.situacao eq 'E' or item.situacao eq 'C'}" ajax="false" class="btn btn-circle btn-icon-only btn-default icones">
+                                <i class="fa fa-sticky-note"></i>
+                                <p:fileDownload  value="#{notaFiscalProdutoControle.gerarNota(item)}" />
+                            </p:commandLink>
+
+                            <h:commandLink  styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                            rendered="#{item.situacao ne 'E' and item.situacao ne 'C' }" title="Remover nota fiscal" action="#{notaFiscalProdutoControle.doFinishExcluir()}" onclick="return confirm('Tem certeza que deseja excluir esta nota?');" >
+                                <i class="icon-trash"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{notaFiscalProdutoControle.nfSelecionado}"/>
+                            </h:commandLink>
+
+                            <h:commandLink  title="Carta de correção" rendered="#{item.situacao eq 'E' or item.situacao eq 'D'}" styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                            action="#{notaFiscalProdutoControle.doShowCartaCorrecao()}" >
+                                <i class="fa fa-pencil"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{notaFiscalProdutoControle.nfSelecionado}"/>
+                            </h:commandLink>
+
+                            <h:commandLink  title="Auditoria" styleClass="btn btn-circle btn-icon-only btn-default icones" action="#{notaFiscalProdutoControle.doShowAuditoria()}" >
+                                <i class="fa fa-history"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{notaFiscalProdutoControle.nfSelecionado}"/>
+                            </h:commandLink>
+
+                            <p:commandLink title="Download xml" ajax="false"
+                                           rendered="#{item.xmlEnvio ne null and usuarioControle.perfilSuporte}"
+                                           class="btn btn-circle btn-icon-only btn-default icones">
+                                <i class="fa fa-arrow-down"></i>
+                                <p:fileDownload  value="#{notaFiscalProdutoControle.downloadXmls(item)}" />
+                            </p:commandLink>
+
+                            <p:commandLink title="Download xml" ajax="false"
+                                           rendered="#{item.xmlArmazenamento ne null and !usuarioControle.perfilSuporte}"
+                                           class="btn btn-circle btn-icon-only btn-default icones">
+                                <i class="fa fa-arrow-down"></i>
+                                <p:fileDownload  value="#{notaFiscalProdutoControle.downloadXmlArmazenamento(item)}" />
+                            </p:commandLink>
+                        </div>
+
+                    </p:column>
+                </sec:ifAnyGranted>
+
+            </p:dataTable>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

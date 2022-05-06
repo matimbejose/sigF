@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <div class="row">
+        <div class="col my-4 mx-4">
+            <div class="balao">
+                <p>
+                    <i class="fa fa-2x fa-thumbs-up"></i>
+                    ...Certo, sua conta bancária foi cadastrada com sucesso, se quiser editar ou cadastrar outras contas, acesse na lateral esquerda do SG Finanças, MENU->CADASTRO->CONTAS BANCÁRIAS->BOTÃO NOVO (PARA CADASTRAR NOVA CONTA) OU BOTÃO ALTERAR CONTA (PARA EDITAR SUA CONTA BANCÁRIA JÁ CADASTRADA)...</p>
+                <p>...Agora vamos para o próximo passo. Você tem algum funcionário ou prestador de serviço que usará o SG Finanças? Se sim, cadastre seu funcionário para gerar um usuário para ele, se não, clique no botão PULAR...</p>
+                <p>...Se você cadastrou um novo funcionário, deverá fornecer permissões para o usuário utilizar o sistema. Sendo assim, acesse na lateral esquerda do SG Finanças, MENU->SEGURANÇA->USUÁRIO->BOTÃO ALTERAR USUÁRIO. Adicione permissões na aba PERMISSÕES ou vincule-o à um grupo de permissões na aba GRUPO...</p>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h4>Cadastro de funcionário</h4>
+            <div class="row">
+                <div class="col form-group form-md-line-input">
+                    <label class="control-label"><span class="required">* </span>Nome do funcionário</label>
+                    <p:inputText value="#{wizardControle.tela4Funcionario.nome}"
+                                 required="true" requiredMessage="Informe o nome do funcionário"/>
+                </div>
+                <div class="col form-group form-md-line-input">
+                    <label class="control-label"><span class="required">* </span>CPF</label>
+                    <p:inputMask value="#{wizardControle.tela4Funcionario.cpf}" mask="999.999.999-99" validatorMessage="CPF inválido"
+                                 required="true" requiredMessage="Informe o cpf do funcionário" autocomplete="off"/>
+                </div>
+                <div class="col form-group form-md-line-input">
+                    <label class="control-label"> <span class="required"> * </span>Data de nascimento</label>
+                    <p:calendar value="#{wizardControle.tela4Funcionario.dataNascimento}" navigator="true" pattern="dd/MM/yyyy" mask="true"
+                                required="true" requiredMessage="Informe a data de nascimento do funcionário"/>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col form-group form-md-line-input">
+                    <p:importEnum type="br.com.villefortconsulting.sgfinancas.util.EnumTipoContratacao"/>
+                    <label class="control-label"><span class="required">* </span>Tipo da contratação</label>
+                    <p:selectOneMenu value="#{wizardControle.tela4Funcionario.tipoContratacao}"
+                                     required="true" requiredMessage="Informe o tipo da contratação">
+                        <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                        <f:selectItems value="#{EnumTipoContratacao.ALL_VALUES}" var="enum"
+                                       itemLabel="#{enum.descricao}" itemValue="#{enum.tipo}"/>
+                    </p:selectOneMenu>
+                </div>
+                <div class="col-2 form-group form-md-line-input">
+                    <label class="control-label"> <span class="required"> * </span>Data da contratação</label>
+                    <p:calendar navigator="true" value="#{wizardControle.tela4Funcionario.dataContratacao}" pattern="dd/MM/yyyy" mask="true" />
+                </div>
+                <div class="col-2 form-group form-md-line-input">
+                    <label class="control-label" >É vendedor?</label>
+                    <p:selectOneMenu value="#{wizardControle.tela4Funcionario.ehOrcamentista}"
+                                     required="true" requiredMessage="Informe se o funcionário é vendedor">
+                        <f:selectItem itemLabel="Não" itemValue="N"/>
+                        <f:selectItem itemLabel="Sim" itemValue="S"/>
+                    </p:selectOneMenu>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-7 form-group form-md-line-input">
+                    <label class="control-label"><span class="required"> * </span>Email</label>
+                    <p:inputText value="#{wizardControle.tela4Funcionario.email}"
+                                 required="true" requiredMessage="Favor informar o email." validatorMessage="Email incorreto"/>
+                </div>
+                <div class="col form-group form-md-line-input">
+                    <label class="control-label"><span class="required"> * </span>Telefone celular</label>
+                    <p:inputMask value="#{wizardControle.tela4Funcionario.telefoneCelular}" mask="(99) 99999-9999" styleClass="telefone"
+                                 required="true" requiredMessage="Favor informar o telefone celular."/>
+                </div>
+            </div>
+        </div>
+    </div>
+</html>

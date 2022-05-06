@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      lang="pt_br">
+
+    <f:metadata>
+        <f:event listener="#{usuarioControle.validarTermo()}" type="preRenderView"/>
+    </f:metadata>
+
+    <h:head>
+        <f:facet name="first">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+        </f:facet>
+        <title><ui:insert name="title">SG Finanças</ui:insert></title>
+        <link rel="icon" type="image/png" href="/resources/images/favicon.png" />
+        <h:outputScript name="js/layout.js" library="rain-layout" />
+        <ui:insert name="head"/>
+        <ui:insert name="cssInicial"/>
+        <script src="#{facesContext.externalContext.requestContextPath}/resources/js/main.js?v=#{usuarioControle.revNumber}"/>
+        <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+        <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet" />
+        <link href="#{facesContext.externalContext.requestContextPath}/resources/css/main.css?v=#{usuarioControle.revNumber}" rel="stylesheet" type="text/css" />
+        <link href="#{facesContext.externalContext.requestContextPath}/resources/css/toast/toastr.min.css" rel="stylesheet" type="text/css"/>
+        <script src="#{facesContext.externalContext.requestContextPath}/resources/js/toast/toastr.min.js" type="text/javascript"></script>
+        <script src="#{facesContext.externalContext.requestContextPath}/resources/js/toast/toast.js" type="text/javascript"></script>
+        <h:outputStylesheet name="css/layout-chateau-green-light.css" library="rain-layout" />
+        <h:outputStylesheet name="css/primeicons.css" library="rain-layout" />
+    </h:head>
+
+    <h:body>
+        <script>
+            // <![CDATA[
+
+            let LHCChatOptions = {opt: {widget_height: 340, widget_width: 300, popup_height: 520, popup_width: 500, domain: 'consigplusbr.com'}};
+            (() => {
+                let po = document.createElement('script');
+                po.type = 'text/javascript';
+                po.async = true;
+                let referrer = (document.referrer) ? encodeURIComponent(document.referrer.substr(document.referrer.indexOf('://') + 1)) : '';
+                po.src = 'https://consigplusbr.com:2002/lhc_web/index.php/por/chat/getstatus/(click)/internal/(position)/bottom_right/(ma)/br/(check_operator_messages)/true/(top)/350/(units)/pixels/(theme)/2/(leaveamessage)/true?r=' + referrer;
+                let s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(po, s);
+            })();
+            let animateHeader = true;
+            function bindSuporteCall() {
+                Array.from(document.querySelectorAll('.linkSuporte')).forEach(f => f.addEventListener('click', () => {
+                        lh_inst.lh_openchatWindow();
+                        return false;
+                    }));
+            }
+            function init() {
+                try {
+                    let remotesScripts = Array.from(document.querySelectorAll('.remotes > script'));
+                    let remoteFunction = Object.keys(window).filter(f => f.indexOf('remote') === 0);
+                    remotesScripts = remotesScripts.map(m => m.innerHTML.trim().replace(/ .*/, ''));
+                    remotesScripts = remoteFunction.filter(f => !remotesScripts.includes(f));
+                    remotesScripts.forEach(e => delete window[e]);
+                    showHideIcons();
+                    const notificacoes = parseInt(`#{controleMenu.obterQtdNotificacao()}`) | 0;
+                    document.querySelectorAll('.notification-count').forEach(elem => {
+                        if (notificacoes < 10 || !elem.classList.contains('short')) {
+                            elem.innerHTML = notificacoes;
+                        } else {
+                            elem.innerHTML = '9+';
+                        }
+                        if (notificacoes !== 0) {
+                            elem.classList.add('show');
+                        }
+                        elem.title = `Você tem \${notificacoes} notificações.`;
+                    });
+                    if ($().tooltip) {
+                        $('[data-toggle="tooltip"]').tooltip();
+                    }
+                    const lrp = document.querySelector('.layout-rightpanel');
+                    new MutationObserver(() => {
+                        const div = document.getElementById('toast-container');
+                        if (div) {
+                            div.classList[lrp.classList.contains('layout-right-panel-active') ? 'add' : 'remove']('panel-open');
+                        }
+                    }).observe(lrp, {
+                        attributes: true,
+                        attributeFilter: ['class'],
+                        childList: false,
+                        characterData: false
+                    });
+                    const btns = document.querySelector('.card.btns');
+                    if (btns.querySelector('.pull-right button') === null) {
+                        if (btns.querySelector('.pull-left li.processed') === null) {
+                            btns.style.display = 'none';
+                            animateHeader = false;
+                        }
+                    } else {
+                        Array.from(btns.querySelectorAll('.pull-right .ui-button'))
+                            .forEach(e => e.classList.add('outlined-button'));
+                    }
+                    alignItemsEnd();
+
+                    const sticky = btns.offsetTop - 50;
+                    window.onscroll = () => {
+                        if (animateHeader) {
+                            btns.classList[window.pageYOffset > sticky ? 'add' : 'remove']("sticky");
+                        }
+                    };
+                    window.onscroll();
+                    // Fazer tudo antes dessa linha
+                    bindSuporteCall();
+                    const sidebar = document.querySelector('.layout-sidebar');
+                    loadingSpinner.style.opacity = 0;
+                    sidebar.style.opacity = 1;
+                    setTimeout(() => loadingSpinner.style.display = 'none', 400);
+                } catch (err) {
+                    console.error(err);
+                    bindSuporteCall();
+                    loadingSpinner.style.color = '#fcc';
+                    loadingSpinner.querySelector('span').style.display = 'unset';
+                    loadingSpinner.querySelector('p').style.display = 'block';
+                    let i = loadingSpinner.querySelector('i');
+                    i.classList.remove('fa-refresh');
+                    i.classList.remove('fa-spin');
+                    i.classList.add('fa-exclamation-triangle');
+                    const sidebar = document.querySelector('.layout-sidebar');
+                    sidebar.style.display = 'none';
+                }
+            }
+            $(document).ready(() => init());
+            // ]]>
+        </script>
+        <style>
+            #lhc_status_container {
+                bottom: 50px;
+            }
+            #screenBlocker {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                z-index: 9999999;
+                cursor: progress;
+                transition: background-color .4s;
+                background-color: #0002;
+            }
+            #screenBlocker:not(.visible) {
+                background-color: #0000;
+            }
+            .hover-menu {
+                height: 0px;
+                position: fixed;
+                left: 15px;
+                float: left;
+                z-index: 999;
+            }
+            .hover-menu > .actions {
+                transition: opacity .4s, height .4s;
+                height: 0px;
+                background-color: white;
+                border: none;
+                padding: 4px 9px;
+                opacity: 0;
+                overflow: hidden;
+            }
+            .ui-widget-content.ui-datatable-even .hover-menu > .actions {
+                background-color: #f9f9f9;
+            }
+            tr:hover .hover-menu > .actions {
+                border: 1px solid #ccc;
+                border-top: none;
+                height: auto;
+                opacity: 1;
+            }
+            .hover-menu > .actions > a {
+                border-color: transparent;
+                display: inline;
+            }
+            tr:hover .hover-menu > .actions > a:last-child {
+                margin-right: 0;
+            }
+            .sticky {
+                position: fixed;
+                top: 50px;
+                width: calc(100% - 70px);
+                z-index: 99;
+                transition: width .2s;
+            }
+            .layout-wrapper.layout-static-active .sticky {
+                width: calc(100% - 312px);
+            }
+            .sticky + .body-content {
+                padding-top: 87px;
+            }
+            ul.fadeInDown > li > a,ul.fadeInDown > li > a > span {
+                width: 100%;
+            }
+        </style>
+
+        <div id="uploadIndicator">
+            <i class="first fa fa-cloud"></i>
+            <div class="icon-container">
+                <i class="icon fa"></i>
+            </div>
+            <i class="last fa fa-desktop"></i>
+        </div>
+        <div id="processIndicator">
+            <i class="icon fa"></i>
+        </div>
+        <div class="layout-wrapper layout-topbar-#{guestPreferences.topbarTheme} layout-menu-#{guestPreferences.menuTheme} #{guestPreferences.menuMode}" >
+            <div id="loadingSpinner" style="width: 100vw;">
+                <div style="user-select: none;">
+                    <i class="fa fa-spin fa-refresh"></i>
+                    <br/>
+                    <span style="display: none;line-height: 10px;font-size: 24px;color: #666;">Ocorreu um erro ao abrir a tela.</span>
+                    <p style="font-size: 16px;color: #666;display: none;">Clique <a href="#" class="linkSuporte">aqui</a> para entrar em contato com o suporte.</p>
+                </div>
+            </div>
+            <ui:include src="./topbar.xhtml"></ui:include>
+            <ui:include src="./menu.xhtml"></ui:include>
+            <ui:include src="./right_panel.xhtml"></ui:include>
+
+            <div class="layout-main">
+                <div class="layout-breadcrumb">
+                    <div class="breadcrumb">
+                        <div class="route-bar-breadcrumb">
+                            <li>
+                                <i class="fa fa-home"></i>
+                                <p:link outcome="/restrito/index.xhtml"> #{empresaControle.descricaoBreadcrumb}</p:link>
+                            </li>
+                            <li>/</li>
+                            <ui:insert name="viewname" />
+                        </div>
+                    </div>
+                    <ul class="route-bar-menu">
+                        <li id="helpBtn" style="display: none;">
+                            <a href="#">
+                                <i class="fa fa-info-circle"/>
+                                <span>Ajuda</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="linkSuporte">
+                                <i class="fa fa-life-saver"></i>
+                                <span>Suporte</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="tel:08004491015">
+                                0800 449 1015
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="layout-content">
+                    <h:form role="form" id="form" enctype="multipart/form-data" acceptcharset="ISO-8859-1">
+                        <div class="remotes" style="display: none;">
+                            <ui:insert name="remotes"></ui:insert>
+                        </div>
+                        <div class="card btns">
+                            <div class="pull-left">
+                                <ui:include src="./routebar-menu.xhtml"/>
+                            </div>
+                            <div class="pull-right user-btn">
+                                <ui:insert name="formButtons"/>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="body-content">
+                            <h:messages class="alertMessage" id="msgResultado"
+                                        errorClass="alert alert-danger" infoClass="alert alert-success" warnClass="alert alert-warning"/>
+                            <ui:insert name="content"></ui:insert>
+                        </div>
+                    </h:form>
+                </div>
+                <ui:include src="./footer.xhtml"></ui:include>
+            </div>
+        </div>
+
+        <link href="#{facesContext.externalContext.requestContextPath}/resources/metronic/assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css" />
+        <link href="#{facesContext.externalContext.requestContextPath}/resources/metronic/assets/global/css/components.css" rel="stylesheet" id="style_components" type="text/css" />
+
+        <script src="https://unpkg.com/popper.js@1.15.0/dist/umd/popper.min.js"></script>
+        <script src="https://unpkg.com/popper.js@1.15.0/dist/umd/popper-utils.min.js"></script>
+        <link rel="stylesheet" href="#{facesContext.externalContext.requestContextPath}/resources/bootstrap-4.3.1/css/bootstrap.css"></link>
+        <script src="#{facesContext.externalContext.requestContextPath}/resources/bootstrap-4.3.1/js/bootstrap.min.js"></script>
+
+        <p:ajaxStatus style="position: fixed;bottom: 10px;right: 10px;z-index: 9999999;" onstart="lockScreen();" oncomplete="unlockScreen();" onerror="unlockScreen();" onsuccess="unlockScreen();">
+            <f:facet name="start">
+                <i class="fa fa-circle-o-notch fa-spin fa-2x" style="color: #88c657;"></i>
+            </f:facet>
+            <f:facet name="complete">
+                <h:outputText value=""/>
+            </f:facet>
+        </p:ajaxStatus>
+
+        <div id="screenBlocker" style="display: none;"></div>
+
+        <ui:insert name="script"/>
+    </h:body>
+
+</html>

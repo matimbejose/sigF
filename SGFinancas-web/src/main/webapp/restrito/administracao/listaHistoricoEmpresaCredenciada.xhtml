@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Empresa credenciada"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Segurança</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/administracao/listaHistoricoEmpresaCredenciada.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteBack" action="listaEmpresaCredenciada.xhtml"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <div class="row">
+                <div class="col-md-12 ">
+                    <!-- BEGIN SAMPLE FORM PORTLET-->
+                    <div class="portlet light bordered">
+                        <div class="portlet-title">
+                            <div class="caption">
+                                <i class="fa fa-graduation-cap"></i>
+
+                                <span class="caption-subject font-dark sbold uppercase">Histórico de acesso da empresa #{empresaCredenciadaControle.empresaSelecionada.descricao}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="portlet-body form">
+                            <h:form acceptcharset="ISO-8859-1" role="form">
+
+                                <div class="form-body">
+
+                                    <div class="portlet-body flip-scroll">
+                                        <p:dataTable value="#{empresaCredenciadaControle.listarHistorico()}" emptyMessage="Nenhum registro encontrado." var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+                                            <p:column headerText="Usuário " style="text-align: right">
+                                                <h:outputText value="#{item.idUsuario.nome}"/>
+                                            </p:column>
+
+                                            <p:column headerText="IP do usuário " style="text-align: right">
+                                                <h:outputText value="#{item.ip}"/>
+                                            </p:column>
+
+                                            <p:column headerText="Data de acesso" sortBy="#{item.dataAcesso}" style="text-align: right">
+                                                <h:outputText value="#{item.dataAcesso}" >
+                                                    <f:convertDateTime pattern="dd/MM/yy HH:mm:ss"/>
+                                                </h:outputText>
+                                            </p:column>
+
+                                        </p:dataTable>
+                                    </div>
+                                </div>
+                            </h:form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

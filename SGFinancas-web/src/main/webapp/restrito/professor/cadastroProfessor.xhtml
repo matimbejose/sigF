@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Professor"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Escola</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/professor/listaProfessor.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteSave" action="#{professorControle.doFinishAdd()}"/>
+            <h:commandButton id="remoteCancel" action="listaProfessor.xhtml" immediate="true"/>
+            <h:commandButton id="remoteHelp" rendered="false" action="#{professorControle.mostrarAjuda()}" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <div class="row">
+                <div class="col-md-6 col-sm-12">
+                    <div class="card card-w-title">
+                        <h1>Identificação</h1>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group form-md-line-input">
+                                    <label class="control-label"><span class="required">* </span>Nome do professor</label>
+                                    <p:inputText value="#{professorControle.professorSelecionado.nome}"
+                                                 required="true"
+                                                 requiredMessage="Informe o nome do professor"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group form-md-line-input">
+                                    <label class="control-label"><span class="required">* </span>CPF</label>
+                                    <p:inputMask mask="999.999.999-99" value="#{professorControle.professorSelecionado.cpf}"
+                                                 required="true"
+                                                 requiredMessage="Informe o cpf do professor"
+                                                 validatorMessage="CPF inválido"
+                                                 autocomplete="off"/>
+
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group form-md-line-input">
+
+                                    <label class="control-label">
+                                        <span class="required">* </span>Ativo?
+                                    </label>
+                                    <p:selectOneMenu value="#{professorControle.professorSelecionado.ativo}" required="true" requiredMessage="Informe se professor está ativo">
+                                        <f:selectItem itemLabel="-- Selecione --" noSelectionOption="true" />
+                                        <f:selectItem itemLabel="Sim" itemValue="S" />
+                                        <f:selectItem itemLabel="Não" itemValue="N"  />
+                                    </p:selectOneMenu>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group form-md-line-input">
+                                    <label class="control-label"> Data de nascimento</label>
+                                    <p:calendar navigator="true" value="#{professorControle.professorSelecionado.dataNascimento}" pattern="dd/MM/yyyy" mask="true" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group form-md-line-input">
+                                    <label class="control-label">Email</label>
+                                    <p:inputText value="#{professorControle.professorSelecionado.email}" validatorMessage="Email incorreto">
+                                    </p:inputText>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group form-md-line-input">
+                                    <label class="control-label">Telefone celular</label>
+                                    <p:inputMask value="#{professorControle.professorSelecionado.telefoneCelular}" mask="(99) 99999-9999" styleClass="telefone" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group form-md-line-input">
+                                    <label class="control-label">Telefone residencial</label>
+                                    <p:inputMask value="#{professorControle.professorSelecionado.telefoneResidencial}" mask="(99) 9999-9999?9" styleClass="telefone" /> 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-12">
+                    <div class="card card-w-title">
+                        <h1>Endereço</h1>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group form-md-line-input">
+                                    <label class="control-label">CEP</label>
+                                    <div class="input-group">
+                                        <div class="input-group-append">
+                                            <p:inputMask value="#{professorControle.professorSelecionado.cep}" mask="99.999-999" id="inpCep"/>
+                                            <p:commandLink action="#{professorControle.buscarEnderecoPorCep()}"
+                                                           styleClass="btn" update="pnlEndereco1, pnlEndereco2" process="@this, inpCep">
+                                                <i class="fa fa-search"></i>
+                                            </p:commandLink>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <p:outputPanel id="pnlEndereco1" styleClass="row col">
+                                <div class="col-md-4">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label">Número</label>
+                                        <p:inputMask value="#{professorControle.professorSelecionado.numero}" mask="9?9999999"/>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label">Complemento</label>
+                                        <p:inputText value="#{professorControle.professorSelecionado.complemento}"/>
+                                    </div>
+                                </div>
+                            </p:outputPanel>
+                        </div>
+                        <p:outputPanel id="pnlEndereco2">
+                            <div class="row  ">
+                                <div class="col-md-12">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label">Logradouro</label>
+                                        <p:inputText value="#{professorControle.professorSelecionado.endereco}"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row  ">
+                                <div class="col-md-12">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label">Bairro</label>
+                                        <p:inputText value="#{professorControle.professorSelecionado.bairro}"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row  ">
+                                <div class="col-md-6">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label">UF</label>
+                                        <p:selectOneMenu id="uf" value="#{professorControle.ufSelecionado}" converter="#{genericConverter}">
+                                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                            <f:selectItems value="#{professorControle.UFs}"  var="uf" itemLabel="#{uf.descricao}" itemValue="#{uf}"/>
+                                            <p:ajax event="change" process="@this" update="uf, cidade" />
+                                        </p:selectOneMenu>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label">Cidade</label>
+                                        <p:selectOneMenu id="cidade" value="#{professorControle.professorSelecionado.idCidade}" converter="#{genericConverter}"
+                                                         panelStyle="width:180px" effect="fade" var="t" filter="true" filterMatchMode="contains">
+                                            <p:column>
+                                                <h:outputText value="#{t.descricao}" />
+                                            </p:column>
+
+                                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                            <f:selectItems value="#{professorControle.cidades}"  var="cidade" itemLabel="#{cidade.descricao}" itemValue="#{cidade}"/>
+                                        </p:selectOneMenu>
+                                    </div>
+                                </div>
+                            </div>
+                        </p:outputPanel>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

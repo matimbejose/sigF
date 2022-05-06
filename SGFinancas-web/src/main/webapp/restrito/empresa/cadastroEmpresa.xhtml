@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <f:metadata>
+            <f:event listener="#{empresaControle.preecherEmpresa()}" type="preRenderView"/>
+        </f:metadata>
+
+        <ui:param name="title" value="Empresa"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Cadastro</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/empresa/listaEmpresa.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteSave" action="#{empresaControle.doFinishAdd()}"/>
+            <h:commandButton id="remoteCancel" action="listaEmpresa.xhtml" immediate="true"/>
+            <h:commandButton id="remoteHelp" rendered="false" action="#{empresaControle.mostrarAjuda()}" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <div class="form-body">
+                <div class="card p-0 mt-3">
+                    <p:tabView id="tabs">
+                        <p:tab title="Informações da empresa">
+                            <div class="pl-2">
+                                <h4>Identificação</h4>
+                                <div class="row">
+                                    <div class="col-1 form-group form-md-line-input">
+                                        <p:outputLabel for="@next" value="Tipo"/>
+                                        <p:selectOneMenu value="#{empresaControle.pj}" widgetVar="tipoEmpresa">
+                                            <f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+                                            <f:selectItem itemLabel="PJ" itemValue="true"/>
+                                            <f:selectItem itemLabel="PF" itemValue="false"/>
+                                            <p:ajax process="@this" update="tabs"/>
+                                        </p:selectOneMenu>
+                                    </div>
+                                    <div class="col-2">
+                                        <div class="form-group form-md-line-input">
+                                            <p:outputLabel for="@next" value="#{empresaControle.labelPJ}"/>
+                                            <p:inputText id="cpfCnpj" widgetVar="cpfCnpj" required="true" requiredMessage="Favor informar o #{empresaControle.labelPJ}"
+                                                         value="#{empresaControle.empresaSelecionada.cnpj}" style="padding: 6px;"/>
+                                        </div>
+                                    </div>
+                                    <p:row rendered="#{not empresaControle.pj}">
+                                        <div class="col-2">
+                                            <div class="form-group form-md-line-input">
+                                                <p:outputLabel for="@next" value="Data de nascimento"/>
+                                                <p:calendar navigator="true" value="#{empresaControle.empresaSelecionada.dataConstituicao}"
+                                                            pattern="dd/MM/yyyy" mask="true"/>
+                                            </div>
+                                        </div>
+                                    </p:row>
+                                    <div class="col-auto form-group form-md-line-input px-0 pt-4">
+                                        <p:commandLink action="#{empresaControle.buscarDadosEmpresaPorCNPJ()}"
+                                                       styleClass="btn" update="@form" process="@this, @previous, cpfCnpj">
+                                            <i class="fa fa-search"></i>
+                                        </p:commandLink>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group form-md-line-input">
+                                            <p:outputLabel for="@next" value="Razão social"/>
+                                            <p:inputText value="#{empresaControle.empresaSelecionada.descricao}" disabled="true"/>
+                                        </div>
+                                    </div>
+                                    <p:row rendered="#{empresaControle.pj}">
+                                        <div class="col">
+                                            <div class="form-group form-md-line-input">
+                                                <p:outputLabel for="@next" value="Nome fantasia"/>
+                                                <p:inputText value="#{empresaControle.empresaSelecionada.nomeFantasia}"/>
+                                            </div>
+                                        </div>
+                                    </p:row>
+                                </div>
+                                <p:row rendered="#{empresaControle.empresaSelecionada.PJ}">
+                                    <div class="row">
+                                        <div class="col-3">
+                                            <div class="form-group form-md-line-input">
+                                                <p:outputLabel for="@next" value="Responsável"/>
+                                                <p:inputText value="#{empresaControle.empresaSelecionada.responsavel}" disabled="true"/>
+                                            </div>
+                                        </div>
+                                        <p:row rendered="#{empresaControle.pj}">
+                                            <div class="col">
+                                                <div class="form-group form-md-line-input">
+                                                    <p:outputLabel for="@next" value="Data de abertura"/>
+                                                    <p:calendar navigator="true" value="#{empresaControle.empresaSelecionada.dataConstituicao}"
+                                                                pattern="dd/MM/yyyy" mask="true" disabled="true"/>
+                                                </div>
+                                            </div>
+                                        </p:row>
+                                        <div class="col">
+                                            <div class="form-group form-md-line-input">
+                                                <p:outputLabel for="@next" value="Porte da empresa"/>
+                                                <p:selectOneMenu value="#{empresaControle.empresaSelecionada.tipoSocialEmpresa}" converter="#{genericConverter}">
+                                                    <f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+                                                    <f:selectItems value="#{empresaControle.listaTipoSocialEmpresa}" var="obj"
+                                                                   itemLabel="#{obj.acronimo}" itemValue="#{obj}"/>
+                                                </p:selectOneMenu>
+                                            </div>
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="form-group form-md-line-input">
+                                                <p:importEnum type="br.com.villefortconsulting.sgfinancas.util.EnumTipoEmpresa"/>
+                                                <p:outputLabel for="@next" value="Tipo de empresa"/>
+                                                <p:selectOneMenu value="#{empresaControle.empresaSelecionada.tipo}"
+                                                                 required="true" requiredMessage="Informe o tipo de empresa">
+                                                    <f:selectItems value="#{EnumTipoEmpresa.ALL_VALUES}" var="tipo"
+                                                                   itemLabel="#{tipo.descricao}" itemValue="#{tipo.tipo}"/>
+                                                </p:selectOneMenu>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </p:row>
+                            </div>
+                            <div class="pl-2">
+                                <h4>Endereço/Contato</h4>
+                                <p:outputPanel id="pnlEndereco">
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="form-group form-md-line-input">
+                                                <p:outputLabel for="inpCep" value="CEP"/>
+                                                <div class="input-group">
+                                                    <div class="input-group-append">
+                                                        <p:inputMask value="#{empresaControle.empresaSelecionada.endereco.cep}" mask="99.999-999" id="inpCep"
+                                                                     required="true" requiredMessage="Informe o CEP"/>
+                                                        <span class="input-group-btn">
+                                                            <p:commandLink action="#{empresaControle.buscarEnderecoPorCep()}" process="@this, inpCep"
+                                                                           styleClass="btn blue btn-outline sbold" update="pnlEndereco">
+                                                                <i class="fa fa-search"></i>
+                                                            </p:commandLink>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="form-group form-md-line-input">
+                                                <p:outputLabel for="@next" value="Logradouro"/>
+                                                <p:inputText value="#{empresaControle.empresaSelecionada.endereco.endereco}"
+                                                             required="true" requiredMessage="Informe o logradouro"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-1">
+                                            <div class="form-group form-md-line-input">
+                                                <p:outputLabel for="@next" value="Número"/>
+                                                <p:inputMask value="#{empresaControle.empresaSelecionada.endereco.numero}" mask="9?9999999"
+                                                             required="true" requiredMessage="Informe o número"/>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-group form-md-line-input">
+                                                <p:outputLabel for="@next" value="Complemento"/>
+                                                <p:inputText value="#{empresaControle.empresaSelecionada.endereco.complemento}"/>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-group form-md-line-input">
+                                                <p:outputLabel for="@next" value="Bairro"/>
+                                                <p:inputText value="#{empresaControle.empresaSelecionada.endereco.bairro}"
+                                                             required="true" requiredMessage="Informe o bairro"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="form-group form-md-line-input">
+                                                <p:outputLabel for="@next" value="Estado"/>
+                                                <p:selectOneMenu value="#{empresaControle.ufSelecionado}" converter="#{genericConverter}"
+                                                                 required="true" requiredMessage="Informe o estado">
+                                                    <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                    <f:selectItems value="#{empresaControle.UFs}" var="uf"
+                                                                   itemLabel="#{uf.descricao}" itemValue="#{uf}"/>
+                                                    <p:ajax event="change" process="@this" update="@this, cidade"/>
+                                                </p:selectOneMenu>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-group form-md-line-input">
+                                                <p:outputLabel for="@next" value="Cidade"/>
+                                                <p:selectOneMenu id="cidade" value="#{empresaControle.empresaSelecionada.endereco.idCidade}"
+                                                                 required="true" requiredMessage="Informe a cidade"
+                                                                 panelStyle="width:180px" effect="fade" var="t" converter="#{genericConverter}"
+                                                                 filter="true" filterMatchMode="contains">
+                                                    <p:column>
+                                                        <h:outputText value="#{t.descricao}"/>
+                                                    </p:column>
+
+                                                    <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                    <f:selectItems value="#{empresaControle.cidades}" var="cidade"
+                                                                   itemLabel="#{cidade.descricao}" itemValue="#{cidade}"/>
+                                                </p:selectOneMenu>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-group form-md-line-input">
+                                                <p:outputLabel for="@next" value="Telefone"/>
+                                                <p:inputMask mask="(99) 9999-9999?9" value="#{empresaControle.empresaSelecionada.fone}"
+                                                             styleClass="telefone"/>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-group form-md-line-input">
+                                                <p:outputLabel for="@next" value="Email"/>
+                                                <p:inputText value="#{empresaControle.empresaSelecionada.email}"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </p:outputPanel>
+                            </div>
+                        </p:tab>
+                        <p:tab title="Cnae" rendered="#{empresaControle.empresaSelecionada.PJ and !empresaControle.empresaSelecionada.credor}">
+                            <div class="pl-2">
+                                <h4>Principal</h4>
+                                <p:dataTable id="tblCnaePrincipal" value="#{empresaControle.listCnaePrincipal}" var="item"
+                                             emptyMessage="Nenhum registro encontrado." editable="true" editMode="cell"
+                                             styleClass="card p-0 mb-4 ui-datatable-striped ui-datatable-sm ui-datatable-gridlines">
+
+                                    <p:column headerText="Classificação" style="text-align:left" width="40%">
+                                        <p:selectOneMenu value="#{item.classificacao}" panelStyle="width:600px" effect="fade" disabled="true"
+                                                         var="t" filter="true" filterMatchMode="contains" converter="#{genericConverter}">
+
+                                            <p:column headerText="Sec">
+                                                <h:outputText value="#{t.secao}"/>
+                                            </p:column>
+
+                                            <p:column headerText="Divisão">
+                                                <h:outputText value="#{t.divisao}"/>
+                                            </p:column>
+
+                                            <p:column headerText="Descrição">
+                                                <h:outputText value="#{t.descricao}"/>
+                                            </p:column>
+
+                                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                            <f:selectItems value="#{empresaControle.classificacoes}" var="classificacao"
+                                                           itemLabel="#{classificacao.descricao}" itemValue="#{classificacao}"/>
+                                            <p:ajax event="change" update="tblCnaePrincipal" process="@this"/>
+                                        </p:selectOneMenu>
+                                    </p:column>
+
+                                    <p:column headerText="Cnae principal" style="text-align:left">
+                                        <p:selectOneMenu value="#{item.cnae}" panelStyle="width:600px" effect="fade" disabled="true"
+                                                         var="t" filter="true" filterMatchMode="contains" converter="#{genericConverter}">
+
+                                            <p:column headerText="Código" style="width: 100px">
+                                                <h:outputText value="#{t.codigo}"/>
+                                            </p:column>
+
+                                            <p:column headerText="Descrição">
+                                                <h:outputText value="#{t.descricao}"/>
+                                            </p:column>
+
+                                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                            <f:selectItems value="#{empresaControle.listarCnaesPrincipais(item.classificacao)}" var="cnae"
+                                                           itemLabel="#{cnae.codigo} - #{cnae.descricao}" itemValue="#{cnae}"/>
+                                            <p:ajax event="change" process="@this" update="form:tabs:tblCnaeSecundario"/>
+                                        </p:selectOneMenu>
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                            <div class="pl-2">
+                                <h4>Secundários</h4>
+                                <p:dataTable id="tblCnaeSecundario" value="#{empresaControle.listCnaeSecundario}" var="item"
+                                             emptyMessage="Nenhum registro encontrado." editable="true" editMode="cell"
+                                             styleClass="card p-0 ui-datatable-striped ui-datatable-sm ui-datatable-gridlines">
+
+                                    <p:column headerText="Classificação" style="text-align:left" width="40%">
+                                        <p:selectOneMenu value="#{item.classificacao}" panelStyle="width:600px" disabled="true" effect="fade"
+                                                         var="t" filter="true" filterMatchMode="contains" converter="#{genericConverter}">
+
+                                            <p:column headerText="Sec">
+                                                <h:outputText value="#{t.secao}"/>
+                                            </p:column>
+
+                                            <p:column headerText="Divisão">
+                                                <h:outputText value="#{t.divisao}"/>
+                                            </p:column>
+
+                                            <p:column headerText="Descrição">
+                                                <h:outputText value="#{t.descricao}"/>
+                                            </p:column>
+
+                                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                            <f:selectItems value="#{empresaControle.classificacoes}" var="classificacao"
+                                                           itemLabel="#{classificacao.descricao}" itemValue="#{classificacao}"/>
+                                            <p:ajax event="change" update="tblCnaeSecundario" process="@this, tblCnaeSecundario"/>
+                                        </p:selectOneMenu>
+                                    </p:column>
+
+                                    <p:column headerText="Cnae secundário" style="text-align:left">
+                                        <p:selectOneMenu value="#{item.cnae}" panelStyle="width:600px" effect="fade" var="t" disabled="true"
+                                                         filter="true" filterMatchMode="contains" converter="#{genericConverter}">
+
+                                            <p:column headerText="Código" style="width: 100px">
+                                                <h:outputText value="#{t.codigo}"/>
+                                            </p:column>
+
+                                            <p:column headerText="Descrição">
+                                                <h:outputText value="#{t.descricao}"/>
+                                            </p:column>
+
+                                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                            <f:selectItems value="#{empresaControle.listarCnaesSecundarios(item)}" var="cnae"
+                                                           itemLabel="#{cnae.codigo} - #{cnae.descricao}" itemValue="#{cnae}"/>
+                                            <p:ajax event="change" process="@this, tblCnaeSecundario" update="tblCnaeSecundario, form:tabs:tblCnaePrincipal"/>
+                                        </p:selectOneMenu>
+                                    </p:column>
+
+                                    <ui:remove>
+                                        <p:column width="85" headerText="Ações" style="text-align: center">
+                                            <div class="actions">
+                                                <p:commandLink action="#{empresaControle.removeCnaeSecundario(item)}" title="Remover cnae"
+                                                               update="tblCnaeSecundario" process="@this, tblCnaeSecundario"
+                                                               styleClass="btn btn-circle btn-icon-only btn-default icones">
+                                                    <i class="icon-trash"></i>
+                                                </p:commandLink>
+                                            </div>
+                                        </p:column>
+
+                                        <f:facet name="footer">
+                                            <p:commandButton action="#{empresaControle.addCnaeSecundario()}" immediate="true" icon="fa fa-plus"
+                                                             process="@this, tblCnaeSecundario" update="tblCnaeSecundario" value="Adicionar"/>
+                                        </f:facet>
+                                    </ui:remove>
+
+                                </p:dataTable>
+                            </div>
+                        </p:tab>
+                        <p:tab title="Informações para a nota fiscal">
+                            <div class="pl-2">
+                                <h4>Certificado digital</h4>
+                                <p:outputPanel id="pnlAnexo">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group form-md-line-input">
+                                                <p:outputLabel for="@next" value="Tipo de certificado digital"/>
+                                                <p:selectOneMenu value="#{empresaControle.empresaSelecionada.tipoCertificadoDigital}">
+                                                    <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                    <f:selectItem itemLabel="Certificado A1" itemValue="A1"/>
+                                                    <f:selectItem itemLabel="Certificado A3" itemValue="A3"/>
+                                                    <p:ajax event="change" update="certificado" process="@this"/>
+                                                </p:selectOneMenu>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p:outputPanel id="certificado">
+                                        <p:row rendered="#{empresaControle.empresaSelecionada.tipoCertificadoDigital eq 'A1'}">
+                                            <p:row rendered="#{empresaControle.empresaSelecionada.idDocumento eq null}">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div class="form-group form-md-line-input">
+                                                            <p:outputLabel for="@next" value="Selecione o arquivo .pfx do certificado digital"/>
+                                                            <h:inputFile value="#{empresaControle.part}"/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div class="form-group form-md-line-input">
+                                                            <p:outputLabel for="@next" value="Senha certificado digital"/>
+                                                            <p:password value="#{empresaControle.empresaSelecionada.senhaCertificado}"/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </p:row>
+
+                                            <p:row rendered="#{empresaControle.empresaSelecionada.idDocumento ne null}">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <p:commandLink styleClass="btn default btn-circle btn-sm"
+                                                                       immediate="false" ajax="false">
+                                                            <i class="fa fa-arrow-down"></i> Baixar certificado
+
+                                                            <p:fileDownload value="#{documentoControle.downloadAnexo(empresaControle.empresaSelecionada.idDocumento)}"/>
+                                                        </p:commandLink>
+
+                                                        <h:outputText value=" "/>
+
+                                                        <p:commandLink action="#{empresaControle.deletarAnexo()}" update="certificado" process="@this"
+                                                                       styleClass="btn default btn-circle btn-sm" immediate="false">
+                                                            <i class="fa fa-eraser"></i> Remover certificado
+                                                        </p:commandLink>
+                                                    </div>
+                                                </div>
+                                            </p:row>
+                                        </p:row>
+                                    </p:outputPanel>
+                                </p:outputPanel>
+                            </div>
+                            <div class="pl-2">
+                                <h4>Nota fiscal</h4>
+                                <div class="row align-items-end">
+                                    <div class="col">
+                                        <div class="form-group form-md-line-input">
+                                            <p:outputLabel for="@next" value="Regime tributário"/>
+                                            <p:selectOneMenu value="#{empresaControle.empresaSelecionada.regimeTributario}" disabled="true">
+                                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                <f:selectItems value="#{empresaControle.regimesTributarios}" var="regimeTributario"
+                                                               itemLabel="#{regimeTributario.descricao}" itemValue="#{regimeTributario.forma}"/>
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group form-md-line-input">
+                                            <p:importEnum type="br.com.villefortconsulting.sgfinancas.util.EnumPorteEmpresa"/>
+                                            <p:outputLabel for="@next" value="Tipo de empresa"/>
+                                            <p:selectOneMenu value="#{empresaControle.empresaSelecionada.porte}" style="width: 100%;" disabled="true">
+                                                <f:selectItem itemLabel="Selecione" noSelectionOption="true"/>
+                                                <f:selectItems value="#{EnumPorteEmpresa.ALL_VALUES}" var="enum"
+                                                               itemDisabled="#{!empresaControle.empresaSelecionada.PJ and enum.ehPJ}"
+                                                               itemLabel="#{enum.descricao}" itemValue="#{enum.sigla}"/>
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group form-md-line-input">
+                                            <p:outputLabel for="@next" value="Indicador inscrição estadual"/>
+                                            <p:selectOneMenu value="#{empresaControle.empresaSelecionada.indicadorInscricaoEstadual}" disabled="true">
+                                                <f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+                                                <f:selectItem itemLabel="Não contribuinte" itemValue="NC"/>
+                                                <f:selectItem itemLabel="Contribuinte" itemValue="CO"/>
+                                                <f:selectItem itemLabel="Contribuinte isento" itemValue="CI"/>
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group form-md-line-input">
+                                            <p:outputLabel for="@next" value="Faturamento"/>
+                                            <p:inputNumber value="#{empresaControle.empresaSelecionada.faturamento}" disabled="true" symbol="R$ "
+                                                           thousandSeparator="." decimalSeparator="," decimalPlaces="2"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row align-items-end">
+                                    <div class="col">
+                                        <div class="form-group form-md-line-input">
+                                            <p:outputLabel for="@next" value="(%) Crédito de ICMS"/>
+                                            <p:inputNumber value="#{empresaControle.empresaSelecionada.creditoIcms}" symbol="%" symbolPosition="s"/>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group form-md-line-input">
+                                            <p:outputLabel for="@next" value="Incluir informações de imposto nas informações adicionais da NFe"/>
+                                            <p:selectOneMenu value="#{empresaControle.empresaSelecionada.incluirInformacoesDeImpostoNaNota}">
+                                                <f:selectItem itemLabel="Sim" itemValue="S"/>
+                                                <f:selectItem itemLabel="Não" itemValue="N"/>
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group form-md-line-input">
+                                            <p:outputLabel for="@next" value="Inscrição estadual"/>
+                                            <p:inputText value="#{empresaControle.empresaSelecionada.inscricaoEstadual}"/>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group form-md-line-input">
+                                            <p:outputLabel for="@next" value="Inscrição municipal"/>
+                                            <p:inputText value="#{empresaControle.empresaSelecionada.inscricaoMunicipal}"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </p:tab>
+                        <p:tab title="Informações adicionais">
+                            <div class="row">
+                                <div class="col-auto" style="width: 220px">
+                                    <h5>Logomarca</h5>
+                                    <div class="fileinput fileinput-new" data-provides="fileinput">
+                                        <div class="fileinput-new thumbnail" style="width: 215px; height: 200px;">
+                                            <p:outputPanel id="pnlLogo">
+                                                <p:graphicImage style="max-height: 200px;max-width: 200px;" cache="false" value="#{empresaControle.logo}"
+                                                                rendered="#{empresaControle.empresaSelecionada.logo ne null}" id="foto"/>
+                                                <p:graphicImage style="max-height: 200px;max-width: 200px;" cache="false" url="/resources/images/avatar-usuario.jpg"
+                                                                rendered="#{empresaControle.empresaSelecionada.logo eq null}" id="fotoPadrao"/>
+                                            </p:outputPanel>
+                                        </div>
+                                        <div>
+                                            <span class="btn default btn-file">
+                                                <h:inputFile id="inputFoto" value="#{empresaControle.partLogo}"/>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="pl-2 mt-4 pt-2">
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <div class="form-group form-md-line-input">
+                                                    <p:outputLabel for="@next" value="Contabilidade"/>
+                                                    <p:selectOneMenu value="#{empresaControle.empresaSelecionada.idContabilidade}" effect="fade"
+                                                                     var="t" filter="true" filterMatchMode="contains" converter="#{genericConverter}">
+
+                                                        <p:column headerText="Descrição">
+                                                            <h:outputText value="#{t.descricao}"/>
+                                                        </p:column>
+
+                                                        <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                        <f:selectItems value="#{contabilidadeControle.contabilidades}" var="c"
+                                                                       itemLabel="#{c.descricao}" itemValue="#{c}"/>
+                                                    </p:selectOneMenu>
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="form-group form-md-line-input">
+                                                    <p:outputLabel for="@next" value="Ramo de Atividade"/>
+                                                    <p:selectOneMenu value="#{empresaControle.empresaSelecionada.ramo}" editable="true"
+                                                                     placeholder="Outros (Digite o ramo da empresa)">
+                                                        <f:selectItems value="#{empresaControle.ramoEmpresa}" var="ramo" itemLabel="#{ramo}" itemValue="#{ramo}" />
+                                                    </p:selectOneMenu>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="pl-2">
+                                        <h4>SG Finanças</h4>
+                                        <p:row rendered="#{usuarioControle.perfilSuporte}">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <div class="form-group form-md-line-input">
+                                                        <label class="control-label">Tipo de conta</label>
+                                                        <p:selectOneMenu value="#{empresaControle.empresaSelecionada.tipoConta}" required="true"
+                                                                         requiredMessage="Informe o tipo da conta">
+                                                            <f:selectItem itemLabel="Não informado" noSelectionOption="true" />
+                                                            <f:selectItem itemLabel="Gratuita" itemValue="G" />
+                                                            <f:selectItem itemLabel="Paga" itemValue="P" />
+                                                        </p:selectOneMenu>
+                                                    </div>
+
+                                                </div>
+                                                <div class="col">
+                                                    <div class="form-group form-md-line-input">
+                                                        <p:outputLabel for="@next" value="Data de credenciamento" />
+                                                        <p:inputText value="#{empresaControle.empresaSelecionada.dataCredenciamento}" disabled="true">
+                                                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                        </p:inputText>
+                                                    </div>
+                                                </div>
+                                                <div class="col">
+                                                    <div class="form-group form-md-line-input">
+                                                        <p:outputLabel for="@next" value="Ativo" />
+                                                        <p:selectOneMenu value="#{empresaControle.empresaSelecionada.ativo}"
+                                                                         required="true" requiredMessage="Informe se a empresa esta ativa">
+                                                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true" />
+                                                            <f:selectItem itemLabel="Sim" itemValue="S" />
+                                                            <f:selectItem itemLabel="Não" itemValue="N" />
+                                                        </p:selectOneMenu>
+                                                    </div>
+                                                </div>
+                                                <div class="col">
+                                                    <div class="form-group form-md-line-input">
+                                                        <p:outputLabel for="@next" value="Mensalidade" />
+                                                        <p:inputNumber value="#{empresaControle.empresaSelecionada.mensalidade}" symbol="R$ "
+                                                                       thousandSeparator="." decimalSeparator="," decimalPlaces="2" />
+                                                    </div>
+                                                </div>
+                                                <div class="col">
+                                                    <div class="form-group form-md-line-input">
+                                                        <p:outputLabel for="@next" value="Tipo de venda" />
+                                                        <p:inputText value="#{empresaControle.empresaSelecionada.enumTipoUsoSistema.descricao}"
+                                                                     disabled="true" style="padding-right: 6px;" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </p:row>
+                                    </div>
+                                </div>
+                            </div>
+                        </p:tab>
+                    </p:tabView>
+                </div>
+            </div>
+            <script>
+                // <![CDATA[
+                function imgError(elem) {
+                    elem.src = '/resources/images/blank.jpg';
+                }
+                $(document).ready(function () {
+                    const img = document.querySelector('.fileinput-new.thumbnail img');
+                    const inp = document.querySelector('input[type=file]');
+                    img.addEventListener('click', () => inp.click());
+                    inp.addEventListener('change', evt => {
+                        for (let file of evt.target.files) {
+                            let reader = new FileReader();
+                            reader.onload = () => img.setAttribute('src', reader.result);
+                            reader.readAsDataURL(file);
+                        }
+                    }, {passive: true});
+                });
+                $("#somCnae").find("label").removeClass("ui-inputfield");
+                $("#somCnae").find(".ui-state-default ").removeClass("ui-state-default");
+                $("#somCnaeSecundario").find("label").removeClass("ui-inputfield");
+                $("#somCnaeSecundario").find(".ui-state-default ").removeClass("ui-state-default");
+                $(document).ready(function () {
+                    $(PF('cpfCnpj').jq)
+                        .on('input', function (event) {
+                            let val = this.value.replace(/\D+/g, ''), joins = ['.', '.'], lengths;
+                            const tipo = PF('tipoEmpresa').getSelectedLabel();
+                            if (tipo === "PJ") {
+                                joins.push('/');
+                                lengths = [2, 3, 3, 4, 2];
+                            } else {
+                                lengths = [3, 3, 3, 2];
+                            }
+                            joins = joins.concat(['-', '', '']);
+                            let newVal = new RegExp(lengths.map(m => '(.{1,' + m + '})').join('')).exec(val)
+                                .filter((f, i) => i > 0 && f !== undefined)
+                                .reduce((a, v, i) => a + (v === undefined ? '' : v + (lengths[i] === v.length ? joins[i] : '')), "");
+                            if (event.originalEvent !== undefined && event.originalEvent.inputType === 'deleteContentBackward') {
+                                newVal = newVal.replace(/\D$/, '');
+                            }
+                            this.value = newVal;
+                        })
+                        .trigger('input')
+                        .attr('pattern', '^\\d{2}(\\.\\d{3}\\.\\d{3}\\/\\d{4}|\\d(?:\\.\\d{3}){2})-\\d{2}$');
+                });
+                // ]]>
+            </script>
+            <style>
+                .pl-2 > h4 {
+                    margin-left: -5px;
+                    font-weight: normal;
+                }
+            </style>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

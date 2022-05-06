@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:sec="http://www.springframework.org/security/facelets/tags"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Empresas credenciadas" />
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Segurança</li>
+            <li>/</li>
+            <li>Administração</li>
+            <li>/</li>
+            <li>
+                <p:link outcome="/restrito/administracao/listaEmpresaCredenciada.xhtml"> #{title}</p:link>
+            </li>
+        </ui:define>
+
+        <ui:define name="content">
+            <p:dataTable value="#{empresaCredenciadaControle.model}" var="item" emptyMessage="Nenhuma empresa encontrada." rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" first="#{contaPagarControle.first}" id="tbl" widgetVar="tbl" styleClass="card p-0">
+
+                <p:ajax event="page" listener="#{empresaCredenciadaControle.onPageChange}" />
+
+                <p:column headerText="Nome" sortBy="#{item.descricao}" filterBy="#{item.descricao}">
+                    <f:facet name="filter">
+                        <p:inputText value="#{empresaCredenciadaControle.filtro.descricao}" onchange="PF('tbl').filter();"/>
+                    </f:facet>
+                    <h:outputText value="#{item.descricao}" />
+                </p:column>
+
+                <p:column headerText="Dt. Cred." sortBy="#{item.dataCredenciamento}" width="125">
+                    <h:outputText value="#{item.dataCredenciamento}">
+                        <f:convertDateTime pattern="dd/MM/yy HH:mm" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Contato" width="125">
+                    <h:outputText value="#{item.fone}" />
+                </p:column>
+
+                <p:column headerText="Responsável" width="125">
+                    <h:outputText value="#{item.responsavel}" />
+                </p:column>
+
+                <p:column headerText="Dias" width="60">
+                    <h:outputText value="#{empresaCredenciadaControle.diasRestantes(item)}" />
+                </p:column>
+
+                <p:column headerText="Tipo conta" width="60" sortBy="#{item.tipoConta}">
+                    <p:row rendered="#{item.tipoConta eq 'G'}">
+                        <span style="color: #1010aa;">Gratuita</span>
+                    </p:row>
+                    <p:row rendered="#{item.tipoConta eq 'P'}">
+                        <span style="color: #10aa10;">Paga</span>
+                    </p:row>
+                    <p:row rendered="#{item.tipoConta eq 'E'}">
+                        <span style="color: #aa1010;">Expirada</span>
+                    </p:row>
+                </p:column>
+
+                <p:column headerText="Cidade" width="125">
+                    <h:outputText value="#{item.endereco.idCidade.descricao}" />
+                </p:column>
+
+                <p:column headerText="UF" width="30">
+                    <h:outputText value="#{item.endereco.idCidade.idUF.descricao}" />
+                </p:column>
+
+                <p:column headerText="Ativo" sortBy="#{item.ativo}" width="60" filterBy="#{item.ativo}">
+                    <f:facet name="filter">
+                        <p:selectOneMenu onchange="PF('tbl').filter()" styleClass="custom-filter"
+                                         value="#{empresaCredenciadaControle.filtro.ativo}">
+                            <f:selectItem itemLabel="Todos" noSelectionOption="true"/>
+                            <f:selectItem itemLabel="Sim" itemValue="S"/>
+                            <f:selectItem itemLabel="Não" itemValue="N"/>
+                        </p:selectOneMenu>
+                    </f:facet>
+
+                    <h:outputText value="Sim" rendered="#{item.ativo eq 'S'}"/>
+                    <h:outputText value="Não" rendered="#{item.ativo eq 'N'}"/>
+                </p:column>
+
+                <p:column width="60" headerText="Ações">
+                    <div class="actions">
+                        <p:row rendered="#{item.ativo eq 'S'}">
+                            <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Mais detalhes"
+                                           action="#{empresaCredenciadaControle.doMostrarDetalhes()}">
+                                <i class="fa fa-eye"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{empresaCredenciadaControle.empresaSelecionada}"/>
+                            </h:commandLink>
+                            <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Contatos"
+                                           action="#{empresaContatoClienteControle.doShowContatos()}">
+                                <i class="fa fa-address-card-o"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{empresaContatoClienteControle.empresaSelecionada}" />
+                            </h:commandLink>
+                            <h:commandLink title="Arquivar" styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                           action="#{empresaCredenciadaControle.doArquivar()}"
+                                           onclick="return confirm('Tem certeza que deseja arquivar essa empresa?')">
+                                <i class="fa fa-archive fa-lg"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{empresaCredenciadaControle.empresaSelecionada}" />
+                            </h:commandLink>
+                            <h:commandLink title="Acessar" styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                           action="#{empresaCredenciadaControle.doAcessar()}" rendered="#{sec:ifAnyGranted('DEV')}">
+                                <i class="fa fa-sign-in fa-lg"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{empresaCredenciadaControle.empresaSelecionada}" />
+                            </h:commandLink>
+                            <h:commandLink title="Gerenciar módulos" styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                           action="#{empresaCredenciadaControle.doManageModules()}">
+                                <i class="fa fa-object-group fa-lg"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{empresaCredenciadaControle.empresaSelecionada}" />
+                            </h:commandLink>
+                            <h:commandLink title="Gerenciar pagamento" styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                           action="#{empresaCredenciadaControle.doManagePayment()}">
+                                <i class="fa fa-credit-card fa-lg"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{empresaCredenciadaControle.empresaSelecionada}" />
+                            </h:commandLink>
+                            <h:commandLink title="Histórico" styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                           action="#{empresaCredenciadaControle.doShowHistorico()}">
+                                <i class="fa fa-book"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{empresaCredenciadaControle.empresaSelecionada}" />
+                            </h:commandLink>
+                        </p:row>
+                        <p:row rendered="#{item.ativo ne 'S'}">
+                            Empresa desativada
+                        </p:row>
+                    </div>
+                </p:column>
+
+            </p:dataTable>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

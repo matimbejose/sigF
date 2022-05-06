@@ -1,0 +1,37 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:cc="http://xmlns.jcp.org/jsf/composite/components"
+    template="/WEB-INF/templateFull.xhtml">
+
+    <ui:param name="title" value="Termo de uso"/>
+
+    <ui:define name="title">#{title}</ui:define>
+
+    <ui:define name="content">
+        <style>
+            .layout-breadcrumb, .layout-footer {
+                display: none;
+            }
+            .layout-content, .layout-content > form > div > div > .card {
+                padding: 0;
+                border: 0;
+            }
+        </style>
+        <embed src="#{usuarioControle.termoUsoBase64}" style="width: 100%;height: calc(100vh - 50px - 90px);" />
+        <hr/>
+        <div class="row w-100">
+            <div class="col-auto"></div>
+            <div class="col">
+                <span>Para continuar é necessário aceitar a última versão do termo de uso</span>
+            </div>
+            <div class="col-auto">
+                <p:commandButton action="#{usuarioControle.aceitarTermo}" value="Aceitar o termo de uso" ajax="false"/>
+            </div>
+        </div>
+    </ui:define>
+
+</ui:composition>

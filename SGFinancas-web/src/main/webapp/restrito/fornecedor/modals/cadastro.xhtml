@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <ui:composition template="/WEB-INF/templateModalCadastro.xhtml">
+
+        <ui:param name="title" value="Cadastro de fornecedor"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="content">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-8">
+                        <div class="form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Razão social"/>
+                            <p:inputText value="#{fornecedorControle.dtoCadastro.razaoSocial}" styleClass="form-control" required="true"/>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="CPF/CNPJ"/>
+                            <p:inputText value="#{fornecedorControle.dtoCadastro.cpfCnpj}" styleClass="form-control" required="true"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Inscrição municipal"/>
+                            <p:inputText value="#{fornecedorControle.dtoCadastro.inscricaoMunicipal}" styleClass="form-control"/>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Inscrição estadual"/>
+                            <p:inputText value="#{fornecedorControle.dtoCadastro.inscricaoEstadual}" styleClass="form-control"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Observação"/>
+                            <p:inputText value="#{fornecedorControle.dtoCadastro.observacao}" styleClass="form-control"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

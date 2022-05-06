@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite/components">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="UF"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Cadastro</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/uf/listaUf.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="formButtons">
+            <p:commandButton type="button" value="Limpar filtros" onclick="clearDataTableFilters('tbl');"/>
+            <p:commandButton id="toggler" type="button" value="Colunas"/>
+            <p:columnToggler datasource="tbl" trigger="toggler"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <p:dataTable value="#{ufControle.model}" emptyMessage="Nenhum registro encontrado." var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="50" lazy="true" rows="50" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+                <p:column headerText="#" width="55" sortBy="#{item.id}" visible="false">
+                    <h:outputText value="#{item.id}"/>
+                </p:column>
+
+                <p:column headerText="Sigla" sortBy="#{item.descricao}">
+                    <h:outputText value="#{item.descricao}"/>
+                </p:column>
+
+                <p:column headerText="Nome" sortBy="#{item.nomeCompleto}">
+                    <h:outputText value="#{item.nomeCompleto}"/>
+                </p:column>
+
+                <p:column headerText="Código UF" sortBy="#{item.cuf}">
+                    <h:outputText value="#{item.cuf}"/>
+                </p:column>
+
+                <p:column headerText="Código país" sortBy="#{item.pais}">
+                    <h:outputText value="#{item.pais}"/>
+                </p:column>
+
+                <p:column headerText="Aliquota ICMS" sortBy="#{item.aliquota}">
+                    <cc:convertPercent value="#{item.aliquota}" maxFractionDigits="2" minFractionDigits="2" placeholder="0%"/>
+                </p:column>
+
+                <p:column headerText="Participa do protocolo" sortBy="#{item.participaProtocolo}">
+                    <h:outputText value="Sim" rendered="#{item.participaProtocolo eq 'S'}"/>
+                    <h:outputText value="Não" rendered="#{item.participaProtocolo ne 'S'}"/>
+                </p:column>
+
+                <p:column headerText="MVA" sortBy="#{item.mva}">
+                    <cc:convertPercent value="#{item.mva}" maxFractionDigits="2" minFractionDigits="2" placeholder="0%"/>
+                </p:column>
+
+            </p:dataTable>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

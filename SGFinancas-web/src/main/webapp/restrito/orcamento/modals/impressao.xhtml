@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <ui:composition template="/WEB-INF/templateModal.xhtml">
+
+        <ui:define name="title">Impressão de orçamento</ui:define>
+
+        <ui:define name="content">
+            <p:menu style="width: 100%">
+                <p:menuitem action="#{orcamentoControle.doStartPrint}" ajax="false" value="Imprimir orçamento" rendered="#{!osControle.ehOficina(empresaControle.empresaLogada)}"/>
+                <p:menuitem action="#{orcamentoControle.doStartPrintForClient}" ajax="false" value="Imprimir orçamento" rendered="#{osControle.ehOficina(empresaControle.empresaLogada)}"/>
+                <p:menuitem action="#{orcamentoControle.enviarOrcamentoVeiculoPorEmail()}" update="@form" value="Enviar orçamento por email" rendered="#{osControle.ehOficina(empresaControle.empresaLogada)}"/>
+                <p:menuitem action="#{orcamentoControle.enviarOrcamentoPorEmail}" update="@form" value="Enviar orçamento por email" rendered="#{!osControle.ehOficina(empresaControle.empresaLogada)}"/>
+            </p:menu>
+        </ui:define>
+
+    </ui:composition>
+</html>

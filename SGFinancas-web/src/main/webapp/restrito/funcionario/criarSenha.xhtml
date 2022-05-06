@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Funcionário"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Funcionário</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/funcionario/listaFuncionario.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteSave" action="#{funcionarioControle.doCriaSenha()}"/>
+            <h:commandButton id="remoteCancel" action="listaFuncionario.xhtml" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <div class="row">
+                <div class="col-md-8 mx-auto">
+                    <div class="card card-w-title">
+                        <h1>Criação da senha do funcionário - #{funcionarioControle.funcionarioSelecionado.nome}</h1>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group form-md-line-input">
+                                    <label class="control-label"><span class="required">* </span> Senha (mínimo 4 caracteres)</label>
+                                    <p:password value="#{funcionarioControle.senha}"
+                                                required="true"
+                                                requiredMessage="Favor informar a senha."
+                                                styleClass="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group form-md-line-input">
+                                    <label class="control-label"><span class="required">* </span> Repetir senha</label>
+                                    <p:password value="#{funcionarioControle.repetirSenha}"
+                                                required="true"
+                                                requiredMessage="Favor repetir a senha."
+                                                styleClass="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+    </ui:composition>
+
+</html>

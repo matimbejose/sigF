@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite/components"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Empresas credenciadas" />
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Segurança</li>
+            <li>/</li>
+            <li>Administração</li>
+            <li>/</li>
+            <li>
+                <p:link outcome="/restrito/administracao/listaEmpresaCredenciada.xhtml"> #{title}</p:link>
+            </li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteSave" action="#{empresaCredenciadaControle.atualizarModulos()}"/>
+            <h:commandButton id="remoteCancel" action="listaEmpresaCredenciada.xhtml"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <style>
+                tr.obrigatorio, tr.adquirido, th .ui-chkbox-box {
+                    pointer-events: none;
+                    cursor: default;
+                    opacity: .85;
+                }
+                .selector {
+                    width:16px;
+                    text-align:center;
+                }
+                tr.obrigatorio .selector > .ui-chkbox, tr.adquirido .selector > .ui-chkbox {
+                    opacity: .4;
+                }
+                tr:not(.dado) .adesao {
+                    text-decoration: line-through;
+                }
+                .money {
+                    text-align: right;
+                    width: 100px;
+                }
+            </style>
+            <p:dataTable id="tbl" value="#{empresaCredenciadaControle.modulos}" var="modulo" styleClass="card p-0 ui-datatable-striped ui-datatable-gridlines"
+                         selection="#{empresaCredenciadaControle.selection}" rowKey="#{modulo.id}" sortBy="#{modulo.foo}" rowStyleClass="#{modulo.styleClass}">
+
+                <p:ajax event="rowSelect" process="tbl" update="tbl"/>
+                <p:ajax event="rowUnselect" process="tbl" update="tbl"/>
+                <p:ajax event="toggleSelect" process="tbl" update="tbl"/>
+                <p:ajax event="rowSelectCheckbox" process="tbl" update="tbl"/>
+                <p:ajax event="rowUnselectCheckbox" process="tbl" update="tbl"/>
+
+                <p:column selectRow="false" selectionMode="multiple" styleClass="selector"/>
+
+                <p:column selectRow="false" headerText="Módulo">
+                    #{modulo.nome}
+                </p:column>
+
+                <p:column selectRow="false" headerText="Valor de adesão" styleClass="money adesao">
+                    <cc:convertMoney value="#{modulo.valorAdesao}"/>
+                </p:column>
+
+                <p:column selectRow="false" headerText="Valor da mensalidade" styleClass="money">
+                    <cc:convertMoney value="#{modulo.valorMensalidade}"/>
+                </p:column>
+
+                <p:summaryRow>
+                    <p:column colspan="3">
+                        Total:
+                    </p:column>
+                    <p:column style="text-align: right;">
+                        <cc:convertMoney value="#{empresaCredenciadaControle.mensalidadeTotal}"/>
+                    </p:column>
+                </p:summaryRow>
+
+            </p:dataTable>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite/components"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Empresas credenciadas" />
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Segurança</li>
+            <li>/</li>
+            <li>Administração</li>
+            <li>/</li>
+            <li>
+                <p:link outcome="/restrito/administracao/listaEmpresaCredenciada.xhtml"> #{title}</p:link>
+            </li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteSave" action="#{empresaCredenciadaControle.atualizarPagamentoMensalidade()}"/>
+            <h:commandButton id="remoteCancel" action="listaEmpresaCredenciada.xhtml"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <div class="card">
+                <h5>Dados da mensalidade</h5>
+                <div class="row">
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Data de validade"/>
+                        <p:calendar value="#{empresaCredenciadaControle.pagamentoMensalidadeSelecionado.dataValidade}" navigator="true" pattern="dd/MM/yyyy"
+                                    disabled="#{empresaCredenciadaControle.pagamentoMensalidadeSelecionado.id ne null}"/>
+                    </div>
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Data de pagamento"/>
+                        <p:calendar value="#{empresaCredenciadaControle.pagamentoMensalidadeSelecionado.dataPagamento}" navigator="true" pattern="dd/MM/yyyy"/>
+                    </div>
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Valor pago"/>
+                        <p:inputNumber value="#{empresaCredenciadaControle.pagamentoMensalidadeSelecionado.valorPago}" decimalPlaces="2"
+                                       decimalSeparator="," thousandSeparator="."/>
+                    </div>
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Usuário que fez o pagamento"/>
+                        <p:selectOneMenu value="#{empresaCredenciadaControle.pagamentoMensalidadeSelecionado.idUsuarioPagamento}" var="t"
+                                         effect="fade" converter="#{genericConverter}" filter="true" filterMatchMode="startsWith">
+                            <p:column>
+                                <h:outputText value="#{t.nome}"/>
+                            </p:column>
+
+                            <f:selectItems value="#{usuarioControle.listaUsuarioPorEmpresa(empresaCredenciadaControle.empresaSelecionada)}"
+                                           var="user" itemLabel="#{user.nome}" itemValue="#{user}"/>
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+                <h5>Dados da empresa</h5>
+                <div class="row">
+                    <div class="col-3 form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Tipo de conta"/>
+                        <p:selectOneMenu value="#{empresaCredenciadaControle.empresaSelecionada.tipoConta}">
+                            <f:selectItem itemLabel="Grátis (período de testes)" itemValue="G"/>
+                            <f:selectItem itemLabel="Paga" itemValue="P"/>
+                            <f:selectItem itemLabel="Expirada" itemValue="E"/>
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

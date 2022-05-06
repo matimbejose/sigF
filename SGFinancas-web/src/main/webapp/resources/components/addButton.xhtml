@@ -1,0 +1,39 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:composite="http://xmlns.jcp.org/jsf/composite"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:sec="http://www.springframework.org/security/facelets/tags"
+      xmlns:p="http://primefaces.org/ui">
+
+    <composite:interface>
+        <composite:attribute name="label" required="true"
+                             shortDescription="Label to be displayed on top of the input."/>
+        <composite:attribute name="required" required="false" default="#{false}"
+                             shortDescription="Marks component as required."/>
+        <composite:attribute name="disabled" required="false" default="#{false}"
+                             shortDescription="Marks component as disabled."/>
+        <composite:attribute name="entityName" required="true"
+                             shortDescription="Name to be called on the bean."/>
+        <composite:attribute name="renderIfAnyGranted" required="false" default=""
+                             shortDescription="Permission the user must have in order to render the add button."/>
+        <composite:attribute name="context" required="false" default=""
+                             shortDescription="Object containig the context for the new entity."/>
+    </composite:interface>
+
+    <composite:implementation>
+        <f:param name="disabled" value=""/>
+        <label class="control-label">
+            <p:row rendered="#{cc.attrs.required}">
+                <span class="required"> * </span>
+            </p:row>
+            #{cc.attrs.label}
+        </label>
+        <div class="input-group add-button #{cc.attrs.disabled or (cc.attrs.renderIfAnyGranted ne '' and !sec:ifAnyGranted(cc.attrs.renderIfAnyGranted)) ? 'full-size' : 'partial-size'}">
+            <composite:insertChildren/>
+            <p:commandLink title="Adicionar" styleClass="btn btn-sm" process="@this" rendered="#{!(cc.attrs.disabled or (cc.attrs.renderIfAnyGranted ne '' and !sec:ifAnyGranted(cc.attrs.renderIfAnyGranted)))}"
+                           action="#{cadastroControle.showAddModal(cc.attrs.entityName, cc.attrs.context)}">
+                <p:ajax event="dialogReturn" update="@previous" oncomplete="triggerAutoSelect();"/>
+                <i class="fa fa-plus"></i>
+            </p:commandLink>
+        </div>
+    </composite:implementation>
+</html>

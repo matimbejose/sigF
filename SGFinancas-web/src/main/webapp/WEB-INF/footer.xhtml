@@ -1,0 +1,41 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui">
+
+
+    <div class="layout-footer">
+        <div class="page-footer-inner d-flex">
+            <div>
+                <a href="https://villefortconsulting.com/">
+                    <img src="#{facesContext.externalContext.requestContextPath}/resources/images/logo_ville_preto.png" height="32px"/>
+                </a>
+            </div>
+            <div class="page-footer-inner ml-auto">
+                <a href="https://wa.me/5531982397105" target="_BLANK" rel="noopener noreferrer">
+                    <i class="fa fa-2x fa-whatsapp"></i>
+                </a>
+            </div>
+            <div class="page-footer-inner ml-3">
+                <a href="mailto:comercial@sgfinanças.com">
+                    <i class="fa fa-2x fa-envelope-o"></i>
+                </a>
+            </div>
+            <div class="page-footer-inner ml-3">
+                <a href="https://www.instagram.com/sgfinancas_/">
+                    <i class="fa fa-2x fa-instagram"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script   src="https://www.googletagmanager.com/gtag/js?id=UA-83320262-2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+
+        gtag('config', 'UA-83320262-2');
+    </script>
+
+</ui:composition>

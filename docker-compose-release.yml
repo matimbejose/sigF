@@ -1,0 +1,32 @@
+version: '2.4'
+services:
+  sgfinancas:
+    image: 192.168.0.52:8082/sgfinancas-release:latest
+    user: root
+    ports:
+      - "8009:8009"
+      - "8080:8080"
+    env_file: 
+      - .env-release      
+    environment:
+      - DEBUG=true
+      - JAVA_OPTS=-Dline.separator=$$'\r\n' -Dfile.encoding=ISO-8859-1 -Duser.language=pt -Duser.country=BR -server -Xms4G -Xmx4G -Xmn1G -XX:+UseLargePages -XX:+UseConcMarkSweepGC -XX:+DisableExplicitGC -Dcom.sun.jersey.server.impl.cdi.lookupExtensionInBeanManager=true -Djboss.as.management.blocking.timeout=3600 -Djava.awt.headless=true -Djava.net.preferIPv4Stack=true
+      - TZ=America/Bahia
+      - DB_DATABASENAME=${DB_DATABASENAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_SERVERNAME=${DB_SERVERNAME}
+      - DB_SERVERPORT=${DB_SERVERPORT}
+      - DB_USERNAME=${DB_USERNAME}
+    volumes:
+      - /home/apps/data/sgfinancas/log/:/opt/jboss/wildfly/standalone/log
+      - /home/apps/data/sgfinancas/termos/:/termos
+      - /home/apps/data/sgfinancas/arquivos:/opt/jboss/wildfly/arquivos
+    restart: always
+    container_name: cn_sgfinancas
+    networks:
+      apache_villefort:
+        aliases:
+          - srv_sgfinancas
+networks:
+    apache_villefort:
+        external: true    

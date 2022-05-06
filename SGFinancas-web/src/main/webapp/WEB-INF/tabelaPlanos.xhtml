@@ -1,0 +1,190 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui">
+    <style>
+        .layout-wrapper .layout-main .layout-content {
+            padding: 8px 0 0 0;
+        }
+        table {
+            color: #777;
+            border-spacing: 0;
+            border-collapse: collapse;
+        }
+        .table.anual [data-anual]:after {
+            content: attr(data-anual);
+        }
+        .table.mensal [data-mensal]:after {
+            content: attr(data-mensal);
+        }
+        .table tr td {
+            text-align: center;
+        }
+        .table tr > *:nth-child(3) {
+            color: #618a2a;
+            background-color: #ebf0e4;
+        }
+        .table tr:hover > td {
+            background-color: #eee;
+        }
+        .table tr:hover > td:nth-child(3) {
+            background-color: #ded;
+        }
+        .table th {
+            width: 25%;
+        }
+        .table tfoot tr th {
+            text-align: center;
+            vertical-align: middle;
+        }
+        .btn-default {
+            border: 1px solid #ccc !important;
+        }
+        .table > thead > tr > th {
+            vertical-align: bottom;
+            border-bottom: 2px solid #ddd;
+            padding: 8px;
+        }
+        .table > tbody > tr > td, .table > tbody > tr > th {
+            padding: 8px;
+            line-height: 1.42857143;
+            vertical-align: top;
+            border-top: 1px solid #ddd;
+        }
+        tr[style] > td:after {
+            content: var(--marker);
+            color: red;
+        }
+    </style>
+
+    <table class="table table-hover anual" id="tabelaPlanos">
+        <thead>
+            <tr>
+                <th style="text-align: center;" colspan="4">
+                    <div class="btn-group btn-group-toggle mb-2" data-toggle="buttons">
+                        <label class="btn active btn-success" data-value="anual">
+                            <input type="radio" name="plano" checked="checked"/>Plano anual
+                        </label>
+                        <label class="btn btn-default" data-value="mensal">
+                            <input type="radio" name="plano"/>Plano mensal
+                        </label>
+                    </div>
+                </th>
+            </tr>
+            <tr class="nomes">
+                <th style="text-align: center;">Starter <span data-mensal="mensal" data-anual="anual"></span></th>
+                <th style="text-align: center;">Avançado <span data-mensal="mensal" data-anual="anual"></span></th>
+                <th style="text-align: center;">Premium <span data-mensal="mensal" data-anual="anual"></span></th>
+                <th style="text-align: center;">Ilimitado <span data-mensal="mensal" data-anual="anual"></span></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Ideal para quem trabalha sozinho e quer ter o controle financeiro da sua empresa sem perder tempo.</td>
+                <td>
+                    Ideal para quem tem um empregado ou um sócio.
+                    <br/>
+                    Emita notas fiscais em todo o Brasil e compartilhe a gestão da sua empresa.
+                </td>
+                <td>
+                    Ideal para pequenas e médias empresas que querem ser grandes.
+                    <br/>
+                    <br/>
+                    <strong>SG FINANÇAS RECOMENDA</strong>
+                </td>
+                <td>Ideal para pequenas e médias empresas que possuem grandes desafios.</td>
+            </tr>
+            <tr class="valor">
+                <td>R$ <span data-mensal="89,90" data-anual="69,90"></span> por mês</td>
+                <td>R$ <span data-mensal="159,90" data-anual="127,90"></span> por mês</td>
+                <td>R$ <span data-mensal="179,90" data-anual="149,90"></span> por mês</td>
+                <td>R$ <span data-mensal="249,90" data-anual="199,90"></span> por mês</td>
+            </tr>
+            <tr>
+                <td>1 USUÁRIO</td>
+                <td>2 USUÁRIOS</td>
+                <td>10 USUÁRIOS</td>
+                <td>Usuários ILIMITADOS</td>
+            </tr>
+            <tr>
+                <td>10 NF de Produto</td>
+                <td>100 NF de Produto</td>
+                <td>1000 NF de Produto</td>
+                <td>NF de Produto ILIMITADAS</td>
+            </tr>
+            <tr style="--marker: '*';">
+                <td>10 NF de Serviço</td>
+                <td>100 NF de Serviço</td>
+                <td>1000 NF de Serviço</td>
+                <td>NF de Serviço ILIMITADAS</td>
+            </tr>
+            <tr>
+                <td><s>NFC-e</s></td>
+                <td><s>NFC-e</s></td>
+                <td>5.000 NFC-e</td>
+                <td>NFC-e ILIMITADAS</td>
+            </tr>
+            <tr style="--marker: '**';">
+                <td>Boleto Fácil ILIMITADOS</td>
+                <td>Boleto Fácil ILIMITADOS</td>
+                <td>Boleto Fácil ILIMITADOS</td>
+                <td>Boleto Fácil ILIMITADOS</td>
+            </tr>
+            <tr style="--marker: '***';">
+                <td>5 Boletos pelo seu Banco</td>
+                <td>50 Boletos pelo seu Banco</td>
+                <td>500 Boletos pelo seu Banco</td>
+                <td>Boletos pelo seu banco ILIMITADOS</td>
+            </tr>
+            <tr>
+                <td>Relatórios de Vendas, Financeiros e de Estoque</td>
+                <td>Relatórios de Vendas, Financeiros e de Estoque</td>
+                <td>Relatórios de Vendas, Financeiros e de Estoque</td>
+                <td>Relatórios de Vendas, Financeiros e de Estoque</td>
+            </tr>
+            <tr>
+                <td>Suporte Completo e Gratuito</td>
+                <td>Suporte Completo e Gratuito</td>
+                <td>Suporte Completo e Gratuito</td>
+                <td>Suporte Completo e Gratuito</td>
+            </tr>
+            <tr>
+                <td>Aplicativo para Smartphone</td>
+                <td>Aplicativo para Smartphone</td>
+                <td>Aplicativo para Smartphone</td>
+                <td>Aplicativo para Smartphone</td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <th><button onclick="checkout(this);" type="button" class="mb-2 btn btn-success">Assine já!</button></th>
+                <th><button onclick="checkout(this);" type="button" class="mb-2 btn btn-success">Assine já!</button></th>
+                <th><button onclick="checkout(this);" type="button" class="mb-2 btn btn-success btn-lg">Assine já!</button></th>
+                <th><button onclick="checkout(this);" type="button" class="mb-2 btn btn-success">Assine já!</button></th>
+            </tr>
+            <tr>
+                <th colspan="4">
+                    <div class="px-2" style="color: red;text-align: left;font-weight: normal;">
+                        <small>* Consulte os municípios disponíveis</small><br/>
+                        <small>** Consulte condições</small><br/>
+                        <small>*** Consulte os bancos disponíveis</small>
+                    </div>
+                </th>
+            </tr>
+        </tfoot>
+    </table>
+    <script>
+        // <![CDATA[
+        const labels = Array.from(document.querySelectorAll('.btn-group-toggle label'));
+        const tabela = document.querySelector('#tabelaPlanos');
+        labels.forEach(label => {
+            label.addEventListener('click', evt => {
+                labels.forEach(l => l.classList.remove('active', 'btn-success'));
+                labels.forEach(l => l.classList.add('btn-default'));
+                ['active', 'btn-success', 'btn-default'].forEach(c => evt.target.classList.toggle(c));
+                tabela.classList.remove('anual', 'mensal');
+                tabela.classList.add(evt.target.getAttribute('data-value'));
+            });
+        });
+
+        //]]>
+    </script>
+</ui:composition>

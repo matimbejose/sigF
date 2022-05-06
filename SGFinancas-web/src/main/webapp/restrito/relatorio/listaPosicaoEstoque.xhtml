@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/WEB-INF/templateReport.xhtml">
+
+        <ui:param name="title" value="Relatório de posições de estoque"/>
+
+        <ui:param name="link" value="/restrito/relatorio/listaPosicaoEstoque.xhtml"/>
+
+        <ui:param name="fileDownload" value="#{relatorioPosicaoEstoqueControle.gerarRelatorioPosicaoEstoque()}"/>
+
+        <ui:define name="config">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Produto"/>
+                        <p:selectOneMenu value="#{relatorioPosicaoEstoqueControle.produtoSelecionado}" panelStyle="width:180px" effect="fade"
+                                         var="t" style="width:160px" filter="true" filterMatchMode="startsWith" converter="#{genericConverter}">
+                            <p:column>
+                                <h:outputText value="#{t.descricao}"/>
+                            </p:column>
+                            <f:selectItem itemLabel="-- Todos os produtos --" noSelectionOption="true"/>
+                            <f:selectItems value="#{relatorioPosicaoEstoqueControle.produtos()}" var="produto"
+                                           itemLabel="#{produto.descricao}" itemValue="#{produto}"/>
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="control-label"><span class="required">* </span>Escolha o tipo de relatorio</label>
+                        <p:selectOneMenu  value="#{relatorioPosicaoEstoqueControle.tipoRelatorio}"
+                                          required="true" requiredMessage="Favor informar o tipo de relatório desejado.">
+                            <f:selectItem itemLabel="PDF Completo" itemValue="semValores"/>
+                            <f:selectItem itemLabel="PDF Simples" itemValue="comValores" />
+
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

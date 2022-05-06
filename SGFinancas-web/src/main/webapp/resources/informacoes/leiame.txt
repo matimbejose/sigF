@@ -1,0 +1,356 @@
+upload de arquivo:
+http://stackoverflow.com/questions/8875818/how-to-use-primefaces-pfileupload-listener-method-is-never-invoked-or-uploaded
+
+cache:
+https://developer.jboss.org/message/644418
+
+Auditoria:
+http://docs.jboss.org/hibernate/orm/4.2/devguide/en-US/html/ch15.html#d5e4058
+
+
+caracteres especiais:
+http://htmlhelp.com/reference/html40/entities/symbols.html
+
+configuracao netbeans
+http://wiki.netbeans.org/FaqI18nProjectEncoding
+
+frameworks:
+http://imasters.com.br/linguagens/java/listagem-de-frameworks-java/
+
+
+segurncao:
+http://www.devmedia.com.br/spring-security-integrando-spring-com-java-ee/31051
+https://www.youtube.com/watch?v=qoR6lY6biO4#t=20
+http://stackoverflow.com/questions/6632982/how-to-create-custom-methods-for-use-in-spring-security-expression-language-annot/6634438#6634438
+http://springinpractice.com/2010/07/06/spring-security-database-schemas-for-mysql
+
+
+graficos
+http://www.highcharts.com/
+
+Datasource  jboss:
+
+http://wildfly.org/news/2014/02/06/GlassFish-to-WildFly-migration/
+
+Hibernate – Many-To-Many Example – Join Table + Extra Column (Annotation)
+http://www.mkyong.com/hibernate/hibernate-many-to-many-example-join-table-extra-column-annotation/
+
+http://jbossdivers.wordpress.com/2014/03/23/configurando-um-ambiente-wildfly-8-profissional/
+
+
+Remover linhas:
+<extension module="org.jboss.as.jaxrs"/>
+<subsystem xmlns="urn:jboss:domain:jaxrs:1.0"/>
+
+incluir no wildly
+
+    <system-properties>
+        <property name="org.apache.catalina.connector.URI_ENCODING" value="ISO-8859-1"/>
+        <property name="org.apache.catalina.connector.USE_BODY_ENCODING_FOR_QUERY_STRING" value="true"/>
+    </system-properties>
+
+Atualizar metronic:
+mudar no  
+--> metronic.js
+D:\Desenvolvimento\iDataSoft\iDataSoft-web\src\main\webapp\resources\metronic\3.1\assets\global\scripts
+var assetsPath = document.getElementById('contextPath').innerHTML + '/resources/metronic/assets/';
+
+no lock.js
+ var assetsPath = document.getElementById('contextPath').innerHTML + '/resources/metronic/assets/';
+            
+             $m.backstretch([
+		        assetsPath + "admin/pages/media/bg/1.jpg",
+    		    assetsPath + "admin/pages/media/bg/2.jpg",
+    		    assetsPath + "admin/pages/media/bg/3.jpg",
+    		    assetsPath + "admin/pages/media/bg/4.jpg"
+		        ], {
+		          fade: 1000,
+		          duration: 8000
+		      });
+        }
+
+mudar o bootstrap-daterangepicker => baixar versao mais nova
+moment.js
+ 
+_months : 'Janeiro_Fevereiro_Março_Abril_Maio_Junho_Julho_Agosto_Setembro_Outubro_Novembro_Dezembro'.split('_'),
+_monthsShort : 'Jan_Fev_Mar_Abr_Mai_Jun_Jul_Ago_Set_Out_Nov_Dez'.split('_'),
+
+_weekdays : 'Domingo_Segunda_Terça_Quarta_Quinta_Sexta_Sábado'.split('_'),
+
+_weekdays : 'Domingo_Segunda_Terça_Quarta_Quinta_Sexta_Sábado'.split('_'),
+_weekdaysShort : 'Dom_Seg_Ter_Qua_Qui_Sex_Sab'.split('_'),
+
+http://blogs.bytecode.com.au/glen/2013/09/25/calling-primefaces-remotecommand-with-javascript-arguments.html
+
+demo.js
+no
+var setColor = function(color) {
+
+colocar a funcao
+ salvarCorUsuario( [ { name: 'cor', value: color_ }] );
+
+upload de arquivo
+<p:fileUpload id="upload" 
+        fileUploadListener="#{bibliotecaController.salvarArquivo}"
+        description="Images" auto="true" multiple="false"
+        label="Procurar vídeo..." cancelLabel="Cancelar"
+        sizeLimit="377487360" uploadLabel="Enviar vídeo"
+        allowTypes="/(\.|\/)(mp4)$/"                   
+        invalidSizeMessage="O tamanho do arquivo não pode ultrapassar o limite de 200 MB"
+        invalidFileMessage="Você só pode incluir arquivos em formato mp4." />
+[15:00:40] Franklin Souza: public void salvarArquivo(FileUploadEvent fileUploadEvent) {
+
+  System.out.println("t");
+  UploadedFile uploadedFile = fileUploadEvent.getFile();
+  
+  try {
+   
+   
+  } catch (Exception e) {
+   e.printStackTrace();
+  }
+ }
+
+
+---> primefaces
+http://primefaces.github.io/
+
+
+Instalando o ambiente
+http://jbossdivers.wordpress.com/2014/03/23/configurando-um-ambiente-wildfly-8-profissional/
+https://jbossdivers.wordpress.com/2014/03/23/configurando-um-ambiente-wildfly-8-profissional-parte-2/
+
+1) wget http://fs.sentilabs.com/downloads/as/wildfly/wildfly-8.1.0.Final.zip
+2) sudo adduser –disabled-password –disabled-login jboss
+3) unzip wildfly-8.1.0.Final.zip
+4) sudo mv wildfly-8.1.0.Final /opt/wildfly
+5) sudo chown -R jboss:jboss /opt/wildfly
+6) wget http://fs.sentilabs.com/downloads/as/wildfly/java.sh
+7) wget http://fs.sentilabs.com/downloads/as/wildfly/wildfly.sh
+8) wget http://fs.sentilabs.com/downloads/as/wildfly/wildfly
+9) sudo mv java.sh /etc/profile.d/
+10) sudo mv wildfly.sh /etc/profile.d/
+11) sudo mv wildfly /etc/init.d/
+12) sudo chmod +x /etc/init.d/wildfly
+13) sudo /etc/init.d/wildfly start
+14) sudo apt-get install sysv-rc-conf
+15) sudo sysv-rc-conf wildfly on
+16) sudo /opt/wildfly/bin/add-user.sh
+17) To be able to access wildfly from internet open /opt/wildfly/standalone/configuration/standalone.xml and patch to jboss.bind.address to 0.0.0.0 in every place you find it (Note: there are many other options by which you can achieve this).
+18) sudo /etc/init.d/wildfly stop
+19) sudo /etc/init.d/wildfly start
+http://blog.sentilabs.com/wildfly-8-1-0-installation-on-ubuntu-14-04/
+
+---> Importante. Se for usar algum Componrnete do metronic, deve mudar o Jquery de $ para $m!!!
+http://gilbertoastolfi.wordpress.com/2014/03/11/desenvolvendo-uma-aplicacao-java-web-jsf-criando-templates-parte-2/
+
+
+
+--> Faixa de cor, arrumar o posicionamento
+
+
+===> bi
+http://www.databaseskill.com/3116731/
+http://etl-tools.info/en/pentaho/jpivot-crosstab.htm
+https://groups.google.com/forum/#!forum/pivot4j-list
+http://jpivot.sourceforge.net/
+http://jpivot.sourceforge.net/news.html
+http://sourceforge.net/projects/jpivot/
+http://jpivot.cvs.sourceforge.net/jpivot/jpivot/src/java/com/tonbeller/jpivot/mondrian/MondrianResult.java?r1=1.8&r2=1.7
+http://community.pentaho.com/projects/mondrian/
+http://mondrian.pentaho.com/documentation/faq.php
+http://www.olap4j.org/olap4j_fs.html
+http://www.olap4j.org/olap4j_fs.html
+http://khaidoan.wikidot.com/pentaho-bi-integration
+
+
+
+linux:
+--> mudar a configuracao do mysql para utf-8
+ vi /etc/mysql/my.cnf
+[client]
+default-character-set=utf8
+
+[mysql]
+default-character-set=utf8
+
+
+[mysqld]
+collation-server = utf8_unicode_ci
+init-connect='SET NAMES utf8'
+character-set-server = utf8
+
+=> reinicar
+
+
+
+
+====> tentar no grid de lançamento
+Alisson: xhtml
+<h:inputHidden id="hdIndex" value="#{cadastroCampanhaController.index}"/>
+<h:inputHidden id="hdTipoDadosImportacao" value="#{cadastroCampanhaController.tipoDadosImportacao}" />
+
+<p:remoteCommand name="atualizarComboImportacaoPersonalizada" actionListener="#{cadastroCampanhaController.atualizarComboImportacaoPersonalizada()}"/>
+
+<p:dataTable id="dtImportacaoPersonalizada" value="#{cadastroCampanhaController.dataModel}" binding="#{cadastroCampanhaController.dataTableImportacaoPersonalizada}" scrollable="true" scrollWidth="1150">
+
+</p:dataTable>
+
+
+Alisson: public void atualizarComboImportacaoPersonalizada(){
+listaTiposDadosImportacao.put(index, tipoDadosImportacao);
+}
+
+
+Alisson: public void atualizarComboImportacaoPersonalizada(){
+listaTiposDadosImportacao.put(index, tipoDadosImportacao);
+}
+
+private SelectOneMenu criarCombo(TipoDadosImportacaoEnum tipoDadosImportacao, int index) {
+SelectOneMenu selectOneMenu = new SelectOneMenu();
+
+selectOneMenu.setId("cmbImportacaoPersonalizada"+index);
+selectOneMenu.setDisabled(false);
+selectOneMenu.setRendered(true);
+selectOneMenu.setRequired(false);
+selectOneMenu.setValue(tipoDadosImportacao);
+selectOneMenu.setStyleClass("combo");
+selectOneMenu.setValueExpression("value", Components.createValueExpression("#{cadastroCampanhaController.tipoDadosImportacao}", TipoDadosImportacaoEnum.class));
+selectOneMenu.setOnchange("atualizarCombo("+index+")");
+
+UISelectItems selectItens = new UISelectItems();
+selectItens.setValue(listaSelectItens);
+
+selectOneMenu.getChildren().add(selectItens);
+
+// AjaxBehavior ajax = new AjaxBehavior();
+// ajax.setListener(Components.createMethodExpression("#{cadastroCampanhaController.atualizarComboImportacaoPersonalizada()}", Void.class));
+// ajax.setUpdate("@this");
+// ajax.setImmediate(true);
+// selectOneMenu.addClientBehavior("change", ajax);
+
+return selectOneMenu;
+}
+
+
+
+
+Alisson: javascript
+function atualizarCombo(index){
+document.getElementById('hdIndex').value = index;
+document.getElementById('hdTipoDadosImportacao').value = document.getElementById('cmbImportacaoPersonalizada'+index+'_input').value;
+
+atualizarComboImportacaoPersonalizada();
+}
+
+a ideia é o seguinte
+eu coloquei no onchange do meu combo, que vai chamar essa funcao javacript
+
+
+chsarmento: mas com vc fez o onChance?
+se o cara esta na tabela
+
+
+Alisson: nela eu atribuo os valores q eu necessito e coloco numa variavel escondida
+
+e depois eu chamo a funcao remotecommand
+q vai pegar esse valores escodido e atribuir a lista
+
+
+
+
+projeto
+Rogerio: to pegando aqui
+protected void service(HttpServletRequest request,
+HttpServletResponse response)
+throws IOException, ServletException {
+//String payloadRequest = getBody(request);
+//System.out.println(payloadRequest);
+String auxData = getBody(request);
+TaskWrapper data = TaskWrapper auxData;
+
+//PrintWriter out = response.getWriter();
+}
+esse é uma servlet
+usei um metodo getBody que retorna uma string
+mas se tivesse um geito de retornar o tipo TaskWrapper (fazendo um cast)
+seria melhor
+algo como o request.getparameter ou algo assim
+vou almocar
+depois a gente conversa
+s
+
+
+grafico componentes:
+http://www.highcharts.com/demo/line-labels
+
+expressoes
+http://jamacedo.com/2009/09/usando-a-biblioteca-jep-para-analisar-e-avaliar-expressoes-matematicas/
+
+
+seguranca
+http://www.dominikdorn.com/facelets/
+http://www.dominikdorn.com/facelets/sec_example.xhtml.txt
+
+        sec:ifAnyGranted("ROLE_USER,ROLE_ADMIN"): ? #{sec:ifAnyGranted("ROLE_USER,ROLE_ADMIN")} <br/>
+        !sec:ifAnyGranted("ROLE_USER,ROLE_ADMIN"): ? #{! sec:ifAnyGranted("ROLE_USER,ROLE_ADMIN")} <br/>
+        sec:ifNotGranted("ROLE_USER"): ? #{sec:ifNotGranted("ROLE_USER")} <br/>
+        !sec:ifNotGranted("ROLE_USER"): ? #{! sec:ifNotGranted("ROLE_USER")} <br/>
+
+        <sec:ifAnyGranted roles="ROLE_USER,ROLE_ADMIN">
+            This gets shown if the user has any of the roles &quot;ROLE_USER&quot; or &quot;ROLE_ADMIN&quot;<br/>
+        </sec:ifAnyGranted>
+
+
+        <sec:ifAllGranted roles="ROLE_USER,ROLE_MODERATOR">
+            This gets shown if the user has all of the roles &quot;ROLE_USER&quot; and &quot;ROLE_MODERATOR&quot;<br/>
+        </sec:ifAllGranted>
+
+
+        <sec:ifNotGranted roles="ROLE_MODERATOR,ROLE_VIEWER">
+            This gets shown if th user has not any of the roles &quot;ROLE_MODERATOR&quot; or &quot;ROLE_VIEWER&quot;<br/>
+        </sec:ifNotGranted>
+
+http://samerabdelkafi.wordpress.com/2011/01/16/secure-your-web-application-with-spring-security/
+
+- por no jboss
+-Dcom.sun.jersey.server.impl.cdi.lookupExtensionInBeanManager=true  -Dfile.encoding=ISO-8859-1
+<deployment-scanner path="deployments" relative-to="jboss.server.base.dir" scan-interval="10000"/>
+
+---> 12:50:59,201 ERROR [io.undertow.request] (default task-51) UT005023: Exception handling request to /ConsigPlus/restrito/consignataria/cadastroConsignataria.xhtml: java.lang.IllegalStateException: UT000047: The number of parameters exceeded the maximum of 1000
+
+
+transacao
+http://piotrnowicki.com/2012/11/types-of-entitymanagers-application-managed-entitymanager/
+
+
+Tabela com Scroll
+
+Adicionar a classe maxHeight400 na div onde contem a tabela.
+http://stackoverflow.com/questions/24930488/spring-security-sessionregistry-not-working
+
+
+(p:commandButton ... onclick="this.disabled=true;" oncomplete="this.disabled=false;" /)
+
+
+# iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 8080
+iptables -A INPUT -p tcp --dport 8080 -j ACCEPT
+ iptables -I INPUT -p tcp --dport 8080 -j ACCEPT
+
+service iptables save
+$ service iptables restart
+$ service httpd restart
+sudo /usr/libexec/iptables/iptables.init save
+
+https://lintut.com/install-and-enable-iptables-firewall-on-centos-7-linux/
+
+https://jbossdivers.wordpress.com/2014/03/23/configurando-um-ambiente-wildfly-8-profissional/
+
+https://gist.github.com/fernandoaleman/2172388
+
+https://www.digitalocean.com/community/tutorials/how-to-install-mariadb-on-centos-7
+
+https://www.ostechnix.com/how-to-change-apache-ftp-and-ssh-default-port-to-a-custom-port-part-1/
+
+https://developer.jboss.org/wiki/JBossAS713ProblemasComFontesJasperReportsNoLinux
+http://stackoverflow.com/questions/3811908/font-is-not-available-to-the-jvm-with-jasper-reports

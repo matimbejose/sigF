@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Assinar Nfs-e com certificado A3"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Nota fiscal</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/notaFiscalProduto/listaNotaFiscalProduto.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes"/>
+
+        <ui:define name="content">
+            <div class="notification">
+                <div class="notification-title">
+                    Atenção!
+                </div>
+                - Certifique-se que o seu certificado esteja corretamente conectado ao seu computador. <br></br>
+                - Se o plugin Web PKI ainda não estiver instalado em seu navegador, você será direcionado para a página de instalação.
+            </div>
+
+            <div class="row">
+                <div class="col-md-12 ">
+                    <div class="card card-w-title">
+                        <h1>Assinar nota com certificado A3</h1>
+                        <div class="form-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="control-label">Escolha o certificado</label>
+                                        <div class="input-group">
+                                            <div class="input-group-append">
+                                                <select id="certificateSelect" class="form-control"></select>
+                                                <button id="refreshButton" type="button" class="ui-button ui-widget ui-state-default" style="padding: 6px;">Atualizar</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <input type="hidden" id="toSignHashField" name="toSignHashField" value="#{notaFiscalServicoControle.hashCancelamento}" />
+                            <p:inputText type="hidden" id="certificateField" class="certificateField" value="#{notaFiscalServicoControle.certificateField}"/>
+                            <p:inputText type="hidden" id="signatureField" class="signatureField" value="#{notaFiscalServicoControle.signatureField}"/>
+
+                            <p:remoteCommand name="rc" process="@form" action="#{notaFiscalServicoControle.assinarCancelarXml()}" />
+                            <button id="signButton" type="button" class="btn blue">Cancelar Nota fiscal</button>
+                            <h:commandButton action="listaNotaFiscalServico.xhtml" immediate="true" styleClass="btn default" value="Cancelar" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+        <ui:define name="script">
+            <script src="#{facesContext.externalContext.requestContextPath}/resources/webPki/scripts/jquery-1.11.3.js" type="text/javascript"></script>
+            <script src="#{facesContext.externalContext.requestContextPath}/resources/webPki/scripts/jquery.blockUI.js" type="text/javascript"></script>
+            <script src="#{facesContext.externalContext.requestContextPath}/resources/webPki/scripts/lacuna-web-pki-2.5.0.js" type="text/javascript"></script>
+            <script src="#{facesContext.externalContext.requestContextPath}/resources/webPki/scripts/signature-form.js" type="text/javascript"></script>
+
+            <script>
+                $(document).ready(function () {
+                    signatureForm.init({
+                        form: $('#signForm'),
+                        certificateSelect: $('#certificateSelect'),
+                        signButton: $('#signButton'),
+                        refreshButton: $('#refreshButton'),
+                        toSignHashField: $('#toSignHashField'),
+                        certificateField: $('#certificateField'),
+                        signatureField: $('#signatureField')
+                    });
+                });
+            </script>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

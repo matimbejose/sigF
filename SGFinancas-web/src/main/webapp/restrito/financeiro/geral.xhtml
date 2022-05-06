@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite/components"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Geral"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Financeiro</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/financeiro/geral.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteHelp" rendered="false" onclick="PF('helpDialog').show();return false;" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <ui:include src="/WEB-INF/msgErro.xhtml"/>
+            <div class="card">
+                <p:schedule id="calendar" value="#{financeiroControle.model}" widgetVar="schedule" timeZone="GMT-3" draggable="false"
+                            initialDate="#{financeiroControle.filtro.dataReferencia}" style="max-height: calc(100vh - 150px);">
+                    <p:ajax event="eventSelect" listener="#{financeiroControle.onEventSelect}" update="eventDetails" oncomplete="PF('eventDialog').show();"/>
+                </p:schedule>
+            </div>
+            <p:dialog widgetVar="eventDialog" header="Detalhes" showEffect="fade" hideEffect="fade" width="60%">
+                <p:outputPanel id="eventDetails" style="overflow: hidden">
+                    <p:row rendered="#{financeiroControle.contaParcelaSelecionada ne null}">
+                        <div class="row">
+                            <div class="col">
+                                <strong>Plano de conta</strong><br/>
+                                <span>#{financeiroControle.contaParcelaSelecionada.idConta.idPlanoConta.descricao}</span>
+                            </div>
+                        </div>
+                        <hr/>
+                        <div class="row">
+                            <div class="col">
+                                <strong>Conta bancária</strong><br/>
+                                <span>#{financeiroControle.contaParcelaSelecionada.idContaBancaria.descricao}</span>
+                            </div>
+                            <div class="col">
+                                <c:set var="conta" value="#{financeiroControle.contaParcelaSelecionada.idConta}"/>
+                                <strong>#{conta.idCliente ne null ? 'Cliente' : 'Fornecedor'}</strong><br/>
+                                <span>#{conta.idCliente ne null ? conta.idCliente.nome : conta.idFornecedor.razaoSocial}</span>
+                            </div>
+                        </div>
+                        <hr/>
+                        <div class="row">
+                            <div class="col">
+                                <strong>Origem:</strong>
+                                <span>#{contaPagarControle.mostraOrigem(financeiroControle.contaParcelaSelecionada.idConta)}</span>
+                                <br/>
+                                <strong>Vencimento:</strong>
+                                <span><cc:convertDate value="#{financeiroControle.contaParcelaSelecionada.dataVencimento}"/></span>
+                                <br/>
+                                <strong>Valor bruto:</strong>
+                                <span><cc:convertMoney value="#{financeiroControle.contaParcelaSelecionada.valor}"/></span>
+                                <br/>
+                                <strong>Forma de pagamento:</strong>
+                                <span>#{financeiroControle.contaParcelaSelecionada.idFormaPagamento.descricao}</span>
+                                <br/>
+                                <strong>Situacao:</strong>
+                                <span>#{contratoClienteControle.buscarSituacao(financeiroControle.contaParcelaSelecionada.situacao)}</span>
+                            </div>
+                            <div class="col-2 mb-1 justify-content-end align-items-end" style="display: flex;">
+                                <p:commandButton value="Abrir" rendered="#{financeiroControle.contaParcelaSelecionada.idConta.tipoTransacao eq 'P'}"
+                                                 action="#{contaPagarControle.doStartAlterarConta()}" styleClass="pull-right">
+                                    <f:setPropertyActionListener value="#{financeiroControle.contaParcelaSelecionada.idConta}"
+                                                                 target="#{contaPagarControle.contaSelecionada}"/>
+                                    <f:setPropertyActionListener value="#{financeiroControle.contaParcelaSelecionada}"
+                                                                 target="#{contaPagarControle.contaParcelaSelecionada}"/>
+                                    <f:setPropertyActionListener value="telaGeral" target="#{contaPagarControle.telaAnterior}"/>
+                                </p:commandButton>
+                                <p:commandButton value="Abrir" rendered="#{financeiroControle.contaParcelaSelecionada.idConta.tipoTransacao eq 'R'}"
+                                                 action="#{contaReceberControle.doStartAlterarConta()}" styleClass="pull-right">
+                                    <f:setPropertyActionListener value="#{financeiroControle.contaParcelaSelecionada.idConta}"
+                                                                 target="#{contaReceberControle.contaSelecionada}"/>
+                                    <f:setPropertyActionListener value="#{financeiroControle.contaParcelaSelecionada}"
+                                                                 target="#{contaReceberControle.contaParcelaSelecionada}"/>
+                                    <f:setPropertyActionListener value="telaGeral" target="#{contaReceberControle.telaAnterior}"/>
+                                </p:commandButton>
+                            </div>
+                        </div>
+
+                    </p:row>
+                </p:outputPanel>
+            </p:dialog>
+            <p:dialog widgetVar="helpDialog" header="Legenda" showEffect="fade" hideEffect="fade" width="700px">
+                <div class="fc demo-fc">
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td class="fc-event-container" style="width: 200px;">
+                                    <a class="fc-day-grid-event fc-h-event fc-event fc-start fc-end pagar sit-PG">
+                                        <div class="fc-content">
+                                            <span class="fc-title">Vale transporte<br/>R$ 200,00 - Pago</span>
+                                        </div>
+                                    </a>
+                                </td>
+                                <td style="vertical-align: middle;">
+                                    Conta paga: Fundo verde
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="fc-event-container">
+                                    <a class="fc-day-grid-event fc-h-event fc-event fc-start fc-end receber sit-PP">
+                                        <div class="fc-content">
+                                            <span class="fc-title">Cliente XYZ<br/>R$ 400,00 - Pago parcialmente</span>
+                                        </div>
+                                    </a>
+                                </td>
+                                <td style="vertical-align: middle;">
+                                    Conta parcialmente paga: Fundo amarelo
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="fc-event-container">
+                                    <a class="fc-day-grid-event fc-h-event fc-event fc-start fc-end pagar sit-NP">
+                                        <div class="fc-content">
+                                            <span class="fc-title">Conta de luz<br/>R$ 500,00 - Não pago</span>
+                                        </div>
+                                    </a>
+                                </td>
+                                <td style="vertical-align: middle;">
+                                    Conta não paga: Fundo vermelho
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="fc-event-container">
+                                    <a class="fc-day-grid-event fc-h-event fc-event fc-start fc-end pagar sit-CC">
+                                        <div class="fc-content">
+                                            <span class="fc-title">Instalação janelas<br/>R$ 780,00 - Cancelado</span>
+                                        </div>
+                                    </a>
+                                </td>
+                                <td style="vertical-align: middle;">
+                                    Conta cancelada: Fundo preto
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="fc-event-container">
+                                    <a class="fc-day-grid-event fc-h-event fc-event fc-start fc-end receber sit-IT">
+                                        <div class="fc-content">
+                                            <span class="fc-title">Serviço XYZ<br/>R$ 132,00 - Interrompido</span>
+                                        </div>
+                                    </a>
+                                </td>
+                                <td style="vertical-align: middle;">
+                                    Conta interrompida: Fundo azul
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="height: 50px;vertical-align: bottom" colspan="2">
+                                    Disposição dos itens:
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="fc-event-container">
+                                    <a class="fc-day-grid-event fc-h-event fc-event fc-start fc-end pagar sit-NP">
+                                        <div class="fc-content">
+                                            <span class="fc-title">Nome da conta<br/>Valor - Situacao</span>
+                                        </div>
+                                    </a>
+                                </td>
+                                <td>
+                                    O triângulo com um "menos" dentro representa uma conta a pagar e com um "mais" representa uma conta a receber.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </p:dialog>
+            <p:inputText type="hidden" id="action" value="#{financeiroControle.action}"/>
+            <p:remoteCommand name="rc" update="calendar" process="@this, action" action="#{financeiroControle.navigate}" oncomplete="bindEvent();" global="false"/>
+            <p:remoteCommand name="atualizaTela" update="calendar" process="@this" oncomplete="bindEvent();" global="false"/>
+            <script>
+                function bindEvent() {
+                        const btns = $('.fc-toolbar.fc-header-toolbar .fc-left button');
+                    btns.click(function (event) {
+                        body.classList.add('loading');
+                        $(act).val(Array.from(this.classList).filter(f => f.indexOf('fc-') >= 0)[0].split('-')[1]);
+                        rc();
+                        event.stopPropagation();
+                        event.preventDefault();
+                    btns.addClass('ui-state-disabled');
+                    });
+                    body.classList.remove('loading');
+                        Array.from(btns.find('span')).forEach(span => {
+                            if (span.classList.contains('ui-icon-circle-triangle-w')) {
+                            span.setAttribute('class', 'fa fa-angle-left');
+                            span.parentElement.classList.add('mr-2');
+                        } else {
+                span.setAttribute('class', 'fa fa-angle-right');
+                }
+                    });
+                }
+                    let act, body, interval;
+                $(document).ready(function () {
+                    act = document.getElementById('form:action');
+                    body = document.querySelector('body');
+                bindEvent();
+        atualizaTela();
+                });
+            </script>
+            <style>
+                .fc-day-grid-event .fc-content {
+                    height: 32px;
+                }
+                .fc-scroller.fc-day-grid-container {
+                    height: calc(100vh - 280px) !important;
+                }
+                .layout-menu-horizontal .fc-scroller.fc-day-grid-container {
+                    height: calc(100vh - 324px) !important;
+                }
+                body .fc .fc-event.pagar, body .fc .fc-event.receber {
+                    text-shadow: 0 0 1px;
+                    cursor: pointer;
+                    border: none;
+                    box-shadow: inset 0 0 0 2px #0003;
+                    padding: 3px;
+                }
+                .pagar:after, .receber:after {
+                    position: absolute;
+                    bottom: 0;
+                    right: 0;
+                    font-size: 18px;
+                    width: 20px;
+                    height: 20px;
+                    background-image: linear-gradient(-225deg, transparent 0 50%, #0008 50% 100%);
+                    color: white;
+                    text-align: right;
+                    padding-right: 3px;
+                    z-index: 9;
+                }
+                .pagar:after {
+                    content: '-';
+                }
+                .receber:after {
+                    content: '+';
+                    padding-right: 1px;
+                    padding-top: 2px;
+                }
+                .sit-PG {
+                    background-color: #9fffcb !important;
+                    color: #1c222b !important;
+                }
+                .sit-PP {
+                    background-color: #f7de74 !important;
+                    color: #1c222b !important;
+                }
+                .sit-NP {
+                    background-color: #f77474 !important;
+                }
+                .sit-CC {
+                    background-color: #666 !important;
+                }
+                .sit-IT {
+                    background-color: #74c1f7 !important;
+                    color: #1c222b !important;
+                }
+                .other-month {
+                    opacity: .75;
+                }
+                .fc-event-container > a {
+                    margin: 0 2px;
+                    border-radius: 0;
+                }
+                tbody > tr:not(:first-child) .fc-event-container > a {
+                    margin-top: 2px;
+                }
+                .other-month {
+                    opacity: .75;
+                }
+                .loading .fc-event {
+                    display: none;
+                }
+                .fc-time-grid-container, .fc-view-container hr.fc-divider.ui-widget-header {
+                    display: none;
+                }
+                .demo-fc {
+                    border: none;
+                }
+                .demo-fc td {
+                    border: none;
+                }
+            </style>
+            <p:idleMonitor timeout="5000">
+                <p:ajax event="idle" oncomplete="interval = setInterval(() => atualizaTela(), 5e3);"/>
+                <p:ajax event="active" oncomplete="if (interval) clearInterval(interval);"/>
+            </p:idleMonitor>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

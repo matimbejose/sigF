@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Perfil"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Segurança</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/seguranca/listaPerfil.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteSave" action="#{perfilControle.doFinishAdd()}"/>
+            <h:commandButton id="remoteCancel" action="listaPerfil.xhtml?faces-redirect=true" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <h1>
+                <h:column rendered="#{usuarioControle.usuarioSelecionado.id eq null}">
+                    <span class="caption-subject font-dark sbold uppercase">Cadastro</span>
+                </h:column>
+                <h:column rendered="#{usuarioControle.usuarioSelecionado.id ne null}">
+                    Manutencao
+                </h:column>
+            </h1>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="form-body">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label"><span class="required">* </span>Descrição</label>
+                                <p:inputText value="#{perfilControle.perfilSelecionado.descricao}" disabled="true"
+                                             required="true" requiredMessage="Informe a descrição"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card card-w-title">
+                <h1>Permissões</h1>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group form-md-line-input">
+                            <div class="input-group">
+                                <div class="input-group-append">
+                                    <p:inputText id="descricaoPesquisa" value="#{perfilControle.descricaoPesquisa}" placeholder="Informe parte da descricao..." type="text"
+                                                 style="min-width: 400px !important;"/>
+                                    <p:commandButton action="#{perfilControle.doPesquisaPermissao()}" update="tblPesquisa" process="@this,descricaoPesquisa" icon="fa fa-search"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p:dataTable value="#{perfilControle.permissaoList}" id="tblPesquisa"
+                                     emptyMessage="Nenhuma permissao localizada" var="itemPermissaoSelecionada"
+                                     class="table table-hover" styleClass="table-scroll-y table-hover">
+
+                            <p:column headerText="Permissões disponíveis" >
+                                <h:outputText value="#{itemPermissaoSelecionada.descricaoDetalhada}"/>
+                            </p:column>
+
+                            <p:column headerText="" width="22">
+                                <f:facet name="header">
+                                    <div class="pesquisa-list .pesquisa-dois .pesquisa-tres">
+                                        <p:commandLink  class="btn btn-circle btn-icon-only btn-default icones" title="Selecionar permissao" action="#{perfilControle.doAceitarPermissaoTodas()}" update="form:tblPermissao, form:tblPesquisa"  immediate="true">
+                                            <i class="fa fa-angle-double-right"></i>
+                                        </p:commandLink>
+                                    </div>
+                                </f:facet>
+                                <p:commandLink  class="btn btn-circle btn-icon-only btn-default icones" title="Selecionar permissao" action="#{perfilControle.doAdicionaPermissao()}" update="form:tblPermissao, form:tblPesquisa"  immediate="true">
+                                    <i class="fa fa-angle-double-right"></i>
+                                    <f:setPropertyActionListener value="#{itemPermissaoSelecionada}" target="#{perfilControle.permissaoSelecionada}"/>
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                    </div>
+
+                    <div class="col-md-6">
+                        <p:dataTable value="#{perfilControle.perfilSelecionado.permissaoPerfilList}" id="tblPermissao"
+                                     emptyMessage="Nenhuma permissao localizada" var="itemPermissao"   editable="true" editMode="cell"
+                                     class="table table-hover" styleClass="table-scroll-y table-hover">
+
+                            <p:column headerText="Permissões atribuídas" >
+                                <h:outputText value="#{itemPermissao.idPermissao.descricaoDetalhada}"/>
+                            </p:column>
+
+                            <p:column headerText="" width="22">
+
+                                <p:commandLink  title="Remover permissao"  styleClass="btn btn-circle btn-icon-only btn-default icones" action="#{perfilControle.doRemoverPermissao()}" update="form:tblPermissao, form:tblPesquisa" immediate="true" >
+                                    <i class="icon-trash"></i>
+                                    <f:setPropertyActionListener value="#{itemPermissao}" target="#{perfilControle.permissaoPerfilSelecionado}"/>
+                                </p:commandLink>
+                            </p:column>
+
+                        </p:dataTable>
+                    </div>
+                </div>
+
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

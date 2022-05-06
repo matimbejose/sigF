@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Estoque"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Estoque</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/estoque/listaEstoque.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteImport" action="#{estoqueControle.mudaSituacaoImportacao()}"/>
+            <h:commandButton id="remoteExport">
+                <p:fileDownload value="#{estoqueControle.downloadPlanilha()}" />
+            </h:commandButton>
+        </ui:define>
+
+        <ui:define name="formButtons">
+            <p:commandButton type="button" value="Limpar filtros" onclick="clearDataTableFilters('tbl');"/>
+            <p:commandButton id="toggler" type="button" value="Colunas"/>
+            <p:columnToggler datasource="tbl" trigger="toggler"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <p:dataTable value="#{estoqueControle.model}" emptyMessage="Nenhum registro encontrado." var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+                <p:column headerText="#" width="55" sortBy="#{item.id}" visible="false">
+                    <h:outputText value="#{item.id}"/>
+                </p:column>
+
+                <p:column headerText="Produto" sortBy="#{item.descricao}" style="width: 300px" filterBy="#{item.descricao}">
+                    <f:facet name="filter">
+                        <p:inputText onchange="PF('tbl').filter()" value="#{estoqueControle.filtroProduto.descricao}"/>
+                    </f:facet>
+                    <h:outputText value="#{item.descricao}"/>
+                </p:column>
+
+                <p:column headerText="Unidade medida" width="75" filterBy="#{item.idUnidadeMedida.descricao}">
+                    <f:facet name="filter">
+                        <p:selectOneMenu onchange="PF('tbl').filter()" styleClass="custom-filter" filter="true" filterMatchMode="contains"
+                                         value="#{estoqueControle.filtroProduto.idUnidadeMedida}" converter="#{genericConverter}">
+                            <f:selectItem itemLabel="Todos" noSelectionOption="true"/>
+                            <f:selectItems value="#{unidadeMedidaControle.unidadeMedidas}" var="un"
+                                           itemLabel="#{un.descricao}" itemValue="#{un}"/>
+                        </p:selectOneMenu>
+                    </f:facet>
+                    <h:outputText value="#{item.idUnidadeMedida.sigla}"/>
+                </p:column>
+
+                <p:column headerText="Estoque máximo" width="100" style="text-align: right">
+                    <h:outputText value="#{item.estoqueMaximo}">
+                        <f:convertNumber minFractionDigits="2" maxFractionDigits="2"/>
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Estoque mínimo" width="100" style="text-align: right">
+                    <h:outputText value="#{item.estoqueMinimo}">
+                        <f:convertNumber minFractionDigits="2" maxFractionDigits="2"/>
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Estoque disponível" width="100" style="text-align: right">
+                    <h:outputText value="#{item.estoqueDisponivel}" >
+                        <f:convertNumber minFractionDigits="2" maxFractionDigits="2"/>
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Valor de venda"  style="text-align: right">
+                    <h:outputText value="#{item.valorVenda}">
+                        <f:convertNumber type="currency" locale="pt_BR" currencySymbol="RS"/>
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Valor de custo" style="text-align: right">
+                    <h:outputText value="#{item.valorCusto}">
+                        <f:convertNumber type="currency" locale="pt_BR" currencySymbol="RS"/>
+                    </h:outputText>
+                </p:column>
+
+                <p:column width="77" headerText="Ações" >
+                    <div class="actions">
+                        <h:commandLink  title="Histórico" styleClass="btn btn-circle btn-icon-only btn-default icones" action="#{estoqueControle.doShowHistorico()}" >
+                            <i class="fa fa-book"></i>
+                            <f:setPropertyActionListener value="#{item}" target="#{estoqueControle.produtoSelecionado}"/>
+                        </h:commandLink>
+
+                    </div>
+                </p:column>
+
+            </p:dataTable>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

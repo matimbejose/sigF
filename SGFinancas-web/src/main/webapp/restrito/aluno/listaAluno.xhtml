@@ -1,0 +1,127 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:sec="http://www.springframework.org/security/facelets/tags"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Aluno"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Escola</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/aluno/listaAluno.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteBack" action="#{alunoControle.doFinishListarAluno()}" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="formButtons">
+            <p:commandButton action="#{alunoControle.gerarListaPresenca()}" value="Lista de presença"/>
+            <p:commandButton action="#{alunoControle.gerarRelacaoProfissoes()}" value="Relação das profissões"/>
+            <p:commandButton type="button" value="Limpar filtros" onclick="clearDataTableFilters('tbl');"/>
+            <p:commandButton id="toggler" type="button" value="Colunas"/>
+            <p:columnToggler datasource="tbl" trigger="toggler"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <div class="card card-w-title">
+                <h1 class="mb-0">
+                    <span class="pull-right">
+                        <sec:ifAnyGranted roles ="ALUNO_GERENCIAR" >
+                            <div class="btn-group" >
+                                <h:commandLink action="#{alunoControle.doStartAdd()}"  title="Novo aluno" class="btn btn-circle default blue-stripe">
+                                    <i class="fa fa-plus"></i> Adicionar aluno </h:commandLink>
+                            </div>
+                        </sec:ifAnyGranted>
+                    </span>
+                    Curso: #{alunoControle.turmaSelecionada.idCurso.descricao}
+                    <br/>
+                    Professor: #{alunoControle.turmaSelecionada.idProfessor.nome}
+                </h1>
+            </div>
+            <p:dataTable value="#{alunoControle.model}" emptyMessage="Nenhum registro encontrado." var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+                <p:column headerText="#" width="55" sortBy="#{item.id}" visible="false">
+                    <h:outputText value="#{item.id}"/>
+                </p:column>
+
+                <p:column headerText="Aluno" sortBy="#{idCliente.nome}">
+                    <h:outputText value="#{item.idSolicitante.nome}"/>
+                </p:column>
+
+                <p:column headerText="Situação" sortBy="#{item.situacao}">
+                    <h:outputText value="Pago" rendered="#{item.situacao eq 'P'}"/>
+                    <h:outputText value="Não pago" rendered="#{item.situacao eq 'N'}"/>
+                </p:column>
+
+                <p:column headerText="Opç. pagamento" sortBy="#{item.opcaoPagamento}">
+                    <h:outputText value="PAA" rendered="#{item.opcaoPagamento eq 'P'}"/>
+                    <h:outputText value="Contrato" rendered="#{item.opcaoPagamento eq 'C'}"/>
+                </p:column>
+
+                <p:column headerText="Valor" sortBy="#{item.valor}" style="text-align: right">
+                    <h:outputText value="#{item.valor}">
+                        <f:convertNumber locale="pt_BR" type="currency" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Desconto" sortBy="#{item.desconto}" style="text-align: right">
+                    <h:outputText value="#{item.desconto}">
+                        <f:convertNumber locale="pt_BR" type="currency" />
+                    </h:outputText>
+                </p:column>
+
+                <sec:ifAnyGranted roles ="ALUNO_GERENCIAR" >
+
+                    <p:column width="140" headerText="Ações" >
+
+                        <div class="actions">
+                            <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                           rendered="#{item.situacao ne 'P'}" title="Alterar aluno" action="#{alunoControle.doStartAlterar()}"  >
+                                <i class="fa fa-edit"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{alunoControle.solicitanteTurmaSelecionado}"/>
+                            </h:commandLink>
+
+                            <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                           rendered="#{item.idContrato eq null and item.opcaoPagamento eq 'C'}" title="Criar contrato" action="#{contratoClienteControle.doStartAddContratoAluno()}"  >
+                                <i class="fa fa-wpforms"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{contratoClienteControle.solicitanteTurmaSelecionado}"/>
+                            </h:commandLink>
+
+                            <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                           rendered="#{item.idContrato ne null and item.opcaoPagamento eq 'C'}" title="Alterar contrato" action="#{contratoClienteControle.doStartAlterarContratoAluno()}"  >
+                                <i class="fa fa-list-ol"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{contratoClienteControle.solicitanteTurmaSelecionado}"/>
+                                <f:setPropertyActionListener value="#{item.idContrato}" target="#{contratoClienteControle.contratoSelecionado}"/>
+                            </h:commandLink>
+
+                            <h:commandLink  styleClass="btn btn-circle btn-icon-only btn-default icones" title="Remover aluno" action="#{alunoControle.doFinishExcluir()}" onclick="return confirm('Tem certeza que deseja excluir esta turma?');" >
+                                <i class="icon-trash"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{alunoControle.solicitanteTurmaSelecionado}"/>
+                            </h:commandLink>
+
+                            <h:commandLink  title="Auditoria" styleClass="btn btn-circle btn-icon-only btn-default icones" action="#{alunoControle.doShowAuditoria()}" >
+                                <i class="fa fa-history"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{alunoControle.solicitanteTurmaSelecionado}"/>
+                            </h:commandLink>
+
+                        </div>
+
+                    </p:column>
+                </sec:ifAnyGranted>
+
+            </p:dataTable>
+
+        </ui:define>
+
+    </ui:composition>
+
+</html>

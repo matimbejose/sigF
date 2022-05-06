@@ -1,0 +1,264 @@
+body {
+    .ui-overlaypanel {
+        background-color: $panelContentBgColor;
+        color: $panelContentTextColor;
+        padding: 0;
+        border: $overlayContentBorder;
+        @include shadow($overlayContainerShadow);
+
+        .ui-overlaypanel-content {
+            padding: $panelContentPadding;
+        }
+        
+        .ui-overlaypanel-close {
+            background-color: $overlayPanelCloseIconBgColor;
+            color: $overlayPanelCloseIconColor;
+            width: 22px;
+            height: 22px;
+            text-align: center;
+            line-height: 22px;
+            text-align: center;
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            @include transition(background-color $transitionDuration);
+            
+            &.ui-state-hover {
+                background-color: $overlayPanelCloseIconHoverBgColor;
+                color: $overlayPanelCloseIconHoverColor;
+            }
+
+            .ui-icon {
+                @include icon_override("\f00d");
+                display: inline-block;
+                line-height: inherit;
+            }
+        }
+    }
+    
+    .ui-dialog {
+        padding: 0;
+        @include shadow($overlayContainerShadow);
+        
+        .ui-dialog-titlebar {
+            border: $panelHeaderBorder;
+            background-color: $panelHeaderBgColor;
+            color: $panelHeaderTextColor;
+            padding: $panelHeaderPadding;
+            font-weight: $panelHeaderFontWeight;
+            border-bottom: 0 none;
+            
+            .ui-dialog-title {
+                margin: 0;
+                float: none;
+            }
+            
+            .ui-dialog-titlebar-icon {
+                color: $panelHeaderIconColor;
+                border: 0 none;
+                padding: 0;
+                margin-left: $inlineSpacing;
+                @include transition(color $transitionDuration);
+                
+                &.ui-state-hover {
+                    color: $panelHeaderIconHoverColor;
+                }
+                
+                .ui-icon-closethick {
+                    @include icon_override("\f00d");
+                }
+
+                .ui-icon-minus {
+                    @include icon_override("\f068");
+                } 
+
+                .ui-icon-plus {
+                    @include icon_override("\f067");
+                }
+
+                .ui-icon-extlink {
+                    @include icon_override("\f2d0");
+                }
+
+                .ui-icon-newwin {
+                    @include icon_override("\f066");
+                }
+            }
+        }
+        
+        .ui-dialog-content {
+            background-color: $panelContentBgColor;
+            color: $panelContentTextColor;
+            border: $overlayContentBorder;
+            padding: $panelContentPadding;
+            line-height: $panelContentLineHeight;
+        }
+        
+        .ui-dialog-footer {
+            border: $panelFooterBorder;
+            border-top: 0 none;
+            background-color: $panelFooterBgColor;
+            color: $panelFooterTextColor;
+            padding: $panelFooterPadding;
+            margin: 0;
+            text-align: right;
+            
+            button {
+                margin: 0 $inlineSpacing 0 0;
+                width: auto;
+            }
+        }
+                
+        &.ui-confirm-dialog {
+            .ui-dialog-content {
+                padding: $fontSize;
+
+                > span {
+                    float: none;
+                    display: inline-block;
+                    vertical-align: middle;
+                    line-height: 1;
+                    margin: 0;
+                    
+                    &.ui-icon {
+                        margin-right: 2 * $inlineSpacing;
+                        font-size: 20px;
+                    }
+                }
+            }
+        }
+        
+        .ui-resizable-handle {
+            display: none !important;
+        }
+    }
+
+    .ui-tooltip {        
+        .ui-tooltip-text {
+            background-color: $tooltipBgColor;
+            color: $tooltipTextColor;
+            @include shadow($overlayContainerShadow);
+        }
+        
+        &.ui-state-error {
+            border: 0 none;
+        }
+        
+        &.ui-tooltip-right {
+            .ui-tooltip-arrow {
+                border-right-color: $tooltipBgColor;;
+            }
+        }
+        
+        &.ui-tooltip-left {
+            .ui-tooltip-arrow {
+                border-left-color: $tooltipBgColor;;
+            }
+        }
+        
+        &.ui-tooltip-top {
+            .ui-tooltip-arrow {
+                border-top-color: $tooltipBgColor;;
+            }
+        }
+        
+        &.ui-tooltip-bottom {
+            .ui-tooltip-arrow {
+                border-bottom-color: $tooltipBgColor;;
+            }
+        }
+    }
+    
+    .ui-lightbox {
+        @include shadow($overlayContainerShadow);
+        
+        .ui-lightbox-caption {
+            border: $panelHeaderBorder;
+            background-color: $panelHeaderBgColor;
+            color: $panelHeaderTextColor;
+            padding: $panelHeaderPadding;
+            font-weight: $panelHeaderFontWeight;
+            
+            .ui-lightbox-caption-text {
+                color: $panelHeaderTextColor;
+                margin: 0;
+            }
+            
+            .ui-lightbox-close {
+                padding: 0;
+                color: $panelHeaderIconColor;
+                @include transition(color $transitionDuration);
+                
+                &.ui-state-hover {
+                    color: $panelHeaderIconHoverColor;
+                }
+
+                .ui-icon {
+                    @include icon_override("\f00d");
+                }
+            }
+        }
+        
+        .ui-lightbox-content-wrapper {
+            overflow: hidden;
+            background-color: $panelContentBgColor;
+            color: $panelContentTextColor;
+            border: 0 none;
+            padding: 0;
+            line-height: $panelContentLineHeight;
+                      
+            .ui-lightbox-nav-left {
+                @include icon_override("\f053");
+                @include transition(all $transitionDuration);
+                font-size: 24px;
+                margin-left: 4px;
+                color: #ffffff;
+
+                &:hover {
+                    @include scale(1.2);
+                }
+                
+                span {
+                    display: none;
+                }
+            }
+            
+            .ui-lightbox-nav-right {
+                @include icon_override("\f054");
+                @include transition(all .3s);
+                font-size: 24px;
+                margin-right: 4px;
+                color: #ffffff;
+                
+                &:hover {
+                    @include scale(1.2);
+                }
+                
+                span {
+                    display: none;
+                }
+            }
+            
+            .ui-lightbox-content.ui-lightbox-loading + a {
+                display: none;
+            }
+        }
+    }
+
+    .ui-sidebar {
+        background-color: $panelContentBgColor;
+        color: $panelContentTextColor;
+        padding: $panelContentPadding;
+        border: $overlayContentBorder;
+        @include shadow($overlayContainerShadow);
+
+        .ui-sidebar-close {
+            padding: 0;
+
+            .ui-icon {
+                @include icon_override("\f00d");
+            }
+        }
+    }
+
+}

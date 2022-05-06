@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <div class="row">
+        <div class="col my-4 mx-4">
+            <div class="balao">
+                <p>
+                    <i class="fa fa-2x fa-thumbs-up"></i>
+                    ...Ótimo, agora vc sabe a importância do cadastro de clientes e fornecedores e sabe que existem outras funcionalidades no sistema, que precisam desse cadastros...
+                </p>
+                <p>...Vamos cadastrar seu primeiro produto?...</p>
+                <p>...Agora se você não vai comprar ou vender produtos, clique no botão PULAR...</p>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h4>Cadastro de produtos</h4>
+            <div class="row">
+                <div class="col form-group form-md-line-input">
+                    <label class="control-label"><span class="required">* </span>Descrição do produto</label>
+                    <p:inputText value="#{wizardControle.tela9Produto.descricao}" required="true"
+                                 requiredMessage="Informe a descrição do produto" />
+                </div>
+                <div class="col form-group form-md-line-input">
+                    <label class="control-label"><span class="required">* </span>Unidade de medida</label>
+                    <p:selectOneMenu value="#{wizardControle.tela9Produto.idUnidadeMedida}"
+                                     required="true" requiredMessage="Informe a unidade medida"
+                                     converter="#{genericConverter}">
+                        <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true" />
+                        <f:selectItems value="#{unidadeMedidaControle.unidadeMedidas}" var="unidadeMedida"
+                                       itemLabel="#{unidadeMedida.descricao}" itemValue="#{unidadeMedida}" />
+                    </p:selectOneMenu>
+                </div>
+                <div class="col form-group form-md-line-input">
+                    <label class="control-label"><span class="required">* </span>Data de entrada</label>
+                    <p:calendar navigator="true" required="true" requiredMessage="Informe a data de entrada"
+                                value="#{wizardControle.tela9Produto.dataEntrada}" pattern="dd/MM/yyyy"
+                                mask="true" maxdate="#{produtoControle.dataMaxima()}" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col form-group form-md-line-input">
+                    <label class="control-label"><span class="required">* </span>Estoque disponível</label>
+                    <p:inputNumber value="#{wizardControle.tela9Produto.estoqueDisponivel}"
+                                   required="true" requiredMessage="Favor informar o estoque disponível"
+                                   decimalPlaces="0">
+                        <p:ajax listener="#{produtoControle.updateEstoque}" global="false" process="@this"/>
+                    </p:inputNumber>
+                </div>
+                <div class="col form-group form-md-line-input">
+                    <label class="control-label"><span class="required">* </span>Preço de custo</label>
+                    <p:inputNumber value="#{wizardControle.tela9Produto.valorCusto}" id="vlrCusto"
+                                   disabled="#{wizardControle.tela9Produto.composto eq 'K' or wizardControle.tela9Produto.usaPrecoCalculado eq 'S'}"
+                                   required="true" requiredMessage="Informe o valor de custo"
+                                   symbol="R$ " decimalSeparator=","
+                                   thousandSeparator="." decimalPlaces="2">
+                        <p:ajax process="@this"/>
+                    </p:inputNumber>
+                </div>
+                <div class="col form-group form-md-line-input">
+                    <label class="control-label"><span class="required">* </span>Preço de venda</label>
+                    <p:inputNumber value="#{wizardControle.tela9Produto.valorVenda}" required="true" id="vlrVenda"
+                                   disabled="#{wizardControle.tela9Produto.composto eq 'K' or wizardControle.tela9Produto.usaPrecoCalculado eq 'S'}"
+                                   requiredMessage="Informe o valor da venda" symbol="R$ " decimalSeparator=","
+                                   thousandSeparator="." decimalPlaces="2">
+                        <p:ajax process="@this"/>
+                    </p:inputNumber>
+                </div>
+            </div>
+        </div>
+    </div>
+</html>

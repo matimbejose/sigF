@@ -1,0 +1,68 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Tipo de patrimônio"/>
+        <ui:define name="title">#{title}</ui:define>
+        <ui:define name="viewname">
+            <li>##SECTION_NAME##</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/tipoPatrimonio/listaTipoPatrimonio.xhtml"> #{title}</p:link></li>
+        </ui:define>
+            
+
+        <ui:define name="content">
+
+
+            <h:messages class="alertMessage" id="msgResultado" errorClass="alert alert-danger" warnClass="alert alert-info" />
+            <div class="row">
+                <div class="col-md-12 ">
+                    <!-- BEGIN SAMPLE FORM PORTLET-->
+                    <div class="portlet light bordered">
+                        <div class="portlet-title">
+                            <div class="actions">
+                                <h:form>
+                                    <h:commandLink styleClass="btn blue btn-circle btn-outline sbold" immediate="true" action="#{tipoPatrimonioControle.mostrarAjuda()}">
+                                        <i class="icon-question"></i>
+                                    </h:commandLink>
+                                </h:form>
+                            </div>
+                            <div class="tools">
+                            </div>
+                        </div>
+                        <div class="portlet-body form">
+                            <h:form acceptcharset="ISO-8859-1" role="form">
+                                <div class="form-body">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label"><span class="required">* </span>Descrição</label>
+                                                <p:inputText value="#{tipoPatrimonioControle.tipoPatrimonioSelecionada.descricao}"
+                                                             required="true" 
+                                                             requiredMessage="Informe a descrição"
+                                                             styleClass="form-control" />
+                                            </div>
+                                        
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-actions">
+                                    <h:commandButton action="#{tipoPatrimonioControle.doFinishAdd()}"  styleClass="btn blue " value="Salvar" />
+                                    <h:commandButton action="listaTipoPatrimonio.xhtml" immediate="true" styleClass="btn default" value="Cancelar" />
+                                </div>
+                            </h:form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

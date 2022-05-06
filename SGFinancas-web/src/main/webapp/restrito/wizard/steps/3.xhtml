@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <div class="row">
+        <div class="col my-4 mx-4">
+            <div class="balao">
+                <p>
+                    <i class="fa fa-2x fa-thumbs-up"></i>
+                    ...Pronto, as informações da sua empresa estão completas, se desejar realizar novas edições posteriormente,
+                    acesse na lateral esquerda do SG Finanças, MENU->CADASTRO->MINHA EMPRESA->BOTÃO ALTERAR EMPRESA...</p>
+                <p>...Agora vamos cadastrar sua conta bancária...</p>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h4>Cadastro de conta bancária</h4>
+            <h5>Detalhes</h5>
+            <div class="row">
+                <div class="col form-group form-md-line-input">
+                    <label class="control-label"><span class="required">* </span>Descrição</label>
+                    <p:inputText value="#{wizardControle.tela3ContaBancaria.descricao}"
+                                 required="true" requiredMessage="Informe a descrição"/>
+                </div>
+                <div class="col form-group form-md-line-input">
+                    <label class="control-label"><span class="required">* </span>Banco</label>
+                    <p:selectOneMenu value="#{wizardControle.tela3ContaBancaria.idBanco}" required="true" requiredMessage="Informe o banco"
+                                     var="t" filter="true" filterMatchMode="contains" converter="#{genericConverter}">
+                        <p:column>
+                            <h:outputText value="#{t.numero}" />
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{t.descricao}" />
+                        </p:column>
+
+                        <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                        <f:selectItems value="#{contaBancariaControle.bancos}" var="banco"
+                                       itemLabel="#{banco.numero} - #{banco.descricao}" itemValue="#{banco}"/>
+                        <p:ajax process="@this" event="change" update="pnlAgencia"/>
+                    </p:selectOneMenu>
+                </div>
+                <div class="col form-group form-md-line-input">
+                    <label class="control-label"><span class="required">* </span>Tipo conta</label>
+                    <p:selectOneMenu  value="#{wizardControle.tela3ContaBancaria.tipoConta}">
+                        <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                        <f:selectItem itemLabel="Conta corrente" itemValue="C" />
+                        <f:selectItem itemLabel="Conta salário" itemValue="S" />
+                        <f:selectItem itemLabel="Conta poupança" itemValue="P" />
+                    </p:selectOneMenu >
+                </div>
+            </div>
+            <h5>Agência/Conta</h5>
+            <div class="row">
+                <div class="col form-group form-md-line-input">
+                    <label class="control-label"><span class="required">* </span>Agência</label>
+                    <p:inputMask value="#{wizardControle.tela3ContaBancaria.agencia}"
+                                 mask="9?999999999" required="true" requiredMessage="Informe o número da agência"/>
+                </div>
+                <div class="col-1 form-group form-md-line-input">
+                    <p:outputPanel id="pnlAgencia">
+                        <p:outputLabel class="control-label" rendered="#{wizardControle.ehBancoCaixa()}"><span class="required">* </span>Op.</p:outputLabel>
+                        <p:inputMask mask="999" value="#{wizardControle.tela3ContaBancaria.operacao}"
+                                     rendered="#{wizardControle.ehBancoCaixa()}"
+                                     required="true" requiredMessage="Informe a operação"/>
+
+                        <p:outputLabel class="control-label" rendered="#{!wizardControle.ehBancoCaixa()}">Díg.</p:outputLabel>
+                        <p:inputMask mask="*" value="#{wizardControle.tela3ContaBancaria.digitoAgencia}"
+                                     rendered="#{!wizardControle.ehBancoCaixa()}"/>
+                    </p:outputPanel>
+                </div>
+                <div class="col form-group form-md-line-input">
+                    <label class="control-label"><span class="required">* </span>Conta</label>
+                    <p:inputMask value="#{wizardControle.tela3ContaBancaria.conta}"
+                                 mask="9?999999999" required="true" requiredMessage="Informe o número da conta"/>
+                </div>
+                <div class="col-1 form-group form-md-line-input">
+                    <label class="control-label">Díg.</label>
+                    <p:inputMask mask="*" value="#{wizardControle.tela3ContaBancaria.digitoConta}"/>
+                </div>
+                <div class="col-2 form-group form-md-line-input">
+                    <label class="control-label"><span class="required">* </span>Saldo inicial</label>
+                    <p:inputNumber value="#{wizardControle.tela3ContaBancaria.saldoInicial}"
+                                   required="true" requiredMessage="Informe o saldo inicial"
+                                   decimalSeparator=","  thousandSeparator="." symbol="R$ " decimalPlaces="2"/>
+                </div>
+                <div class="col-2 form-group form-md-line-input">
+                    <label class="control-label"><span class="required">* </span>Data do saldo</label>
+                    <p:calendar navigator="true" value="#{wizardControle.tela3ContaBancaria.dataSaldo}"
+                                required="true" requiredMessage="Informe a data do saldo" mask="true"
+                                pattern="dd/MM/yyyy" maxdate="#{contaBancariaControle.dataHoje()}"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</html>

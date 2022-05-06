@@ -1,0 +1,53 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html">
+    <div class="form-body">
+        <div class="row">
+            <div class="col-md-12 col-sm-12">
+                <div class="card card-w-title">
+                    <h1>O contrato selecionado possui uma movimentação financeira</h1>
+                    <div class="portlet-body">
+                        <p:dataTable value="#{controle.listaParcelasPagas}" var="item" emptyMessage="Nenhuma parcela encontrada."
+                                     rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom"
+                                     class="table table-striped table-bordered table-hover table-striped table-condensed flip-content" id="tabelaDados">
+
+                            <p:column headerText="Nº da parcela" sortBy="#{item.numParcela}">
+                                <h:outputText value="#{item.numParcela}"/>
+                            </p:column>
+
+                            <p:column headerText="Pagamento" sortBy="#{item.dataPagamento}">
+                                <h:outputText value="#{item.dataPagamento}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="Valor" sortBy="#{item.valorPago}">
+                                <h:outputText value="#{item.valorPago}">
+                                    <f:convertNumber currencySymbol="R$" type="currency" />
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="Vencimento" sortBy="#{item.dataVencimento}">
+                                <h:outputText value="#{item.dataVencimento}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="Forma de pagamento" sortBy="#{item.idFormaPagamento.descricao}">
+                                <h:outputText value="#{item.idFormaPagamento.descricao}"/>
+                            </p:column>
+
+                            <p:column headerText="Situação" sortBy="#{item.situacao}">
+                                <h:outputText value="#{contaReceberControle.buscarSituacao(item.situacao)}"/>
+                            </p:column>
+
+                        </p:dataTable>
+                        <p>Ao remover este contrato todas as parcelas listadas acima serão excluidas.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ui:composition>

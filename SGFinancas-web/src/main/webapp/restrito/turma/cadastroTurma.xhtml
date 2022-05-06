@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Turma"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Escola</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/turma/listaTurma.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteSave" action="#{turmaControle.doFinishAdd()}"/>
+            <h:commandButton id="remoteCancel" action="listaTurma.xhtml" immediate="true"/>
+            <h:commandButton id="remoteHelp" rendered="false" action="#{turmaControle.mostrarAjuda()}" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <div class="card">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group form-md-line-input">
+                            <label class="control-label"><span class="required">* </span>Descrição</label>
+                            <p:inputText value="#{turmaControle.turmaSelecionado.descricao}"
+                                         required="true"
+                                         requiredMessage="Informe a descrição da turma"
+                                         styleClass="form-control" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group form-md-line-input">
+                            <label class="control-label"><span class="required">* </span>Curso</label>
+                            <p:selectOneMenu value="#{turmaControle.turmaSelecionado.idCurso}"
+                                             panelStyle="width:180px" effect="fade" styleClass="prime-min-width"
+                                             required="true" requiredMessage="Informe o curso"
+                                             var="t" style="width:160px;" filter="true" filterMatchMode="contains"
+                                             converter="#{genericConverter}">
+                                <p:column>
+                                    <h:outputText value="#{t.descricao}" />
+                                </p:column>
+
+                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                <f:selectItems value="#{cursoControle.cursos}"  var="c" itemLabel="#{c.descricao}" itemValue="#{c}"/>
+                            </p:selectOneMenu>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group form-md-line-input">
+                            <label class="control-label"><span class="required">* </span>Professor</label>
+                            <p:selectOneMenu value="#{turmaControle.turmaSelecionado.idProfessor}"
+                                             panelStyle="width:180px" effect="fade" styleClass="prime-min-width"
+                                             required="true" requiredMessage="Informe o professor"
+                                             var="t" style="width:160px;" filter="true" filterMatchMode="contains"
+                                             converter="#{genericConverter}">
+                                <p:column>
+                                    <h:outputText value="#{t.nome}" />
+                                </p:column>
+
+                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                <f:selectItems value="#{professorControle.professors}"  var="c" itemLabel="#{c.nome}" itemValue="#{c}"/>
+                            </p:selectOneMenu>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group form-md-line-input">
+                            <label class="control-label"><span class="required">* </span>Data de início</label>
+
+                            <p:calendar navigator="true" value="#{turmaControle.turmaSelecionado.dataInicial}" required="true" mask="true"
+                                        requiredMessage="Informe a data de início" pattern="dd/MM/yyyy"/>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group form-md-line-input">
+                            <label class="control-label"><span class="required">* </span>Data do término</label>
+
+                            <p:calendar navigator="true" value="#{turmaControle.turmaSelecionado.dataFinal}" required="true"
+                                        requiredMessage="Informe a data do termino" pattern="dd/MM/yyyy" mask="true"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2">
+                        <div class="form-group form-md-line-input">
+                            <label class="control-label"><span class="required">* </span>UF</label>
+                            <p:selectOneMenu id="uf" value="#{turmaControle.ufSelecionado}"
+                                             required="true"
+                                             requiredMessage="Informe a UF"
+                                             converter="#{genericConverter}">
+                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                <f:selectItems value="#{turmaControle.UFs}"  var="uf" itemLabel="#{uf.descricao}" itemValue="#{uf}"/>
+                                <p:ajax event="change" process="@this" update="uf, cidade" />
+                            </p:selectOneMenu>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group form-md-line-input">
+                            <label class="control-label"><span class="required">* </span>Cidade</label>
+                            <p:selectOneMenu id="cidade" value="#{turmaControle.turmaSelecionado.idCidade}"
+                                             panelStyle="width:180px" effect="fade"
+                                             required="true"
+                                             requiredMessage="Informe a cidade"
+                                             var="t" filter="true" filterMatchMode="contains"
+                                             converter="#{genericConverter}">
+                                <p:column>
+                                    <h:outputText value="#{t.descricao}" />
+                                </p:column>
+
+                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                <f:selectItems value="#{turmaControle.cidades}"  var="cidade" itemLabel="#{cidade.descricao}" itemValue="#{cidade}"/>
+                            </p:selectOneMenu>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group form-md-line-input">
+                            <label class="control-label">Horário</label>
+                            <p:inputText value="#{turmaControle.turmaSelecionado.horario}" styleClass="form-control" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group form-md-line-input">
+                            <label class="control-label">Número</label>
+
+                            <p:inputText value="#{turmaControle.turmaSelecionado.numero}" styleClass="form-control" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group form-md-line-input">
+                            <label class="control-label">Observação</label>
+
+                            <p:inputTextarea value="#{turmaControle.turmaSelecionado.localRealizacao}" styleClass="form-control" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

@@ -1,0 +1,117 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+        
+        <ui:define name="cssInicial">
+            <style>
+                .title-inbox {
+                    background-color: #e0eaf0;
+                }
+                .head-inbox {
+                    width: 100%;
+                }
+                .body-inbox {
+                    overflow-y: scroll;
+                    height: 250px;
+                }
+            </style>
+            <link href="#{facesContext.externalContext.requestContextPath}/resources/metronic/assets/admin/pages/css/inbox.css" rel="stylesheet" type="text/css"/>
+        </ui:define>
+
+        <ui:param name="title" value="Nova mensagem"/>
+        <ui:define name="title">#{title}</ui:define>
+        <ui:define name="viewname">
+            <li>##SECTION_NAME##</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/mensagem/listaMensagem.xhtml"> #{title}</p:link></li>
+        </ui:define>
+            
+
+        <ui:define name="content">
+            <h:form acceptcharset="ISO-8859-1">
+            <h:messages class="alertMessage" errorClass="alert alert-danger" infoClass="alert alert-success"/>
+
+            <div class="row inbox">
+                <div class="col-md-3">
+                    <ul class="ver-inline-menu margin-bottom-10">
+                        <li class="#{mensagemControle.filtro.somentePrioritarias?'':'active'}">
+                            <p:commandLink process="@this" action="#{controleMenu.doAcionarPagina('mensagem/listaMensagem.xhtml')}">
+                                <i class="fa fa-inbox"></i> Caixa de entrada  (#{mensagemControle.qtdMensagensNaoLidas}) 
+                                <f:setPropertyActionListener value="#{false}" target="#{mensagemControle.filtro.somentePrioritarias}" />
+                            </p:commandLink>
+                        </li>
+                        <li class="#{mensagemControle.filtro.somentePrioritarias?'active':''}">
+                            <p:commandLink process="@this" action="#{controleMenu.doAcionarPagina('mensagem/listaMensagem.xhtml')}">
+                                <i class="fa fa-star"></i> Prioritárias  (#{mensagemControle.qtdMensagensPrioritarias}) 
+                                <f:setPropertyActionListener value="#{true}" target="#{mensagemControle.filtro.somentePrioritarias}" />
+                            </p:commandLink>
+                        </li>
+                        <li class="trash">
+                            <a href="javascript:;" > 
+                                <i class="icon-trash"></i> Lixo eletrônico </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="col-md-9">
+                    <div class="inbox-content">
+                        
+                        <p:toolbar>
+                            <p:toolbarGroup align="left">
+                                <p:commandLink update="txtAnexos" title="Apagar anexos" action="#{mensagemControle.apagarAnexos() }" process="@this" styleClass="btn blue btn-sm" >
+                                    <i class="fa fa-trash"></i> Apagar anexos
+                                </p:commandLink>
+                            </p:toolbarGroup>
+                            <p:toolbarGroup align="right">
+                                <p:selectBooleanCheckbox style="vertical-align: middle" value="#{mensagemControle.leituraObrigatoria}" />
+                                <h:outputText style="padding-left: 5px; padding-right: 25px; font-weight: normal; font-size: 0.9em; color: gray" value="Leitura obrigatória"/>
+                                
+                                <h:commandLink action="#{mensagemControle.doFinishMensagem()}"  styleClass="btn btn-sm blue" >
+                                    <i class="fa fa-send"></i> Enviar 
+                                </h:commandLink>
+                            </p:toolbarGroup>
+                        </p:toolbar>
+                        
+                        <p:panelGrid columns="2" columnClasses="title-inbox,head-inbox">
+                            
+                            <h:outputText value="Assunto:" />
+                            <h:inputText required="true" requiredMessage="Informe o assunto da mensagem" style="width: 100%" value="#{mensagemControle.mensagem.assunto}"  />
+                            
+                            <h:outputText value="De:" />
+                            <h:outputText value="#{mensagemControle.remetente}" />
+                            
+                            <h:outputText value="Para:" />
+                            <h:outputText rendered="true" value="#{mensagemControle.destinatario}" />
+                            
+                            <h:outputText value="Anexos:" />
+                            <h:outputText id="txtAnexos" value="#{mensagemControle.anexos}" />
+                        </p:panelGrid>
+                        
+                            
+                        <p:fileUpload fileUploadListener="#{mensagemControle.carregarAenxos}"
+                                      label="Escolher arquivo" 
+                                      uploadLabel="Upload"
+                                      cancelLabel="Cancelar"
+                                      invalidSizeMessage="Cada anexo deve ter no máximo 5 mb" 
+                                      fileLimitMessage="Máximo de 5 anexos"
+                                      mode="advanced" 
+                                      multiple="true" 
+                                      sizeLimit="5242880" fileLimit="5" 
+                                      update="txtAnexos"
+                                      />
+                        
+                        <p:editor value="#{mensagemControle.mensagem.texto}" style="width: 100%;" />
+                    </div>
+                </div>
+            </div>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Função ajuda"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Segurança</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/seguranca/listaFuncaoAjuda.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteSave" action="#{funcaoAjudaControle.doFinishAdd()}"/>
+            <h:commandButton id="remoteCancel" action="listaFuncaoAjuda.xhtml" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <h1>Cadastro</h1>
+            <div class="card">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group form-md-line-input">
+                            <label class="control-label"><span class="required">* </span>Chave</label>
+                            <p:inputText value="#{funcaoAjudaControle.funcaoAjudaSelecionado.chave}" placeholder="Chave" type="text" autocomplete="off" styleClass="form-control" ></p:inputText>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group form-md-line-input">
+                            <label class="control-label"><span class="required">* </span>Descrição</label>
+                            <p:editor id="editor" widgetVar="editorWidget" value="#{funcaoAjudaControle.funcaoAjudaSelecionado.descricao}" width="900" />
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

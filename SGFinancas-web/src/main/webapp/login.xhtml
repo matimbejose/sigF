@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui" >
+    <h:head>
+        <meta charset="utf-8" />
+        <title>SGFinanças 1.0</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        <meta content="width=device-width, initial-scale=1" name="viewport" />
+        <meta content="" name="description" />
+        <meta content="" name="author" />
+        <h:outputStylesheet name="main.css" library="css" />
+        <h:outputStylesheet name="css/layout-chateau-green-light.css" library="rain-layout" />
+        <link rel="stylesheet" href="#{facesContext.externalContext.requestContextPath}/resources/bootstrap-4.3.1/css/bootstrap.css"></link>
+        <script src="#{facesContext.externalContext.requestContextPath}/resources/bootstrap-4.3.1/js/bootstrap.min.js"></script>
+        <link href="#{facesContext.externalContext.requestContextPath}/resources/metronic/assets/pages/css/login-5.min.css" rel="stylesheet" type="text/css" />
+        <link rel="shortcut icon" href="resources/images/favicon.png" />
+    </h:head>
+    <h:body class=" login">
+
+        <!-- BEGIN : LOGIN PAGE 5-1 -->
+        <h:form acceptcharset="ISO-8859-1" styleClass="login-form" id="form" prependId="false" >
+
+            <!-- Global site tag (gtag.js) - Google Analytics -->
+            <script src="https://www.googletagmanager.com/gtag/js?id=UA-83320262-2"></script>
+            <script>
+                function togglePassword(element) {
+                    if (element.classList.contains("fa-eye")) {
+                        element.classList.remove("fa-eye");
+                        element.classList.add("fa-eye-slash");
+                        element.parentElement.parentElement.querySelector("input").type = "text";
+                    } else {
+                        element.classList.add("fa-eye");
+                        element.classList.remove("fa-eye-slash");
+                        element.parentElement.parentElement.querySelector("input").type = "password";
+                    }
+                }
+                window.dataLayer = window.dataLayer || [];
+                function gtag() {
+                    dataLayer.push(arguments);
+                }
+                gtag('js', new Date());
+
+                gtag('config', 'UA-83320262-2');
+            </script>
+
+            <style type="text/css">
+                .forgot {
+                    color: #a0a9b4;
+                    padding-top: 20px;
+                    margin-right: 1em;
+                    display: inline-block;
+                }
+
+                .msg {
+                    border-width: 1px ;
+                    background-color: #fbe1e3;
+                    border-color: #fbe1e3;
+                    color: #e73d4a;
+                    margin-top: -60px;
+                    padding: 15px;
+                }
+            </style>
+
+            <div class="user-login-5">
+                <div class="row bs-reset">
+                    <div class="col-md-6 bs-reset">
+                        <div class="login-bg" style="background-image:url('resources/images/logo_aplicacao3d.jpg')">
+                            <img class="login-logo" src="resources/images/logo_ville.png" /> </div>
+                    </div>
+                    <div class="col-md-6 login-container bs-reset">
+                        <div class="login-content">
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <p:row rendered="#{param.erroSession != null}">
+                                        <p:outputPanel class="msg">
+                                            Usuário já está logado no SGFinancas!
+                                        </p:outputPanel>
+                                    </p:row>
+
+                                    <p:row rendered="#{param.erro != null and param.erroSession == null}">
+                                        <p:outputPanel class="msg">
+                                            ${SPRING_SECURITY_LAST_EXCEPTION.message}
+                                        </p:outputPanel>
+                                    </p:row>
+
+                                    <p:row rendered="#{param.loggedOut != null}">
+                                        <p:outputPanel class="msg">
+                                            Sessão finalizada com sucesso.
+                                        </p:outputPanel>
+                                    </p:row>
+
+                                    <p:row rendered="#{param.alert != null}">
+                                        <p:outputPanel class="alert alert-info">
+                                            #{param.alert}
+                                        </p:outputPanel>
+                                    </p:row>
+                                    <div class="alert alert-info" style="margin-bottom: 0;margin-top: -200px;">
+                                        <p>Em função da pandemia Covid-19 estamos trabalhando com horário reduzido de atendimento telefônico.</p>
+                                        <p>Mas não se preocupe, pois seguimos atendendo normalmente através do Celular, Chat ou e-mail.</p>
+                                        <p>Contamos com sua compreensão.</p>
+                                        <p>Whatsapp: (31) 98239-7105</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="headerLogin">
+                                <h1>Bem vindo!</h1>
+                                <p>O <span style="color: #78a242;"><strong>SGFinanças</strong></span> ajuda você a fazer uma gestão financeira completa do seu negócio. Interaja com clientes, fornecedores, governo e contadores.</p>
+                                <p style="color: #3f3f3f;">Ainda não é usuário? <a href="#{usuarioControle.urlAindaNaoCliente()}" style="color: #78a242;"><strong>Clique aqui</strong></a> para criar uma conta. Levará só alguns instantes.</p>
+                            </div>
+
+                            <div class="">
+                                <div class="row" >
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <p:outputLabel for="@next" value="E-mail" styleClass="control-label"/>
+                                            <p:inputText id="username" type="text" class=" login-username" />
+                                        </div>
+                                    </div>
+                                    <div class="col" style="overflow: hidden;">
+                                        <div class="form-group">
+                                            <p:outputLabel for="@next" value="Senha" styleClass="control-label"/>
+                                            <div class="input-group">
+                                                <p:inputText id="password" class=" login-password" type="password"/>
+                                                <div class="input-group-append" style= "position: relative ; top: -25px; left: calc(100% - 25px);">
+                                                    <i class="fa fa-eye" onclick="togglePassword(this)"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <button  class="btn btn-light" style="background-color: #78a242;color: #f0ffe9;" type="submit">Entrar</button>
+                                    </div>
+                                    <div class="col-sm-8 text-right p-0">
+                                        <div class="forgot">
+                                            <a  href="recuperarSenha.xhtml" style="color: #78a242;">Esqueceu a senha?</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+    </h:body>
+
+</html>

@@ -1,0 +1,411 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:cc="http://xmlns.jcp.org/jsf/composite/components"
+    template="/WEB-INF/template.xhtml">
+
+    <ui:param name="title" value="Início"/>
+
+    <ui:define name="title">#{title}</ui:define>
+
+    <ui:define name="content">
+        <ui:include src="/WEB-INF/msgErro.xhtml"/>
+        <p:row rendered="#{empresaControle.logadoComoEmpresa}">
+            <p:selectOneMenu value="#{telaInicialControle.competencia}">
+                <f:selectItem itemLabel="Mensal" itemValue="M" />
+                <f:selectItem itemLabel="Semanal" itemValue="S" />
+                <f:selectItem itemLabel="Hoje" itemValue="H" />
+                <p:ajax update="index" process="@this" />
+            </p:selectOneMenu>
+            <p:outputPanel id="index">
+                #{telaInicialControle.obterValoresParaGraficoIndex()}
+                <div class="row mb-4">
+                    <div class="col-12 col-sm-6 col-md-4 col-xl">
+                        <div class="card overview-box" data-type="receber" style="--cor: #94863c33;">
+                            <div class="gradient"></div>
+                            <div class="overview">
+                                <span class="overview-title">Receita recebida</span>
+                                <h3 class="statistics">R$ 0,00</h3>
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-striped" style="background-color: var(--cor);"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-4 col-xl">
+                        <div class="card overview-box" data-type="pagar" style="--cor: #943c3c33;">
+                            <div class="gradient"></div>
+                            <div class="overview">
+                                <span class="overview-title">Despesa paga</span>
+                                <h3 class="statistics">R$ 0,00</h3>
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-striped" style="background-color: var(--cor);"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-4 col-xl">
+                        <div class="card overview-box" data-type="receber" style="--cor: #3c946233;">
+                            <div class="gradient"></div>
+                            <div class="overview">
+                                <span class="overview-title">Vendas realizadas e recebidas</span>
+                                <h3 class="statistics">R$ 0,00</h3>
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-striped" style="background-color: var(--cor);"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-4 col-xl">
+                        <div class="card overview-box" style="--cor: #3c679433;">
+                            <div class="gradient"></div>
+                            <div class="overview">
+                                <span class="overview-title">Saldo previsto</span>
+                                <h3 class="statistics" style="color: #{telaInicialControle.cardSaldo.valor gt 0 ? '#00f' : '#f00'} ">
+                                    <cc:convertMoney value="#{telaInicialControle.cardSaldo.valor}"/>
+                                </h3>
+                                <span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-4">
+                        <div class="card h-100" id="acesso">
+                            <h5>Acesso rápido</h5>
+                            <div class="row mx-0">
+                                <p:repeat value="#{usuarioControle.acessoRapidoList}" var="ar">
+                                    <div class="col-4 p-1" >
+                                        <p:commandLink action="#{controleMenu.doAcionarListagem(ar.link)}" styleClass="quick-access-card h-100">
+                                            <i class="mt-3 mb-2 fa fa-2x fa-fw #{ar.icone}" ></i>
+                                            <p style="font-size: 10px;">#{ar.descricao}</p>
+                                        </p:commandLink>
+                                        <p:tooltip for="@previous" value="#{ar.tooltip}" position="right"/>
+                                    </div>
+                                </p:repeat>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="card h-100 pr-0 pb-0" id="financeiro">
+                            <h5>Financeiro #{telaInicialControle.nomeCompetencia}</h5>
+                            <div class="timeline">
+                                <div style="text-align: center;">Nenhuma parcela recebida/paga</div>
+                                <ul class="empty-fallback m-0 pr-1">
+                                    <p:repeat value="#{telaInicialControle.timelineRecebido}" var="cp">
+                                        <li data-value="#{cp.valor}" data-type="#{cp.tipoTransacao}" data-paid="pago">
+                                            <span class="time">
+                                                <h:outputText value="#{cp.data}">
+                                                    <f:convertDateTime pattern="dd/MM"/>
+                                                </h:outputText>
+                                            </span>
+                                            <span class="event-icon event-#{cp.tipoTransacao}" title="#{cp.title}"></span>
+                                            <div class="event-content">
+                                                <span class="event-title">#{cp.nomeEvento}</span>
+                                                <i><small><h:outputText value="#{cp.observacao}"/></small></i>
+                                            </div>
+                                        </li>
+                                    </p:repeat>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="card h-100 pr-0 pb-0" id="compromissos">
+                            <h5>Compromissos #{telaInicialControle.nomeCompetencia}</h5>
+                            <div class="timeline">
+                                <div style="text-align: center;">Nenhuma parcela a receber/pagar</div>
+                                <ul class="empty-fallback m-0 pr-1">
+                                    <p:repeat value="#{telaInicialControle.timelineReceber}" var="cp">
+                                        <li data-value="#{cp.valor}" data-type="#{cp.tipoTransacao}" data-paid="pagar">
+                                            <span class="time">
+                                                <h:outputText value="#{cp.data}">
+                                                    <f:convertDateTime pattern="dd/MM"/>
+                                                </h:outputText>
+                                            </span>
+                                            <span class="event-icon event-#{cp.tipoTransacao}" title="#{cp.title}"></span>
+                                            <div class="event-content">
+                                                <span class="event-title">#{cp.nomeEvento}</span>
+                                                <i><small><h:outputText value="#{cp.observacao}"/></small></i>
+                                            </div>
+                                        </li>
+                                    </p:repeat>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        <div class="card px-0 pb-0 visao-geral" id="visao">
+                            <h5 class="mx-3">Visão geral</h5>
+                            <p:dataTable value="#{cadastroControle.listaCadastroNotOk}" var="status" styleClass="ui-datatable-sm ui-datatable-reflow"
+                                         emptyMessage="Todos os cadastros obrigatórios foram preenchidos.">
+                                <p:column style="width: 30px;">
+                                    <i class="#{status.status.icone} pull-right icon-status" title="#{status.status.descricao}"></i>
+                                </p:column>
+
+                                <p:column>
+                                    <p style="margin-bottom: 0;">#{status.nome}</p>
+                                    <small style="color: gray;font-size: 10px;">#{status.status.descricao}</small>
+                                    <p:row rendered="#{status.possuiDependencias}">
+                                        <hr/>
+                                        <span>Dependências</span>
+                                        <ul>
+                                            <ui:repeat value="#{status.dependencias}" var="dep">
+                                                <li>#{dep}</li>
+                                            </ui:repeat>
+                                        </ul>
+                                    </p:row>
+                                </p:column>
+
+                                <p:column style="width: 40px;">
+                                    <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Ir á pagina de cadastro"
+                                                   action="#{cadastroControle.invokeStatusMethod(status)}" disabled="#{status.callBack eq null}">
+                                        <i class="fa fa-plus"></i>
+                                    </h:commandLink>
+
+                                    <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Ir á pagina de importação"
+                                                   action="#{cadastroControle.doStartImport(status)}" disabled="#{status.classeDto eq null or status.importador eq null}">
+                                        <i class="fa fa-upload"></i>
+                                    </h:commandLink>
+
+                                    <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Ir á pagina de importação"
+                                                   action="#{cadastroControle.doStartExport(status)}" rendered="#{false}">
+                                        <i class="fa fa-download"></i>
+                                    </h:commandLink>
+                                </p:column>
+                            </p:dataTable>
+                        </div>
+                    </div>
+                    <div class="col" id="promocoes">
+                        <div class="row">
+                            <p:repeat value="#{meuPlanoControle.moduloPacotesDisponiveis}" var="moduloPacote">
+                                <div class="col-6 pb-3">
+                                    <div class="card p-0 h-100">
+                                        <div class="row px-3 h-100" style="flex-direction: column;justify-content: space-between;">
+                                            <div class="header">
+                                                <div class="bar" style="font-size: 12px;">PROMOÇÕES</div>
+                                                <div style="margin-bottom: 5px;">
+                                                    <h:outputText value="#{moduloPacote.nome}"/>
+                                                    por
+                                                    <cc:convertMoney value="#{moduloPacote.valorAdesao + moduloPacote.valorMensalidade}"/>
+                                                </div>
+                                                <div class="bar description">
+                                                    Plano ideal para o seu
+                                                    <h:outputText value="#{moduloPacote.categorias}"/>
+                                                </div>
+                                            </div>
+                                            <div class="mt-3 mb-4 ml-3">
+                                                <p:repeat value="#{moduloPacote.moduloPacoteModuloList}" var="mpm">
+                                                    <div>
+                                                        <i class="checkmark"></i>
+                                                        <h:outputText value="#{mpm.idModulo.descricao}"/>
+                                                    </div>
+                                                </p:repeat>
+                                            </div>
+                                            <div>
+                                                <h:commandLink value="Contrate agora" styleClass="btn btn-outline-success py-3 px-4 mb-3 ml-3"
+                                                               action="#{meuPlanoControle.contratarPacote}">
+                                                    <f:setPropertyActionListener value="#{moduloPacote}" target="#{meuPlanoControle.moduloPacoteSelecionado}"/>
+                                                </h:commandLink>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </p:repeat>
+                        </div>
+                    </div>
+                </div>
+                <script>
+                    // <![CDATA[
+                    $(document).ready(() => {
+                        Array.from(document.querySelectorAll('.empty-fallback'))
+                            .filter(f => f.children.length > 0)
+                            .forEach(f => f.parentElement.querySelector('div').style.display = 'none');
+                        Array.from(document.querySelectorAll('.timeline > ul'))
+                            .filter(f => f.children.length === 0)
+                            .forEach(f => f.innerHTML = '');
+
+                        const getData = (elem, data) => elem.getAttribute('data-' + data);
+                        const money = new Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL'}).format;
+                        const percent = new Intl.NumberFormat('pt-BR', {style: 'percent'}).format;
+                        let data = {P: {pago: 0, pagar: 0}, R: {pago: 0, pagar: 0}};
+                        Array.from(document.querySelectorAll('.timeline > ul > li'))
+                            .forEach(li => data[getData(li, 'type')][getData(li, 'paid')] += parseFloat(getData(li, 'value')));
+                        Array.from(document.querySelectorAll('.overview-box'))
+                            .forEach(card => {
+                                let d;
+                                switch (getData(card, 'type')) {
+                                    case 'receber':
+                                        d = data.R;
+                                        break;
+                                    case 'pagar':
+                                        d = data.P;
+                                        break;
+                                    default:
+                                        return;
+                                }
+                                const vPago = d.pago, vPagar = d.pagar, vTotal = d.pago + d.pagar;
+                                card.querySelector('.statistics').innerHTML = money(vPago) + ' <small>de ' + money(vTotal) + '</small>';
+                                let pT, pV;
+                                if (vPago <= 0) {
+                                    pT = pV = '0%';
+                                } else if (vPago >= vTotal) {
+                                    pT = pV = '100%';
+                                } else {
+                                    pV = (vPago / vTotal * 100) + '%';
+                                    pT = percent(vPago / vTotal);
+                                }
+                                Array.from(card.querySelectorAll('.progress-bar'))
+                                    .forEach(pb => {
+                                        pb.style.width = pV;
+                                        pb.innerHTML = pT;
+                                    });
+                            });
+                    });
+                    #{introJSConfigControle.getIntroJSFor('index')}
+                    // ]]>
+                </script>
+            </p:outputPanel>
+        </p:row>
+        <p:row rendered="#{empresaControle.logadoComoGestor}">
+
+        </p:row>
+        <p:row rendered="#{empresaControle.logadoComoCredor}">
+
+        </p:row>
+        <style>
+            .progress > .progress-bar {
+                color: black;
+                padding-bottom: 1px;
+            }
+            .knob-container {
+                min-width: 180px;
+            }
+            .stats-box a, .stats-box a:hover {
+                color: white;
+            }
+            .layout-dashboard .stats-box span.statistics-header {
+                letter-spacing: 0;
+                margin: 16px 0 16px 14px;
+            }
+            .layout-dashboard .stats-box span.statistics {
+                font-size: 22px;
+            }
+            :root {
+                --cor: transparent;
+            }
+            .gradient {
+                box-shadow: 0 0 0 12px var(--cor), 0 0 0 24px var(--cor), 0 0 0 36px var(--cor);
+                width: 2px;
+                height: 2px;
+                position: absolute;
+                right: -2px;
+                top: -2px;
+                border-radius: 1px;
+            }
+            .card.overview-box {
+                overflow: hidden;
+            }
+            .quick-access-card {
+                text-align: center;
+                background-color: #f6f6f6;
+                display: block;
+                border-radius: 4px;
+                padding: 5px;
+                transition: all .2s;
+                color:#3c9462 !important;
+            }
+            .quick-access-card:hover {
+                color: white !important;
+                background-color: #3c9462;
+            }
+            .timeline ul > li > span.event-icon.event-R {
+                border: solid 3px #36925e;
+            }
+            .timeline ul > li > span.event-icon.event-P {
+                border: solid 3px #f8447e;
+            }
+            .timeline ul:empty {
+                display: none;
+            }
+            .timeline ul {
+                height: 342px;
+                overflow-y: auto;
+                background-image: linear-gradient(90deg, transparent, transparent 52px, #f4f7f9 52px, #f4f7f9 54px, transparent 54px, transparent);
+            }
+            .timeline > ul > li {
+                margin: 0;
+                min-height: 0;
+                padding-bottom: 15px;
+            }
+            .timeline > ul > li .event-icon::before {
+                height: 0px;
+            }
+            .timeline > ul > li span.event-icon {
+                margin-top: 3px;
+            }
+            .header {
+                background-color: #3c9462;
+                margin: 5px;
+                color: white;
+                padding: 10px;
+                font-size: 14px;
+            }
+            .bar {
+                border-left: 3px solid white;
+                padding-left: 7px;
+                margin: 3px 0;
+            }
+            .bar.description {
+                text-transform: lowercase;
+            }
+            .bar.description:first-letter {
+                text-transform: uppercase;
+            }
+            .checkmark {
+                display: inline-block;
+                width: 12px;
+                height: 6px;
+                transform: rotate(-45deg);
+                border: 1px solid black;
+                border-top: none;
+                border-right: none;
+                margin: 5px;
+            }
+            .ui-selectonemenu.ui-widget{
+                width: auto !important;
+                background-color: transparent;
+                border: none;
+                height: unset;
+            }
+            .ui-selectonemenu.ui-widget label.ui-selectonemenu-label{
+                padding-bottom: 0px;
+                padding-top: 0px;
+            }
+            span.btn.btn-circle.icones {
+                color: #bbb;
+                cursor: default;
+            }
+            .visao-geral thead {
+                display: none;
+            }
+            div.overview > h3.statistics {
+                color: #555;
+            }
+            .progress {
+                position: absolute;
+                bottom: 10px;
+                width: calc(100% - 20px);
+            }
+            .overview {
+                padding-bottom: 15px;
+            }
+        </style>
+    </ui:define>
+
+</ui:composition>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <f:metadata >
+        <f:event listener="#{usuarioControle.controleMenu.setMenuAdministracaoADMAtualizaEsquema() }" type="preRenderView" />
+    </f:metadata>
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Atualização do esquema do banco de dados"/>
+        <ui:define name="title">#{title}</ui:define>
+        <ui:define name="viewname">
+            <li>##SECTION_NAME##</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/administracao/atualizacaoBancoDados.xhtml"> #{title}</p:link></li>
+        </ui:define>
+        <ui:define name="content">
+            <h:messages class="alertMessage" errorClass="alert alert-danger" infoClass="alert alert-success"/>
+
+            <div class="notification">
+                <div class="notification-title">
+                    Cuidado!
+                </div>
+                Execute somente comandos para atualização do esquema do banco de dados. Para atualizar os dados, use a opção atualização dos dados para que o sistema de cache funcione corretamente!
+            </div>
+
+            <div class="row">
+                <div class="col-md-12 ">
+                    <!-- BEGIN SAMPLE FORM PORTLET-->
+                    <div class="portlet light bordered">
+                        <div class="portlet-title">
+                            <div class="caption">
+                                <i class="fa fa-database"></i>
+                                ATENÇÃO: Essa operação não poderá ser desfeita.
+                            </div>
+                            <div class="tools">
+                            </div>
+                        </div>
+                        <div class="portlet-body form">
+                            <h:form acceptcharset="ISO-8859-1" role="form">
+                                <div class="form-body">
+
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label"><span class="required">* </span>Comando SQL DDL</label>
+                                        <p:inputTextarea value="#{administracaoControle.consulta}" rendered="true" requiredMessage="Informe o comando"  placeholder="Comando DDL" styleClass="form-control" ></p:inputTextarea>
+                                    </div>
+
+                                </div>
+                                <div class="form-actions">
+                                    <h:commandButton action="#{administracaoControle.executaAtualizaoBancoDados()}"  styleClass="btn green" value="Atualizar" />
+                                </div>
+                            </h:form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <div class="form-body">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group form-md-line-input">
+                    <label class="control-label">Plano de contas padrão</label>
+                    <p:selectOneMenu value="#{parametroSistemaControle.parametroSistemaSelecionado.idPlanoContaPadraoPdv}"
+                                     var="t" converter="#{genericConverter}">
+                        <p:column>
+                            <h:outputText value="#{t.codigo}" />
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{t.descricao}" />
+                        </p:column>
+
+                        <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                        <f:selectItems value="#{planoContaControle.listarPlanosContaParaTransacoesContaReceber()}"  var="planoConta"
+                                       itemLabel="#{planoConta.descricao}" itemValue="#{planoConta}"
+                                       itemDisabled="#{planoConta.tipoIndicador ne 'S' or planoConta.idContaPai.bloqueiaFilhoContaReceber eq 'S'}"
+                                       id="itens"
+                                       itemDescription="#{planoContaControle.obterNomesDosPais(planoConta)}">
+                        </f:selectItems>
+                    </p:selectOneMenu>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group form-md-line-input">
+                    <label class="control-label">Centro de custo padrão</label>
+                    <p:selectOneMenu value="#{parametroSistemaControle.parametroSistemaSelecionado.idCentroCustoPadraoPdv}"
+                                     var="t" converter="#{genericConverter}">
+                        <p:column>
+                            <h:outputText value="#{t.descricao}" />
+                        </p:column>
+
+                        <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                        <f:selectItems value="#{centroCustoControle.centroCustos}"  var="centroCusto" itemLabel="#{centroCusto.descricao}" itemValue="#{centroCusto}"/>
+
+                    </p:selectOneMenu>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group form-md-line-input">
+                    <label class="control-label">Conta bancária padrão</label>
+                    <p:selectOneMenu value="#{parametroSistemaControle.parametroSistemaSelecionado.idContaBancariaPadraoPdv}"
+                                     var="t" converter="#{genericConverter}">
+                        <p:column>
+                            <h:outputText value="#{t.descricao}" />
+                        </p:column>
+
+                        <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                        <f:selectItems value="#{contaBancariaControle.contaBancarias}"  var="contaBancaria" itemLabel="#{contaBancaria.descricao}" itemValue="#{contaBancaria}"/>
+                    </p:selectOneMenu>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group form-md-line-input">
+                    <label class="control-label">Observação padrão</label>
+                    <p:inputTextarea value="#{parametroSistemaControle.parametroSistemaSelecionado.observacaoPadraoPdv}"/>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</html>

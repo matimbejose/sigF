@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Solicitações de cadastro de cliente"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Cadastro</li>
+            <li>/</li>
+            <li>Vistoria</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/solicitacaoCadastroCliente/listaSolicitacaoCadastroCliente.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteReject" onclick="PF('cancelamento').show();return false;" rendered="#{solicitacaoCadastroClienteControle.podeEditar}"/>
+            <h:commandButton id="remoteAccept" action="#{solicitacaoCadastroClienteControle.doAccept()}" rendered="#{solicitacaoCadastroClienteControle.podeEditar}"/>
+            <h:commandButton id="remoteCancel" action="listaSolicitacaoCadastroCliente.xhtml" immediate="true" rendered="#{solicitacaoCadastroClienteControle.podeEditar}"/>
+            <h:commandButton id="remoteBack" action="listaSolicitacaoCadastroCliente.xhtml" immediate="true" rendered="#{not solicitacaoCadastroClienteControle.podeEditar}"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <div class="card">
+                <h5>Dados do cliente</h5>
+                <div class="row">
+                    <div class="col">
+                        <div class="row">
+                            <div class="col-7 form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Nome"/>
+                                <p:inputText value="#{solicitacaoCadastroClienteControle.objetoSelecionado.idSolicitacaoCadastroCliente.nome}" disabled="true"/>
+                            </div>
+                            <div class="col-5 form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="CPF/CNPJ"/>
+                                <p:inputText value="#{solicitacaoCadastroClienteControle.objetoSelecionado.idSolicitacaoCadastroCliente.cpfCnpj}" disabled="true"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-7 form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="CNH"/>
+                                <p:inputText value="#{solicitacaoCadastroClienteControle.objetoSelecionado.idSolicitacaoCadastroCliente.cnh}" disabled="true"/>
+                            </div>
+                            <div class="col-5 form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Categoria da CNH"/>
+                                <p:inputText value="#{solicitacaoCadastroClienteControle.objetoSelecionado.idSolicitacaoCadastroCliente.categoriaCnh}" disabled="true"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4 form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Celular"/>
+                                <p:inputText value="#{solicitacaoCadastroClienteControle.objetoSelecionado.idSolicitacaoCadastroCliente.celular}" disabled="true"/>
+                            </div>
+                            <div class="col-8 form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Email"/>
+                                <p:inputText value="#{solicitacaoCadastroClienteControle.objetoSelecionado.idSolicitacaoCadastroCliente.email}" disabled="true"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4 form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Já cadastrou?"/>
+                                <p:inputText value="#{solicitacaoCadastroClienteControle.objetoSelecionado.idSolicitacaoCadastroCliente.idCliente eq null ? 'Não' : 'Sim'}" disabled="true"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col" style="border-left: 1px solid #eee;">
+                        <div class="row">
+                            <div class="col form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Endereço"/>
+                                <p:inputText value="#{solicitacaoCadastroClienteControle.objetoSelecionado.idSolicitacaoCadastroCliente.endereco.endereco}" disabled="true"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-3 form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Número"/>
+                                <p:inputText value="#{solicitacaoCadastroClienteControle.objetoSelecionado.idSolicitacaoCadastroCliente.endereco.numero}" disabled="true"/>
+                            </div>
+                            <div class="col-3 form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Complemento"/>
+                                <p:inputText value="#{solicitacaoCadastroClienteControle.objetoSelecionado.idSolicitacaoCadastroCliente.endereco.complemento}" disabled="true"/>
+                            </div>
+                            <div class="col-6 form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Bairro"/>
+                                <p:inputText value="#{solicitacaoCadastroClienteControle.objetoSelecionado.idSolicitacaoCadastroCliente.endereco.bairro}" disabled="true"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Estado"/>
+                                <p:inputText value="#{solicitacaoCadastroClienteControle.objetoSelecionado.idSolicitacaoCadastroCliente.endereco.idCidade.idUF.nomeCompleto}" disabled="true"/>
+                            </div>
+                            <div class="col form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Cidade"/>
+                                <p:inputText value="#{solicitacaoCadastroClienteControle.objetoSelecionado.idSolicitacaoCadastroCliente.endereco.idCidade.descricao}" disabled="true"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <span><!-- Não remover --></span>
+            </div>
+
+            <div class="card">
+                <h5>Dados do veículo</h5>
+                <div class="row">
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Marca"/>
+                        <p:inputText value="#{solicitacaoCadastroClienteControle.objetoSelecionado.idModeloInformacao.idModelo.idMarca.nome}" disabled="true"/>
+                    </div>
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Modelo"/>
+                        <p:inputText value="#{solicitacaoCadastroClienteControle.objetoSelecionado.idModeloInformacao.idModelo.nome}" disabled="true"/>
+                    </div>
+                    <div class="col-2 form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Ano do modelo"/>
+                        <p:inputNumber value="#{solicitacaoCadastroClienteControle.objetoSelecionado.idModeloInformacao.ano}" disabled="true"
+                                       decimalPlaces="0" thousandSeparator=""/>
+                    </div>
+                    <div class="col-2 form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Ano de fabricação"/>
+                        <p:inputNumber value="#{solicitacaoCadastroClienteControle.objetoSelecionado.anoFabricacao}" disabled="true"
+                                       decimalPlaces="0" thousandSeparator=""/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Cor"/>
+                        <p:inputText value="#{solicitacaoCadastroClienteControle.objetoSelecionado.idCorVeiculo.descricao}" disabled="true"/>
+                    </div>
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Combustível"/>
+                        <p:inputText value="#{solicitacaoCadastroClienteControle.objetoSelecionado.idCombustivel.descricao}" disabled="true"/>
+                    </div>
+                    <div class="col-2 form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Placa"/>
+                        <p:inputText value="#{solicitacaoCadastroClienteControle.objetoSelecionado.placa}" disabled="true"/>
+                    </div>
+                    <div class="col-2 form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Cambio"/>
+                        <p:inputText value="#{solicitacaoCadastroClienteControle.objetoSelecionado.cambio}" disabled="true"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Renavam"/>
+                        <p:inputText value="#{solicitacaoCadastroClienteControle.objetoSelecionado.renavam}" disabled="true"/>
+                    </div>
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Chassi"/>
+                        <p:inputText value="#{solicitacaoCadastroClienteControle.objetoSelecionado.chassi}" disabled="true"/>
+                    </div>
+                    <div class="col-2 form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Nº de portas"/>
+                        <p:inputNumber value="#{solicitacaoCadastroClienteControle.objetoSelecionado.nroPortas}" disabled="true"
+                                       decimalPlaces="0" thousandSeparator=""/>
+                    </div>
+                    <div class="col-2 form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Nº de passageiros"/>
+                        <p:inputNumber value="#{solicitacaoCadastroClienteControle.objetoSelecionado.nroPassageiros}" disabled="true"
+                                       decimalPlaces="0" thousandSeparator=""/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-2 form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Valor protegido/Fipe"/>
+                        <p:inputNumber value="#{solicitacaoCadastroClienteControle.objetoSelecionado.valorFipe}" disabled="true"
+                                       decimalPlaces="0" thousandSeparator=""/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h5>Dados da solicitacao</h5>
+                <div class="row">
+                    <div class="col">
+                        <div class="row">
+                            <div class="col form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Status"/>
+                                <p:inputText value="#{solicitacaoCadastroClienteControle.statusDesc}" disabled="true"/>
+                            </div>
+                            <div class="col form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Data da última ação"/>
+                                <p:calendar value="#{solicitacaoCadastroClienteControle.objetoSelecionado.dataModificacao}" disabled="true"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Observações"/>
+                                <p:inputTextarea value="#{solicitacaoCadastroClienteControle.objetoSelecionado.observacao}" disabled="#{not solicitacaoCadastroClienteControle.podeEditar}"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <p:dataTable value="#{solicitacaoCadastroClienteControle.listaAnexos}" var="arquivo" id="fileList" emptyMessage="Nenhum arquivo enviado."
+                                     styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+                            <f:facet name="header">
+                                Arquivos
+                                <div class="pull-right">
+                                    <p:commandButton icon="fa fa-fw fa-5x fa-cloud-download" value="Baixar imagens do orçamento" ajax="false">
+                                        <p:fileDownload value="#{solicitacaoCadastroClienteControle.baixarImagens()}"/>
+                                    </p:commandButton>
+                                </div>
+                                <div class="clearfix"></div>
+                            </f:facet>
+                            <p:column headerText="Nome do arquivo">
+                                <h:outputText value="#{arquivo.nome}" title="#{arquivo.nome}"/>
+                            </p:column>
+                            <p:column headerText="Data do upload">
+                                <h:outputText value="#{arquivo.dataEnvio}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="" style="width: 16px;text-align: center;">
+                                <f:facet name="header">
+                                    <i class="fa fa-arrow-down" title="Baixar arquivos"></i>
+                                </f:facet>
+                                <p:commandLink title="Baixar arquivo" ajax="false" class="btn btn-circle btn-icon-only btn-default icones" immediate="true">
+                                    <i class="fa fa-arrow-down"></i>
+                                    <p:fileDownload value="#{documentoControle.downloadAnexo(arquivo)}"/>
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                    </div>
+                </div>
+            </div>
+            <p:dialog widgetVar="cancelamento" header="Rejeitar solicitação" width="600">
+                <h:messages class="alertMessage" id="errors" errorClass="alert alert-danger"/>
+                <div class="row">
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Informe o motivo"/>
+                        <p:inputTextarea value="#{solicitacaoCadastroClienteControle.objetoSelecionado.motivoCancelamento}" rows="5" id="motivo"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col"></div>
+                    <div class="col-auto form-group form-md-line-input">
+                        <p:commandButton action="#{solicitacaoCadastroClienteControle.doReject()}" value="Rejeitar" styleClass="mr-2"
+                                         rendered="#{solicitacaoCadastroClienteControle.podeEditar}" update="errors" process="@this, motivo"/>
+                        <p:commandButton onclick="PF('cancelamento').hide();" value="Cancelar"/>
+                    </div>
+                </div>
+            </p:dialog>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

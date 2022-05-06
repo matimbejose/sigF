@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Cnae"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Nota fiscal</li>
+            <li>/</li>
+            <li>Apoio</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/cnae/listaCnae.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="formButtons">
+            <p:commandButton type="button" value="Limpar filtros" onclick="clearDataTableFilters('tbl');"/>
+            <p:commandButton id="toggler" type="button" value="Colunas"/>
+            <p:columnToggler datasource="tbl" trigger="toggler"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <h:messages class="alertMessage" errorClass="alert alert-danger" infoClass="alert alert-success"/>
+            <h:form acceptcharset="ISO-8859-1">
+                <p:dataTable value="#{cnaeControle.model}" emptyMessage="Nenhum registro encontrado." var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+                    <p:column headerText="#" width="55" sortBy="#{item.id}" visible="false">
+                        <h:outputText value="#{item.id}"/>
+                    </p:column>
+
+                    <p:column headerText="Código" sortBy="#{item.codigo}" filterBy="#{item.codigo}" width="100">
+                        <f:facet name="filter">
+                            <p:inputText value="#{cnaeControle.filtro.codigo}" onchange="PF('tbl').filter()"/>
+                        </f:facet>
+                        <h:outputText value="#{item.codigo}"/>
+                    </p:column>
+
+                    <p:column headerText="Descrição" sortBy="#{item.descricao}" filterBy="#{item.descricao}">
+                        <f:facet name="filter">
+                            <p:inputText value="#{cnaeControle.filtro.descricao}" onchange="PF('tbl').filter()"/>
+                        </f:facet>
+                        <h:outputText value="#{item.descricao}"/>
+                    </p:column>
+
+                    <p:column headerText="Classificação" filterBy="#{item.classificacao}">
+                        <f:facet name="filter">
+                            <p:inputText value="#{cnaeControle.filtro.classificacao}" onchange="PF('tbl').filter()"/>
+                        </f:facet>
+                        <h:outputText value="#{item.idClassificacao.descricao}"/>
+                    </p:column>
+
+                </p:dataTable>
+            </h:form>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

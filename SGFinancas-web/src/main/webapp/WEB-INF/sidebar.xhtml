@@ -1,0 +1,698 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:sec="http://www.springframework.org/security/facelets/tags"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:rain="http://primefaces.org/rain">
+
+    <div class="layout-sidebar" style="opacity: 0;">
+        <div class="nano">
+            <div class="nano-content menu-scroll-content">
+                <h:form id="menuform">
+                    <div class="pr-2 search-input">
+                        <i class="fa fa-search avoid-clicks text-blue-hoki"></i>
+                        <p:inputText widgetVar="menuSearch" styleClass="m-1" placeholder="Pesquisar"/>
+                        <i class="fa fa-times-circle"></i>
+                    </div>
+                    <rain:menu widgetVar="me" rendered="#{empresaControle.isLogadoComoEmpresa()}">
+                        <sec:ifAnyGranted roles="DASHBOARD_VIEW">
+                            <p:menuitem value="Dashboard" icon="fa fa-tachometer"
+                                        outcome="#{controleMenu.doAcionarListagem('dashboard.xhtml')}"/>
+                        </sec:ifAnyGranted>
+                        <p:submenu label="Menu">
+                            <sec:ifAnyGranted roles="
+                                              EMPRESA_GERENCIAR,EMPRESA_VISUALIZAR,
+                                              PLANO_CONTA_GERENCIAR,PLANO_CONTA_VISUALIZAR,
+                                              CENTRO_CUSTO_GERENCIAR,CENTRO_CUSTO_VISUALIZAR,
+                                              CONTA_BANCARIA_GERENCIAR,CONTA_BANCARIA_VISUALIZAR,
+                                              FORMA_PAGAMENTO_GERENCIAR,FORMA_PAGAMENTO_VISUALIZAR,
+                                              TIPO_PAGAMENTO_VISUALIZAR, TIPO_PAGAMENTO_GERENCIAR,
+                                              MOTIVO_CANCELAMENTO_CONTA_GERENCIAR,MOTIVO_CANCELAMENTO_CONTA_VISUALIZAR,
+                                              PLANO_PAGAMENTO_VISUALIZAR,
+                                              CLIENTE_GERENCIAR,CLIENTE_VISUALIZAR,
+                                              FORNECEDOR_GERENCIAR,FORNECEDOR_VISUALIZAR,
+                                              TRANSPORTADORA_GERENCIAR,TRANSPORTADORA_VISUALIZAR,
+                                              FABRICANTE_VISUALIZAR,FABRICANTE_GERENCIAR,
+                                              FUNCIONARIO_GERENCIAR,FUNCIONARIO_VISUALIZAR,
+                                              FORNECEDOR_GERENCIAR,FORNECEDOR_VISUALIZAR,
+                                              TRANSPORTADORA_GERENCIAR,TRANSPORTADORA_VISUALIZAR,
+                                              FABRICANTE_VISUALIZAR,FABRICANTE_GERENCIAR,
+                                              FUNCIONARIO_GERENCIAR,FUNCIONARIO_VISUALIZAR,
+                                              PRODUTO_GERENCIAR,PRODUTO_VISUALIZAR,
+                                              SERVICO_GERENCIAR,SERVICO_VISUALIZAR,
+                                              CATEGORIA_GERENCIAR,CATEGORIA_VISUALIZAR,
+                                              UNIDADE_MEDIDA_GERENCIAR,UNIDADE_MEDIDA_VISUALIZAR,
+                                              AVARIA_GERENCIAR,AVARIA_VISUALIZAR,
+                                              FORMULARIO_GERENCIAR,FORMULARIO_VISUALIZAR,
+                                              SOLICITACAO_GERENCIAR,SOLICITACAO_VISUALIZAR">
+                                <p:submenu label="Cadastro" icon="fa fa-keyboard-o">
+                                    <sec:ifAnyGranted roles="EMPRESA_GERENCIAR,EMPRESA_VISUALIZAR">
+                                        <p:menuitem value="Minha empresa" icon="fa fa-building"
+                                                    outcome="#{controleMenu.doAcionarListagem('empresa')}"/>
+                                    </sec:ifAnyGranted>
+
+                                    <p:menuitem id="om_visaogeral" value="Visão geral" icon="fa fa-map-o"
+                                                outcome="#{controleMenu.doAcionarPagina('cadastro/visaoGeral.xhtml')}"/>
+
+                                    <sec:ifAnyGranted roles="PLANO_CONTA_GERENCIAR,PLANO_CONTA_VISUALIZAR">
+                                        <p:menuitem value="Plano de contas" icon="fa fa-line-chart"
+                                                    outcome="#{controleMenu.doAcionarListagem('planoConta')}"/>
+                                    </sec:ifAnyGranted>
+
+                                    <sec:ifAnyGranted roles="CENTRO_CUSTO_GERENCIAR,CENTRO_CUSTO_VISUALIZAR">
+                                        <p:menuitem value="Centro de custo" icon="fa fa-cc"
+                                                    url="#{controleMenu.doAcionarListagem('centroCusto')}"/>
+                                    </sec:ifAnyGranted>
+
+                                    <sec:ifAnyGranted roles="CONTA_BANCARIA_GERENCIAR,CONTA_BANCARIA_VISUALIZAR">
+                                        <p:menuitem value="Contas bancárias" icon="fa fa-credit-card"
+                                                    url="#{controleMenu.doAcionarListagem('contaBancaria')}"/>
+                                    </sec:ifAnyGranted>
+
+                                    <sec:ifAnyGranted roles="
+                                                      FORMA_PAGAMENTO_GERENCIAR,FORMA_PAGAMENTO_VISUALIZAR,
+                                                      TIPO_PAGAMENTO_VISUALIZAR, TIPO_PAGAMENTO_GERENCIAR,
+                                                      MOTIVO_CANCELAMENTO_CONTA_GERENCIAR,MOTIVO_CANCELAMENTO_CONTA_VISUALIZAR,
+                                                      PLANO_PAGAMENTO_VISUALIZAR">
+                                        <p:submenu label="Pagamentos">
+                                            <sec:ifAnyGranted roles="FORMA_PAGAMENTO_GERENCIAR,FORMA_PAGAMENTO_VISUALIZAR">
+                                                <p:menuitem value="Forma de pagamento"
+                                                            icon="fa fa-google-wallet"
+                                                            outcome="#{controleMenu.doAcionarListagem('formaPagamento')}"/>
+                                            </sec:ifAnyGranted>
+
+                                            <sec:ifAnyGranted roles="TIPO_PAGAMENTO_VISUALIZAR, TIPO_PAGAMENTO_GERENCIAR">
+                                                <p:menuitem value="Tipo de pagamento" icon="fa fa-usd"
+                                                            outcome="#{controleMenu.doAcionarListagem('tipoPagamento')}"/>
+                                            </sec:ifAnyGranted>
+
+                                            <sec:ifAnyGranted roles="MOTIVO_CANCELAMENTO_CONTA_GERENCIAR,MOTIVO_CANCELAMENTO_CONTA_VISUALIZAR">
+                                                <p:menuitem value="Motivo de cancelamento de conta" icon="fa fa-pencil-square"
+                                                            url="#{controleMenu.doAcionarListagem('motivoCancelamentoConta')}"/>
+                                            </sec:ifAnyGranted>
+
+                                            <sec:ifAnyGranted roles="PLANO_PAGAMENTO_VISUALIZAR">
+                                                <p:menuitem value="Plano de pagamento" icon="fa fa-usd"
+                                                            outcome="#{controleMenu.doAcionarListagem('planoPagamento')}"/>
+                                            </sec:ifAnyGranted>
+                                        </p:submenu>
+                                    </sec:ifAnyGranted>
+
+                                    <sec:ifAnyGranted roles="
+                                                      CLIENTE_GERENCIAR,CLIENTE_VISUALIZAR,
+                                                      FORNECEDOR_GERENCIAR,FORNECEDOR_VISUALIZAR,
+                                                      TRANSPORTADORA_GERENCIAR,TRANSPORTADORA_VISUALIZAR,
+                                                      FABRICANTE_VISUALIZAR,FABRICANTE_GERENCIAR,
+                                                      FUNCIONARIO_GERENCIAR,FUNCIONARIO_VISUALIZAR">
+                                        <p:submenu label="Pessoas">
+                                            <sec:ifAnyGranted roles="CLIENTE_GERENCIAR,CLIENTE_VISUALIZAR">
+                                                <p:menuitem value="Cliente" icon="fa fa-male"
+                                                            outcome="#{controleMenu.doAcionarListagem('cliente')}"/>
+                                            </sec:ifAnyGranted>
+
+                                            <sec:ifAnyGranted roles="FORNECEDOR_GERENCIAR,FORNECEDOR_VISUALIZAR">
+                                                <p:menuitem value="Fornecedor" icon="fa fa-industry"
+                                                            outcome="#{controleMenu.doAcionarListagem('fornecedor')}"/>
+                                            </sec:ifAnyGranted>
+
+                                            <sec:ifAnyGranted roles="TRANSPORTADORA_GERENCIAR,TRANSPORTADORA_VISUALIZAR">
+                                                <p:menuitem value="Transportadora"
+                                                            icon="fa fa-truck"
+                                                            outcome="#{controleMenu.doAcionarListagem('transportadora')}"/>
+                                            </sec:ifAnyGranted>
+
+                                            <sec:ifAnyGranted roles="FUNCIONARIO_GERENCIAR,FUNCIONARIO_VISUALIZAR">
+                                                <p:menuitem value="Funcionário" icon="fa fa-user-circle-o"
+                                                            outcome="#{controleMenu.doAcionarListagem('funcionario')}"/>
+                                            </sec:ifAnyGranted>
+
+                                            <sec:ifAnyGranted roles="FABRICANTE_VISUALIZAR,FABRICANTE_GERENCIAR">
+                                                <p:menuitem value="Fabricantes" icon="fa fa-industry"
+                                                            url="#{controleMenu.doAcionarListagem('fabricante')}"/>
+                                            </sec:ifAnyGranted>
+                                        </p:submenu>
+                                    </sec:ifAnyGranted>
+
+                                    <sec:ifAnyGranted roles="
+                                                      PRODUTO_GERENCIAR,PRODUTO_VISUALIZAR,
+                                                      SERVICO_GERENCIAR,SERVICO_VISUALIZAR,
+                                                      CATEGORIA_GERENCIAR,CATEGORIA_VISUALIZAR,
+                                                      UNIDADE_MEDIDA_GERENCIAR,UNIDADE_MEDIDA_VISUALIZAR">
+                                        <p:submenu label="#{empresaControle.enumTipoUsoSistema.produtoServicoLabel}">
+                                            <sec:ifAnyGranted roles="PRODUTO_GERENCIAR,PRODUTO_VISUALIZAR">
+                                                <p:menuitem value="Produto" icon="fa fa-product-hunt" rendered="#{empresaControle.enumTipoUsoSistema.vendeProdutos}"
+                                                            outcome="#{controleMenu.doAcionarListagem('produto')}"/>
+                                            </sec:ifAnyGranted>
+
+                                            <sec:ifAnyGranted roles="SERVICO_GERENCIAR,SERVICO_VISUALIZAR">
+                                                <p:menuitem value="Serviço" icon="fa fa-wrench" rendered="#{empresaControle.enumTipoUsoSistema.vendeServicos}"
+                                                            outcome="#{controleMenu.doAcionarListagem('servico')}"/>
+                                            </sec:ifAnyGranted>
+
+                                            <sec:ifAnyGranted roles="CATEGORIA_GERENCIAR,CATEGORIA_VISUALIZAR">
+                                                <p:menuitem value="Categoria de #{empresaControle.enumTipoUsoSistema.produtoServicoLabel}" icon="fa fa-clipboard"
+                                                            outcome="#{controleMenu.doAcionarListagem('produtoCategoria')}"/>
+                                            </sec:ifAnyGranted>
+
+                                            <sec:ifAnyGranted roles="UNIDADE_MEDIDA_GERENCIAR,UNIDADE_MEDIDA_VISUALIZAR">
+                                                <p:menuitem value="Unidade de medida" icon="fa fa-cog"
+                                                            outcome="#{controleMenu.doAcionarListagem('unidadeMedida')}"/>
+                                            </sec:ifAnyGranted>
+                                        </p:submenu>
+                                    </sec:ifAnyGranted>
+
+                                    <sec:ifAnyGranted roles="
+                                                      AVARIA_GERENCIAR,AVARIA_VISUALIZAR,
+                                                      FORMULARIO_GERENCIAR,FORMULARIO_VISUALIZAR,
+                                                      SOLICITACAO_GERENCIAR,SOLICITACAO_VISUALIZAR">
+                                        <p:submenu label="Vistoria">
+                                            <sec:ifAnyGranted roles="AVARIA_GERENCIAR,AVARIA_VISUALIZAR">
+                                                <p:menuitem value="Avaria"
+                                                            icon="fa fa-chain-broken"
+                                                            outcome="#{controleMenu.doAcionarListagem('avaria')}"/>
+                                            </sec:ifAnyGranted>
+
+                                            <sec:ifAnyGranted roles="FORMULARIO_GERENCIAR,FORMULARIO_VISUALIZAR">
+                                                <p:menuitem value="Formulário"
+                                                            icon="fa fa-wpforms"
+                                                            outcome="#{controleMenu.doAcionarListagem('formulario')}"/>
+                                            </sec:ifAnyGranted>
+
+                                            <sec:ifAnyGranted roles="SOLICITACAO_GERENCIAR,SOLICITACAO_VISUALIZAR">
+                                                <p:menuitem value="Solicitações"
+                                                            icon="fa fa-wpforms"
+                                                            outcome="#{controleMenu.doAcionarListagem('solicitacaoCadastroCliente')}"/>
+                                            </sec:ifAnyGranted>
+                                        </p:submenu>
+                                    </sec:ifAnyGranted>
+                                </p:submenu>
+                            </sec:ifAnyGranted>
+
+                            <sec:ifAnyGranted roles="
+                                              USUARIO_GERENCIAR,USUARIO_VISUALIZAR,
+                                              GRUPO_GERENCIAR,GRUPO_VISUALIZAR
+                                              PARAMETRO_SISTEMA_GERENCIAR, PARAMETRO_SISTEMA_ADMINISTRACAO">
+                                <p:submenu label="Segurança" icon="fa fa-key">
+                                    <sec:ifAnyGranted roles="USUARIO_GERENCIAR,USUARIO_VISUALIZAR">
+                                        <p:menuitem value="Usuário" icon="fa fa-user"
+                                                    outcome="#{controleMenu.doAcionarListagem('usuario')}"/>
+                                    </sec:ifAnyGranted>
+
+                                    <sec:ifAnyGranted roles="GRUPO_GERENCIAR,GRUPO_VISUALIZAR">
+                                        <p:menuitem value="Grupo" icon="fa fa-users"
+                                                    outcome="#{controleMenu.doAcionarListagem('grupo')}"/>
+                                    </sec:ifAnyGranted>
+
+                                    <sec:ifAnyGranted roles="PARAMETRO_SISTEMA_GERENCIAR, PARAMETRO_SISTEMA_ADMINISTRACAO">
+                                        <p:menuitem value="Parâmetros do sistema" icon="fa fa-assistive-listening-systems"
+                                                    outcome="#{controleMenu.doAcionarPagina('parametroSistema/cadastroParametroSistema.xhtml')}"/>
+                                    </sec:ifAnyGranted>
+                                </p:submenu>
+                            </sec:ifAnyGranted>
+
+                            <sec:ifAnyGranted roles="
+                                              ORCAMENTO_GERENCIAR,ORCAMENTO_VISUALIZAR,
+                                              VENDA_GERENCIAR,VENDA_VISUALIZAR,
+                                              OS_GERENCIAR,OS_VISUALIZAR,
+                                              ORDEM_SERVICO_GERENCIAR,ORDEM_SERVICO_VISUALIZAR,
+                                              CONTRATO_GERENCIAR,CONTRATO_VISUALIZAR,
+                                              NOTA_FISCAL_PRODUTO_GERENCIAR,NOTA_FISCAL_PRODUTO_VISUALIZAR,
+                                              NOTA_FISCAL_SERVICO_GERENCIAR,NOTA_FISCAL_SERVICO_VISUALIZAR,
+                                              RELATORIO_VENDA_CLIENTE,
+                                              RELATORIO_VENDA_VENDEDOR,
+                                              RELATORIO_MAIS_VENDIDOS,
+                                              RELATORIO_SERVICO_CLIENTE">
+                                <p:submenu label="Comercial" icon="fa fa-money">
+                                    <sec:ifAnyGranted roles="ORCAMENTO_GERENCIAR,ORCAMENTO_VISUALIZAR">
+                                        <p:menuitem value="Orçamento" icon="fa fa-line-chart"
+                                                    outcome="#{controleMenu.doAcionarListagem('orcamento')}"/>
+                                    </sec:ifAnyGranted>
+
+                                    <sec:ifAnyGranted roles="VENDA_GERENCIAR,VENDA_VISUALIZAR">
+                                        <p:menuitem value="Venda" icon="fa fa-shopping-basket"
+                                                    outcome="#{controleMenu.doAcionarListagem('venda')}"/>
+                                    </sec:ifAnyGranted>
+
+                                    <sec:ifAnyGranted roles="OS_GERENCIAR,OS_VISUALIZAR,ORDEM_SERVICO_GERENCIAR,ORDEM_SERVICO_VISUALIZAR">
+                                        <p:menuitem value="Ordem de serviço" icon="fa fa-pencil-square"
+                                                    outcome="#{controleMenu.doAcionarPagina('os/listaOS.xhtml')}"/>
+                                    </sec:ifAnyGranted>
+
+                                    <sec:ifAnyGranted roles="CONTRATO_GERENCIAR,CONTRATO_VISUALIZAR">
+                                        <p:menuitem value="Contrato de cliente" icon="fa fa-wpforms"
+                                                    outcome="#{controleMenu.doAcionarPagina('contratoEntrada/listaContratoCliente.xhtml')}"/>
+                                    </sec:ifAnyGranted>
+
+                                    <sec:ifAnyGranted roles="
+                                                      NOTA_FISCAL_PRODUTO_GERENCIAR,NOTA_FISCAL_PRODUTO_VISUALIZAR,
+                                                      NOTA_FISCAL_SERVICO_GERENCIAR,NOTA_FISCAL_SERVICO_VISUALIZAR">
+                                        <p:submenu label="Notas fiscais" icon="fa fa-file-text-o">
+                                            <sec:ifAnyGranted roles="NOTA_FISCAL_PRODUTO_GERENCIAR,NOTA_FISCAL_PRODUTO_VISUALIZAR">
+                                                <p:menuitem value="NF-e" icon="fa fa-file-text-o"
+                                                            outcome="#{controleMenu.doAcionarListagem('notaFiscalProduto')}"/>
+                                            </sec:ifAnyGranted>
+
+                                            <sec:ifAnyGranted roles="NOTA_FISCAL_SERVICO_GERENCIAR,NOTA_FISCAL_SERVICO_VISUALIZAR">
+                                                <p:menuitem value="NFS-e" icon="fa fa-gg-circle"
+                                                            outcome="#{controleMenu.doAcionarListagem('notaFiscalServico')}"/>
+                                            </sec:ifAnyGranted>
+                                        </p:submenu>
+                                    </sec:ifAnyGranted>
+
+                                    <p:submenu label="Relatórios" icon="fa fa-print">
+                                        <sec:ifAnyGranted roles="RELATORIO_VENDA_CLIENTE">
+                                            <p:menuitem value="Produtos por cliente"
+                                                        icon="fa fa-sticky-note"
+                                                        outcome="#{controleMenu.doAcionarPagina('relatorio/listaVendaCliente.xhtml')}"/>
+                                        </sec:ifAnyGranted>
+
+                                        <sec:ifAnyGranted roles="RELATORIO_VENDA_VENDEDOR">
+                                            <p:menuitem value="Produtos por vendedor"
+                                                        icon="fa fa-sticky-note"
+                                                        outcome="#{controleMenu.doAcionarPagina('relatorio/listaVendaVendedor.xhtml')}"/>
+                                        </sec:ifAnyGranted>
+
+                                        <sec:ifAnyGranted roles="RELATORIO_MAIS_VENDIDOS">
+                                            <p:menuitem value="Produtos mais vendidos"
+                                                        icon="fa fa-sticky-note"
+                                                        outcome="#{controleMenu.doAcionarPagina('relatorio/relatorioProdutosMaisVendidos.xhtml')}"
+                                                        rendered="#{empresaControle.enumTipoUsoSistema.vendeProdutos}"/>
+                                        </sec:ifAnyGranted>
+
+                                        <sec:ifAnyGranted roles="RELATORIO_SERVICO_CLIENTE">
+                                            <p:menuitem value="Serviços mais vendidos"
+                                                        icon="fa fa-sticky-note"
+                                                        outcome="#{controleMenu.doAcionarPagina('relatorio/relatorioServicosMaisVendidos.xhtml')}"
+                                                        rendered="#{empresaControle.enumTipoUsoSistema.vendeServicos}"/>
+                                        </sec:ifAnyGranted>
+                                    </p:submenu>
+                                </p:submenu>
+                            </sec:ifAnyGranted>
+
+                            <sec:ifAnyGranted roles="
+                                              COMPRA_GERENCIAR,COMPRA_VISUALIZAR,
+                                              PRODUCAO_GERENCIAR,PRODUCAO_VISUALIZAR,
+                                              CONTRATO_GERENCIAR,CONTRATO_VISUALIZAR,
+                                              EXTRATO_ESTOQUE_PRODUTO,
+                                              RELATORIO_GIRO_ESTOQUE,
+                                              RELATORIO_POSICAO_ESTOQUE,
+                                              RELATORIO_MOVIMENTO_ESTOQUE">
+                                <p:submenu label="Suprimentos" icon="fa fa-credit-card">
+                                    <sec:ifAnyGranted roles="COMPRA_GERENCIAR,COMPRA_VISUALIZAR">
+                                        <p:menuitem value="Compra" icon="fa fa-shopping-cart"
+                                                    outcome="#{controleMenu.doAcionarListagem('compra')}"/>
+                                    </sec:ifAnyGranted>
+
+                                    <sec:ifAnyGranted roles="PRODUCAO_GERENCIAR,PRODUCAO_VISUALIZAR">
+                                        <p:menuitem value="Produção" icon="fa fa-industry"
+                                                    outcome="#{controleMenu.doAcionarListagem('producao')}"/>
+                                    </sec:ifAnyGranted>
+
+                                    <sec:ifAnyGranted roles="CONTRATO_GERENCIAR,CONTRATO_VISUALIZAR">
+                                        <p:menuitem value="Contrato de fornecedor"
+                                                    icon="fa fa-wpforms"
+                                                    outcome="#{controleMenu.doAcionarPagina('contratoSaida/listaContratoFornecedor.xhtml')}"/>
+                                    </sec:ifAnyGranted>
+
+                                    <sec:ifAnyGranted roles="
+                                                      EXTRATO_ESTOQUE_PRODUTO,
+                                                      RELATORIO_GIRO_ESTOQUE,
+                                                      RELATORIO_POSICAO_ESTOQUE,
+                                                      RELATORIO_MOVIMENTO_ESTOQUE">
+                                        <p:submenu label="Estoque" icon="fa fa-leaf">
+                                            <sec:ifAnyGranted roles="EXTRATO_ESTOQUE_PRODUTO">
+                                                <p:menuitem value="Movimentação"
+                                                            icon="fa fa-list-alt"
+                                                            outcome="#{controleMenu.doAcionarPagina('estoque/listaExtratoEstoque.xhtml')}"/>
+                                            </sec:ifAnyGranted>
+
+                                            <sec:ifAnyGranted roles="
+                                                              RELATORIO_GIRO_ESTOQUE,
+                                                              RELATORIO_POSICAO_ESTOQUE,
+                                                              RELATORIO_MOVIMENTO_ESTOQUE">
+                                                <p:submenu label="Relatório" icon="fa fa-print">
+                                                    <sec:ifAnyGranted roles="RELATORIO_GIRO_ESTOQUE">
+                                                        <p:menuitem value="Giro de estoque" icon="fa fa-sticky-note"
+                                                                    outcome="#{controleMenu.doAcionarPagina('relatorio/listaGiroEstoque.xhtml')}"/>
+                                                    </sec:ifAnyGranted>
+
+                                                    <sec:ifAnyGranted roles="RELATORIO_POSICAO_ESTOQUE">
+                                                        <p:menuitem value="Posição de estoque" icon="fa fa-sticky-note"
+                                                                    outcome="#{controleMenu.doAcionarPagina('relatorio/listaPosicaoEstoque.xhtml')}"/>
+                                                    </sec:ifAnyGranted>
+
+                                                    <sec:ifAnyGranted roles="RELATORIO_MOVIMENTO_ESTOQUE">
+                                                        <p:menuitem value="Movimento de estoque" icon="fa fa-sticky-note"
+                                                                    outcome="#{controleMenu.doAcionarPagina('relatorio/relatorioMovimentoDeEstoque.xhtml')}"/>
+                                                    </sec:ifAnyGranted>
+
+                                                    <ui:remove>
+                                                        <sec:ifAnyGranted roles="RELATORIO_EXTRATO_ESTOQUE">
+                                                            <p:menuitem value="Extrato de estoque" icon="fa fa-sticky-note"
+                                                                        outcome="#{controleMenu.doAcionarPagina('relatorio/relatorioExtratoDeEstoque.xhtml')}"/>
+                                                        </sec:ifAnyGranted>
+                                                    </ui:remove>
+                                                </p:submenu>
+                                            </sec:ifAnyGranted>
+                                        </p:submenu>
+                                    </sec:ifAnyGranted>
+
+                                </p:submenu>
+                            </sec:ifAnyGranted>
+
+                            <sec:ifAnyGranted roles="
+                                              CONTA_RECEBER_GERENCIAR,CONTA_RECEBER_VISUALIZAR,
+                                              CONTA_PAGAR_GERENCIAR,CONTA_PAGAR_VISUALIZAR,
+                                              TRANSFERENCIA_GERENCIAR,TRANSFERENCIA_VISUALIZAR,
+                                              CONTA_PAGAR_GERENCIAR,CONTA_PAGAR_VISUALIZAR,
+                                              ANALISE_ORCAMENTARIA_VISUALIZAR,
+                                              INTEGRACAO_BANCARIA_GERENCIAR,INTEGRACAO_BANCARIA_VISUALIZAR,
+                                              DRE_VISUALIZAR,
+                                              FLUXO_CAIXA_VISUALIZAR,
+                                              RELATORIO_ANALISE_PAGAMENTO,
+                                              RELATORIO_ANALISE_RECEBIMENTO,
+                                              EXTRATO_VISUALIZAR">
+                                <p:submenu label="Financeiro" icon="fa fa-dollar">
+                                    <sec:ifAnyGranted roles="CONTA_RECEBER_GERENCIAR,CONTA_RECEBER_VISUALIZAR,CONTA_PAGAR_GERENCIAR,CONTA_PAGAR_VISUALIZAR">
+                                        <p:menuitem value="Calendário financeiro" icon="fa fa-calendar"
+                                                    url="#{controleMenu.doAcionarPagina('financeiro/geral.xhtml')}"/>
+                                    </sec:ifAnyGranted>
+
+                                    <sec:ifAnyGranted roles="CONTA_RECEBER_GERENCIAR,CONTA_RECEBER_VISUALIZAR">
+                                        <p:menuitem value="Contas a receber" icon="fa fa-download"
+                                                    url="#{controleMenu.doAcionarListagem('contaReceber')}"/>
+                                    </sec:ifAnyGranted>
+
+                                    <sec:ifAnyGranted roles="CONTA_PAGAR_GERENCIAR,CONTA_PAGAR_VISUALIZAR">
+                                        <p:menuitem value="Contas a pagar" icon="fa fa-upload"
+                                                    url="#{controleMenu.doAcionarListagem('contaPagar')}"/>
+                                    </sec:ifAnyGranted>
+
+                                    <sec:ifAnyGranted roles="TRANSFERENCIA_GERENCIAR,TRANSFERENCIA_VISUALIZAR">
+                                        <p:submenu label="Caixa" icon="fa fa-archive">
+                                            <sec:ifAnyGranted roles="TRANSFERENCIA_GERENCIAR,TRANSFERENCIA_VISUALIZAR">
+                                                <p:menuitem value="Transferência entre contas"
+                                                            icon="fa fa-exchange"
+                                                            url="#{controleMenu.doAcionarListagem('transferenciaConta')}"/>
+                                            </sec:ifAnyGranted>
+                                            <sec:ifAnyGranted roles="CONSOLIDACAO_MENSAL_GERENCIAR,CONSOLIDACAO_MENSAL_VISUALIZAR">
+                                                <p:menuitem value="Consolidação mensal"
+                                                            icon="fa fa-archive"
+                                                            url="#{controleMenu.doAcionarPagina('financeiro/consolidacaoMensal.xhtml')}"/>
+                                            </sec:ifAnyGranted>
+
+                                            <sec:ifAnyGranted roles="ANALISE_ORCAMENTARIA_VISUALIZAR">
+                                                <p:menuitem value="Previsão Orçamentária"
+                                                            icon="fa fa-bar-chart"
+                                                            url="#{controleMenu.doAcionarPagina('planoConta/previsaoOrcamentaria.xhtml')}"/>
+                                            </sec:ifAnyGranted>
+                                        </p:submenu>
+                                    </sec:ifAnyGranted>
+
+                                    <sec:ifAnyGranted roles="INTEGRACAO_BANCARIA_GERENCIAR, INTEGRACAO_BANCARIA_VISUALIZAR">
+                                        <p:menuitem value="Conciliação bancária"
+                                                    icon="fa fa-retweet"
+                                                    url="#{controleMenu.doAcionarListagem('integracaoBancaria')}"/>
+                                    </sec:ifAnyGranted>
+
+                                    <p:submenu label="Relatórios" icon="fa fa-print">
+                                        <ui:remove>
+                                            <sec:ifAnyGranted roles="RELATORIO_LANCAMENTO_CAIXA">
+                                                <p:menuitem value="Lançamentos de caixa"
+                                                            icon="fa fa-sticky-note"
+                                                            outcome="#{controleMenu.doAcionarPagina('relatorio/listaLancamentoCaixa.xhtml')}"/>
+                                            </sec:ifAnyGranted>
+                                        </ui:remove>
+                                        <sec:ifAnyGranted roles="DRE_VISUALIZAR">
+                                            <p:menuitem value="DRE" icon="fa fa-calculator"
+                                                        outcome="#{controleMenu.doAcionarPagina('dre/listaDRE.xhtml')}"/>
+                                        </sec:ifAnyGranted>
+
+                                        <sec:ifAnyGranted roles="FLUXO_CAIXA_VISUALIZAR">
+                                            <p:menuitem value="Fluxo de caixa"
+                                                        icon="fa fa-share-square"
+                                                        outcome="#{controleMenu.doAcionarListagem('fluxoCaixa')}"/>
+                                        </sec:ifAnyGranted>
+
+                                        <sec:ifAnyGranted roles="RELATORIO_ANALISE_PAGAMENTO">
+                                            <p:menuitem value="Análise de recebimentos"
+                                                        icon="fa fa-sticky-note"
+                                                        outcome="#{controleMenu.doAcionarPagina('relatorio/relatorioAnaliseRecebimento.xhtml')}"/>
+                                        </sec:ifAnyGranted>
+
+                                        <sec:ifAnyGranted roles="RELATORIO_ANALISE_RECEBIMENTO">
+                                            <p:menuitem value="Análise de pagamentos"
+                                                        icon="fa fa-sticky-note"
+                                                        outcome="#{controleMenu.doAcionarPagina('relatorio/relatorioAnalisePagamento.xhtml')}"/>
+                                        </sec:ifAnyGranted>
+
+                                        <sec:ifAnyGranted roles="EXTRATO_VISUALIZAR">
+                                            <p:menuitem value="Extrato de conta corrente" icon="fa fa-list-ol"
+                                                        url="#{controleMenu.doAcionarPagina('extrato/listaExtratoContaCorrente.xhtml')}"/>
+                                        </sec:ifAnyGranted>
+
+                                        <sec:ifAnyGranted roles="ANALISE_ORCAMENTARIA_VISUALIZAR">
+                                            <p:menuitem value="Análise de previsão orçamentária"
+                                                        icon="fa fa-area-chart"
+                                                        url="#{controleMenu.doAcionarPagina('planoConta/analiseOrcamentaria.xhtml')}"/>
+                                        </sec:ifAnyGranted>
+
+                                        <sec:ifAnyGranted roles="RELATORIO_MOVIMENTACAO_CLIENTE">
+                                            <p:menuitem value="Movimentações dos clientes"
+                                                        icon="fa fa-exchange"
+                                                        url="#{controleMenu.doAcionarPagina('relatorio/relatorioMovimentacaoCliente.xhtml')}"/>
+                                        </sec:ifAnyGranted>
+
+                                        <sec:ifAnyGranted roles="RELATORIO_MOVIMENTACAO_CLIENTE">
+                                            <p:menuitem value="Média de prazo de pagamento e média de prazo de recebimento"
+                                                        icon="fa fa-clock-o"
+                                                        url="#{controleMenu.doAcionarPagina('relatorio/relatorioMediaPrazoPagamentoRecebimento.xhtml')}"/>
+                                        </sec:ifAnyGranted>
+                                        <sec:ifAnyGranted roles="RELATORIO_MOVIMENTACAO_CLIENTE">
+                                            <p:menuitem value="Cliente com faturas IUGU faltantes"
+                                                        icon="fa fa-exclamation-triangle"
+                                                        url="#{controleMenu.doAcionarPagina('relatorio/relatorioClientesComFaturaIuguFaltante.xhtml')}"/>
+                                        </sec:ifAnyGranted>
+                                        <sec:ifAnyGranted roles="RELATORIO_MOVIMENTACAO_CLIENTE">
+                                            <p:menuitem value="Acumulado por tipo movimentacao"
+                                                        icon="fa fa-dollar"
+                                                        url="#{controleMenu.doAcionarPagina('relatorio/relatorioClienteMovimentacaoAcumuladoPorTipoMovimentacao.xhtml')}"/>
+                                        </sec:ifAnyGranted>
+                                        <sec:ifAnyGranted roles="RELATORIO_MOVIMENTACAO_CLIENTE">
+                                            <p:menuitem value="Controle de pagamentos"
+                                                        icon="fa fa-spinner"
+                                                        url="#{controleMenu.doAcionarPagina('relatorio/relatorioControlePagamentoParcial.xhtml')}"/>
+                                        </sec:ifAnyGranted>
+                                    </p:submenu>
+                                </p:submenu>
+                            </sec:ifAnyGranted>
+
+                            <sec:ifAnyGranted roles="
+                                              LANCAMENTO_VISUALIZAR,
+                                              FECHAMENTO_CONTABIL_GERENCIAR,FECHAMENTO_CONTABIL_VISUALIZAR,
+                                              IMPORTACAO_CONTA">
+                                <p:submenu label="Contábil" icon="fa fa-wrench">
+                                    <sec:ifAnyGranted roles="LANCAMENTO_VISUALIZAR">
+                                        <p:menuitem value="Lançamento contábil" icon="fa fa-share-square"
+                                                    outcome="#{controleMenu.doAcionarPagina('contabil/listaLancamento.xhtml')}"/>
+                                    </sec:ifAnyGranted>
+
+                                    <sec:ifAnyGranted roles="FECHAMENTO_CONTABIL_GERENCIAR,FECHAMENTO_CONTABIL_VISUALIZAR">
+                                        <p:menuitem value="Fechamento contábil" icon="fa fa-american-sign-language-interpreting"
+                                                    outcome="#{controleMenu.doAcionarListagem('fechamentoContabil')}"/>
+                                    </sec:ifAnyGranted>
+
+                                    <sec:ifAnyGranted roles="IMPORTACAO_CONTA">
+                                        <p:menuitem value="Consulta de apropriação contábil" icon="fa fa-area-chart"
+                                                    outcome="#{controleMenu.doAcionarPagina('contabil/importacaoConta.xhtml')}"/>
+                                    </sec:ifAnyGranted>
+                                </p:submenu>
+                            </sec:ifAnyGranted>
+
+                            <sec:ifAnyGranted roles="
+                                              REGISTRO_PONTO_GERENCIAR,
+                                              PONTO_GERENCIAR,PONTO_VISUALIZAR,
+                                              ABONO_PONTO_GERENCIAR, ABONO_PONTO_VISUALIZAR,
+                                              MANUTENCAO_PONTO_GERENCIAR">
+                                <p:submenu label="Gestão de pessoas" icon="fa fa-user-o">
+                                    <sec:ifAnyGranted roles="REGISTRO_PONTO_GERENCIAR">
+                                        <p:menuitem value="Registrar ponto"
+                                                    icon="fa fa-podcast"
+                                                    outcome="#{controleMenu.doAcionarPagina('pessoal/ponto.xhtml')}"/>
+                                    </sec:ifAnyGranted>
+
+                                    <sec:ifAnyGranted roles="PONTO_GERENCIAR,PONTO_VISUALIZAR">
+                                        <p:menuitem value="Consultar ponto"
+                                                    icon="fa fa-address-book"
+                                                    outcome="#{controleMenu.doAcionarListagem('registroPonto')}"/>
+                                    </sec:ifAnyGranted>
+
+                                    <sec:ifAnyGranted roles="ABONO_PONTO_GERENCIAR, ABONO_PONTO_VISUALIZAR">
+                                        <p:menuitem value="Abonar ponto" icon="fa fa-id-card-o"
+                                                    outcome="#{controleMenu.doAcionarListagem('abonoPonto')}"/>
+                                    </sec:ifAnyGranted>
+
+                                    <sec:ifAnyGranted roles="MANUTENCAO_PONTO_GERENCIAR">
+                                        <p:menuitem value="Manutenção de ponto"
+                                                    icon="fa fa-columns"
+                                                    outcome="#{controleMenu.doAcionarPagina('registroPonto/listaManutencaoPonto.xhtml')}"/>
+                                    </sec:ifAnyGranted>
+                                </p:submenu>
+                            </sec:ifAnyGranted>
+
+                            <sec:ifAnyGranted roles="AGENDA_GERENCIAR">
+                                <p:menuitem value="Agenda" icon="fa fa-calendar"
+                                            rendered="#{parametroSistemaControle.parametroSistemaSelecionado.habilitaAgenda eq 'S' and usuarioControle.usuarioLogado.idFuncionario eq null}"
+                                            outcome="#{controleMenu.doAcionarPagina('modulos/agenda/gerenciarAgenda.xhtml')}"/>
+                            </sec:ifAnyGranted>
+
+                            <sec:ifAnyGranted roles="AGENDA_VISUALIZAR">
+                                <p:menuitem value="Meus agendamentos" icon="fa fa-calendar"
+                                            rendered="#{parametroSistemaControle.parametroSistemaSelecionado.habilitaAgenda eq 'S' and usuarioControle.usuarioLogado.idFuncionario ne null}"
+                                            outcome="#{controleMenu.doAcionarPagina('modulos/agenda/visualizarAgenda.xhtml')}"/>
+                            </sec:ifAnyGranted>
+
+                            <sec:ifAnyGranted roles="
+                                              UNIDADE_GERENCIAR,UNIDADE_VISUALIZAR,
+                                              VAGA_VISUALIZAR,VAGA_GERENCIAR,
+                                              SINDICO_VISUALIZAR,SINDICO_GERENCIAR,
+                                              PARAMETRO_CONDOMINIO_GERENCIAR">
+                                <p:submenu label="Condomínio" icon="fa fa-building" rendered="#{usuarioControle.usuarioLogado.idPerfil.ehSuporte}">
+                                    <sec:ifAnyGranted roles="UNIDADE_GERENCIAR,UNIDADE_VISUALIZAR">
+                                        <p:menuitem value="Bloco" icon="fa fa-building"
+                                                    outcome="#{controleMenu.doAcionarPagina('modulos/condominio/bloco/listaBloco.xhtml')}"/>
+                                    </sec:ifAnyGranted>
+
+                                    <sec:ifAnyGranted roles="VAGA_VISUALIZAR,VAGA_GERENCIAR">
+                                        <p:menuitem value="Vaga" icon="fa fa-building"
+                                                    outcome="#{controleMenu.doAcionarPagina('modulos/condominio/vaga/listaVaga.xhtml')}"/>
+                                    </sec:ifAnyGranted>
+
+                                    <sec:ifAnyGranted roles="SINDICO_VISUALIZAR,SINDICO_GERENCIAR">
+                                        <p:menuitem value="Síndico" icon="fa fa-building"
+                                                    outcome="#{controleMenu.doAcionarPagina('modulos/condominio/sindico/listaSindico.xhtml')}"/>
+                                    </sec:ifAnyGranted>
+
+                                    <sec:ifAnyGranted roles="PARAMETRO_CONDOMINIO_GERENCIAR">
+                                        <p:menuitem value="Parâmetro" icon="fa fa-building"
+                                                    outcome="#{controleMenu.doAcionarPagina('modulos/condominio/parametro/cadastroParametroCondominio.xhtml')}"/>
+                                    </sec:ifAnyGranted>
+                                </p:submenu>
+
+                            </sec:ifAnyGranted>
+
+                            <sec:ifAnyGranted roles="
+                                              IMPORTACAO_NFE, IMPORTACAO_NFSE">
+                                <p:submenu label="Importação" icon="fa fa-cloud-upload">
+                                    <sec:ifAnyGranted roles="IMPORTACAO_NFE">
+                                        <p:menuitem value="NF-e" icon="fa fa-file-text-o"
+                                                    outcome="#{controleMenu.doAcionarPagina('importacao/nfe.xhtml')}"/>
+                                    </sec:ifAnyGranted>
+
+                                    <sec:ifAnyGranted roles="IMPORTACAO_NFSE">
+                                        <p:menuitem value="NFS-e" icon="fa fa-gg-circle"
+                                                    outcome="#{controleMenu.doAcionarPagina('importacao/nfse.xhtml')}"/>
+                                    </sec:ifAnyGranted>
+                                </p:submenu>
+
+                            </sec:ifAnyGranted>
+                            <p:menuitem value="Meu plano" icon="fa fa-object-group"
+                                        outcome="#{controleMenu.doAcionarListagem('pagamento/meuPlano.xhtml')}"/>
+                        </p:submenu>
+                    </rain:menu>
+                    <rain:menu widgetVar="me" rendered="#{empresaControle.isLogadoComoCredor()}">
+                        <p:submenu label="Cadastro">
+                            <p:menuitem value="Contas bancárias"
+                                        url="#{controleMenu.doAcionarListagem('contaBancaria')}"/>
+                        </p:submenu>
+                        <p:menuitem value="Meus dados" outcome="#{controleMenu.doAcionarListagem('antecipador/cadastroAntecipador.xhtml')}"/>
+                        <p:menuitem value="Solicitações de adiantamento" outcome="#{controleMenu.doAcionarListagem('antecipador/solicitacao.xhtml')}"/>
+                    </rain:menu>
+                    <rain:menu widgetVar="me" rendered="#{empresaControle.isLogadoComoGestor()}">
+                        <p:submenu label="Menu">
+                            <p:menuitem value="Empresas credenciadas" outcome="#{controleMenu.doAcionarPagina('administracao/listaEmpresaCredenciada.xhtml')}"/>
+                            <p:submenu label="Credores">
+                                <p:menuitem value="Cadastro" outcome="#{controleMenu.doAcionarListagem('antecipador')}"/>
+                                <p:menuitem value="Solicitações de adiantamento" outcome="#{controleMenu.doAcionarListagem('antecipador/solicitacao.xhtml')}"/>
+                            </p:submenu>
+                            <p:submenu label="Módulos e planos">
+                                <p:menuitem value="Módulo" outcome="#{controleMenu.doAcionarListagem('administracao/modulo')}"/>
+                                <p:menuitem value="Pacote de módulo" outcome="#{controleMenu.doAcionarListagem('administracao/moduloPacote')}"/>
+                                <p:menuitem value="Planos" onclick="alert('Em desenvolvimento'); return false;"/>
+                            </p:submenu>
+                            <p:submenu label="Relatórios gerenciais">
+                                <p:menuitem value="Relatorio Indicação" outcome="#{controleMenu.doAcionarPagina('relatorio/relatorioIndicacao.xhtml')}"/>
+                                <p:menuitem value="Acessos por empresa" outcome="#{controleMenu.doAcionarPagina('administracao/acessosPorEmpresa.xhtml')}"
+                                            rendered="#{sec:ifAnyGranted('DEV')}"/>
+                            </p:submenu>
+                            <p:menuitem value="Versão" outcome="#{controleMenu.doAcionarListagem('administracao/versaoSistema')}"/>
+                            <p:menuitem value="Parâmetro geral" outcome="#{controleMenu.doAcionarPagina('parametroGeral/cadastroParametroGeral.xhtml')}"
+                                        rendered="#{usuarioControle.usuarioLogado.administrator}"/>
+                        </p:submenu>
+                    </rain:menu>
+                    <rain:menu rendered="#{sec:ifAnyGranted('DEV')}" styleClass="mt-0">
+                        <p:submenu label="DEV">
+                            <p:menuitem icon="fa fa-fw" value="Serviços agendados"
+                                        outcome="#{controleMenu.doAcionarPagina('administracao/servicosAgendados.xhtml')}"/>
+                            <p:menuitem icon="fa fa-fw" value="Rotinas"
+                                        outcome="#{controleMenu.doAcionarPagina('administracao/procedures.xhtml')}"/>
+                            <p:menuitem icon="fa fa-fw" value="IntroJS Config"
+                                        outcome="#{controleMenu.doAcionarPagina('administracao/introJSConfig/listaIntroJSConfig.xhtml')}"/>
+                            <p:menuitem icon="fa fa-fw" value="Permissões"
+                                        outcome="#{controleMenu.doAcionarPagina('seguranca/listaPermissao.xhtml')}"/>
+                        </p:submenu>
+                    </rain:menu>
+                    <script>
+                        // <![CDATA[
+                        $(document).ready(function () {
+                            const validaMenu = (menu, val) => {
+                                let atLeastOne = false;
+                                menu.each((i, e) => {
+                                    let hits = false;
+                                    const elem = $(e);
+                                    hits |= elem.children('a').find('span').html().toLowerCase().indexOf(
+                                        val) >= 0;
+                                    if (!hits && elem.children('ul') !== null) {
+                                        hits |= validaMenu(elem.children('ul').children(), val);
+                                    }
+                                    elem[(hits ? 'remove' : 'add') + 'Class']('d-none');
+                                    atLeastOne |= hits;
+                                });
+                                return atLeastOne;
+                            };
+                            const inp = PF('menuSearch').jq.get(0);
+                            const close = document.querySelector('.search-input i.fa-times-circle');
+                            const parent = inp.parentElement;
+                            let menu = PF('me').menu;
+                            inp.value = '';
+                            inp.addEventListener('input', () => {
+                                if (!menu) {
+                                    menu = PF('me').menu;
+                                }
+                                menu.find('.d-none').removeClass('d-none');
+                                close.classList.remove('active');
+                                if (inp.value !== '') {
+                                    validaMenu(menu.children(), inp.value.toLowerCase());
+                                    close.classList.add('active');
+                                }
+                            }, {passive: true});
+                            inp.addEventListener('click', evt => evt.stopPropagation());
+                            close.addEventListener('click', evt => {
+                                inp.value = '';
+                                menu.find('.d-none').removeClass('d-none');
+                                close.classList.remove('active');
+                            });
+                            $(inp).on('focus mouseenter', () => parent.classList.add('focus'));
+                            $(inp).on('blur mouseleave', () => {
+                                if (inp.value === '') {
+                                    parent.classList.remove('focus');
+                                }
+                            });
+                        });
+                        // ]]>
+                    </script>
+                </h:form>
+            </div>
+        </div>
+    </div>
+</ui:composition>

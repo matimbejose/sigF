@@ -1,0 +1,32 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"
+      lang="pt" class="no-js"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite/components">
+
+    <f:metadata >
+        <f:event listener="#{pagamentoControle.processaRetornoDebito()}" type="preRenderView"/>
+    </f:metadata>
+
+    <ui:composition template="/WEB-INF/templateUser.xhtml">
+
+        <ui:define name="title">SG Finanças - Link pagamento</ui:define>
+
+        <ui:define name="content">
+            <div class="row">
+                <div class="ui-g-12 ui-md-12 " style="padding: 10px 25px ">
+                    <h3 class="text-center">Comprovante do pagamento</h3>
+                    <hr class="divider-dark"/>
+                    <p>Valor pago: <small class="text-muted"><cc:convertMoney value="#{pagamentoControle.transacao.idVenda.valor}"/></small></p>
+                    <p>Codigo pagamento: <small class="text-muted">#{pagamentoControle.transacao.idPagamento}</small></p>
+                    <p>Data do pagamento: <small class="text-muted">#{pagamentoControle.retornarDataHora()}</small></p>
+                    <p>Nome do cartão: <small class="text-muted">#{pagamentoControle.transacao.nomeCartao}</small></p>
+                    <p>Nº cartão: <small class="text-muted">XXXX.XXXX.XXXX.#{pagamentoControle.transacao.numeroCartao}</small></p>
+                    <input type="hidden" id="idTransacao" value="#{pagamentoControle.transacao.id}"/>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:sec="http://www.springframework.org/security/facelets/tags"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="IntroJSConfig"/>
+
+        <ui:param name="enabled" value="#{sec:ifAnyGranted('DEV')}"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li><p:link outcome="/restrito/administracao/introJSConfig/listaIntroJSConfig.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteAdd" action="#{introJSConfigControle.doStartAdd()}" rendered="#{enabled}"/>
+        </ui:define>
+
+        <ui:define name="formButtons">
+            <p:commandButton rendered="#{enabled}" type="button" value="Limpar filtros" onclick="clearDataTableFilters('tbl');"/>
+            <p:commandButton rendered="#{enabled}" id="toggler" type="button" value="Colunas"/>
+            <p:columnToggler rendered="#{enabled}" datasource="tbl" trigger="toggler"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <p:dataTable rendered="#{enabled}" value="#{introJSConfigControle.model}" emptyMessage="Nenhum registro encontrado." var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+                <p:column headerText="#" width="55" sortBy="#{item.id}" visible="false">
+                    <h:outputText value="#{item.id}"/>
+                </p:column>
+
+                <p:column headerText="Page id" sortBy="#{item.pageId}">
+                    <h:outputText value="#{item.pageId}"/>
+                </p:column>
+
+                <p:column headerText="Força exibição" sortBy="#{item.forcaExibicao}">
+                    <h:outputText value="Sim" rendered="#{item.forcaExibicao eq 'S'}"/>
+                    <h:outputText value="Não" rendered="#{item.forcaExibicao eq 'N'}"/>
+                </p:column>
+
+                <p:column headerText="Revisão" sortBy="#{item.revisao}">
+                    <h:outputText value="#{item.revisao}"/>
+                </p:column>
+
+                <p:column width="117" headerText="Ações" >
+                    <div class="actions">
+                        <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Alterar"
+                                       action="#{introJSConfigControle.doStartAlterar()}">
+                            <i class="fa fa-edit"></i>
+                            <f:setPropertyActionListener value="#{item}" target="#{introJSConfigControle.introJSConfigSelecionado}"/>
+                        </h:commandLink>
+                        <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Remover"
+                                       action="#{introJSConfigControle.doStartRemover()}">
+                            <i class="fa fa-trash-o"></i>
+                            <f:setPropertyActionListener value="#{item}" target="#{introJSConfigControle.introJSConfigSelecionado}"/>
+                        </h:commandLink>
+                    </div>
+                </p:column>
+
+            </p:dataTable>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

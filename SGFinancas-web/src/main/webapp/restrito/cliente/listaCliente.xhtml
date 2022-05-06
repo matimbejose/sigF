@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:sec="http://www.springframework.org/security/facelets/tags"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Cliente"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Cadastro</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/cliente/listaCliente.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <sec:ifAnyGranted roles ="CLIENTE_GERENCIAR" >
+                <h:commandButton id="remoteAdd" action="#{clienteControle.doStartAdd()}"/>
+                <h:commandButton id="remoteImport" action="#{clienteControle.mudaSituacaoImportacao()}"/>
+            </sec:ifAnyGranted>
+        </ui:define>
+
+        <ui:define name="formButtons">
+            <p:menuButton value="Recebíveis" rendered="#{sec:ifAnyGranted('CLIENTE_MOVIMENTACAO_EXCLUIR')}">
+                <p:menuitem value="Solicitações de exclusão" action="#{clienteControle.doStartReviewDeleteRequests}" ajax="false"
+                            disabled="#{sec:ifNotGranted('CLIENTE_MOVIMENTACAO_EXCLUIR')}"/>
+                <p:menuitem value="Solicitações de alteração" ajax="false" disabled="true"/>
+            </p:menuButton>
+            <p:commandButton type="button" value="Limpar filtros" onclick="clearDataTableFilters('tbl');"/>
+            <p:commandButton id="toggler" type="button" value="Colunas"/>
+            <p:columnToggler datasource="tbl" trigger="toggler"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <script src="https://unpkg.com/vanilla-masker@1.1.1/build/vanilla-masker.min.js"></script>
+            <script>
+                //<![CDATA[
+                function aplicaFiltroPlaca() {
+                    const mercosul = 'AAA9A99', padrao = 'AAA-9999';
+                    const elem = PF('placa').getJQ();
+                    if (elem.attr('mascarado') === 'true') {
+                        return;
+                    }
+                    elem.attr('mascarado', 'true');
+                    elem.on('input', () => {
+                        const val = elem.val().toUpperCase().replace(/[^\dA-Z-]/g, '');
+                        let tipoPadrao = val.indexOf('-') !== -1 || (val.length > 4 && !isNaN(parseInt(val.charAt(4))));
+                        elem.val(VMasker.toPattern(val, tipoPadrao ? padrao : mercosul));
+                    });
+                }
+                //]]>
+            </script>
+            <p:dataTable value="#{clienteControle.model}" emptyMessage="#{clienteControle.emptyMessage}" var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="#{clienteControle.paginatorTemplate}" currentPageReportTemplate="#{clienteControle.currentPageReportTemplate}" styleClass="#{clienteControle.styleClass}">
+
+                <p:column headerText="#" width="55" sortBy="#{item.id}" visible="false">
+                    <h:outputText value="#{item.id}"/>
+                </p:column>
+
+                <p:column headerText="Nome" sortBy="#{item.nome}" filterBy="#{item.nome}">
+                    <f:facet name="filter">
+                        <p:inputText value="#{clienteControle.filtro.descricao}" onchange="PF('tbl').filter()"/>
+                    </f:facet>
+                    <h:outputText value="#{item.nome} - (NÃO ATUALIZADO)" rendered="#{item.idPlanoConta eq null}"/>
+                    <h:outputText value="#{item.nome}" rendered="#{item.idPlanoConta ne null}"/>
+                </p:column>
+
+                <p:column headerText="CPF/CNPJ" sortBy="#{item.cpfCNPJ}" filterBy="#{item.cpfCNPJ}">
+                    <f:facet name="filter">
+                        <p:inputText value="#{clienteControle.filtro.cpfCnpj}" onchange="PF('tbl').filter()"/>
+                    </f:facet>
+                    <h:outputText value="#{item.cpfCNPJ}"/>
+                </p:column>
+
+                <p:column headerText="Email" sortBy="#{item.email}" filterBy="#{item.email}">
+                    <f:facet name="filter">
+                        <p:inputText value="#{clienteControle.filtro.email}" onchange="PF('tbl').filter()"/>
+                    </f:facet>
+                    <h:outputText value="#{item.email}"/>
+                </p:column>
+
+                <p:column headerText="Pontuação" sortBy="#{item.pontuacao}" style="text-align: right" width="120" visible="false">
+                    <h:outputText value="#{item.pontuacao}">
+                        <f:convertNumber locale="pt_BR" minFractionDigits="2" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Placas" width="120" rendered="#{empresaControle.empresaLogada.idCategoriaEmpresa.descricao eq 'Oficina mecânica'}" filterBy="#{item.placa}">
+                    <f:facet name="filter">
+                        <p:inputText value="#{clienteControle.filtro.placa}" onchange="PF('tbl').filter()" widgetVar="placa" onfocus="aplicaFiltroPlaca();"/>
+                    </f:facet>
+                    <h:outputText value="#{clienteControle.placasDo(item)}"/>
+                </p:column>
+
+                <p:column headerText="Ativo" sortBy="#{item.ativo}" width="100" filterBy="#{item.ativo}">
+                    <f:facet name="filter">
+                        <p:selectOneMenu onchange="PF('tbl').filter()" styleClass="custom-filter"
+                                         value="#{clienteControle.filtro.ativo}">
+                            <f:selectItem itemLabel="Todos" noSelectionOption="true"/>
+                            <f:selectItem itemLabel="Sim" itemValue="S"/>
+                            <f:selectItem itemLabel="Não" itemValue="N"/>
+                        </p:selectOneMenu>
+                    </f:facet>
+
+                    <h:outputText value="Sim" rendered="#{item.ativo eq 'S'}"/>
+                    <h:outputText value="Não" rendered="#{item.ativo eq 'N'}"/>
+                </p:column>
+
+                <sec:ifAnyGranted roles ="CLIENTE_GERENCIAR" >
+                    <p:column width="135" headerText="Ações" >
+
+                        <div class="actions">
+                            <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Alterar cliente"
+                                           action="#{clienteControle.doStartAlterar()}" rendered="#{item.ativo eq 'S'}">
+                                <i class="fa fa-edit"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{clienteControle.clienteSelecionado}"/>
+                            </h:commandLink>
+                            <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Contas do cliente"
+                                           action="#{clienteControle.doStartContasCliente()}"  >
+                                <i class="fa fa-check-square"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{clienteControle.clienteSelecionado}"/>
+                            </h:commandLink>
+
+                            <h:commandLink  styleClass="btn btn-circle btn-icon-only btn-default icones" title="Remover cliente"
+                                            action="#{clienteControle.doFinishExcluir()}" rendered="#{item.ativo eq 'S'}"
+                                            onclick="return confirm('Tem certeza que deseja excluir este contato?');" >
+                                <i class="icon-trash"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{clienteControle.clienteSelecionado}"/>
+                            </h:commandLink>
+
+                            <h:commandLink  title="Auditoria" styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                            action="#{clienteControle.doShowAuditoria()}" >
+                                <i class="fa fa-history"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{clienteControle.clienteSelecionado}"/>
+                            </h:commandLink>
+
+                        </div>
+
+
+                    </p:column>
+                </sec:ifAnyGranted>
+
+            </p:dataTable>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

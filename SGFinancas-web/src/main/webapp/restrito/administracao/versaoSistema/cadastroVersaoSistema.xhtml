@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Versão do sistema"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li><p:link outcome="/restrito/administracao/versaoSistema/listaVersaoSistema.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteSave" action="#{versaoSistemaControle.doFinishAdd()}"/>
+            <h:commandButton id="remoteCancel" action="listaVersaoSistema.xhtml" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <div class="form-body">
+                <div class="card">
+                    <div class="row">
+                        <div class="col-2 form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Versão"/>
+                            <p:inputMask value="#{versaoSistemaControle.versaoSistemaSelecionado.versao}" mask="9.99.999"
+                                         required="true" requiredMessage="Informe o número do versão do sistema"/>
+                        </div>
+                        <div class="col-2 form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Data de inclusão"/>
+                            <p:calendar pattern="dd/MM/yyyy" value="#{versaoSistemaControle.versaoSistemaSelecionado.dataInclusao}" disabled="true"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <p:outputLabel for="@next" value="Descrição"/>
+                            <p:inputTextarea value="#{versaoSistemaControle.versaoSistemaSelecionado.descricao}" style="min-height: 400px;"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

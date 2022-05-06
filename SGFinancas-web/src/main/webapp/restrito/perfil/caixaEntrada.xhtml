@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <f:metadata >
+        <f:event listener="#{usuarioControle.controleMenu.setMenuRotinaCaixaEntrada()}" type="preRenderView" />
+    </f:metadata>
+
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+
+        <ui:define name="cssInicial">
+            <link href="#{facesContext.externalContext.requestContextPath}/resources/metronic/assets/admin/pages/css/inbox.css" rel="stylesheet" type="text/css"/>
+
+        </ui:define>
+        <ui:param name="title" value="Caixa postal"/>
+        <ui:define name="title">#{title}</ui:define>
+        <ui:define name="viewname">
+            <li>Perfil</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/seguranca/listaPerfil.xhtml"> #{title}</p:link></li>
+        </ui:define>
+            
+
+        <ui:define name="content">
+
+            <div class="row inbox">
+                <div class="col-md-2">
+                    <ul class="inbox-nav margin-bottom-10">
+                        <li class="inbox active">
+                            <a href="javascript:;" class="btn" data-title="Caixa de entrada">
+                                Caixa de entrada (#{usuarioControle.usuarioLogado.qtdMensagensNaoLidas}) </a>
+                            <b></b>
+                        </li>
+                        <li class="trash">
+                            <a class="btn" href="javascript:;" data-title="Lixo eletrônico">
+                                Lixo eletrônico </a>
+                            <b></b>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-10">
+                    <div class="inbox-header">
+                        <h1 class="pull-left">Caixa de entrada</h1>
+                        <form class="form-inline pull-right" action="index.html">
+                            <div class="input-group input-medium">
+                                <input type="text" class="form-control" placeholder="pesquisar..."/>
+                                <span class="input-group-btn">
+                                    <button type="submit" class="btn green"><i class="fa fa-search"></i></button>
+                                </span>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="inbox-loading">
+                        Carregando...
+                    </div>
+                    <div class="inbox-content">
+                    </div>
+                </div>
+            </div>
+
+
+        </ui:define>
+
+        <ui:define name="script">
+
+            <script src="#{facesContext.externalContext.requestContextPath}/resources/metronic/assets/admin/pages/scripts/inbox.js" type="text/javascript"></script>
+        </ui:define>
+
+        <ui:define name="scriptInicial">
+            Inbox.init();
+        </ui:define>
+
+    </ui:composition>
+</html>

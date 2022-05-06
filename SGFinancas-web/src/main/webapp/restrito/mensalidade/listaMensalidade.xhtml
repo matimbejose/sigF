@@ -1,0 +1,193 @@
+
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:sec="http://www.springframework.org/security/facelets/tags"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <f:metadata >
+        <f:event listener="#{usuarioControle.controleMenu.setPermissoes('MENSALIDADE_VISUALIZAR', 'MENSALIDADE_GERENCIAR', 'mensalidadeControle.doShowAuditoria()')}" type="preRenderView"/>
+    </f:metadata>
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:define name="cssInicial">
+            <link href="#{facesContext.externalContext.requestContextPath}/resources/metronic/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.css" rel="stylesheet" type="text/css"/>
+            <link href="#{facesContext.externalContext.requestContextPath}/resources/metronic/assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css" rel="stylesheet" type="text/css" />
+            <link href="#{facesContext.externalContext.requestContextPath}/resources/metronic/assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css" rel="stylesheet" type="text/css" />
+            <link href="#{facesContext.externalContext.requestContextPath}/resources/metronic/assets/global/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" />
+
+        </ui:define>
+
+        <ui:param name="title" value="Mensalidade "/>
+        <ui:define name="title">#{title}</ui:define>
+        <ui:define name="viewname">
+            <li>##SECTION_NAME##</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/mensalidade/listaMensalidade.xhtml"> #{title}</p:link></li>
+        </ui:define>
+        <ui:define name="content">
+            <h:form acceptcharset="ISO-8859-1" id="formFiltro" prependId="false">
+                <div id="reportrange" class="pull-right tooltips btn btn-sm" data-container="body" data-placement="bottom" data-original-title="Período de vencimento">
+                    <i class="icon-calendar"></i>
+                    <span class="thin uppercase hidden-xs"></span>
+                    <i class="fa fa-angle-down"></i>
+                </div>
+
+                <p:inputText class="dataIni" type="hidden" value="#{mensalidadeControle.filtro.dataInicio}" />
+                <p:inputText class="dataFim" type="hidden" value="#{mensalidadeControle.filtro.dataFim}"/>
+
+                <p:remoteCommand name="rc" update=":formPrincipal:tabelaDados" />
+
+            </h:form>
+        </ui:define>
+
+        <ui:define name="content">
+
+            <h:messages class="alertMessage" errorClass="alert alert-danger" infoClass="alert alert-success"/>
+            <h:form id="formPrincipal" acceptcharset="ISO-8859-1">
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <!-- BEGIN EXAMPLE TABLE PORTLET-->
+                        <div class="portlet light bordered">
+
+                            <div class="portlet-title">
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <sec:ifAnyGranted roles ="MENSALIDADE_GERENCIAR" >
+                                            <div class="btn-group" >
+                                                <h:commandLink action="#{mensalidadeControle.doStartAdd() }"  title="Nova mensalidade" class="btn btn-circle default blue-stripe">
+                                                    <i class="fa fa-plus"></i> Nova mensalidade </h:commandLink>
+                                            </div>
+                                        </sec:ifAnyGranted>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="input-group">
+                                            <p:inputText value="#{mensalidadeControle.filtro.descricao}" placeholder="Pesquisar..." />
+                                            <span class="input-group-btn">
+                                                <div class="btn-group">
+                                                    <div class="form-group form-md-line-input">
+                                                        <p:commandLink  title="Consultar" styleClass="btn blue btn-outline sbold" update=":formPrincipal:tabelaDados" >
+                                                            <i class="fa fa-search"></i>
+                                                        </p:commandLink>
+                                                    </div>
+
+                                                </div>
+                                            </span>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="portlet-body">
+
+                                <div class="portlet-body flip-scroll">
+
+                                    <p:dataTable value="#{mensalidadeControle.model}" emptyMessage="Nenhum registro encontrado." var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+                                        <p:column headerText="Descrição" sortBy="#{item.idContaReceber.descricao}" >
+                                            <h:outputText value="#{item.idContaReceber.descricao}"/>
+                                        </p:column>
+
+                                        <p:column headerText="Unidade"  >
+                                            <h:outputText value="#{item.idContaReceber.idUnidadeOcupacao.idUnidade.descricao}"/>
+                                        </p:column>
+
+
+                                        <p:column headerText="Venc." sortBy="#{item.dataVencimento}" width="95">
+                                            <h:outputText value="#{item.dataVencimento}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                                            </h:outputText>
+                                        </p:column>
+
+                                        <p:column headerText="Valor parcela" sortBy="#{item.valorParcela}" style="text-align: right">
+                                            <h:outputText value="#{item.valorParcela}">
+                                                <f:convertNumber currencySymbol="R$" type="currency" />
+                                            </h:outputText>
+                                        </p:column>
+
+                                        <p:column headerText="Valor recebido" sortBy="#{item.valorRecebido}" style="text-align: right">
+                                            <h:outputText value="#{item.valorRecebido}">
+                                                <f:convertNumber currencySymbol="R$" type="currency" />
+                                            </h:outputText>
+                                        </p:column>
+
+                                        <p:column headerText="Valor restante" sortBy="#{item.valorPendente}" style="text-align: right">
+                                            <h:outputText value="#{item.valorPendente}">
+                                                <f:convertNumber currencySymbol="R$" type="currency" />
+                                            </h:outputText>
+                                        </p:column>
+
+                                        <p:column headerText="Situação" sortBy="#{item.situacao}">
+                                            <h:outputText value="#{contaReceberControle.buscarSituacao(item.situacao)}"/>
+                                        </p:column>
+
+                                        <sec:ifAnyGranted roles ="MENSALIDADE_GERENCIAR" >
+                                            <p:column width="140" headerText="Ações" >
+
+                                                <div class="actions">
+
+                                                    <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Alterar mensalidade" action="#{mensalidadeControle.doStartAlterar()}"  >
+                                                        <i class="fa fa-edit"></i>
+                                                        <f:setPropertyActionListener value="#{item.idContaReceber}" target="#{mensalidadeControle.mensalidadeSelecionada}"/>
+                                                    </h:commandLink>
+
+                                                    <h:commandLink  title="Pagar mensalidade"
+                                                                    styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                                                    rendered="#{item.situacao ne 'RC'}"
+                                                                    action="#{mensalidadeControle.doStartAddParcela()}" >
+                                                        <f:setPropertyActionListener value="#{item}" target="#{mensalidadeControle.mensalidadeParcelaSelecionada}"/>
+                                                        <i class="fa fa-usd"></i>
+                                                    </h:commandLink>
+
+                                                    <p:commandLink title="Download arquivo" ajax="false" class="btn btn-circle btn-icon-only btn-default icones" rendered="#{item.idContaReceber.idDocumento ne null}">
+                                                        <i class="fa fa-arrow-down"></i>
+                                                        <p:fileDownload  value="#{documentoControle.downloadAnexo(item.idContaReceber.idDocumento)}" />
+                                                    </p:commandLink>
+
+                                                    <h:commandLink  title="Auditoria" styleClass="btn btn-circle btn-icon-only btn-default icones" action="#{mensalidadeControle.doShowAuditoria()}" >
+                                                        <i class="fa fa-history"></i>
+                                                        <f:setPropertyActionListener value="#{item.idContaReceber}" target="#{mensalidadeControle.mensalidadeSelecionada}"/>
+                                                    </h:commandLink>
+
+                                                </div>
+
+                                            </p:column>
+                                        </sec:ifAnyGranted>
+
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </h:form>
+        </ui:define>
+
+        <ui:define name="scriptPagina">
+            <script src="#{facesContext.externalContext.requestContextPath}/resources/metronic/assets/global/plugins/moment.min.js" type="text/javascript"></script>
+            <script src="#{facesContext.externalContext.requestContextPath}/resources/metronic/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.js" type="text/javascript"></script>
+
+            <script src="#{facesContext.externalContext.requestContextPath}/resources/metronic/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js" type="text/javascript"></script>
+            <script src="#{facesContext.externalContext.requestContextPath}/resources/metronic/assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.js" type="text/javascript"></script>
+            <script src="#{facesContext.externalContext.requestContextPath}/resources/metronic/assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js" type="text/javascript"></script>
+
+        </ui:define>
+
+        <ui:define name="script">
+            <script src="#{facesContext.externalContext.requestContextPath}/resources/metronic/assets/pages/scripts/components-date-time-pickers.js" type="text/javascript" charset="utf-8"></script>
+            <script src="#{facesContext.externalContext.requestContextPath}/resources/metronic/assets/global/plugins/counterup/jquery.waypoints.min.js" type="text/javascript"></script>
+            <script src="#{facesContext.externalContext.requestContextPath}/resources/metronic/assets/global/plugins/counterup/jquery.counterup.min.js"  type="text/javascript"></script>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

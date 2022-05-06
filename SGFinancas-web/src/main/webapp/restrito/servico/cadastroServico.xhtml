@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite/components">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Serviço"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Cadastro</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/servico/listaServico.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteSave" action="#{servicoControle.doFinishAdd()}"/>
+            <h:commandButton id="remoteCancel" action="listaServico.xhtml" immediate="true"/>
+            <h:commandButton id="remoteHelp" rendered="false" action="#{servicoControle.mostrarAjuda()}" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <div class="card">
+                <div class="form-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label"><span class="required">* </span>Descrição do serviço</label>
+                                <p:inputText value="#{servicoControle.servicoSelecionado.descricao}"
+                                             required="true" requiredMessage="Informe a descrição do servico"/>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group form-md-line-input">
+                                <cc:addButton label="Categoria do serviço" entityName="produtoCategoria">
+                                    <p:selectOneMenu value="#{servicoControle.servicoSelecionado.idProdutoCategoria}"
+                                                     converter="#{genericConverter}" filter="true">
+                                        <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                        <f:selectItems value="#{produtoControle.produtosCategoria}" var="categoria" itemLabel="#{categoria.descricao}" itemValue="#{categoria}"/>
+                                    </p:selectOneMenu>
+                                </cc:addButton>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label">Valor de venda</label>
+                                <p:inputNumber value="#{servicoControle.servicoSelecionado.valorVenda}"
+                                               symbol="R$ " decimalSeparator="," thousandSeparator="." decimalPlaces="2" />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label">Custo do serviço</label>
+                                <p:inputNumber value="#{servicoControle.servicoSelecionado.custoServico}"
+                                               symbol="R$ " decimalSeparator="," thousandSeparator="." decimalPlaces="2" />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label">Tempo de execução</label>
+                                <p:calendar navigator="true" timeOnly="true" pattern="HH:mm" value="#{servicoControle.servicoSelecionado.tempoExecucao}"/>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label">Seleção de profissional</label>
+                                <p:selectOneMenu value="#{servicoControle.servicoSelecionado.permiteSelecaoProfissional}"
+                                                 required="true" requiredMessage="Informe se o serviço permite a seleção de um profissional">
+                                    <f:selectItem itemLabel="Sim" itemValue="S"/>
+                                    <f:selectItem itemLabel="Não" itemValue="N"/>
+                                </p:selectOneMenu>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label">Recorrência</label>
+                                <p:inputNumber value="#{servicoControle.servicoSelecionado.recorrencia}" thousandSeparator="" decimalPlaces="0"
+                                               symbol=" dias" symbolPosition="s"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col mb-3">
+                            <p:dataTable value="#{servicoControle.servicoSelecionado.servicoProdutoList}" var="sp"
+                                         emptyMessage="Sem produtos cadastrados" lazy="true" id="tbl" widgetVar="tbl"
+                                         styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+                                <f:facet name="header">
+                                    Produtos necessários para realizar o serviço
+                                    <div class="pull-right">
+                                        <p:commandButton value="Adicionar" action="#{servicoControle.doAdicionarProduto()}" update="tbl" immediate="true"/>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </f:facet>
+
+                                <p:column headerText="Produto">
+                                    <cc:addButton label="" entityName="produto">
+                                        <p:selectOneMenu value="#{sp.idProduto}" filter="true" converter="#{genericConverter}">
+                                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                            <f:selectItems value="#{produtoControle.produtos}" var="prod" itemLabel="#{prod.descricao}" itemValue="#{prod}"/>
+                                            <p:ajax process="@this"/>
+                                        </p:selectOneMenu>
+                                    </cc:addButton>
+                                </p:column>
+
+                                <p:column headerText="Quantidade" width="90">
+                                    <p:inputNumber value="#{sp.quantidade}" minValue="0"/>
+                                </p:column>
+
+                                <p:column headerText="" width="26" style="text-align: center;">
+                                    <p:commandLink title="Remover" action="#{servicoControle.doRemoveProduto()}" update="tbl" process="@this"
+                                                   styleClass="btn btn-circle btn-icon-only btn-default icones">
+                                        <i class="fa fa-trash-o"></i>
+                                        <f:setPropertyActionListener value="#{sp}" target="#{servicoControle.servicoProdutoSelecionado}"/>
+                                    </p:commandLink>
+                                </p:column>
+                            </p:dataTable>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <p:outputPanel id="panelFoto">
+                                <p:carousel value="#{servicoControle.listaAnexos()}" var="img" id="carrossel" headerText="Imagens do serviço"
+                                            styleClass="card p-0 m-0">
+                                    <p:row rendered="#{img.conteudo eq null}">
+                                        <div onclick="PF('input').jq.find('input[type=file]').click();" class="text-blue-madison text-center" style="padding-top: 130px;cursor: pointer;">
+                                            <i class="fa fa-5x fa-plus-circle"></i>
+                                            <br/>
+                                            <div class="fa-2x" style="padding-top: 105px;">Adicionar</div>
+                                        </div>
+                                    </p:row>
+                                    <p:row rendered="#{img.conteudo ne null}">
+                                        <div class="img-container">
+                                            <img src="#{img.conteudo}" class="foto-container"/>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col file-name-container pr-0 pt-1 text-center">
+                                                #{img.nome}
+                                            </div>
+                                            <div class="col-2 remove-btn-container pl-0">
+                                                <p:commandButton icon="fa fa-fw fa-trash-o" action="#{servicoControle.removerAnexo(img)}"
+                                                                 update="carrossel"/>
+                                            </div>
+                                        </div>
+                                    </p:row>
+                                </p:carousel>
+                                <p:fileUpload fileUploadListener="#{servicoControle.setPart}" mode="advanced" widgetVar="input" style="display: none;height: 0;" process="@this"
+                                              update="carrossel" auto="true" onstart="showUpload(`picture-o`);" oncomplete="hideUpload();"/>
+                            </p:outputPanel>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <style>
+                .ui-carousel img {
+                    max-width: 500px;
+                    max-height: 400px;
+                }
+                .ui-carousel-item {
+                    height: 347px;
+                }
+                .img-container {
+                    display: table-cell;
+                    vertical-align: middle;
+                    text-align: center;
+                    width: 378px;
+                    height: 320px;
+                    padding-top: 10px;
+                }
+                img.foto-container {
+                    max-height: 100%;
+                }
+                div.remove-btn-container {
+                    max-width: 45px;
+                }
+                .remove-btn-container button {
+                    width: 100%;
+                    height: 25px;
+                }
+                .remove-btn-container button.ui-button span.ui-button-text {
+                    padding: 3px 14px;
+                }
+            </style>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

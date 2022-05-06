@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite/components"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <f:metadata >
+        <f:event listener="#{contaBancariaControle.init()}" type="preRenderView"/>
+    </f:metadata>
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Conta bancária"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <p:row rendered="#{empresaControle.isLogadoComoCredor()}">
+                <li>Cadastro</li>
+            </p:row>
+            <p:row rendered="#{empresaControle.isLogadoComoEmpresa()}">
+                <li>Financeiro</li>
+                <li>/</li>
+                <li>Apoio</li>
+            </p:row>
+            <li>/</li>
+            <li><p:link outcome="/restrito/contaBancaria/listaContaBancaria.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteSave" action="#{contaBancariaControle.doFinishAdd()}"/>
+            <h:commandButton id="remoteCancel" action="listaContaBancaria.xhtml" immediate="true"/>
+            <h:commandButton id="remoteHelp" rendered="false" action="#{contaBancariaControle.mostrarAjuda()}" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-6 col-sm-12">
+                        <div class="card card-w-title">
+                            <h5>Detalhes</h5>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label"><span class="required">* </span>Descrição</label>
+                                        <p:inputText value="#{contaBancariaControle.contaBancariaSelecionado.descricao}"
+                                                     required="true" requiredMessage="Informe a descrição"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label"><span class="required">* </span>Banco</label>
+                                        <p:selectOneMenu id="somCapitulo" value="#{contaBancariaControle.contaBancariaSelecionado.idBanco}"
+                                                         panelStyle="width:180px" effect="fade" styleClass="prime-min-width"
+                                                         required="true" requiredMessage="Informe o banco"
+                                                         var="t" filter="true" filterMatchMode="contains"
+                                                         converter="#{genericConverter}">
+                                            <p:column>
+                                                <h:outputText value="#{t.numero}" />
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{t.descricao}" />
+                                            </p:column>
+
+                                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                            <f:selectItems value="#{contaBancariaControle.bancos}"  var="banco" itemLabel="#{banco.numero} - #{banco.descricao}" itemValue="#{banco}"/>
+                                            <p:ajax process="@this" event="change" update="pnlAgencia"/>
+                                        </p:selectOneMenu>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label"><span class="required">* </span>Tipo conta</label>
+                                        <p:selectOneMenu  value="#{contaBancariaControle.contaBancariaSelecionado.tipoConta}">
+                                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                            <f:selectItem itemLabel="Conta corrente" itemValue="C" />
+                                            <f:selectItem itemLabel="Conta salário" itemValue="S" />
+                                            <f:selectItem itemLabel="Conta poupança" itemValue="P" />
+                                        </p:selectOneMenu >
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col form-group form-md-line-input">
+                                    <cc:addButton label="Centro Custo" entityName="centroCusto">
+                                        <p:selectOneMenu value="#{contaBancariaControle.contaBancariaSelecionado.idCentroCusto}" effect="fade"
+                                                         var="t" filter="true" filterMatchMode="contains" converter="#{genericConverter}">
+                                            <p:column>
+                                                <h:outputText value="#{t.descricao}"/>
+                                            </p:column>
+
+                                            <f:selectItem itemLabel="" noSelectionOption="true"/>
+                                            <f:selectItems value="#{centroCustoControle.centroCustos}" var="centroCusto"
+                                                           itemLabel="#{centroCusto.descricao}" itemValue="#{centroCusto}"/>
+                                        </p:selectOneMenu>
+                                    </cc:addButton>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                        <div class="card card-w-title">
+                            <h5>Agencia/Conta</h5>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label"><span class="required">* </span>Agência</label>
+                                        <p:inputMask value="#{contaBancariaControle.contaBancariaSelecionado.agencia}"
+                                                     mask="9?999999999" required="true" requiredMessage="Informe o número da agência"/>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group form-md-line-input">
+                                        <p:outputPanel id="pnlAgencia">
+
+                                            <p:outputLabel class="control-label" rendered="#{contaBancariaControle.ehBancoCaixa()}"><span class="required">* </span>Op.</p:outputLabel>
+                                            <p:inputMask mask="999" value="#{contaBancariaControle.contaBancariaSelecionado.operacao}"
+                                                         rendered="#{contaBancariaControle.ehBancoCaixa()}"
+                                                         required="true" requiredMessage="Informe a operação"/>
+
+                                            <p:outputLabel class="control-label" rendered="#{!contaBancariaControle.ehBancoCaixa()}">Díg.</p:outputLabel>
+                                            <p:inputMask mask="*" value="#{contaBancariaControle.contaBancariaSelecionado.digitoAgencia}"
+                                                         rendered="#{!contaBancariaControle.ehBancoCaixa()}"/>
+                                        </p:outputPanel>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label"><span class="required">* </span>Conta</label>
+                                        <p:inputMask value="#{contaBancariaControle.contaBancariaSelecionado.conta}"
+                                                     mask="9?999999999" required="true" requiredMessage="Informe o número da conta"/>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label">Díg.</label>
+                                        <p:inputMask mask="*" value="#{contaBancariaControle.contaBancariaSelecionado.digitoConta}"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label"><span class="required">* </span>Saldo inicial</label>
+                                        <p:inputNumber value="#{contaBancariaControle.contaBancariaSelecionado.saldoInicial}"
+                                                       required="true" requiredMessage="Informe o saldo inicial"
+                                                       decimalSeparator=","  thousandSeparator="." symbol="R$ " decimalPlaces="2"/>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label"><span class="required">* </span>Data saldo</label>
+                                        <p:calendar navigator="true" value="#{contaBancariaControle.contaBancariaSelecionado.dataSaldo}"
+                                                    required="true" requiredMessage="Informe a data do saldo" mask="true"
+                                                    pattern="dd/MM/yyyy" maxdate="#{contaBancariaControle.dataHoje()}"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label">Carteira</label>
+                                        <p:inputNumber value="#{contaBancariaControle.contaBancariaSelecionado.carteira}"
+                                                       decimalSeparator="," thousandSeparator="." decimalPlaces="0"/>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label">Cedente</label>
+                                        <p:inputText value="#{contaBancariaControle.contaBancariaSelecionado.cedente}" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

@@ -1,0 +1,119 @@
+body {
+    .ui-progressbar {
+        border: $progressBarBorder;
+        height: $progressBarHeight;
+        background-color: $progressBarBgColor;
+        
+        .ui-progressbar-value {
+            border: 0 none;
+            margin: 0;
+            background: $progressBarValueBgColor;
+        }
+        
+        .ui-progressbar-label {
+            margin-top: 0;
+            color: $textColor;
+            display: none !important;
+        }
+    }
+    
+    .ui-galleria {
+        .ui-galleria-nav-prev,
+        .ui-galleria-nav-next {
+            @include transition(all $transitionDuration);
+            position: absolute;
+            color: $textSecondaryColor;
+            
+            &:hover {
+                @include scale(1.2);
+            }
+        }
+
+        .ui-galleria-nav-prev {
+            @include icon_override("\f053");
+            font-size: 20px;
+        }
+
+        .ui-galleria-nav-next {
+            @include icon_override("\f054");
+            font-size: 20px;
+        }
+    }
+
+    .ui-clock {
+        border: $panelContentBorder;
+        background-color: $panelContentBgColor;
+        color: $panelContentTextColor;
+        padding: $panelContentPadding;
+    }
+
+    .ui-log {
+        padding: 0;
+        @include shadow($overlayContainerShadow);
+        
+        .ui-log-header {
+            border: $panelHeaderBorder;
+            background-color: $panelHeaderBgColor;
+            color: $panelHeaderTextColor;
+            padding: $panelHeaderPadding;
+            font-weight: $panelHeaderFontWeight;
+            height: auto;
+            
+            .ui-log-button {
+                display: inline-block;
+                position: static;
+                margin-right: $inlineSpacing;
+                color: $panelHeaderIconColor;
+                padding: 2px;
+                @include transition(color $transitionDuration);
+                
+                &.ui-state-hover {
+                    color: $panelHeaderIconHoverColor;
+                }
+                                
+                .ui-icon-trash {
+                    @include icon_override("\f1f8");
+                }
+
+                .ui-icon-note {
+                    @include icon_override("\f24a");
+                }
+
+                .ui-icon-info {
+                    @include icon_override("\f05a");
+                }
+
+                .ui-icon-notice {
+                    @include icon_override("\f071");
+                }
+
+                .ui-icon-search {
+                    @include icon_override("\f188");
+                }
+
+                .ui-icon-alert {
+                    @include icon_override("\f06a");
+                }
+            }
+        }
+        
+        .ui-log-content {
+            background-color: $panelContentBgColor;
+            color: $panelContentTextColor;
+            border: $panelContentBorder;
+            padding: $panelContentPadding;
+            line-height: $panelContentLineHeight;
+        }
+    }
+
+    .ui-terminal {
+        background-color: $panelContentBgColor;
+        color: $panelContentTextColor;
+        border: $panelContentBorder;
+        padding: $panelContentPadding;
+
+        .ui-terminal-input {
+            font-size: $fontSize;
+        }
+    }
+}

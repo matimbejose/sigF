@@ -1,0 +1,67 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+
+        <ui:param name="title" value="Permissão"/>
+        <ui:define name="title">#{title}</ui:define>
+        <ui:define name="viewname">
+            <li>Segurança</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/seguranca/listaPermissao.xhtml"> #{title}</p:link></li>
+        </ui:define>
+            
+
+        <ui:define name="content">
+
+            <h:messages class="alertMessage" id="msgResultado" errorClass="alert alert-danger" />
+            <div class="row">
+                <div class="col-md-6 ">
+                    <!-- BEGIN SAMPLE FORM PORTLET-->
+                    <div class="portlet light bordered">
+                        <div class="portlet-title">
+                            <div class="caption">
+                                <i class="fa fa-key"></i> 
+                                <h:column rendered="#{permissaoControle.permissaoSelecionada.id eq null}">
+                                    <span class="caption-subject font-dark sbold uppercase">Cadastro</span>
+                                </h:column>
+                                <h:column rendered="#{permissaoControle.permissaoSelecionada.id ne null}">
+                                    <span class="caption-subject font-dark sbold uppercase">Manutenção</span>
+                                </h:column>
+
+                            </div>
+                            <div class="tools">
+                            </div>
+                        </div>
+                        <div class="portlet-body form">
+                            <h:form role="form">
+                                <div class="form-body">
+                                    <div class="form-group form-md-line-input">
+                                        <label>Descrição</label>
+                                        <p:inputText value="#{permissaoControle.permissaoSelecionada.descricao}" placeholder="Descrição do permissão" type="text" autocomplete="off" styleClass="form-control" ></p:inputText>
+                                    </div>
+
+                                </div>
+                                <div class="form-actions">
+                                    <h:panelGrid columns="4" >
+                                        <h:commandButton action="#{permissaoControle.doFinishAdd()}"  styleClass="btn blue " value="Salvar" />
+                                        <h:outputText value="&#150;" />
+                                        <h:outputText value="&#150;" />
+                                        <h:commandButton action="listaPermissao.xhtml?faces-redirect=true" immediate="true" styleClass="btn default" value="Cancelar" />
+                                    </h:panelGrid>
+                                </div>
+                            </h:form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

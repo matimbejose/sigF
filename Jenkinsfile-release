@@ -1,0 +1,44 @@
+pipeline {
+    
+  agent { label 'sgfinancas-release'}
+
+  options {
+        buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '2')
+        timeout(time: 90, unit: 'MINUTES')
+  }
+
+  stages {
+ 
+        stage('Build'){
+            steps {
+                sh "mvn clean -Dmaven.test.skip=true"
+                sh "mvn compile -U -Dmaven.test.skip=true"
+                sh "mvn package -U -Dmaven.test.skip=true"
+            }
+        }
+        stage('SGFinancas-Release Image Build'){
+            steps {
+                sh "docker build -t sgfinancas-release -f Dockerfile-release . "
+                sh "docker tag sgfinancas-release 192.168.0.52:8082/sgfinancas-release:latest"
+                sh "docker push 192.168.0.52:8082/sgfinancas-release:latest"
+            }
+        }     
+        stage('SGFinancas-Release Publish'){
+            steps {
+			    sh "cp .env-release .env"
+                sh "docker pull 192.168.0.52:8082/sgfinancas-release:latest"
+                sh "docker-compose -f docker-compose-release.yml stop"
+                sh "docker-compose -f docker-compose-release.yml up -d --build"
+            }
+        }
+   }
+   post {
+    success { 
+      slackSend (color: '#00FF00', message: "Publicação em Release realizada com sucesso: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+    }
+
+    failure {
+      slackSend (color: '#FF0000', message: "Falha na publicação em Release: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+    }
+  }   
+}

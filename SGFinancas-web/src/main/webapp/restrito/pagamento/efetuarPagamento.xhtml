@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:sec="http://www.springframework.org/security/facelets/tags"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Efetuar pagamento"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Pagamentos</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/pagamento/assineJa.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes"/>
+
+        <ui:define name="content">
+            <style>
+                input.ui-inputfield.ui-widget {
+                    padding-right: 6px !important;
+                }
+            </style>
+            <div class="card card-w-title">
+                <h4>
+                    Efetuar pagamento #{type} do plano #{checkoutControle.dadosPagamento.plano} por
+                    <h:outputText value="#{checkoutControle.dadosPagamento.preco}">
+                        <f:convertNumber currencyCode="BRL" type="currency"/>
+                    </h:outputText>
+                </h4>
+                <div class="row">
+                    <div class="col-3">
+                        <div class="form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Meio de pagamento"/>
+                            <p:selectOneMenu value="#{checkoutControle.dadosPagamento.tipoPagamento}" required="true">
+                                <f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+                                <f:selectItem itemLabel="Cartão de crédito" itemValue="CC"/>
+                                <f:selectItem itemLabel="Boleto bancário" itemValue="BB" itemDisabled="#{true}"/>
+                                <p:ajax process="@this" update="campos"/>
+                            </p:selectOneMenu>
+                        </div>
+                    </div>
+                </div>
+                <p:outputPanel id="campos">
+                    <p:row rendered="#{checkoutControle.dadosPagamento.tipoPagamento eq 'CC'}">
+                        <h3>Dados do cartão</h3>
+                        <div class="mx-2">
+                            <div class="row">
+                                <div class="col-auto pr-0" style="width: 170px;">
+                                    <div class="form-group form-md-line-input">
+                                        <p:outputLabel for="@next" value="Número"/>
+                                        <p:inputMask mask="9999.9999.9999.9999" required="true"
+                                                     value="#{checkoutControle.dadosPagamento.cartao.numero}"/>
+                                    </div>
+                                </div>
+                                <div class="col-auto pl-0" style="width: 60px;">
+                                    <div class="form-group form-md-line-input">
+                                        <p:outputLabel for="@next" value="CVV"/>
+                                        <p:inputNumber decimalPlaces="0" thousandSeparator="" required="true"
+                                                       value="#{checkoutControle.dadosPagamento.cartao.cvv}"/>
+                                    </div>
+                                </div>
+                                <div class="col-auto" style="width: 120px;">
+                                    <div class="form-group form-md-line-input">
+                                        <p:outputLabel for="@next" value="Validade"/>
+                                        <p:calendar navigator="true" pattern="MM/yyyy" mask="true" required="true"
+                                                    value="#{checkoutControle.dadosPagamento.cartao.dataValidade}"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-auto" style="width: 350px;">
+                                    <div class="form-group form-md-line-input">
+                                        <p:outputLabel for="@next" value="Nome no cartão"/>
+                                        <p:inputText required="true" value="#{checkoutControle.dadosPagamento.cartao.nome}"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </p:row>
+                    <p:row rendered="#{checkoutControle.dadosPagamento.tipoPagamento ne null}">
+                        <h3>Dados de fatura</h3>
+                        <div class="mx-2">
+                            <div class="row">
+                                <div class="col-auto" style="width: 200px;">
+                                    <div class="form-group form-md-line-input">
+                                        <p:outputLabel for="@next" value="CNPJ/CPF"/>
+                                        <p:inputText styleClass="form-control input-mask" widgetVar="cpfCnpj" required="true"
+                                                     value="#{checkoutControle.dadosPagamento.fatura.cpfCnpj}"/>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group form-md-line-input">
+                                        <p:outputLabel for="@next" value="Nome"/>
+                                        <p:inputText required="true" value="#{checkoutControle.dadosPagamento.fatura.nome}"/>
+                                    </div>
+                                </div>
+                                <div class="col-auto" style="width: 250px;">
+                                    <div class="form-group form-md-line-input">
+                                        <p:outputLabel for="@next" value="CEP"/>
+                                        <div class="input-group">
+                                            <div class="input-group-append">
+                                                <p:inputMask mask="99.999-999" required="true" value="#{checkoutControle.dadosPagamento.fatura.endereco.cep}"/>
+                                                <p:commandLink action="#{checkoutControle.buscarEnderecoPorCep()}" styleClass="btn"
+                                                               update="pnlEndereco" process="@this, @previous">
+                                                    <i class="fa fa-search"></i>
+                                                </p:commandLink>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <p:outputPanel id="pnlEndereco" class="row">
+                                <div class="col pr-0">
+                                    <div class="form-group form-md-line-input">
+                                        <p:outputLabel for="@next" value="Endereço"/>
+                                        <p:inputText required="true" value="#{checkoutControle.dadosPagamento.fatura.endereco.rua}"/>
+                                    </div>
+                                </div>
+                                <div class="col-auto px-0" style="width: 100px;">
+                                    <div class="form-group form-md-line-input">
+                                        <p:outputLabel for="@next" value="Número"/>
+                                        <p:inputText required="true" value="#{checkoutControle.dadosPagamento.fatura.endereco.numero}"/>
+                                    </div>
+                                </div>
+                                <div class="col-auto pl-0" style="width: 120px;">
+                                    <div class="form-group form-md-line-input">
+                                        <p:outputLabel for="@next" value="Complemento"/>
+                                        <p:inputText value="#{checkoutControle.dadosPagamento.fatura.endereco.complemento}"/>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="form-group form-md-line-input">
+                                        <p:outputLabel for="@next" value="Bairro"/>
+                                        <p:inputText required="true" value="#{checkoutControle.dadosPagamento.fatura.endereco.bairro}"/>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="form-group form-md-line-input">
+                                        <p:outputLabel for="@next" value="Cidade"/>
+                                        <p:inputText required="true" value="#{checkoutControle.dadosPagamento.fatura.endereco.cidade}"/>
+                                    </div>
+                                </div>
+                                <div class="col-auto" style="width: 120px;">
+                                    <div class="form-group form-md-line-input">
+                                        <p:outputLabel for="@next" value="UF"/>
+                                        <p:selectOneMenu required="true" converter="#{genericConverter}"
+                                                         value="#{checkoutControle.dadosPagamento.fatura.endereco.uf}">
+                                            <f:selectItem itemLabel="--" noSelectionOption="true"/>
+                                            <f:selectItems value="#{empresaControle.UFs}" var="uf"
+                                                           itemLabel="#{uf.descricao}" itemValue="#{uf.descricao}"/>
+                                        </p:selectOneMenu>
+                                    </div>
+                                </div>
+                            </p:outputPanel>
+                        </div>
+                        <script>
+                            //<![CDATA[
+                            $(document).ready(() => {
+                                const elem = PF('cpfCnpj').getJQ();
+                                elem.on('input', () => {
+                                    const val = elem.val().replace(/\D/g, '');
+                                    elem.val(VMasker.toPattern(val, val.length <= 11 ? '999.999.999-99' : '99.999.999/9999-99'));
+                                });
+                            });
+                            //]]>
+                        </script>
+                    </p:row>
+                    <p:row rendered="#{checkoutControle.dadosPagamento.tipoPagamento ne null}">
+                        <hr style="color: #ccc;margin: 7px 8px 25px 8px;"/>
+                        <div class="row">
+                            <div class="col-auto ml-auto text-right pt-2" style="width: 300px;line-height: 14px;">
+                                <small>
+                                    Ao clicar em Experimente Grátis você concorda com nossos
+                                    <p:commandLink ajax="false" value="Termos de Uso" immediate="true">
+                                        <p:fileDownload value="#{empresaControle.baixaTermo()}"/>
+                                    </p:commandLink>.
+                                </small>
+                            </div>
+                            <div class="col-auto">
+                                <p:commandLink ajax="false" value="Confirmar" styleClass="btn px-3 py-2 btn-lg btn-success"
+                                               action="#{checkoutControle.confirmar()}"/>
+                            </div>
+                        </div>
+                    </p:row>
+                </p:outputPanel>
+            </div>
+            <script src="https://unpkg.com/vanilla-masker@1.1.1/build/vanilla-masker.min.js"></script>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

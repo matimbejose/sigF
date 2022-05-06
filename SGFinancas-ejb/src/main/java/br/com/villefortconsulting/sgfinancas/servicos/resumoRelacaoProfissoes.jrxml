@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-05-25T20:25:59 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="autorizacao_desconto_folha" pageWidth="595" pageHeight="842" whenNoDataType="BlankPage" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="dbf1ee1e-2fac-41b7-9215-1776f546f95d">
+    <property name="ireport.zoom" value="1.2100000000000006"/>
+    <property name="ireport.x" value="0"/>
+    <property name="ireport.y" value="0"/>
+    <property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+    <queryString>
+		<![CDATA[]]>
+    </queryString>
+    <field name="areaAtuacao" class="java.lang.String"/>
+    <field name="qtd" class="java.lang.Long"/>
+    <variable name="Total" class="java.lang.Long" calculation="Sum">
+        <variableExpression><![CDATA[$F{qtd}]]></variableExpression>
+    </variable>
+    <columnHeader>
+        <band height="15">
+            <property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+            <staticText>
+                <reportElement mode="Opaque" x="249" y="0" width="151" height="15" uuid="a3ad1bf3-a45e-436e-a215-27c56fbf6b0f"/>
+                <box leftPadding="0">
+                    <bottomPen lineWidth="0.5"/>
+                </box>
+                <textElement textAlignment="Left" verticalAlignment="Middle">
+                    <font fontName="Arial" size="10" isBold="true"/>
+                </textElement>
+                <text><![CDATA[ÁREA DE ATUAÇÃO]]></text>
+            </staticText>
+            <staticText>
+                <reportElement mode="Opaque" x="401" y="0" width="39" height="15" uuid="2e71f9f3-9b64-4269-baac-86e74045735d"/>
+                <box leftPadding="0">
+                    <bottomPen lineWidth="0.5"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font fontName="Arial" size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[TOTAL]]></text>
+            </staticText>
+        </band>
+    </columnHeader>
+    <detail>
+        <band height="15">
+            <property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+            <textField>
+                <reportElement x="249" y="0" width="151" height="15" uuid="5f3ca307-b3e3-4557-a930-c49cc7b95956">
+                    <property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+                    <property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+                    <property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+                </reportElement>
+                <textFieldExpression><![CDATA[$F{areaAtuacao}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="401" y="0" width="39" height="15" uuid="cf31b12c-6dd2-42fe-b3aa-4aba1acec59b">
+                    <property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+                </reportElement>
+                <textElement textAlignment="Center"/>
+                <textFieldExpression><![CDATA[$F{qtd}]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+    <summary>
+        <band height="15">
+            <staticText>
+                <reportElement x="249" y="0" width="151" height="15" uuid="1fe68bd3-f7d5-4cea-9ed5-095aa15b211d">
+                    <property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+                    <property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+                    <property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+                </reportElement>
+                <text><![CDATA[NÚMERO DE ALUNOS]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="401" y="0" width="39" height="15" uuid="c114e2eb-fd0d-4bc2-a863-1956d7944772">
+                    <property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+                </reportElement>
+                <textElement textAlignment="Center"/>
+                <textFieldExpression><![CDATA[$V{Total}]]></textFieldExpression>
+            </textField>
+        </band>
+    </summary>
+</jasperReport>

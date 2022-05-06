@@ -1,0 +1,465 @@
+.layout-wrapper {
+    .layout-topbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 999;
+        height: 64px;
+        width: 100%;
+        @include background-gradient-left2right($topbarBgLeftColor, $topbarBgRightColor);
+
+        @if variable-exists(topbarBgImage) {
+            background-image: url("\#{resource['harmony-layout:images/#{$topbarBgImage}']}");
+            background-size: contain;
+            background-repeat: repeat-x;
+        }
+
+        .logo-container {
+            height: 64px;
+            color: $topbarLogoColor;
+            padding-top: 12px;
+            padding-left: 12px;
+            width: 224px;
+            float: left;
+
+            img {
+                height: 40px;
+                width: auto;
+                vertical-align: middle;
+                border: 0 none;
+            }
+
+            .app-name {
+                font-weight: bold;
+                font-size: 24px;
+                vertical-align: middle;
+                margin-left: 12px;
+            }
+        }
+
+        .topbar-content {
+            float: left;
+            height: 64px;
+            text-align: center;
+            width: calc(100% - 225px);
+            @include clearfix();
+
+            #topbar-sidebar-button {
+                float: left;
+                color: $topbarSidebarButtonColor;
+                height: 64px;
+                width: 64px;
+                text-align: center;
+                line-height: 64px;
+
+                &:hover {
+                    background-color: $topbarIconHoverBgColor;
+                }
+
+                i {
+                    line-height: inherit;
+                    font-size: 24px;
+                }
+            }
+
+            .search-input {
+                height: 32px;
+                width: 180px;
+                position: relative;
+                margin-top: 16px;
+                float: left;
+    
+                .icon-search {
+                    color: $topbarSearchInputIconColor;
+                    top: 8px;
+                    left: 10px;
+                    position: absolute;
+                }
+    
+                input {
+                    display: inline-block;
+                    vertical-align: middle;
+                    text-align: left;
+                    font-size: $fontSize;
+                    color: $topbarSearchInputTextColor;
+                    background-color: transparent;
+                    border: 0 none;
+                    padding: 6px 6px 6px 28px;
+                    border-bottom: 1px solid $topbarSearchInputBorderColor;
+                    @include border-radius(0);
+
+                    &:focus {
+                        outline: 0 none;
+                        border-bottom-color: $topbarSearchInputBorderFocusColor;
+                    }
+                }
+            }
+
+            #topbar-quickmenu-button {
+                display: none;
+            }
+
+            .topbar-icons {
+                height: 64px;
+                display: inline-block;
+                list-style: none;
+
+                ul {
+                    margin: 0;
+                    padding: 0;
+
+                    li {
+                        display: inline-block;
+                        position: relative;
+
+                        a {
+                            display: inline-block;
+                            height: 64px;
+                            width: 64px;
+                            text-align: center;
+                            line-height: 64px;
+                            cursor: pointer;
+
+                            &:hover {
+                                background-color: $topbarIconHoverBgColor;
+                            }
+                            
+                            &:hover + .layout-quickmenu-tooltip {
+                                display: block;
+                            }
+
+                            i {
+                                width: auto;
+                                font-size: 24px;
+                                line-height: inherit;
+                                text-align: left;
+        
+                                &.topbar-icon-plane {
+                                    color: $topbarQuickMenuIconColor1;
+                                    width: 24px;
+                                    height: 24px;
+                                }
+                        
+                                &.topbar-icon-calendar {
+                                    color: $topbarQuickMenuIconColor2;
+                                    width: 24px;
+                                    height: 24px;
+                                }
+                        
+                                &.topbar-icon-notes {
+                                    color: $topbarQuickMenuIconColor3;
+                                    width: 24px;
+                                    height: 24px;
+                                }
+                        
+                                &.topbar-icon-settings {
+                                    color: $topbarQuickMenuIconColor4;
+                                    width: 24px;
+                                    height: 24px;
+                                }
+                            }
+
+                            .icon-label {
+                                display: none;
+                            }
+                        }
+                    }
+
+                    .layout-quickmenu-tooltip {
+                        display: none;
+                        padding: 0 5px;
+                        position: absolute;
+                        top: 70px;
+                        left: -37px;
+                        line-height: 1;
+                        width: 128px;
+                        
+                        .layout-quickmenu-tooltip-text {
+                           padding: 6px 8px;
+                           font-weight: 600;
+                           background-color: $quickMenuTooltipBgColor;
+                           color: $quickMenuTooltipTextColor;
+                           min-width: 75px;
+                           white-space: nowrap;
+                           text-align: center;
+                           @include shadow(0 3px 6px 0 rgba(0, 0, 0, 0.16));
+                        }
+                        
+                        .layout-quickmenu-tooltip-arrow {
+                            position: absolute;
+                            width: 0;
+                            height: 0;
+                            border-color: transparent;
+                            border-style: solid;
+                            top: 0;
+                            left: 50%;
+                            margin-top: -5px;
+                            margin-left: -5px;
+                            border-width: 0 5px 5px 5px;
+                            border-bottom-color: $quickMenuTooltipBgColor;
+                        }
+                    }
+                }
+            }
+
+            #topbar-profile-menu-button {    
+                float: right;
+                top: 0;
+                padding: 14px 12px 14px 12px;
+
+                img {
+                    width: 36px;
+                    height: 36px;
+                    vertical-align: middle;
+                    border: 0 none;
+                }
+    
+                span {
+                    display: inline-block;
+                    vertical-align: middle;
+                    font-size: 14px;
+                    text-align: left;
+                    margin-left: 4px;
+                    color: $topbarProfileTextColor;
+                }
+
+                &:hover {
+                    background-color: $topbarIconHoverBgColor;
+                }
+            }
+
+            #topbar-right-panel-button {
+                float: right;
+                color: $topbarRightPanelIconColor;
+                height: 64px;
+                width: 64px;
+                text-align: center;
+                line-height: 64px;
+
+                &:hover {
+                    background-color: $topbarIconHoverBgColor;
+                }
+
+                i {
+                    line-height: inherit;
+                    font-size: 36px;
+                }
+            }
+
+            #topbar-profile-menu {
+                background-color: $profileMenuBgColor;
+                list-style: none;
+                padding: 0;
+                margin: 0;
+                width: 199px;
+                text-align: left;
+                position: absolute;
+                list-style-type: none;
+                top: 64px;
+                right: 17px;
+                display: none;
+                -webkit-animation-duration: .5s;
+                animation-duration: .5s;
+                @include shadow(0 3px 6px 0 rgba(0, 0, 0, 0.16));
+    
+                &.topbar-profile-menu-active {
+                    display: block;
+                }
+    
+                li {
+                    > a {
+                        color: $profileMenuItemTextColor;
+                        padding: 8px 12px;
+                        display: block;
+    
+                        i {
+                            color: $profileMenuItemIconColor;
+                            font-size: 16px;
+                            margin-right: 8px;
+                            width: 16px;
+                            height: 16px;
+                        }
+    
+                        &:hover {
+                            background-color: $profileMenuItemHoverBgColor;
+                            color: $profileMenuItemHoverTextColor;
+    
+                            i {
+                                color: $profileMenuItemHoverIconColor;
+                            }
+                        }
+                    }
+    
+                    &.menuitem-active {
+                        > a {
+                            background-color: $profileMenuItemActiveBgColor;
+                            color: $profileMenuItemActiveTextColor;
+        
+                            i {
+                                color: $profileMenuItemActiveIconColor;
+                            }
+                        }
+                    }
+    
+                    ul {
+                        padding: 0;
+                        display: none;
+                        list-style-type: none;
+    
+                        li {
+                            a {
+                                padding-left: 30px;
+                            }
+                        }
+                    }
+                }
+    
+                &.profile-menu-active {
+                    display: block;
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: $breakpoint) {
+    .layout-wrapper {
+        .layout-topbar {
+            height: 128px;
+            text-align: center;
+
+            @if variable-exists(topbarBgImage) {
+                background-size: cover;
+            }
+
+            .logo-container {
+                float: none;
+                margin: 0 auto;
+                padding: 0;
+                display: block;
+                padding-top: 12px;
+                width: auto;
+
+                .app-name {
+                    display: none;
+                }
+            }
+
+            .topbar-content {
+                .topbar-icons {
+                    display: none;
+                    width: 100%;
+                    height: auto;
+                    text-align: left;
+                    position: fixed;
+                    top: 128px;
+                    left: 0;
+                    @include background-gradient-left2right($topbarBgLeftColor, $topbarBgRightColor);
+                }
+
+                #topbar-sidebar-button {
+                    float: none;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                }
+
+                .search-input {
+                    text-align: left;
+                    position: absolute;
+                    top: 64px;
+                    left: 12px;
+                    float: none;
+
+                    input {
+                        width: 125px;
+                    }
+                }
+
+                #topbar-quickmenu-button {
+                    display: block;
+                    position: absolute;
+                    right: 24px;
+                    top: 96px;
+                    color: $topbarQuickMenuButtonTextColor;
+                    font-size: 16px;
+                }
+
+                #topbar-profile-menu-button {  
+                    position: absolute;
+                    float: none;
+                    right: 64px;
+
+                    span {
+                        display: none;
+                    }
+                }
+
+                #topbar-right-panel-button {
+                    position: absolute;
+                    float: none;
+                    right: 0;
+                    top: 0;
+                }
+            }
+        }
+
+        &.topbar-icons-active {
+            .layout-topbar {
+                .topbar-content {
+                    .topbar-icons {
+                        display: block;
+
+                        ul {
+                            padding: 0;
+                            margin:0 ;
+    
+                            li {
+                                display: block;
+    
+                                a {
+                                    color: #ffffff;
+                                    width: 100%;
+                                    text-align: left;
+                                    height: auto;
+                                    padding: 0 20px;
+    
+                                    i {
+                                        vertical-align: middle;
+                                        display: inline-block;
+                                        width: auto;
+                                        height: auto;
+                                        margin-right: 20px;
+                                    }
+    
+                                    .icon-label {
+                                        vertical-align: middle;
+                                        display: inline-block;
+                                    }
+
+                                    &:hover + .layout-quickmenu-tooltip {
+                                        display: none;
+                                    }
+                                }
+    
+                                .layout-quickmenu-tooltip {
+                                    display: none;
+                                }
+                            }
+                        }  
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 1439px) {
+    .layout-wrapper {
+        .layout-topbar {
+            @if variable-exists(topbarBgImage) {
+                background-size: cover;
+            }
+        }
+    }
+}

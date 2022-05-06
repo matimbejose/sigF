@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite/components"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Pacote de módulos"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li><p:link outcome="/restrito/administracao/moduloPacote/listaModuloPacote.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteAdd" action="#{moduloPacoteControle.doStartAdd()}"/>
+        </ui:define>
+
+        <ui:define name="formButtons">
+            <p:commandButton type="button" value="Limpar filtros" onclick="clearDataTableFilters('tbl');"/>
+            <p:commandButton id="toggler" type="button" value="Colunas"/>
+            <p:columnToggler datasource="tbl" trigger="toggler"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <p:dataTable value="#{moduloPacoteControle.model}" emptyMessage="Nenhum registro encontrado." var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+                <p:column headerText="#" width="55" sortBy="#{item.id}" visible="false">
+                    <h:outputText value="#{item.id}"/>
+                </p:column>
+
+                <p:column headerText="Descricao" sortBy="#{item.nome}" filterBy="#{item.nome}">
+                    <f:facet name="filter">
+                        <p:inputText value="#{moduloPacoteControle.filtro.descricao}" onchange="PF('tbl').filter()"/>
+                    </f:facet>
+                    <h:outputText value="#{item.nome}"/>
+                </p:column>
+
+                <p:column headerText="Adesão" sortBy="#{item.valorAdesao}">
+                    <cc:convertMoney value="#{item.valorAdesao}"/>
+                </p:column>
+
+                <p:column headerText="Mensalidade" sortBy="#{item.valorMensalidade}">
+                    <cc:convertMoney value="#{item.valorMensalidade}"/>
+                </p:column>
+
+                <p:column headerText="Vencimento" sortBy="#{item.dataVencimento}">
+                    <cc:convertDate value="#{item.dataVencimento}"/>
+                </p:column>
+
+                <p:column headerText="Ativo" sortBy="#{item.ativo}" width="100" filterBy="#{item.ativo}">
+                    <f:facet name="filter">
+                        <p:selectOneMenu onchange="PF('tbl').filter()" styleClass="custom-filter" value="#{moduloPacoteControle.filtro.ativo}">
+                            <f:selectItem itemLabel="Todos" noSelectionOption="true"/>
+                            <f:selectItem itemLabel="Sim" itemValue="S"/>
+                            <f:selectItem itemLabel="Não" itemValue="N"/>
+                        </p:selectOneMenu>
+                    </f:facet>
+
+                    <h:outputText value="#{item.ativo eq 'S'? 'Sim':'Não'}"/>
+                </p:column>
+
+                <p:column width="117" headerText="Ações" >
+                    <div class="actions">
+                        <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Alterar pacote de módulos"
+                                       action="#{moduloPacoteControle.doStartAlterar()}">
+                            <i class="fa fa-edit"></i>
+                            <f:setPropertyActionListener value="#{item}" target="#{moduloPacoteControle.moduloPacoteSelecionado}"/>
+                        </h:commandLink>
+                        <h:commandLink title="Auditoria" styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                       action="#{moduloPacoteControle.doShowAuditoria()}" >
+                            <i class="fa fa-history"></i>
+                            <f:setPropertyActionListener value="#{item}" target="#{moduloPacoteControle.moduloPacoteSelecionado}"/>
+                        </h:commandLink>
+                    </div>
+                </p:column>
+
+            </p:dataTable>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

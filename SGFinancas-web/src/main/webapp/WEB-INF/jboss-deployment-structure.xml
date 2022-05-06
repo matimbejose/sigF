@@ -1,0 +1,12 @@
+<jboss-deployment-structure>
+    <deployment>
+        <dependencies>
+            <system export="true">
+                <paths>
+                    <path name="com/sun/net/ssl/internal/ssl" />
+                    <path name="com/sun/net/ssl" />
+                </paths>
+            </system>
+        </dependencies>
+    </deployment>
+</jboss-deployment-structure>

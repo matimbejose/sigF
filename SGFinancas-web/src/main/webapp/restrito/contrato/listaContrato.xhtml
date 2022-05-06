@@ -1,0 +1,197 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:sec="http://www.springframework.org/security/facelets/tags"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:include src="/WEB-INF/msgErro.xhtml"/>
+    <p:importEnum type="br.com.villefortconsulting.sgfinancas.util.EnumTipoContrato" var="EnumTipoContrato"/>
+    <div class="layout-dashboard mb-3">
+        <div class="row">
+            <div class="col intro-text">
+                <span>
+                    Contratos de
+                    <p:calendar navigator="true" pattern="dd/MM/yyyy" styleClass="top-calendar m-0" value="#{controle.filtro.data.min}" placeholder="o início">
+                        <p:ajax event="dateSelect" update="tbl"/>
+                        <p:ajax update="tbl"/>
+                    </p:calendar>
+                    até
+                    <p:calendar navigator="true" pattern="dd/MM/yyyy" styleClass="top-calendar m-0" value="#{controle.filtro.data.max}" placeholder="hoje">
+                        <p:ajax event="dateSelect" update="tbl"/>
+                        <p:ajax update="tbl"/>
+                    </p:calendar>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <p:dataTable value="#{controle.model}" emptyMessage="Nenhum registro encontrado." var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+        <p:column headerText="#" width="55" sortBy="#{item.id}" visible="false">
+            <h:outputText value="#{item.id}"/>
+        </p:column>
+
+        <p:column headerText="Fornecedor" sortBy="#{item.idFornecedor.razaoSocial}" filterBy="#{item.fornecedor}"
+                  rendered="#{controle.tipoContrato eq EnumTipoContrato.FORNECEDOR}">
+            <f:facet name="filter">
+                <p:selectOneMenu onchange="PF('tbl').filter()" styleClass="custom-filter" filter="true" filterMatchMode="contains"
+                                 value="#{controle.filtro.fornecedor}" converter="#{genericConverter}">
+                    <f:selectItem itemLabel="Todos" noSelectionOption="true"/>
+                    <f:selectItems value="#{fornecedorControle.fornecedores}" var="fornecedor"
+                                   itemLabel="#{fornecedor.razaoSocial}" itemValue="#{fornecedor}"/>
+                </p:selectOneMenu>
+            </f:facet>
+
+            <h:outputText value="#{item.idFornecedor.razaoSocial}"/>
+        </p:column>
+
+        <p:column headerText="Cliente" sortBy="#{item.idCliente.nome}" filterBy="#{item.cliente}"
+                  rendered="#{controle.tipoContrato eq EnumTipoContrato.CLIENTE}">
+            <f:facet name="filter">
+                <p:selectOneMenu onchange="PF('tbl').filter()" styleClass="custom-filter" filter="true" filterMatchMode="contains"
+                                 value="#{contratoClienteControle.filtro.cliente}" converter="#{genericConverter}">
+                    <f:selectItem itemLabel="Todos" noSelectionOption="true"/>
+                    <f:selectItems value="#{clienteControle.clientes}" var="cliente"
+                                   itemLabel="#{cliente.nome}" itemValue="#{cliente}"/>
+                </p:selectOneMenu>
+            </f:facet>
+            <h:outputText value="#{item.idCliente.nome}"/>
+        </p:column>
+
+        <p:column headerText="Plano de conta" sortBy="#{item.idPlanoConta.descricao}" filterBy="#{item.planoConta}">
+            <f:facet name="filter">
+                <p:selectOneMenu onchange="PF('tbl').filter()" styleClass="custom-filter" filter="true" filterMatchMode="contains"
+                                 value="#{controle.filtro.planoConta}" converter="#{genericConverter}">
+                    <f:selectItem itemLabel="Todos" noSelectionOption="true"/>
+                    <f:selectItems value="#{controle.planoContas()}"
+                                   var="pc" itemLabel="#{pc.descricao}" itemValue="#{pc}"
+                                   itemDescription="#{planoContaControle.obterNomesDosPais(pc)}"/>
+                </p:selectOneMenu>
+            </f:facet>
+            <h:outputText value="#{item.idPlanoConta.descricao}"/>
+        </p:column>
+
+        <p:column headerText="Observação" sortBy="#{item.observacao}" filterBy="#{item.observacao}">
+            <f:facet name="filter">
+                <p:inputText value="#{controle.filtro.descricao}" onchange="PF('tbl').filter()"/>
+            </f:facet>
+            <h:outputText value="#{item.observacao}"/>
+        </p:column>
+
+        <p:column headerText="Início do contrato" sortBy="#{item.dataInicio}">
+            <h:outputText value="#{item.dataInicio}">
+                <f:convertDateTime pattern="dd/MM/yyyy"/>
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Fim do contrato" sortBy="#{item.dataFim}">
+            <h:outputText value="#{item.dataFim}">
+                <f:convertDateTime pattern="dd/MM/yyyy"/>
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Número de parcelas" style="text-align: right" sortBy="#{item.numeroParcelas}" filterBy="#{item.numeroParcelas}">
+            <f:facet name="filter">
+                <p:inputNumber value="#{controle.filtro.numParcelas}" decimalPlaces="0" decimalSeparator="," thousandSeparator="." onchange="PF('tbl').filter()"/>
+            </f:facet>
+            <h:outputText value="#{item.numeroParcelas}"/>
+        </p:column>
+
+        <p:column headerText="Valor do contrato" style="text-align: right" sortBy="#{item.valorContrato}" filterBy="#{item.valorContrato}">
+            <f:facet name="filter">
+                <p:inputNumber value="#{controle.filtro.valor}" decimalPlaces="2" decimalSeparator="," thousandSeparator="." onchange="PF('tbl').filter()"/>
+            </f:facet>
+
+            <h:outputText value="#{item.valorContrato}">
+                <f:convertNumber currencySymbol="R$" type="currency"/>
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Taxa de adesão" style="text-align: right" sortBy="#{item.taxaAdesao}" filterBy="#{item.taxaAdesao}">
+            <f:facet name="filter">
+                <p:inputNumber value="#{controle.filtro.valorAdesao}" decimalPlaces="2" decimalSeparator="," thousandSeparator="." onchange="PF('tbl').filter()"/>
+            </f:facet>
+            <h:outputText value="#{item.taxaAdesao}">
+                <f:convertNumber currencySymbol="R$" type="currency"/>
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Taxa de instalação" style="text-align: right" sortBy="#{item.taxaInstalacao}" filterBy="#{item.taxaInstalacao}">
+            <f:facet name="filter">
+                <p:inputNumber value="#{controle.filtro.valorInstalacao}" decimalPlaces="2" decimalSeparator="," thousandSeparator="." onchange="PF('tbl').filter()"/>
+            </f:facet>
+            <h:outputText value="#{item.taxaInstalacao}">
+                <f:convertNumber currencySymbol="R$" type="currency"/>
+            </h:outputText>
+        </p:column>
+
+        <p:column rendered="#{item.situacao ne 'CC'}" headerText="Situação" sortBy="#{item.situacao}" filterBy="#{item.situacao}">
+            <f:facet name="filter">
+                <p:importEnum type="br.com.villefortconsulting.sgfinancas.util.EnumSituacaoConta" var="EnumSituacaoConta"/>
+                <p:selectOneMenu value="#{controle.filtro.situacao}" onchange="PF('tbl').filter()" styleClass="custom-filter"
+                                 filter="true" filterMatchMode="contains">
+                    <f:selectItem itemLabel="Todos" noSelectionOption="true"/>
+                    <f:selectItems value="#{EnumSituacaoConta.ALL_VALUES}" var="enum" itemLabel="#{enum.descricaoSituacao}" itemValue="#{enum.situacao}"/>
+                </p:selectOneMenu>
+            </f:facet>
+            <h:outputText value="#{contratoClienteControle.buscarSituacao(item.situacao)}"/>
+        </p:column>
+
+        <p:column rendered="#{item.situacao eq 'CC'}" headerText="Situação" sortBy="#{item.situacao}">
+            <h:outputText styleClass="font-red-haze" value="Cancelado"/>
+        </p:column>
+
+        <sec:ifAnyGranted roles ="CONTRATO_GERENCIAR">
+            <p:column width="107" headerText="Ações">
+
+                <div class="actions">
+                    <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Alterar contrato"
+                                   rendered="#{item.situacao ne 'CC'}"
+                                   action="#{controle.doStartAlterar()}">
+                        <i class="fa fa-edit"></i>
+                        <f:setPropertyActionListener value="#{item}" target="#{controle.contratoSelecionado}"/>
+                    </h:commandLink>
+
+                    <p:commandLink title="Download arquivo" ajax="false" class="btn btn-circle btn-icon-only btn-default icones"
+                                   rendered="#{item.idDocumento ne null and item.situacao ne 'CC' and controle.countAnexos(item) eq 1}">
+                        <i class="fa fa-arrow-down"></i>
+                        <p:fileDownload value="#{documentoControle.downloadAnexo(item.idDocumento)}"/>
+                    </p:commandLink>
+
+                    <p:commandLink title="Download arquivo" ajax="false" class="btn btn-circle btn-icon-only btn-default icones" action="#{controle.listAnexos(item)}"
+                                   rendered="#{item.idDocumento ne null and item.situacao ne 'CC' and controle.countAnexos(item) gt 1}">
+                        <i class="fa fa-arrow-down"></i>
+                    </p:commandLink>
+
+                    <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Remover contrato"
+                                   rendered="#{item.situacao eq 'NP'}"
+                                   action="#{controle.doFinishExcluir()}" onclick="return confirm('Tem certeza que deseja excluir este contrato?');">
+                        <i class="icon-trash"></i>
+                        <f:setPropertyActionListener value="#{item}" target="#{controle.contratoSelecionado}"/>
+                    </h:commandLink>
+
+                    <h:commandLink title="Interromper contrato" rendered="#{item.situacao eq 'PP'}" styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                   action="#{controle.doStartInterrupt()}">
+                        <i class="fa fa-chain-broken"></i>
+                        <f:setPropertyActionListener value="#{item}" target="#{controle.contratoSelecionado}"/>
+                    </h:commandLink>
+
+                    <h:commandLink title="Cancelar contrato" rendered="#{item.situacao ne 'CC' and item.situacao ne 'IT'}" styleClass="btn btn-circle btn-icon-only btn-default icones" onclick="return confirm('Tem certeza que deseja cancelar este contrato?');"
+                                   action="#{controle.cancelarContrato()}">
+                        <i class="fa fa-times"></i>
+                        <f:setPropertyActionListener value="#{item}" target="#{controle.contratoSelecionado}"/>
+                    </h:commandLink>
+
+                    <h:commandLink title="Auditoria" styleClass="btn btn-circle btn-icon-only btn-default icones" action="#{controle.doShowAuditoria()}">
+                        <i class="fa fa-history"></i>
+                        <f:setPropertyActionListener value="#{item}" target="#{controle.contratoSelecionado}"/>
+                    </h:commandLink>
+
+                </div>
+
+            </p:column>
+        </sec:ifAnyGranted>
+
+    </p:dataTable>
+
+</ui:composition>

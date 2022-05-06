@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Contrato de cliente"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Contrato</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/contratoEntrada/listaContratoCliente.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteSave" action="#{contratoClienteControle.doFinishAdd()}" rendered="#{contratoClienteControle.podeSalvar()}"/>
+            <h:commandButton id="remoteCancel" action="#{contratoClienteControle.retornarTela()}" immediate="true"/>
+            <h:commandButton id="remoteHelp" rendered="false" action="#{contratoClienteControle.mostrarAjuda()}" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <ui:include src="../contrato/cadastroContrato.xhtml">
+                <ui:param name="controle" value="#{contratoClienteControle}"/>
+            </ui:include>
+        </ui:define>
+
+    </ui:composition>
+</html>

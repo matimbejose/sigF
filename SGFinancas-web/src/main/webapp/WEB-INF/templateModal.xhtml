@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      lang="pt_br">
+
+    <h:head>
+        <f:facet name="first">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+        </f:facet>
+        <title><ui:insert name="title">SG Finanças</ui:insert></title>
+        <link rel="icon" type="image/png" href="/resources/images/favicon.png" />
+        <h:outputScript name="js/layout.js" library="rain-layout" />
+        <ui:insert name="head"/>
+        <ui:insert name="cssInicial"/>
+        <script src="#{facesContext.externalContext.requestContextPath}/resources/js/main.js"/>
+        <h:outputStylesheet name="css/primeicons.css" library="rain-layout" />
+    </h:head>
+
+    <h:body>
+        <h:form role="form" id="form" enctype="multipart/form-data" acceptcharset="ISO-8859-1">
+            <div class="p-3" style="overflow: hidden;">
+                <div class="remotes d-none">
+                    <ui:insert name="remotes"></ui:insert>
+                </div>
+                <h:messages class="alertMessage" id="msgResultado"
+                            errorClass="alert alert-danger" infoClass="alert alert-success" warnClass="alert alert-warning"/>
+                <ui:insert name="content"></ui:insert>
+            </div>
+        </h:form>
+
+        <h:outputStylesheet name="main.css" library="css" />
+        <link href="#{facesContext.externalContext.requestContextPath}/resources/metronic/assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css" />
+        <link href="#{facesContext.externalContext.requestContextPath}/resources/metronic/assets/global/css/components.css" rel="stylesheet" id="style_components" type="text/css" />
+        <h:outputStylesheet name="css/layout-chateau-green-light.css" library="rain-layout" />
+
+        <link rel="stylesheet" href="#{facesContext.externalContext.requestContextPath}/resources/bootstrap-4.3.1/css/bootstrap.css"></link>
+        <script src="#{facesContext.externalContext.requestContextPath}/resources/bootstrap-4.3.1/js/bootstrap.min.js"></script>
+
+        <p:ajaxStatus style="position: fixed;bottom: 10px;right: 10px;z-index: 9999999;" onstart="lockScreen();" oncomplete="unlockScreen();" onerror="unlockScreen();" onsuccess="unlockScreen();">
+            <f:facet name="start">
+                <i class="fa fa-circle-o-notch fa-spin fa-2x" style="color: #88c657;"></i>
+            </f:facet>
+            <f:facet name="complete">
+                <h:outputText value=""/>
+            </f:facet>
+        </p:ajaxStatus>
+
+        <div id="screenBlocker" style="display: none;"></div>
+
+        <ui:insert name="script"/>
+        <script>
+            // <![CDATA[
+            var hasApplyedDataTableContextMenu = false,
+                hasAttachedMutationObsever = false;
+            $(document).ready(function () {
+                initDataTableFilterFix();
+                let remotesScripts = Array.from(document.querySelectorAll('.remotes > script'));
+                let remoteFunction = Object.keys(window).filter(f => f.indexOf('remote') === 0);
+                remotesScripts = remotesScripts.map(m => m.innerHTML.trim().replace(/ .*/, ''));
+                remotesScripts = remoteFunction.filter(f => !remotesScripts.includes(f));
+                remotesScripts.forEach(e => delete window[e]);
+                alignItemsEnd();
+            });
+            // ]]>
+        </script>
+        <style>
+            .hover-menu {
+                height: 0px;
+                position: fixed;
+                left: 15px;
+                float: left;
+                z-index: 999;
+            }
+            .hover-menu > .actions {
+                transition: opacity .4s, height .4s;
+                height: 0px;
+                background-color: white;
+                border: none;
+                padding: 4px 9px;
+                opacity: 0;
+                overflow: hidden;
+            }
+            .ui-widget-content.ui-datatable-even .hover-menu > .actions {
+                background-color: #f9f9f9;
+            }
+            tr:hover .hover-menu > .actions {
+                border: 1px solid #ccc;
+                border-top: none;
+                height: auto;
+                opacity: 1;
+            }
+            .hover-menu > .actions > a {
+                border-color: transparent;
+                display: inline;
+            }
+            tr:hover .hover-menu > .actions > a:last-child {
+                margin-right: 0;
+            }
+        </style>
+    </h:body>
+
+</html>

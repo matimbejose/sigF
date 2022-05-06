@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:sec="http://www.springframework.org/security/facelets/tags"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="IntroJS Config"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:param name="enabled" value="#{sec:ifAnyGranted('DEV')}"/>
+
+        <ui:define name="viewname">
+            <li><p:link outcome="/restrito/administracao/introJSConfig/listaIntroJSConfig.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton rendered="#{enabled}" id="remoteSave" action="#{introJSConfigControle.doFinishAdd()}"/>
+            <h:commandButton rendered="#{enabled}" id="remoteCancel" action="listaIntroJSConfig.xhtml" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <link href="#{facesContext.externalContext.requestContextPath}/resources/css/codemirror/codemirror.css" rel="stylesheet" type="text/css"/>
+            <link href="#{facesContext.externalContext.requestContextPath}/resources/css/codemirror/darcula.css" rel="stylesheet" type="text/css"/>
+            <script src="#{facesContext.externalContext.requestContextPath}/resources/js/codemirror/codemirror.js" type="text/javascript"></script>
+            <script src="#{facesContext.externalContext.requestContextPath}/resources/js/codemirror/javascript/javascript.js" type="text/javascript"></script>
+
+            <div class="form-body">
+                <div class="card">
+                    <div class="row">
+                        <div class="col form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Page ID"/>
+                            <p:inputText value="#{introJSConfigControle.introJSConfigSelecionado.pageId}"
+                                         required="true" requiredMessage="Informe o id da página"/>
+                        </div>
+                        <div class="col-2 form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Força exibição"/>
+                            <p:selectOneMenu value="#{introJSConfigControle.introJSConfigSelecionado.forcaExibicao}"
+                                             required="true" requiredMessage="Informe o nome">
+                                <f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+                                <f:selectItem itemLabel="Sim" itemValue="S"/>
+                                <f:selectItem itemLabel="Não" itemValue="N"/>
+                            </p:selectOneMenu>
+                        </div>
+                        <div class="col-2 form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Revisão"/>
+                            <p:inputNumber value="#{introJSConfigControle.introJSConfigSelecionado.revisao}" decimalPlaces="0" thousandSeparator=""
+                                           required="true" requiredMessage="Informe o número de revisão"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="JS"/>
+                            <h:inputTextarea value="#{introJSConfigControle.introJSConfigSelecionado.js}" style="width: 100%" id="jsCode"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script>
+                $(document).ready(() => {
+                    let cm = new CodeMirror.fromTextArea(document.getElementById("form:jsCode"), {
+                        lineNumbers: true,
+                        mode: 'javascript',
+                        indentUnit: 4,
+                        theme: "darcula"
+                    });
+                });
+            </script>
+            <style>
+                .CodeMirror {
+                    border-radius: 6px;
+                }
+            </style>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

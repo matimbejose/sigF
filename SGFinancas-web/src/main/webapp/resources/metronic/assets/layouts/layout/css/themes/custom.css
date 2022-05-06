@@ -1,0 +1,45 @@
+/* here you can put your own css to customize and override the theme */
+/* here you can put your own css to customize and override the theme */
+.theme-panel > .toggler {
+    top: -12px!important;
+}
+.theme-panel > .toggler-close {
+    top: -12px!important;
+}
+.theme-panel > .theme-options {
+    top: -12px!important;
+}
+
+.page-header.navbar .page-logo .logo-default {
+    margin: 8px 0 0 0;
+    width: 150px;
+    height: 30px;
+}
+.ui-state-disabled {
+    background-color: #e1e1e1 !important;
+}
+
+.form-group.form-md-line-input {
+    position: relative;
+    margin: 0 0 35px;
+    padding-top: 0px;
+}
+
+.form-group.form-md-line-input.form-md-floating-label {
+    padding-top: 20px!important;
+}
+
+.ui-selectonemenu .ui-selectonemenu-trigger .ui-icon {
+    margin-top: 10px;
+    margin-left: -4px;
+}
+
+ 
+.page-bar .page-toolbar {
+    padding-right: 40px !important;
+}
+
+
+.form-group.form-md-line-input .form-control[disabled], .form-group.form-md-line-input .form-control[readonly], fieldset[disabled] .form-group.form-md-line-input .form-control {
+    cursor: not-allowed!important;
+}

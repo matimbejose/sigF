@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:sec="http://www.springframework.org/security/facelets/tags"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite/components"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Solicitações de exclusão"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Cadastro</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/cliente/listaCliente.xhtml"> Cliente</p:link></li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/cliente/listaSolicitacoesExclusao.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteBack" action="./listaCliente.xhtml"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <p:dataTable value="#{clienteControle.modelSolicitacaoExclusao}" emptyMessage="#{clienteControle.emptyMessage}" var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="#{clienteControle.paginatorTemplate}" currentPageReportTemplate="#{clienteControle.currentPageReportTemplate}" styleClass="#{clienteControle.styleClass}">
+
+                <f:facet name="header">
+                    Solicitações de exclusão
+                </f:facet>
+
+                <p:column headerText="Nome do cliente" sortBy="#{item.idClienteMovimentacao.idCliente.nome}">
+                    <h:outputText value="#{item.idClienteMovimentacao.idCliente.nome}"/>
+                </p:column>
+
+                <p:column headerText="Data da movimentação" sortBy="#{item.idClienteMovimentacao.dataMovimentacao}">
+                    <cc:convertDate value="#{item.idClienteMovimentacao.dataMovimentacao}"/>
+                </p:column>
+
+                <p:column headerText="Origem" sortBy="#{item.idClienteMovimentacao.enumOrigem.descricao}">
+                    <h:outputText value="#{item.idClienteMovimentacao.enumOrigem.descricao}"/>
+                </p:column>
+
+                <p:column headerText="Valor">
+                    <cc:convertMoney value="#{item.idClienteMovimentacao.valor}"/>
+                </p:column>
+
+                <p:column headerText="Status" sortBy="#{item.status}" filterBy="#{item.status}">
+                    <f:facet name="filter">
+                        <p:selectOneMenu onchange="PF('tbl').filter()" styleClass="custom-filter" value="#{clienteControle.filtroSolicitacaoExclusao.status}">
+                            <f:selectItem itemLabel="Todos" noSelectionOption="true"/>
+                            <f:selectItem itemLabel="Abertos" itemValue="A"/>
+                            <f:selectItem itemLabel="Fechados" itemValue="F"/>
+                        </p:selectOneMenu>
+                    </f:facet>
+                    <h:outputText value="Aberto" rendered="#{item.status eq 'A'}"/>
+                    <h:outputText value="Fechado" rendered="#{item.status eq 'F'}"/>
+                </p:column>
+
+                <sec:ifAnyGranted roles ="CLIENTE_GERENCIAR">
+                    <p:column width="135" headerText="Ações">
+                        <div class="actions">
+                            <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Excluir"
+                                           action="#{clienteControle.doConfirmExcluirMovimentacao()}">
+                                <i class="fa fa-check"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{clienteControle.clienteMovimentacaoAlteracaoSelecionada}"/>
+                            </h:commandLink>
+
+                            <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Negar"
+                                           action="#{clienteControle.doCancelExcluirMovimentacao()}">
+                                <i class="fa fa-times"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{clienteControle.clienteMovimentacaoAlteracaoSelecionada}"/>
+                            </h:commandLink>
+
+                            <p:commandLink title="Auditoria" styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                           action="#{clienteControle.doShowAuditoriaSolicitacaoAlteracao()}" ajax="true">
+                                <i class="fa fa-history"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{clienteControle.clienteMovimentacaoAlteracaoSelecionada}"/>
+                            </p:commandLink>
+                        </div>
+                    </p:column>
+                </sec:ifAnyGranted>
+
+            </p:dataTable>
+
+        </ui:define>
+
+    </ui:composition>
+
+</html>

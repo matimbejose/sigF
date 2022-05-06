@@ -1,0 +1,6 @@
+Site key Use this in the HTML code your site serves to users.
+6LcG1AsTAAAAANHtC2EJ7TOqewjqqrA9VdmmGHz9
+
+Secret key
+Use this for communication between your site and Google. Be sure to keep it a secret. 
+6LcG1AsTAAAAAMjERheHhCPIEL1STHRsHc8dP1uy

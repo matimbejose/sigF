@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<ui:composition template="/WEB-INF/template.xhtml">
+
+    <ui:param name="title" value="Abono ponto" />
+
+    <ui:define name="title">#{title}</ui:define>
+
+    <ui:define name="viewname">
+        <li>Pessoal</li>
+        <li>/</li>
+        <li>
+            <p:link outcome="/restrito/abonoPonto/listaAbonoPonto.xhtml"> #{title}</p:link>
+        </li>
+    </ui:define>
+
+    <ui:define name="remotes">
+        <h:commandButton id="remoteSave" action="#{abonoPontoControle.doFinishAdd()}" />
+        <h:commandButton id="remoteCancel" action="listaAbonoPonto.xhtml" immediate="true" />
+        <h:commandButton id="remoteHelp" rendered="false" action="#{abonoPontoControle.mostrarAjuda()}" immediate="true" />
+    </ui:define>
+
+    <ui:define name="content">
+        <div class="form-body">
+            <div class="card">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group form-md-line-input">
+                            <label class="control-label"><span class="required">* </span>Funcionario</label>
+
+                            <p:inputText value="#{abonoPontoControle.funcionarioFeriasSelecionado.idFuncionario.nome}"
+                                rendered="#{abonoPontoControle.funcionarioFeriasSelecionado.id ne null}" disabled="true"
+                                styleClass="form-control" />
+
+                            <p:selectOneMenu value="#{abonoPontoControle.funcionarioFeriasSelecionado.idFuncionario}"
+                                rendered="#{abonoPontoControle.funcionarioFeriasSelecionado.id eq null}"
+                                panelStyle="width:180px" effect="fade" var="t" filter="true" filterMatchMode="contains"
+                                converter="#{genericConverter}">
+                                <p:column>
+                                    <h:outputText value="#{t.nome}" />
+                                </p:column>
+
+                                <f:selectItem itemLabel="-- Selecione o funcionário --" noSelectionOption="true" />
+                                <f:selectItems value="#{funcionarioControle.funcionarios}" var="funcionario"
+                                    itemLabel="#{funcionario.nome}" itemValue="#{funcionario}" />
+
+                            </p:selectOneMenu>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group form-md-line-input">
+                            <label class="control-label"><span class="required">* </span>Motivo do abono</label>
+                            <p:selectOneMenu value="#{abonoPontoControle.funcionarioFeriasSelecionado.motivo}"
+                                required="true" requiredMessage="Informe o motivo do abono">
+                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true" />
+                                <f:selectItems value="#{abonoPontoControle.motivos}" var="m" itemLabel="#{m.value}"
+                                    itemValue="#{m.key}" />
+                            </p:selectOneMenu>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label"> <span class="required"> * </span>Início do abono</label>
+                            <p:calendar navigator="true" value="#{abonoPontoControle.funcionarioFeriasSelecionado.dataInicio}"
+                                required="true" requiredMessage="Informe o início do período de abono"
+                                pattern="dd/MM/yyyy" mask="true" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group form-md-line-input">
+                            <label class="control-label"> <span class="required"> * </span>Fim do abono</label>
+                            <p:calendar navigator="true" value="#{abonoPontoControle.funcionarioFeriasSelecionado.dataFim}"
+                                required="true" requiredMessage="Informe o fim do período de abono" pattern="dd/MM/yyyy"
+                                mask="true" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group form-md-line-input">
+                            <label class="control-label"> Observação</label>
+                            <p:inputText value="#{abonoPontoControle.funcionarioFeriasSelecionado.observacao}"
+                                styleClass="form-control" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </ui:define>
+
+</ui:composition>
+
+</html>

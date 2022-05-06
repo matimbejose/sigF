@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Contato cliente"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Segurança</li>
+            <li>/</li>
+            <li>Administração</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/contatoCliente/listaEmpresaContatoCliente.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteAdd" action="#{empresaContatoClienteControle.doStartAdd()}"/>
+            <h:commandButton id="remoteBack" action="#{controleMenu.doAcionarPagina('administracao/listaEmpresaCredenciada.xhtml')}"/>
+        </ui:define>
+
+        <ui:define name="formButtons">
+            <p:commandButton type="button" value="Limpar filtros" onclick="clearDataTableFilters('tbl');"/>
+            <p:commandButton id="toggler" type="button" value="Colunas"/>
+            <p:columnToggler datasource="tbl" trigger="toggler"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <p:dataTable value="#{empresaContatoClienteControle.model}" emptyMessage="Nenhum registro encontrado." var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+                <f:facet name="header">
+                    #{empresaContatoClienteControle.empresaSelecionada.descricao}
+                </f:facet>
+
+                <p:column headerText="ID" sortBy="#{item.id}" visible="false">
+                    <h:outputText value="#{item.id}"/>
+                </p:column>
+
+                <p:column headerText="Nome contato" sortBy="#{item.nomeContato}">
+                    <h:outputText value="#{item.nomeContato}"/>
+                </p:column>
+
+                <p:column headerText="Telefone" sortBy="#{item.telefone}" width="125">
+                    <h:outputText value="#{item.telefone}"/>
+                </p:column>
+
+                <p:column headerText="Email" sortBy="#{item.email}" width="125">
+                    <h:outputText value="#{item.email}"/>
+                </p:column>
+
+                <p:column headerText="Data contato" sortBy="#{item.dataContato}" width="125">
+                    <h:outputText value="#{item.dataContato}">
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Próx. contato" sortBy="#{item.dataProximoContato}" width="125">
+                    <h:outputText value="#{item.dataProximoContato}">
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column width="117" headerText="Ações" >
+                    <div class="actions">
+                        <div class="actions">
+                            <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Alterar contato" action="#{empresaContatoClienteControle.doStartAlterar()}"  >
+                                <i class="fa fa-edit"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{empresaContatoClienteControle.empresaContatoClienteSelecionado}"/>
+                            </h:commandLink>
+
+                            <h:commandLink  styleClass="btn btn-circle btn-icon-only btn-default icones" title="Remover contato" action="#{empresaContatoClienteControle.doFinishExcluir()}" onclick="return confirm('Tem certeza que deseja excluir este contato?');" >
+                                <i class="icon-trash"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{empresaContatoClienteControle.empresaContatoClienteSelecionado}"/>
+                            </h:commandLink>
+
+                            <h:commandLink  title="Auditoria" styleClass="btn btn-circle btn-icon-only btn-default icones" action="#{empresaContatoClienteControle.doShowAuditoria()}" >
+                                <i class="fa fa-history"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{empresaContatoClienteControle.empresaContatoClienteSelecionado}"/>
+                            </h:commandLink>
+
+                        </div>
+                    </div>
+                </p:column>
+
+            </p:dataTable>
+        </ui:define>
+
+    </ui:composition>
+
+</html>
+

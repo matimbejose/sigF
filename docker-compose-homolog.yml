@@ -1,0 +1,31 @@
+version: '2.4'
+services:
+  sgfinancas:
+    image: 192.168.0.52:8082/sgfinancas-homolog:latest
+    user: root
+    ports:
+      - "8009:8009"
+    env_file: 
+      - .env-homolog
+    environment:
+      - DEBUG=true
+      - JAVA_OPTS=-server -Xms1024m -Xmx3072m -Djava.net.preferIPv4Stack=true -Djboss.modules.system.pkgs=org.jboss.byteman -Djava.awt.headless=true-Djava.net.preferIPv4Stack=true -Dcom.sun.jersey.server.impl.cdi.lookupExtensionInBeanManager=true -Djava.awt.headless=true
+      - TZ=America/Sao_Paulo
+      - DB_DATABASENAME=${DB_DATABASENAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_SERVERNAME=${DB_SERVERNAME}
+      - DB_SERVERPORT=${DB_SERVERPORT}
+      - DB_USERNAME=${DB_USERNAME}
+    volumes:
+      - /home/apps/data/homologacao/sgfinancas/log/:/opt/jboss/wildfly/standalone/log
+      - /home/apps/data/homologacao/sgfinancas/termos/:/termos
+      - /home/apps/data/homologacao/sgfinancas/arquivos:/opt/jboss/wildfly/arquivos
+    restart: always
+    container_name: cn_sgfinancas
+    networks:
+      apache_villefort:
+        aliases:
+          - srv_sgfinancas
+networks:
+    apache_villefort:
+        external: true    

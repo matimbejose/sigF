@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:sec="http://www.springframework.org/security/facelets/tags"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite/components">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Cliente"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Cadastro</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/cliente/listaCliente.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteSave" action="#{clienteControle.doFinishAdd()}"/>
+            <h:commandButton id="remoteCancel" action="listaCliente.xhtml" immediate="true"/>
+            <h:commandButton id="remoteHelp" rendered="false" action="#{clienteControle.mostrarAjuda()}" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <p:tabView id="abas">
+                <p:tab title="Geral">
+                    <h5>Informações do cliente</h5>
+                    <div class="mx-2">
+                        <div class="row">
+                            <div class="col-3 form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Nome"/>
+                                <p:inputText value="#{clienteControle.clienteSelecionado.nome}" required="true" requiredMessage="Informe o nome"/>
+                            </div>
+                            <div class="col-2 form-group form-md-line-input">
+                                <p:outputLabel for="@next" value=" Tipo de pessoa"/>
+                                <p:selectOneMenu value="#{clienteControle.clienteSelecionado.tipo}" required="true" requiredMessage="Informe o tipo de pessoa">
+                                    <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                    <f:selectItem itemLabel="Pessoa Júridica" itemValue="PJ"/>
+                                    <f:selectItem itemLabel="Pessoa Física" itemValue="PF"/>
+                                    <p:ajax update="pnlTipo, pnlInscricao, pnlCpfCnpj, complemento" event="change" process="@this"/>
+                                </p:selectOneMenu>
+                            </div>
+                            <div class="col">
+                                <p:outputPanel id="pnlTipo">
+                                    <div class="row">
+                                        <p:row rendered="#{clienteControle.clienteSelecionado.tipo eq 'PF'}">
+                                            <div class="col form-group form-md-line-input">
+                                                <p:outputLabel for="@next" value="Data de nascimento"/>
+                                                <p:calendar id="nascimento" navigator="true" value="#{clienteControle.clienteSelecionado.dataNascimento}" pattern="dd/MM/yyyy" mask="true" yearRange="c-50:c+50"/>
+                                            </div>
+                                        </p:row>
+                                        <div class="col form-group form-md-line-input">
+                                            <p:outputLabel for="@next" value="CNPJ/CPF"/>
+                                            <div class="input-group">
+                                                <div class="input-group-append">
+                                                    <p:inputText disabled="true" readonly="true"
+                                                                 rendered="#{clienteControle.clienteSelecionado.tipo eq null}"/>
+
+                                                    <p:inputMask mask="99.999.999/9999-99" value="#{clienteControle.clienteSelecionado.cpfCNPJ}"
+                                                                 autocomplete="off" validatorMessage="CNPJ inválido"
+                                                                 rendered="#{clienteControle.clienteSelecionado.tipo eq 'PJ'}"/>
+
+                                                    <p:inputMask mask="999.999.999-99" value="#{clienteControle.clienteSelecionado.cpfCNPJ}"
+                                                                 autocomplete="off" validatorMessage="CPF inválido"
+                                                                 rendered="#{clienteControle.clienteSelecionado.tipo eq 'PF'}" >
+                                                        <p:ajax update="pnlTipo, pnlInscricao, pnlCpfCnpj, complemento" process="@this, pnlTipo" event="change"/>
+                                                    </p:inputMask>
+                                                    <p:commandLink action="#{clienteControle.buscarDadosClientePorCpfCnpj()}" styleClass="btn"
+                                                                   update="@form, form:msgResultado" process="@this, pnlTipo">
+                                                        <i class="fa fa-search"></i>
+                                                    </p:commandLink>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <p:row rendered="#{clienteControle.clienteSelecionado.tipo eq 'PJ'}">
+                                            <div class="col form-group form-md-line-input">
+                                                <p:outputLabel for="@next" value="Razão social"/>
+                                                <p:inputText value="#{clienteControle.clienteSelecionado.razaoSocial}"/>
+                                            </div>
+                                        </p:row>
+                                    </div>
+                                </p:outputPanel>
+                            </div>
+                            <p:row rendered="#{empresaControle.empresaLogada.idCategoriaEmpresa.descricao eq 'Oficina mecânica'}">
+                                <div class="col-2 form-group form-md-line-input" >
+                                    <p:outputLabel for="@next" value="Seguradora"/>
+                                    <p:selectOneMenu value="#{clienteControle.clienteSelecionado.seguradora}">
+                                        <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                        <f:selectItem itemLabel="Sim" itemValue="S"/>
+                                        <f:selectItem itemLabel="Não" itemValue="N"/>
+                                    </p:selectOneMenu>
+                                </div>
+                            </p:row>
+                        </div>
+                        <p:outputPanel id="complemento" rendered="#{empresaControle.empresaLogada.idCategoriaEmpresa.descricao eq 'Oficina mecânica'}">
+                            <div class="row">
+                                <div class="col">
+                                    <p:outputLabel for="@next" value="Matricula"/>
+                                    <p:inputNumber value="#{clienteControle.clienteSelecionado.matricula}"/>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group form-md-line-input">
+                                        <p:outputLabel for="@next" value="Situação"/>
+                                        <p:selectOneMenu value="#{clienteControle.clienteSelecionado.ativo}">
+                                            <f:selectItem itemLabel="Ativo" itemValue="S"/>
+                                            <f:selectItem itemLabel="Inativo" itemValue="N"/>
+                                        </p:selectOneMenu>
+                                    </div>
+                                </div>
+
+                                <div class="col">
+                                    <div class="form-group form-md-line-input">
+                                        <cc:addButton label="Centro de custo" entityName="centroCusto">
+                                            <p:selectOneMenu value="#{clienteControle.clienteSelecionado.idCentroCusto}" panelStyle="width:180px" effect="fade"
+                                                             var="t" filter="true" filterMatchMode="startsWith" converter="#{genericConverter}">
+                                                <p:column>
+                                                    <h:outputText value="#{t.descricao}" />
+                                                </p:column>
+
+                                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                <f:selectItems value="#{centroCustoControle.centroCustos}" var="centroCusto"
+                                                               itemLabel="#{centroCusto.descricao}" itemValue="#{centroCusto}"/>
+                                            </p:selectOneMenu>
+                                        </cc:addButton>
+                                    </div>
+                                </div>
+
+                                <div class="col-2">
+                                    <div class="form-group form-md-line-input">
+                                        <p:outputLabel for="@next" value="Sexo" rendered="#{clienteControle.clienteSelecionado.tipo eq 'PF'}"/>
+                                        <p:selectOneMenu value="#{clienteControle.clienteSelecionado.sexo}"
+                                                         rendered="#{clienteControle.clienteSelecionado.tipo eq 'PF'}">
+                                            <f:selectItem itemLabel="Feminino" itemValue="F"/>
+                                            <f:selectItem itemLabel="Masculino" itemValue="M"/>
+                                        </p:selectOneMenu>
+                                    </div>
+                                </div>
+                                <div class="col-1">
+                                    <p:outputLabel for="@next" value="Idade" rendered="#{clienteControle.clienteSelecionado.tipo eq 'PF'}"/>
+                                    <p:inputText id="idade" value="#{clienteControle.idade}" disabled="true"
+                                                 rendered="#{clienteControle.clienteSelecionado.tipo eq 'PF'}"/>
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <p:outputLabel for="@next" value="RG" rendered="#{clienteControle.clienteSelecionado.tipo eq 'PF'}"/>
+                                    <p:inputText value="#{clienteControle.clienteSelecionado.rg}"  rendered="#{clienteControle.clienteSelecionado.tipo eq 'PF'}"/>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group form-md-line-input">
+                                        <p:outputLabel for="@next" value="Data de expedição" rendered="#{clienteControle.clienteSelecionado.tipo eq 'PF'}"/>
+                                        <p:calendar navigator="true" value="#{clienteControle.clienteSelecionado.dataExpedicao}"
+                                                    pattern="dd/MM/yyyy" mask="true" rendered="#{clienteControle.clienteSelecionado.tipo eq 'PF'}"/>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <p:outputLabel for="@next" value="Orgão expedidor" rendered="#{clienteControle.clienteSelecionado.tipo eq 'PF'}"/>
+                                    <p:inputText value="#{clienteControle.clienteSelecionado.orgaoExpedidor}" rendered="#{clienteControle.clienteSelecionado.tipo eq 'PF'}"/>
+                                </div>
+                                <div class="col">
+                                    <p:outputLabel for="@next" value="CNH" rendered="#{clienteControle.clienteSelecionado.tipo eq 'PF'}"/>
+                                    <p:inputText value="#{clienteControle.clienteSelecionado.cnh}" rendered="#{clienteControle.clienteSelecionado.tipo eq 'PF'}"/>
+                                </div>
+                                <div class="col">
+                                    <p:outputLabel for="@next" value="Categoria CNH" rendered="#{clienteControle.clienteSelecionado.tipo eq 'PF'}"/>
+                                    <p:selectOneMenu value="#{clienteControle.clienteSelecionado.categoriaCNH}" rendered="#{clienteControle.clienteSelecionado.tipo eq 'PF'}">
+                                        <p:importEnum type="br.com.villefortconsulting.sgfinancas.util.EnumCategoriaCNH"/>
+                                        <f:selectItems var="enum" itemLabel="#{enum.descricao}" itemValue="#{enum.categoria}"
+                                                       value="#{EnumCategoriaCNH.ALL_VALUES}"/>
+                                    </p:selectOneMenu>
+                                </div>
+
+
+                            </div>
+                        </p:outputPanel>
+                        <p:outputPanel id="pnlCpfCnpj" styleClass="row">
+                            <div class="col-2 form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Inscrição municipal"/>
+                                <p:inputText disabled="#{clienteControle.clienteSelecionado.tipo ne 'PJ'}"
+                                             value="#{clienteControle.clienteSelecionado.inscricaoMunicipal}"/>
+                            </div>
+                            <div class="col-2 form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Tem inscrição estadual?"/>
+                                <p:selectOneMenu disabled="#{clienteControle.clienteSelecionado.tipo ne 'PJ'}"
+                                                 value="#{clienteControle.clienteSelecionado.temInscricaoEstadual}"
+                                                 required="true" requiredMessage="Informe se tem inscrição estadual">
+                                    <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                    <f:selectItem itemLabel="Sim" itemValue="S"/>
+                                    <f:selectItem itemLabel="Não" itemValue="N"/>
+                                    <p:ajax update="outputInscricaoEstadual" event="change" process="@this"/>
+                                </p:selectOneMenu>
+                            </div>
+                            <div class="col-2 form-group form-md-line-input">
+                                <p:outputPanel id="outputInscricaoEstadual">
+                                    <p:outputLabel for="@next" value="Inscrição estadual"/>
+                                    <p:inputText disabled="#{clienteControle.clienteSelecionado.temInscricaoEstadual ne 'S'}"
+                                                 value="#{clienteControle.clienteSelecionado.inscricaoEstadual}"/>
+                                </p:outputPanel>
+                            </div>
+                            <p:outputPanel id="pnlInscricao" styleClass="col row">
+                                <div class="col form-group form-md-line-input">
+                                    <p:outputLabel for="@next" value="Cliente contribuinte de ICMS?"/>
+                                    <p:selectOneMenu disabled="#{clienteControle.clienteSelecionado.tipo ne 'PJ'}"
+                                                     value="#{clienteControle.clienteSelecionado.indicadorInscricaoEstadual}">
+                                        <f:selectItem itemLabel="Contribuinte" itemValue="1"/>
+                                        <f:selectItem itemLabel="Contribuinte isento" itemValue="2"/>
+                                        <f:selectItem itemLabel="Não contribuinte" itemValue="9"/>
+                                    </p:selectOneMenu>
+                                </div>
+                                <div class="col form-group form-md-line-input">
+                                    <p:outputLabel for="@next" value="Opta simples?"/>
+                                    <p:selectOneMenu disabled="#{clienteControle.clienteSelecionado.tipo ne 'PJ'}"
+                                                     value="#{clienteControle.clienteSelecionado.optaSimples}">
+                                        <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                        <f:selectItem itemLabel="Sim" itemValue="S"/>
+                                        <f:selectItem itemLabel="Não" itemValue="N"/>
+                                    </p:selectOneMenu>
+                                </div>
+                            </p:outputPanel>
+                        </p:outputPanel>
+                    </div>
+                    <h5>Contato do cliente</h5>
+                    <div class="mx-2">
+                        <div class="row">
+                            <div class="col form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Telefone comercial"/>
+                                <p:inputMask value="#{clienteControle.clienteSelecionado.telefoneComercial}" mask="(99) 9999-9999?9"/>
+                            </div>
+                            <div class="col form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Telefone residencial"/>
+                                <p:inputMask value="#{clienteControle.clienteSelecionado.telefoneResidencial}" mask="(99) 9999-9999?9"/>
+                            </div>
+                            <div class="col form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Telefone celular"/>
+                                <p:inputMask value="#{clienteControle.clienteSelecionado.telefoneCelular}" mask="(99) 99999-9999"
+                                             required="#{clienteControle.criaUsuarioParaCliente}" requiredMessage="Informe o telefone celular"/>
+                            </div>
+                            <div class="col form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Email"/>
+                                <p:inputText value="#{clienteControle.clienteSelecionado.email}" validatorMessage="Email incorreto"
+                                             required="#{clienteControle.criaUsuarioParaCliente}" requiredMessage="Informe o email"/>
+                            </div>
+                            <div class="col form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="CEP"/>
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <p:inputMask value="#{clienteControle.clienteSelecionado.endereco.cep}" mask="99.999-999" id="inpCep"/>
+                                        <p:commandLink action="#{clienteControle.buscarEnderecoPorCep()}" styleClass="btn"
+                                                       update="pnlEndereco1" process="@this, inpCep">
+                                            <i class="fa fa-search"></i>
+                                        </p:commandLink>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <p:outputPanel id="pnlEndereco1">
+                            <div class="row">
+                                <div class="col-3 form-group form-md-line-input">
+                                    <p:outputLabel for="@next" value="Logradouro"/>
+                                    <p:inputText value="#{clienteControle.clienteSelecionado.endereco.endereco}"/>
+                                </div>
+                                <div class="col-1 form-group form-md-line-input">
+                                    <p:outputLabel for="@next" value="Número"/>
+                                    <p:inputText value="#{clienteControle.clienteSelecionado.endereco.numero}"/>
+                                </div>
+                                <div class="col-2 form-group form-md-line-input">
+                                    <p:outputLabel for="@next" value="Complemento"/>
+                                    <p:inputText value="#{clienteControle.clienteSelecionado.endereco.complemento}"/>
+                                </div>
+                                <div class="col-2 form-group form-md-line-input">
+                                    <p:outputLabel for="@next" value="Bairro"/>
+                                    <p:inputText value="#{clienteControle.clienteSelecionado.endereco.bairro}"/>
+                                </div>
+                                <div class="col-1 form-group form-md-line-input">
+                                    <p:outputLabel for="@next" value="UF"/>
+                                    <p:selectOneMenu id="uf" value="#{clienteControle.ufSelecionado}" converter="#{genericConverter}">
+                                        <f:selectItem itemLabel="--" noSelectionOption="true"/>
+                                        <f:selectItems value="#{clienteControle.UFs}" var="uf" itemLabel="#{uf.descricao}" itemValue="#{uf}"/>
+                                        <p:ajax event="change" process="@this" update="uf, cidade"/>
+                                    </p:selectOneMenu>
+                                </div>
+                                <div class="col-3 form-group form-md-line-input">
+                                    <p:outputLabel for="@next" value="Cidade"/>
+                                    <p:selectOneMenu id="cidade" value="#{clienteControle.clienteSelecionado.endereco.idCidade}" panelStyle="width:180px"
+                                                     var="t" effect="fade" filter="true" filterMatchMode="contains" converter="#{genericConverter}">
+                                        <p:column>
+                                            <h:outputText value="#{t.descricao}"/>
+                                        </p:column>
+
+                                        <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                        <f:selectItems value="#{clienteControle.cidades}" var="cidade"
+                                                       itemLabel="#{cidade.descricao}" itemValue="#{cidade}"/>
+                                    </p:selectOneMenu>
+                                </div>
+                            </div>
+                        </p:outputPanel>
+                    </div>
+                    <h5>
+                        Contato
+                        <div class="pull-right">
+                            <p:commandButton action="#{clienteControle.addContato()}" immediate="true" update="tblContato" icon="fa fa-plus"
+                                             value="Adicionar" styleClass="mr-2"/>
+                        </div>
+                    </h5>
+                    <div class="mx-2">
+                        <p:dataTable value="#{clienteControle.listClienteContato}" var="item" emptyMessage="Nenhum contato encontrado."
+                                     editable="true" editMode="cell" id="tblContato" styleClass="#{clienteControle.styleClass}">
+
+                            <p:column headerText="Nome">
+                                <p:cellEditor>
+                                    <f:facet name="output">
+                                        <p:inputText value="#{item.nome}"/>
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <p:inputText value="#{item.nome}"/>
+                                    </f:facet>
+                                </p:cellEditor>
+                            </p:column>
+
+                            <p:column headerText="Email">
+                                <p:cellEditor>
+                                    <f:facet name="output">
+                                        <p:inputText value="#{item.email}"/>
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <p:inputText value="#{item.email}"/>
+                                    </f:facet>
+                                </p:cellEditor>
+                            </p:column>
+
+                            <p:column headerText="Telefone">
+                                <p:cellEditor>
+                                    <f:facet name="output">
+                                        <p:inputMask mask="(99) 9999-9999?9" class="telefone" value="#{item.telefone}"/>
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <p:inputMask mask="(99) 9999-9999?9" class="telefone" value="#{item.telefone}"/>
+                                    </f:facet>
+                                </p:cellEditor>
+                            </p:column>
+
+                            <p:column headerText="Cargo">
+                                <p:cellEditor>
+                                    <f:facet name="output">
+                                        <p:inputText value="#{item.cargo}"/>
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <p:inputText value="#{item.cargo}"/>
+                                    </f:facet>
+                                </p:cellEditor>
+                            </p:column>
+
+                            <p:column width="77" headerText="Ações">
+                                <div class="actions">
+                                    <p:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Remover contato"
+                                                   immediate="true" process="@this" action="#{clienteControle.removeContato(item)}" update="tblContato">
+                                        <i class="icon-trash"></i>
+                                    </p:commandLink>
+                                </div>
+                            </p:column>
+
+                        </p:dataTable>
+                    </div>
+                </p:tab>
+                <p:tab title="NFSe" rendered="#{empresaControle.enumTipoUsoSistema.vendeServicos}">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Descrição NFs-e"/>
+                                <p:inputTextarea style="width: 100%;resize: none;min-height: 171px;max-height: 220px;overflow-y: auto;border-left: 1px solid #c2cad8 !important"
+                                                 rows="11" value="#{clienteControle.clienteSelecionado.descricaoNFS}"/>
+                            </div>
+                        </div>
+                    </div>
+                    <h5>Percentuais de emissão de Nfs-e</h5>
+                    <div class="row">
+                        <div class="col form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="IR"/>
+                            <p:inputNumber value="#{clienteControle.clienteSelecionado.valorIR}"
+                                           symbol=" %" maxValue="100" decimalSeparator="," symbolPosition="left" thousandSeparator="." decimalPlaces="2"/>
+                        </div>
+                        <div class="col form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="PIS"/>
+                            <p:inputNumber value="#{clienteControle.clienteSelecionado.valorPIS}"
+                                           symbol=" %" maxValue="100" decimalSeparator="," symbolPosition="left" thousandSeparator="." decimalPlaces="2"/>
+                        </div>
+                        <div class="col form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="CSLL"/>
+                            <p:inputNumber value="#{clienteControle.clienteSelecionado.valorCSLL}"
+                                           symbol=" %" maxValue="100" symbolPosition="left" decimalSeparator="," thousandSeparator="." decimalPlaces="2"/>
+                        </div>
+                        <div class="col form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="INSS"/>
+                            <p:inputNumber value="#{clienteControle.clienteSelecionado.valorINSS}"
+                                           symbol=" %" maxValue="100" symbolPosition="left" decimalSeparator="," thousandSeparator="." decimalPlaces="2"/>
+                        </div>
+                        <div class="col form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="COFINS"/>
+                            <p:inputNumber value="#{clienteControle.clienteSelecionado.valorCOFINS}"
+                                           symbol=" %" maxValue="100" symbolPosition="left" decimalSeparator="," thousandSeparator="." decimalPlaces="2"/>
+                        </div>
+                        <div class="col form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="ISS"/>
+                            <p:inputNumber value="#{clienteControle.clienteSelecionado.valorISS}"
+                                           symbol=" %" maxValue="100" symbolPosition="left" decimalSeparator="," thousandSeparator="." decimalPlaces="2"/>
+                        </div>
+                    </div>
+                </p:tab>
+                <p:tab title="Veículo" rendered="#{empresaControle.empresaLogada.idCategoriaEmpresa.descricao eq 'Oficina mecânica'}">
+                    <h5>
+                        <div class="pull-right">
+                            <p:commandButton value="Adicionar" action="#{clienteControle.addClienteVeiculo}" onsuccess="PF('modal').show();"
+                                             process="@this" update="form:veiculoBody"/>
+                        </div>
+                    </h5>
+                    <div class="clearfix"></div>
+                    <p:outputPanel id="dadosVeiculo">
+                        <p:dataTable value="#{clienteControle.listClienteVeiculo}" var="cv" emptyMessage="Nenhum veículo cadastrado"
+                                     rows="#{clienteControle.listClienteVeiculo.size()}" id="listaVeiculos"
+                                     styleClass="card p-0 mb-3 ui-datatable-striped ui-datatable-sm ui-datatable-gridlines">
+                            <p:column headerText="Marca">
+                                <h:outputText value="#{cv.idModelo.idMarca.fipeNome}"/>
+                            </p:column>
+                            <p:column headerText="Modelo">
+                                <h:outputText value="#{cv.idModelo.fipeNome}"/>
+                            </p:column>
+                            <p:column headerText="Valor Protegido/FIPE">
+                                <cc:convertMoney value="#{cv.valorProtegido}"/>
+                            </p:column>
+                            <p:column headerText="Ano de fabricação">
+                                <h:outputText value="#{cv.anoFabricacao}"/>
+                            </p:column>
+                            <p:column headerText="Ano do modelo">
+                                <h:outputText value="#{cv.anoModelo}"/>
+                            </p:column>
+                            <p:column headerText="Combustível" visible="false">
+                                <h:outputText value="#{cv.idCombustivel.descricao}"/>
+                            </p:column>
+                            <p:column headerText="Placa do veículo">
+                                <h:outputText value="#{cv.placa}"/>
+                            </p:column>
+                            <p:column headerText="Número de passageiros" visible="false">
+                                <cc:convertNumber value="#{cv.numeroPassageiros}"/>
+                            </p:column>
+                            <p:column headerText="Número de portas" visible="false">
+                                <h:outputText value="#{cv.portas} portas"/>
+                            </p:column>
+                            <p:column headerText="Câmbio" visible="false">
+                                <h:outputText value="Manual" rendered="#{cv.cambio eq 'M'}"/>
+                                <h:outputText value="Automático" rendered="#{cv.cambio eq 'A'}"/>
+                            </p:column>
+                            <p:column headerText="Ativo?" visible="false">
+                                <h:outputText value="#{cv.ativo}"/>
+                            </p:column>
+                            <p:column headerText="Cor">
+                                <h:outputText value="#{cv.idCorVeiculo.descricao}"/>
+                            </p:column>
+                            <p:column headerText="Renavam" visible="false">
+                                <h:outputText value="#{cv.renavam}"/>
+                            </p:column>
+                            <p:column headerText="Chassi" visible="false">
+                                <h:outputText value="#{cv.chassi}"/>
+                            </p:column>
+
+                            <p:column>
+                                <div class="actions">
+                                    <p:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Editar"
+                                                   action="#{clienteControle.doStartEditarVeiculo}" oncomplete="PF('modal').show();"
+                                                   process="@this" update="form:veiculoBody" rendered="#{cv.ativo eq 'S'}">
+                                        <i class="fa fa-pencil"></i>
+                                        <f:setPropertyActionListener value="#{cv}" target="#{clienteControle.clienteVeiculoSelecionado}"/>
+                                    </p:commandLink>
+
+                                    <p:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" rendered="#{cv.ativo eq 'S'}"
+                                                   title="Desativar veículo" process="@this" action="#{clienteControle.doStartInativarVeiculo}"
+                                                   update="listaVeiculos" >
+                                        <i class="fa fa-minus-circle"></i>
+                                        <f:setPropertyActionListener value="#{cv}" target="#{clienteControle.clienteVeiculoSelecionado}"/>
+                                    </p:commandLink>
+
+                                    <p:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" rendered="#{cv.ativo eq 'N'}"
+                                                   title="Reativar veículo" process="@this" action="#{clienteControle.doStartAtivarVeiculo()}" update="listaVeiculos">
+                                        <i class="fa fa-check-circle"></i>
+                                        <f:setPropertyActionListener value="#{cv}" target="#{clienteControle.clienteVeiculoSelecionado}"/>
+                                    </p:commandLink>
+                                </div>
+                            </p:column>
+                        </p:dataTable>
+                    </p:outputPanel>
+                </p:tab>
+                <p:tab title="Recebíveis">
+                    <div class="row">
+                        <div class="col-2 form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Saldo inicial"/>
+                            <p:inputNumber value="#{clienteControle.clienteSelecionado.saldoInicial}" symbol="R$ " symbolPosition="p"
+                                           disabled="#{clienteControle.clienteSelecionado.saldoInicial ne null}"
+                                           decimalSeparator="," thousandSeparator="." decimalPlaces="2">
+                                <p:ajax process="@this" update="@this, listaMovimentacoes" listener="#{clienteControle.geraSaldoInicial}"/>
+                            </p:inputNumber>
+                        </div>
+                        <div class="col-2 form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Saldo atual"/>
+                            <p:inputNumber value="#{clienteControle.clienteSelecionado.saldoAtual}" symbol="R$ " symbolPosition="p"
+                                           disabled="#{true}" id="saldoAtual"
+                                           decimalSeparator="," thousandSeparator="." decimalPlaces="2"/>
+                        </div>
+                        <div class="pull-right" >
+                            <p:commandButton value="Novo lançamento" action="#{clienteControle.addClienteMovimentacao}" onsuccess="PF('modalClienteMovimentacao').show();"
+                                             process="@this" update="form:clienteMovimentacaoBody, saldoAtual" styleClass="mt-4"/>
+                            <p:spacer width="15"/>
+                            <p:commandButton value="Atualizar listagem" action="#{clienteControle.atualizaListaMovimentacao}"
+                                             process="@this" update="form:abas:dadosClienteMovimentacao, saldoAtual" styleClass="mt-4"/>
+                        </div>
+                    </div>
+                    <p:outputPanel id="dadosClienteMovimentacao">
+                        <p:dataTable value="#{clienteControle.listClienteMovimentacao}" var="cm" emptyMessage="Nenhuma movimentacao cadastrada"
+                                     id="listaMovimentacoes" styleClass="card p-0 mb-3 ui-datatable-striped ui-datatable-sm ui-datatable-gridlines">
+
+                            <p:column headerText="Data da movimentação">
+                                <cc:convertDate value="#{cm.dataMovimentacao}"/>
+                            </p:column>
+
+                            <p:column headerText="Origem">
+                                <h:outputText value="#{cm.enumOrigem.descricao}"/>
+                                <h:outputText value=" (Cancelado)" rendered="#{cm.dataCancelamento ne null}" style="color: red;"/>
+                                <h:outputText value=" (#{cm.tipoMovimentacao})" rendered="#{cm.tipoMovimentacao ne null}" style="color: red;"/>
+                            </p:column>
+
+                            <p:column headerText="Data de Vencimento">
+                                <cc:convertDate value="#{cm.dataVencimento}"/>
+                            </p:column>
+
+                            <p:column headerText="Valor do título">
+                                <span style="color: ##{cm.valorTitulo ge 0 ? '0' : 'f'}0#{cm.valorTitulo le 0 ? '0' : 'f'}">
+                                    <cc:convertMoney value="#{cm.valorTitulo}"/>
+                                </span>
+                            </p:column>
+
+                            <p:column headerText="Data do pagamento">
+                                <cc:convertDate value="#{cm.dataPagamento}"/>
+                            </p:column>
+
+                            <p:column headerText="Valor de encargos">
+                                <cc:convertMoney value="#{cm.valorJuros}"/>
+                            </p:column>
+
+                            <p:column headerText="Valor pago sem encargos">
+                                <span style="color: ##{cm.valorPagoCorrigido ge 0 ? '0' : 'f'}0#{cm.valorPagoCorrigido le 0 ? '0' : 'f'}">
+                                    <cc:convertMoney value="#{cm.valorPagoCorrigido}"/>
+                                </span>
+                            </p:column>
+
+                            <p:column headerText="Saldo">
+                                <span style="color: ##{cm.valorSaldo ge 0 ? '0' : 'f'}0#{cm.valorSaldo le 0 ? '0' : 'f'}">
+                                    <cc:convertMoney value="#{cm.valorSaldo}"/>
+                                </span>
+                            </p:column>
+
+                            <p:column>
+                                <div class="actions">
+                                    <p:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Editar"
+                                                   action="#{clienteControle.doStartEditarMovimentacao()}"
+                                                   process="@this" update="form:clienteMovimentacaoBody"
+                                                   rendered="#{cm.origem eq 'SL' || cm.origem eq 'EL'}">
+                                        <i class="fa fa-pencil"></i>
+                                        <f:setPropertyActionListener value="#{cm}" target="#{clienteControle.clienteMovimentacaoSelecionado}"/>
+                                    </p:commandLink>
+
+                                    <sec:ifAnyGranted roles ="CLIENTE_MOVIMENTACAO_EXCLUIR">
+                                        <p:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                                       title="Excluir movimentação" process="@this" action="#{clienteControle.doFinishExcluirMovimentacao}"
+                                                       update="listaMovimentacoes, form:abas:saldoAtual">
+                                            <i class="fa fa-minus-circle"></i>
+                                            <f:setPropertyActionListener value="#{cm}" target="#{clienteControle.clienteMovimentacaoSelecionado}"/>
+                                        </p:commandLink>
+                                    </sec:ifAnyGranted>
+                                    <sec:ifNotGranted roles="CLIENTE_MOVIMENTACAO_EXCLUIR">
+                                        <sec:ifAnyGranted roles="CLIENTE_MOVIMENTACAO_SOLICITAR_EXCLUIR">
+                                            <p:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                                           title="Solicitar exclusão de movimentação" process="@this" action="#{clienteControle.doRequestExcluirMovimentacao}"
+                                                           update="listaMovimentacoes, form:abas:saldoAtual">
+                                                <i class="fa fa-minus-circle"></i>
+                                                <f:setPropertyActionListener value="#{cm}" target="#{clienteControle.clienteMovimentacaoSelecionado}"/>
+                                            </p:commandLink>
+                                        </sec:ifAnyGranted>
+                                    </sec:ifNotGranted>
+
+                                </div>
+                            </p:column>
+                        </p:dataTable>
+                    </p:outputPanel>
+                </p:tab>
+            </p:tabView>
+
+            <p:dialog widgetVar="modal" id="veiculoModal" width="1000" rendered="#{empresaControle.empresaLogada.idCategoriaEmpresa.descricao eq 'Oficina mecânica'}">
+                <h:messages class="alertMessage" id="errosVeiculo"
+                            errorClass="alert alert-danger" infoClass="alert alert-success" warnClass="alert alert-warning"/>
+                <p:outputPanel id="veiculoBody">
+                    <p:outputPanel rendered="#{clienteControle.clienteVeiculoSelecionado ne null}">
+                        <div class="row">
+                            <div class="col form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Tipo de veículo"/>
+                                <p:selectOneMenu value="#{clienteControle.clienteVeiculoSelecionado.tipo}" converter="#{genericConverter}">
+                                    <f:selectItem itemValue="carros" itemLabel="Carros"/>
+                                    <f:selectItem itemValue="motos" itemLabel="Motos" />
+                                    <f:selectItem itemValue="caminhoes" itemLabel="Caminhões" />
+                                    <p:ajax process="@this" update="veiculoBody"/>
+                                </p:selectOneMenu>
+                            </div>
+                            <div class="col form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Marca"/>
+                                <p:selectOneMenu value="#{clienteControle.marcaSelecionada}" converter="#{genericConverter}"
+                                                 required="true" requiredMessage="Informe a marca">
+                                    <f:selectItem noSelectionOption="true" itemLabel="-- Selecione --"/>
+                                    <f:selectItems value="#{veiculoControle.getListarMarcaByTipo(clienteControle.clienteVeiculoSelecionado.tipo)}" var="marca"
+                                                   itemLabel="#{marca.fipeNome}" itemValue="#{marca}"/>
+                                    <p:ajax process="@this" update="veiculoBody"/>
+                                </p:selectOneMenu>
+                            </div>
+                            <div class="col form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Modelo"/>
+                                <p:selectOneMenu value="#{clienteControle.clienteVeiculoSelecionado.idModelo}" converter="#{genericConverter}"
+                                                 disabled="#{clienteControle.marcaSelecionada eq null}"
+                                                 required="true" requiredMessage="Informe o modelo">
+                                    <f:selectItem noSelectionOption="true" itemLabel="-- Selecione --"/>
+                                    <f:selectItems value="#{veiculoControle.getListaModelo(clienteControle.marcaSelecionada, clienteControle.clienteVeiculoSelecionado.tipo)}" var="marca"
+                                                   itemLabel="#{marca.fipeNome}" itemValue="#{marca}"/>
+                                    <p:ajax process="@this" update="veiculoBody"/>
+                                </p:selectOneMenu>
+                            </div>
+                            <div class="col form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Ano do modelo"/>
+                                <p:selectOneMenu value="#{clienteControle.clienteVeiculoSelecionado.anoModelo}" disabled="#{clienteControle.clienteVeiculoSelecionado.idModelo eq null}"
+                                                 required="true" requiredMessage="Informe o ano do modelo">
+                                    <f:selectItem noSelectionOption="true" itemLabel="-- Selecione --"/>
+                                    <f:selectItems value="#{veiculoControle.getAnosModelo(clienteControle.clienteVeiculoSelecionado.idModelo)}" var="anoM"
+                                                   itemLabel="#{anoM}" itemValue="#{anoM}"/>
+                                    <p:ajax process="@this" update="veiculoBody" listener="#{clienteControle.atualizaVeiculoModelo}"/>
+                                </p:selectOneMenu>
+                            </div>
+                            <div class="col form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Ano de fabricação"/>
+                                <p:inputNumber value="#{clienteControle.clienteVeiculoSelecionado.anoFabricacao}" thousandSeparator="" decimalPlaces="0"
+                                               disabled="#{clienteControle.clienteVeiculoSelecionado.idModelo eq null}"
+                                               required="true" requiredMessage="Informe o ano de fabricação">
+                                    <p:ajax process="@this"/>
+                                </p:inputNumber>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Cor"/>
+                                <p:selectOneMenu value="#{clienteControle.clienteVeiculoSelecionado.idCorVeiculo}" converter="#{genericConverter}"
+                                                 required="true" requiredMessage="Informe a cor">
+                                    <f:selectItem noSelectionOption="true" itemLabel="-- Selecione --"/>
+                                    <f:selectItems value="#{veiculoControle.listaCorVeiculo}" var="cor"
+                                                   itemLabel="#{cor.descricao}" itemValue="#{cor}"/>
+                                    <p:ajax process="@this"/>
+                                </p:selectOneMenu>
+                            </div>
+                            <div class="col form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Combustível"/>
+                                <p:selectOneMenu value="#{clienteControle.clienteVeiculoSelecionado.idCombustivel}" converter="#{genericConverter}"
+                                                 filter="true" filterMatchMode="contains"  required="true" requiredMessage="Informe o combustível">
+                                    <f:selectItem noSelectionOption="true" itemLabel="-- Selecione --"/>
+                                    <f:selectItems value="#{veiculoControle.listaCombustivel}" var="combustivel"
+                                                   itemLabel="#{combustivel.descricao}" itemValue="#{combustivel}"/>
+                                    <p:ajax process="@this"/>
+                                </p:selectOneMenu>
+                            </div>
+                            <div class="col form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Câmbio"/>
+                                <p:selectOneMenu value="#{clienteControle.clienteVeiculoSelecionado.cambio}">
+                                    <f:selectItem noSelectionOption="true" itemLabel="-- Selecione --"/>
+                                    <f:selectItem itemLabel="Manual" itemValue="M"/>
+                                    <f:selectItem itemLabel="Automático" itemValue="A"/>
+                                    <p:ajax process="@this"/>
+                                </p:selectOneMenu>
+                            </div>
+                            <div class="col form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Numero de portas"/>
+                                <p:selectOneMenu value="#{clienteControle.clienteVeiculoSelecionado.portas}">
+                                    <f:selectItem noSelectionOption="true" itemLabel="-- Selecione --"/>
+                                    <f:selectItem itemLabel="2 portas" itemValue="2"/>
+                                    <f:selectItem itemLabel="3 portas" itemValue="3"/>
+                                    <f:selectItem itemLabel="4 portas" itemValue="4"/>
+                                    <f:selectItem itemLabel="5 portas" itemValue="5"/>
+                                    <f:selectItem itemLabel="6 portas" itemValue="6"/>
+                                    <p:ajax process="@this"/>
+                                </p:selectOneMenu>
+                            </div>
+                            <div class="col form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Numero passageiros"/>
+                                <p:inputNumber value="#{clienteControle.clienteVeiculoSelecionado.numeroPassageiros}" decimalPlaces="0">
+                                    <p:ajax process="@this"/>
+                                </p:inputNumber>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Placa do veículo"/>
+                                <p:inputText value="#{clienteControle.clienteVeiculoSelecionado.placa}" widgetVar="placa"
+                                             required="true" requiredMessage="Favor informar a placa do veiculo">
+                                    <p:ajax event="change" process="@this"/>
+                                </p:inputText>
+                            </div>
+                            <div class="col form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Renavam"/>
+                                <p:inputText value="#{clienteControle.clienteVeiculoSelecionado.renavam}">
+                                    <p:ajax process="@this"/>
+                                </p:inputText>
+                            </div>
+                            <div class="col form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Chassi"/>
+                                <p:inputText value="#{clienteControle.clienteVeiculoSelecionado.chassi}">
+                                    <p:ajax process="@this"/>
+                                </p:inputText>
+                            </div>
+                            <div class="col form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Valor Protegido/FIPE"/>
+                                <p:inputNumber value="#{clienteControle.clienteVeiculoSelecionado.valorProtegido}"
+                                               disabled="#{clienteControle.marcaSelecionada eq null}"
+                                               symbol="R$ " decimalSeparator="," thousandSeparator="." decimalPlaces="2">
+                                    <p:ajax process="@this"/>
+                                </p:inputNumber>
+                            </div>
+                            <div class="col"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-auto ml-auto">
+                                <p:commandButton value="Adicionar" process="@this, veiculoBody" update="form:abas:dadosVeiculo, veiculoBody, errosVeiculo"
+                                                 actionListener="#{clienteControle.adicionarClienteVeiculo}" />
+                            </div>
+                        </div>
+                        <script>
+                            //<![CDATA[
+                            $(document).ready(() => {
+                                const mercosul = 'AAA9A99', padrao = 'AAA-9999';
+                                const elem = PF('placa').getJQ();
+                                elem.on('input', () => {
+                                    const val = elem.val().toUpperCase().replace(/[^\dA-Z-]/g, '');
+                                    let tipoPadrao = val.indexOf('-') !== -1 || (val.length > 4 && !isNaN(parseInt(val.charAt(4))));
+                                    elem.val(VMasker.toPattern(val, tipoPadrao ? padrao : mercosul));
+                                });
+                            });
+                            //]]>
+                        </script>
+                    </p:outputPanel>
+                </p:outputPanel>
+            </p:dialog>
+
+            <p:dialog widgetVar="modalClienteMovimentacao" id="clienteMovimentacaoModal" width="800">
+                <h:messages class="alertMessage" id="errosClienteMovimentacao"
+                            errorClass="alert alert-danger" infoClass="alert alert-success" warnClass="alert alert-warning"/>
+                <p:outputPanel id="clienteMovimentacaoBody">
+                    <p:outputPanel rendered="#{clienteControle.editarMovimentacao eq false}">
+                        <div class="row">
+                            <div class="col-3 form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Data movimentação"/>
+                                <p:calendar navigator="true" value="#{clienteControle.clienteMovimentacaoSelecionado.dataMovimentacao}"
+                                            disabled="#{clienteControle.editarMovimentacao eq true}" pattern="dd/MM/yyyy" mask="true">
+                                </p:calendar>
+                            </div>
+                            <div class="col-3 form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Origem"/>
+                                <p:selectOneMenu value="#{clienteControle.editarMovimentacao eq true?
+                                                          clienteControle.clienteMovimentacaoSelecionado.origem :clienteControle.tipoMovimentacao}"
+                                                 converter="#{genericConverter}" disabled="#{clienteControle.editarMovimentacao eq true}">
+                                    <f:selectItem itemLabel="Entrada" itemValue="EL"/>
+                                    <f:selectItem itemLabel="Saida" itemValue="SL"/>
+                                </p:selectOneMenu>
+                            </div>
+                            <div class="col-3 form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Tipo movimentação"/>
+                                <p:selectOneMenu value="#{clienteControle.clienteMovimentacaoSelecionado.tipoMovimentacao}"
+                                                 converter="#{genericConverter}" disabled="#{clienteControle.editarMovimentacao eq true}">
+                                    <f:selectItem itemLabel="Perda" itemValue="Perda"/>
+                                    <f:selectItem itemLabel="Ajuste de saldo" itemValue="Ajuste de saldo"/>
+                                </p:selectOneMenu>
+                            </div>
+                        </div>
+                    </p:outputPanel>
+                    <p:outputPanel rendered="#{clienteControle.editarMovimentacao eq true}">
+                        <div class="row">
+                            <div class="col-3 form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Data vencimento"/>
+                                <p:calendar navigator="true" value="#{clienteControle.clienteMovimentacaoSelecionado.dataVencimento}"
+                                            pattern="dd/MM/yyyy" mask="true">
+                                </p:calendar>
+                            </div>
+                            <div class="col-3 form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Data pagamento"/>
+                                <p:calendar navigator="true" value="#{clienteControle.clienteMovimentacaoSelecionado.dataPagamento}"
+                                            pattern="dd/MM/yyyy" mask="true" disabled="#{!clienteControle.retornaMovimentacaoSaida()}">
+                                    <p:ajax process="@this"/>
+                                </p:calendar>
+                            </div>
+                        </div>
+                    </p:outputPanel>
+                    <div class="row">
+                        <div class="col-3 form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Centro de custo"/>
+                            <p:selectOneMenu value="#{clienteControle.clienteMovimentacaoSelecionado.idCentroCusto}" panelStyle="width:180px" effect="fade"
+                                             var="t" filter="true" filterMatchMode="startsWith" converter="#{genericConverter}">
+                                <p:column>
+                                    <h:outputText value="#{t.descricao}"/>
+                                </p:column>
+
+                                <f:selectItems value="#{centroCustoControle.centroCustos}" var="centroCusto"
+                                               itemLabel="#{centroCusto.descricao}" itemValue="#{centroCusto}"/>
+                            </p:selectOneMenu>
+                        </div>
+                        <div class="col-3 form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Valor"/>
+                            <p:inputNumber value="#{clienteControle.clienteMovimentacaoSelecionado.valorPrevisto}"
+                                           symbol="R$ " decimalSeparator="," thousandSeparator="." decimalPlaces="2">
+                            </p:inputNumber>
+                        </div>
+                        <div class="col-3 form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Origem"/>
+                            <p:inputText value="#{clienteControle.retornaOrigem()}" disabled="true"/>
+                        </div>
+                    </div>
+                    <p:outputPanel rendered="#{clienteControle.clienteMovimentacaoSelecionado.dataPagamento ne null }">
+                        <div class="row">
+                            <div class="col-3 form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Forma de pagamento"/>
+                                <p:selectOneMenu  id="somFormaPagamento" value="#{clienteControle.formaPagamentoSelecionada}">
+                                    <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                    <f:selectItems value="#{formaPagamentoControle.formasPagamento}" var="formaPagamento" itemLabel="#{formaPagamento.descricao}" itemValue="#{formaPagamento.id}"/>
+                                </p:selectOneMenu>
+                            </div>
+                            <div class="col-3 form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Valor pago"/>
+                                <p:inputNumber value="#{clienteControle.clienteMovimentacaoSelecionado.valorPago}"
+                                               symbol="R$ " decimalSeparator="," thousandSeparator="." decimalPlaces="2">
+                                    <p:ajax process="@this"/>
+                                </p:inputNumber>
+                            </div>
+                            <div class="col-3 form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Valor juros"/>
+                                <p:inputNumber value="#{clienteControle.clienteMovimentacaoSelecionado.valorJuros}"
+                                               symbol="R$ " decimalSeparator="," thousandSeparator="." decimalPlaces="2">
+                                </p:inputNumber>
+                            </div>
+                            <div class="col-3 form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Valor taxa"/>
+                                <p:inputNumber value="#{clienteControle.clienteMovimentacaoSelecionado.valorTaxa}"
+                                               symbol="R$ " decimalSeparator="," thousandSeparator="." decimalPlaces="2">
+                                </p:inputNumber>
+                            </div>
+                        </div>
+                    </p:outputPanel>
+                    <p:outputPanel rendered="#{clienteControle.clienteMovimentacaoSelecionado.valorPago > 0}">
+                        <div class="row">
+                            <div class="col-3 form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Data cancelamento"/>
+                                <p:calendar navigator="true" value="#{clienteControle.clienteMovimentacaoSelecionado.dataCancelamento}"
+                                            pattern="dd/MM/yyyy" mask="true">
+                                    <p:ajax process="@this"/>
+                                </p:calendar>
+                            </div>
+                        </div>
+                    </p:outputPanel>
+                    <div class="col-auto ml-auto">
+                        <p:commandButton value="#{clienteControle.editarMovimentacao eq true ? 'Alterar': 'Adicionar'}" process="@this, clienteMovimentacaoBody" update="form:abas:dadosClienteMovimentacao, form:abas:saldoAtual, errosClienteMovimentacao"
+                                         action="#{clienteControle.adicionarClienteMovimentacao()}" />
+                    </div>
+                </p:outputPanel>
+            </p:dialog>
+            <script src="https://unpkg.com/vanilla-masker@1.1.1/build/vanilla-masker.min.js"></script>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

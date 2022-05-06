@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>#{descricaoMenu}</li>
+            <li>/</li>
+            <li><p:link outcome="#{caminhoAuditoria}"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="content">
+            <h3>Auditoria - #{objetoSelecionado}</h3>
+            <div class="card p-0">
+                <p:dataTable id="tbl" value="#{model}" var="item" emptyMessage="Nenhma alteração encontrada." rows="10" styleClass="card p-0"
+                             paginator="true" paginatorPosition="bottom" rowsPerPageTemplate="10,20,30">
+
+                    <ui:insert name="colunas" />
+
+                    <p:column headerText="Usuário" sortBy="#{item[1].usuario}">
+                        <h:outputText value="#{item[1].usuario}"/>
+                    </p:column>
+
+                    <p:column headerText="Data de atualização" sortBy="#{item[1].dataAtualizacao}">
+                        <h:outputText value="#{item[1].dataAtualizacao}" >
+                            <f:convertDateTime pattern="dd/MM/yy HH:mm"/>
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="IP" sortBy="#{item[1].ip}">
+                        <h:outputText value="#{item[1].ip}"/>
+                    </p:column>
+
+                    <p:column headerText="Ação" sortBy="#{item[2].getRepresentation()}">
+                        <h:outputText value="Adicionado" rendered="#{item[2].getRepresentation() eq '0'}"/>
+                        <h:outputText value="Modificado" rendered="#{item[2].getRepresentation() eq '1'}"/>
+                        <h:outputText value="Excluído" rendered="#{item[2].getRepresentation() eq '2'}"/>
+                    </p:column>
+
+                </p:dataTable>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

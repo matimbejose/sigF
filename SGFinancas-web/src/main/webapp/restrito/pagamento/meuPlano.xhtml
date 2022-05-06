@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:sec="http://www.springframework.org/security/facelets/tags"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite/components"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Meu plano"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Pagamento</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/pagamento/meuPlano.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="content">
+            <style>
+                .modulos {
+                    display: flex;
+                    flex-wrap: wrap;
+                }
+                .modulos > div {
+                    width: calc(100% / 3 - 1rem);
+                    margin: 0.5rem;
+                    flex-shrink: 0;
+                    flex-grow: 0;
+                }
+                table {
+                    width: 100%
+                }
+                table.detalhes th {
+                    text-align: left;
+                }
+                table.detalhes td {
+                    text-align: right;
+                }
+            </style>
+            <script>
+                const plus = `fa-plus-square-o`, minus = `fa-minus-square-o`;
+                function toggleIcon(elem) {
+                    if (elem.classList.contains(plus)) {
+                        elem.classList.remove(plus);
+                        elem.classList.add(minus);
+                    } else {
+                        elem.classList.remove(minus);
+                        elem.classList.add(plus);
+                    }
+                }
+            </script>
+            <div class="card">
+                <div class="row">
+                    <div class="col">
+                        <p:outputLabel for="@next" value="Ultimo pagamento do sistema"/>
+                        <p:calendar disabled="true" pattern="dd/MM/yyyy" value="#{meuPlanoControle.pagamentoMensalidade.dataPagamento}"/>
+                    </div>
+                    <div class="col">
+                        <p:outputLabel for="@next" value="Vencimento do contrato"/>
+                        <p:calendar disabled="true" pattern="dd/MM/yyyy" value="#{meuPlanoControle.pagamentoMensalidade.dataValidade}"/>
+                    </div>
+                    <div class="col">
+                        <p:outputLabel for="@next" value="Valor pago"/>
+                        <p:inputNumber disabled="true" symbol="R$ " symbolPosition="p" decimalPlaces="2" decimalSeparator="," thousandSeparator="."
+                                       value="#{meuPlanoControle.pagamentoMensalidade.valorPago}"/>
+                    </div>
+                    <div class="col">
+                        <p:outputLabel for="@next" value="Valor do plano"/>
+                        <p:inputNumber disabled="true" symbol="R$ " symbolPosition="p" decimalPlaces="2" decimalSeparator="," thousandSeparator="."
+                                       value="#{meuPlanoControle.valorPlano}"/>
+                    </div>
+                    <div class="col">
+                        <p:outputLabel for="@next" value="Tipo de conta"/>
+                        <p:selectOneMenu disabled="true" value="#{meuPlanoControle.pagamentoMensalidade.idEmpresa.tipoConta}">
+                            <f:selectItem itemLabel="Gratuita" itemValue="G"/>
+                            <f:selectItem itemLabel="Paga" itemValue="P"/>
+                            <f:selectItem itemLabel="Expirada" itemValue="E"/>
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <h:commandLink value="Histórico de pagamento" styleClass="btn btn-sm px-0" action="#{meuPlanoControle.doShowHistorico()}"/>
+                    </div>
+                </div>
+            </div>
+            <h5>Módulos contratados</h5>
+            <div class="modulos">
+                <p:row rendered="#{meuPlanoControle.modulosContratados.size() eq 0}">
+                    <div style="text-align: center;width: 100%;">Nenhum módulo contratado</div>
+                </p:row>
+                <p:repeat value="#{meuPlanoControle.modulosContratados}" var="pmm">
+                    <div class="card">
+                        <h5>
+                            #{pmm.idModulo.nome}
+                            <i class="pull-right fa fa-plus-square-o" data-toggle="collapse" data-target="#cdc#{pmm.id}"
+                               aria-expanded="false" aria-controls="cdc#{pmm.id}" onclick="toggleIcon(this)"></i>
+                        </h5>
+                        <div class="collapse mb-2" id="cdc#{pmm.id}">
+                            #{pmm.idModulo.descricao}
+                        </div>
+                        <table class="detalhes">
+                            <tr>
+                                <th>Valor de adesão</th>
+                                <td><cc:convertMoney value="#{pmm.idModulo.valorAdesao}"/></td>
+                            </tr>
+                            <tr>
+                                <th>Valor da mensalidade</th>
+                                <td><cc:convertMoney value="#{pmm.idModulo.valorMensalidade}"/></td>
+                            </tr>
+                        </table>
+                    </div>
+                </p:repeat>
+                <div class="m-0"></div>
+            </div>
+            <h5>Módulos disponíveis</h5>
+            <div class="modulos">
+                <p:repeat value="#{meuPlanoControle.modulosDisponiveis}" var="modulo">
+                    <div class="card">
+                        <h5>
+                            #{modulo.nome}
+                            <i class="pull-right fa fa-plus-square-o" data-toggle="collapse" data-target="#cdd#{modulo.id}"
+                               aria-expanded="false" aria-controls="cdd#{modulo.id}" onclick="toggleIcon(this)"></i>
+                        </h5>
+                        <div class="collapse mb-2" id="cdd#{modulo.id}">
+                            #{modulo.descricao}
+                        </div>
+                        <table class="detalhes">
+                            <tr>
+                                <th>Valor de adesão</th>
+                                <td><cc:convertMoney value="#{modulo.valorAdesao}"/></td>
+                            </tr>
+                            <tr>
+                                <th>Valor da mensalidade</th>
+                                <td><cc:convertMoney value="#{modulo.valorMensalidade}"/></td>
+                            </tr>
+                        </table>
+                        <div class="row">
+                            <div class="col-auto ml-auto">
+                                <h:commandLink value="Contratar" styleClass="btn btn-sm" action="#{meuPlanoControle.doStartAddModuloAoContrato()}">
+                                    <f:setPropertyActionListener value="#{modulo}" target="#{meuPlanoControle.moduloSelecionado}"/>
+                                </h:commandLink>
+                            </div>
+                        </div>
+                    </div>
+                </p:repeat>
+                <div class="m-0"></div>
+            </div>
+            <h5>Promoções disponíveis</h5>
+            <div class="modulos">
+                <p:repeat value="#{meuPlanoControle.moduloPacotesDisponiveis}" var="moduloPacote">
+                    <div class="card">
+                        <h5>
+                            #{moduloPacote.nome}
+                            <i class="pull-right fa fa-plus-square-o" data-toggle="collapse" data-target="#cdd#{moduloPacote.id}"
+                               aria-expanded="false" aria-controls="cdd#{moduloPacote.id}" onclick="toggleIcon(this)"></i>
+                        </h5>
+                        <div class="collapse mb-2" id="cdd#{moduloPacote.id}">
+                            #{moduloPacote.descricao}
+                            <p>Modulos da promoção</p>
+                            <ul style="list-style: none;padding-left: 5px;">
+                                <p:repeat value="#{moduloPacote.moduloPacoteModuloList}" var="mpm">
+                                    <li>
+                                        <h:outputText value="#{mpm.idModulo.nome}"/>
+                                    </li>
+                                </p:repeat>
+                            </ul>
+                        </div>
+                        <table class="detalhes">
+                            <tr>
+                                <th>Valor de adesão</th>
+                                <td><cc:convertMoney value="#{moduloPacote.valorAdesao}"/></td>
+                            </tr>
+                            <tr>
+                                <th>Valor da mensalidade</th>
+                                <td><cc:convertMoney value="#{moduloPacote.valorMensalidade}"/></td>
+                            </tr>
+                        </table>
+                        <div class="row">
+                            <div class="col-auto ml-auto">
+                                <h:commandLink value="Contratar" styleClass="btn btn-sm" action="#{meuPlanoControle.contratarPacote}">
+                                    <f:setPropertyActionListener value="#{moduloPacote}" target="#{meuPlanoControle.moduloPacoteSelecionado}"/>
+                                </h:commandLink>
+                            </div>
+                        </div>
+                    </div>
+                </p:repeat>
+                <div class="m-0"></div>
+            </div>
+            <h5>Documentos</h5>
+            <div class="documentos">
+                <p:commandButton value="Termo de adesão" icon="fa fa-download" ajax="false">
+                    <p:fileDownload value="#{meuPlanoControle.downloadTermoDeAdesao()}"/>
+                </p:commandButton>
+                <p:spacer width="10"/>
+                <p:commandButton value="Política de privacidade" icon="fa fa-download" ajax="false">
+                    <p:fileDownload value="#{meuPlanoControle.downloadPoliticaPrivacidade()}"/>
+                </p:commandButton>
+
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

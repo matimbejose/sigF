@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Manutenção de registro do ponto"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Pessoal</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/registroPonto/listaManutencaoPonto.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes"/>
+
+        <ui:define name="formButtons">
+            <p:commandButton action="#{manutencaoPontoControle.doFinishSalvarManutencaoPonto()}" value="Salvar alterações"/>
+            <p:commandButton type="button" value="Limpar filtros" onclick="clearDataTableFilters('tbl');"/>
+            <p:commandButton id="toggler" type="button" value="Colunas"/>
+            <p:columnToggler datasource="tbl" trigger="toggler"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <ui:include src="/WEB-INF/msgErro.xhtml"/>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group form-md-line-input">
+                        <label class="control-label">Funcionário</label>
+                        <p:selectOneMenu value="#{manutencaoPontoControle.funcionario}"
+                                         panelStyle="width:180px" effect="fade"
+                                         var="t" filter="true" filterMatchMode="contains"
+                                         converter="#{genericConverter}">
+                            <p:column>
+                                <h:outputText value="#{t.nome}" />
+                            </p:column>
+
+                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                            <f:selectItems value="#{funcionarioControle.funcionarios}"  var="funcionario" itemLabel="#{funcionario.nome}" itemValue="#{funcionario}"/>
+
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label class="control-label"><span class="required"> * </span>Data</label>
+                    <div class="input-group">
+                        <div class="input-group-append">
+                            <p:calendar navigator="true" id="competencia" value="#{manutencaoPontoControle.competencia}" pattern="MM/yyyy" mask="true" />
+                            <p:commandLink action="#{manutencaoPontoControle.buscarRegistros()}"  title="Consultar" styleClass="btn blue btn-outline sbold" update="tbl, pnlObservacao" >
+                                <i class="fa fa-search"></i>
+                            </p:commandLink>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <p:dataTable value="#{manutencaoPontoControle.lista}" emptyMessage="Nenhum registro encontrado." var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="31" lazy="true" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow" rows="31" editable="true" editMode="cell">
+
+                <f:facet name="header">
+                    #{manutencaoPontoControle.funcionario.nome} (mat. #{manutencaoPontoControle.funcionario.matricula})
+                </f:facet>
+
+                <p:column headerText="Dia" width="40" style="text-align: center;">
+                    <h:outputText value="#{item.dia}"/>
+                </p:column>
+
+                <p:column headerText="Semana" width="80" style="text-align: right;">
+                    <h:outputText value="#{item.diaSemana}"/>
+                </p:column>
+
+                <p:column headerText="Entrada manhã">
+                    <p:calendar navigator="true" value="#{item.entradaManha}" pattern="HH:mm:ss" timeOnly="true" mask="true"/>
+                </p:column>
+
+                <p:column headerText="Saída manhã">
+                    <p:calendar navigator="true" value="#{item.saidaManha}" pattern="HH:mm:ss"  timeOnly="true" mask="true"/>
+                </p:column>
+
+                <p:column headerText="Entrada tarde">
+                    <p:calendar navigator="true" value="#{item.entradaTarde}" pattern="HH:mm:ss"  timeOnly="true" mask="true"/>
+                </p:column>
+
+                <p:column headerText="Saída tarde">
+                    <p:calendar navigator="true" value="#{item.saidaTarde}" pattern="HH:mm:ss" timeOnly="true" mask="true"/>
+                </p:column>
+
+                <p:column headerText="Entrada extra">
+                    <p:calendar navigator="true" value="#{item.entradaExtra}" pattern="HH:mm:ss" timeOnly="true" mask="true"/>
+                </p:column>
+
+                <p:column headerText="Saída extra">
+                    <p:calendar navigator="true" value="#{item.saidaExtra}" pattern="HH:mm:ss" timeOnly="true" mask="true"/>
+                </p:column>
+
+            </p:dataTable>
+            <div class="card mt-3 pb-1">
+                <div class="row">
+                    <div class="col-md-12">
+                        <p:outputPanel id="pnlObservacao">
+                            <div class="form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Observação"/>
+                                <p:inputTextarea value="#{manutencaoPontoControle.observacao}" styleClass="form-control" />
+                            </div>
+                        </p:outputPanel>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <f:metadata>
+        <f:event listener="#{relatorioControlePagamentoParcialControle.cleanFiltro()}" type="preRenderView"/>
+    </f:metadata>
+
+    <ui:composition template="/WEB-INF/templateReport.xhtml">
+
+        <ui:param name="title" value="Relatório análise de pagamento"/>
+
+        <ui:param name="link" value="/restrito/relatorio/relatorioControlePagamentoParcial.xhtml"/>
+
+        <ui:param name="fileDownload" value="#{relatorioControlePagamentoParcialControle.gerarRelatorio()}"/>
+
+        <ui:define name="config">
+            <div class="row">
+                <div class="col form-group form-md-line-input">
+                    <p:outputLabel for="@next" value="Fornecedor"/>
+                    <p:selectOneMenu value="#{relatorioControlePagamentoParcialControle.fornecedorSelecionado}" panelStyle="width:180px" effect="fade"
+                                     var="t" style="width: 160px;" filter="true" filterMatchMode="startsWith" converter="#{genericConverter}">
+                        <p:column>
+                            <h:outputText value="#{t.razaoSocial}"/>
+                        </p:column>
+
+                        <f:selectItem itemLabel="Todos fornecedores" noSelectionOption="true"/>
+                        <f:selectItems value="#{fornecedorControle.fornecedores}" var="f" itemLabel="#{f.razaoSocial}" itemValue="#{f}"/>
+                    </p:selectOneMenu>
+                </div>
+                <div class="col-3 form-group">
+                    <p:outputLabel for="@next" value="Início do periodo"/>
+                    <p:calendar navigator="true" value="#{relatorioControlePagamentoParcialControle.data.min}" pattern="dd/MM/yyyy" mask="true"/>
+                </div>
+                <div class="col-3 form-group">
+                    <p:outputLabel for="@next" value="Fim do periodo"/>
+                    <p:calendar navigator="true" value="#{relatorioControlePagamentoParcialControle.data.max}" pattern="dd/MM/yyyy" mask="true"/>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+</html>

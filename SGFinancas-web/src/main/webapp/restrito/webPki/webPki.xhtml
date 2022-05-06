@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:sec="http://www.springframework.org/security/facelets/tags"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <f:metadata >
+        <f:event listener="#{usuarioControle.controleMenu.setMenuAdministracaoWebPki }" type="preRenderView" />
+    </f:metadata>
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:define name="cssInicial">
+            <link href="#{facesContext.externalContext.requestContextPath}/resources/webPki/css/bootstrap.css" rel="stylesheet" type="text/css"/>
+            <link href="#{facesContext.externalContext.requestContextPath}/resources/webPki/css/bootstrap-theme.css" rel="stylesheet" type="text/css"/>
+            <link href="#{facesContext.externalContext.requestContextPath}/resources/webPki/css/site.css" rel="stylesheet" type="text/css"/>
+        </ui:define>
+
+        <ui:define name="title">            
+            Web PKI
+        </ui:define>
+
+
+        <ui:define name="content">
+            <div class="row">
+                <div class="col-md-12 ">
+                    <!-- BEGIN SAMPLE FORM PORTLET-->
+                    <div class="portlet light bordered">
+                        <div class="portlet-title">
+                        </div>
+                        <div class="portlet-body form">
+                            <h:form acceptcharset="ISO-8859-1"  prependId="false" id="signForm">
+
+                                <!--/* Render a select (combo box) to list the user's certificates. For now it will be empty, we'll populate it later on (see javascript below). */-->
+                                <div class="form-body">
+
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+
+
+                                                <label class="control-label">Escolha o certificado</label>
+                                                <select id="certificateSelect" class="form-control">
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-actions">
+
+                                    <!--/*
+                                        Action buttons. Notice that the "Sign File" button is NOT a submit button. When the user clicks the button,
+                                        we must first use the Web PKI component to perform the client-side computation necessary and only when
+                                        that computation is finished we'll submit the form programmatically (see javascript below).
+                                    */-->
+
+                                    <input type="hidden" id="toSignHashField" name="toSignHash" value="#{webPkiControle.hash}" />
+                                    <p:inputText type="hidden" id="certificateField" 
+                                                 class="certificateField" 
+                                                 value="#{webPkiControle.certificateField}"/>
+                                    <p:inputText type="hidden" 
+                                                 id="signatureField" 
+                                                 class="signatureField" 
+                                                 value="#{webPkiControle.signatureField}"/>
+
+
+                                    <p:remoteCommand name="rc" process="@form" update="pnlDownloadXml" action="#{webPkiControle.assinarXml()}" />
+
+                                    <p:outputPanel id="pnlDownloadXml">
+                                        <button id="signButton" type="button" class="btn blue">Assinar xml</button>
+                                        <p:commandLink value="Download xml" ajax="false" 
+                                                       rendered="#{webPkiControle.xmlAssinado ne null}" 
+                                                       class="btn blue">
+                                            <p:fileDownload  value="#{webPkiControle.downloadXmlAssinado()}" />
+                                        </p:commandLink>
+                                    </p:outputPanel>
+                                </div>
+
+                            </h:form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--/*
+                Once the page is loaded, we initialize the "javascript module" signatureForm passing references to our HTML
+                elements. The module will make the appropriate button wire-ups, perform the necessary computations using Web PKI
+                and submit our form once the process is complete (see file resources/static/js/signature-form.js)
+             */-->
+
+        </ui:define>
+
+        <ui:define name="script">
+            <script src="#{facesContext.externalContext.requestContextPath}/resources/webPki/scripts/jquery-1.11.3.js" type="text/javascript"></script>
+            <script src="#{facesContext.externalContext.requestContextPath}/resources/webPki/scripts/jquery.blockUI.js" type="text/javascript"></script>
+            <script src="#{facesContext.externalContext.requestContextPath}/resources/webPki/scripts/bootstrap.js" type="text/javascript"></script>
+            <script src="#{facesContext.externalContext.requestContextPath}/resources/webPki/scripts/lacuna-web-pki-2.5.0.js" type="text/javascript"></script>
+            <script src="#{facesContext.externalContext.requestContextPath}/resources/webPki/scripts/signature-form.js" type="text/javascript"></script>
+
+            <script>
+                $(document).ready(function () {
+                    signatureForm.init({
+                        form: $('#signForm'),
+                        certificateSelect: $('#certificateSelect'),
+                        signButton: $('#signButton'),
+                        refreshButton: $('#refreshButton'),
+                        toSignHashField: $('#toSignHashField'),
+                        certificateField: $('#certificateField'),
+                        signatureField: $('#signatureField')
+                    });
+                });
+            </script>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

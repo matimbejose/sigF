@@ -1,0 +1,22 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:composite="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui">
+
+    <composite:interface>
+        <composite:attribute name="value" required="true"
+                             shortDescription="Backing bean field."/>
+        <composite:attribute name="label" required="true"
+                             shortDescription="Label to be displayed on top of the input."/>
+        <composite:attribute name="required" required="false" default="false"
+                             shortDescription="Marks component as required."/>
+        <composite:attribute name="requiredMessage" required="false"
+                             shortDescription="Message to display when required field validation fails."/>
+        <composite:attribute name="id" required="false"/>
+    </composite:interface>
+
+    <composite:implementation>
+        <p:outputLabel for="@next" value="#{cc.attrs.label}" rendered="#{cc.attrs.label ne ''}"/>
+        <p:inputText id="#{cc.attrs.id}" converter="#{genericConverter}" value="#{cc.attrs.value}"
+                     required="#{cc.attrs.required}" requiredMessage="#{cc.attrs.requiredMessage}"/>
+    </composite:implementation>
+</html>

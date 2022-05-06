@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite/components"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Contratação de promoção"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Pagamentos</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/pagamento/assineJa.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes"/>
+
+        <ui:define name="content">
+            <style>
+                tr.obrigatorio, th .ui-chkbox-box {
+                    pointer-events: none;
+                    cursor: default;
+                    opacity: .85;
+                }
+                .selector {
+                    width:16px;
+                    text-align:center;
+                }
+                tr.obrigatorio .selector > .ui-chkbox {
+                    opacity: .4;
+                }
+                tr.adquirido .adesao {
+                    text-decoration: line-through;
+                }
+                .money {
+                    text-align: right;
+                    width: 100px;
+                }
+            </style>
+            <script>
+                function showDiv(elem) {
+                    elem.classList.add('d-none');
+                    document.querySelector('.card.dadosPagamento').classList.remove('d-none');
+                }
+            </script>
+            <p:outputPanel rendered="#{meuPlanoControle.ehExpirada()}">
+                <div class="alert alert-danger" role="alert">
+                    Seu período de acesso expirou, clique no botão RENOVAR para continuar utilizando o SG Finanças. Você também pode contratar outros módulos se desejar, bastar seleciona-lo (s) e clicar no botão RENOVAR
+                </div>
+            </p:outputPanel>
+            <div class="row">
+                <div class="col-10 mx-auto">
+                    <p:dataTable id="tbl" value="#{meuPlanoControle.modulos}" var="modulo" rowKey="#{modulo.id}"
+                                 styleClass="card p-0 ui-datatable-striped ui-datatable-gridlines" sortBy="#{modulo.foo}">
+
+                        <p:column headerText="Módulo" style="width:400px">
+                            #{modulo.nome}
+                        </p:column>
+
+                        <p:column headerText="Valor de adesão" styleClass="money adesao">
+                            <cc:convertMoney value="#{modulo.valorAdesao}"/>
+                        </p:column>
+
+                        <p:column headerText="Valor da mensalidade" styleClass="money">
+                            <cc:convertMoney value="#{(modulo.valorMensalidade / 30) * meuPlanoControle.quantidadeDiasRestantes}"/>
+                        </p:column>
+
+                        <p:summaryRow>
+                            <p:column style="text-align: right;">
+                                Total:
+                            </p:column>
+                            <p:column style="text-align: right;">
+                                <cc:convertMoney value="#{meuPlanoControle.moduloPacoteSelecionado.valorAdesao}"/>
+                            </p:column>
+                            <p:column style="text-align: right;">
+                                <cc:convertMoney value="#{(meuPlanoControle.moduloPacoteSelecionado.valorMensalidade / 30) * meuPlanoControle.quantidadeDiasRestantes}"/>
+                            </p:column>
+                        </p:summaryRow>
+
+                    </p:dataTable>
+                    <div class="row">
+                        <div class="col-auto ml-auto">
+                            <p:row rendered="#{meuPlanoControle.exibeBotaoExportarDados()}">
+                                <p:commandButton value="Solicitar exportação de dados" action="#{meuPlanoControle.solictarExportacaoDados()}"
+                                                 process="@this" update="msgResultado"/>
+                                <i class="fa fa-info-circle info-msg" data-toggle="tooltip" data-placement="top"
+                                   title="Essa funcionalidade serve para solicitar automaticamente, a exportação em PDF ou Excel dos dados de cadastro que realizou no SG Finanças"/>
+                            </p:row>
+                            <p:spacer width="10"/>
+                            <p:commandButton value="#{meuPlanoControle.titleAcao}" onclick="showDiv(this);"/>
+                        </div>
+                    </div>
+                    <div class="card dadosPagamento d-none mt-3">
+                        <div class="row">
+                            <div class="col-3 form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Meio de pagamento"/>
+                                <p:selectOneMenu value="#{meuPlanoControle.dadosPagamento.tipoPagamento}" required="true">
+                                    <f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+                                    <f:selectItem itemLabel="Cartão de crédito" itemValue="CC"/>
+                                    <f:selectItem itemLabel="Boleto bancário" itemValue="BB" itemDisabled="#{true}"/>
+                                    <p:ajax process="@this" update="campos"/>
+                                </p:selectOneMenu>
+                            </div>
+                        </div>
+                        <p:outputPanel id="campos">
+                            <p:row rendered="#{meuPlanoControle.dadosPagamento.tipoPagamento eq 'CC'}">
+                                <div class="row">
+                                    <div class="col">
+                                        <h5 class="mt-2">Dados do cartão</h5>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-auto pr-0 form-group form-md-line-input" style="width: 200px;">
+                                        <p:outputLabel for="@next" value="Número"/>
+                                        <p:inputMask mask="9999-9999-9999-9999" required="true"
+                                                     value="#{meuPlanoControle.dadosPagamento.cartao.numero}"/>
+                                    </div>
+                                    <div class="col-auto pl-0 form-group form-md-line-input" style="width: 80px;">
+                                        <p:outputLabel for="@next" value="CVV"/>
+                                        <p:inputNumber decimalPlaces="0" thousandSeparator="" required="true"
+                                                       value="#{meuPlanoControle.dadosPagamento.cartao.cvv}"/>
+                                    </div>
+                                    <div class="col-auto form-group form-md-line-input" style="width: 120px;">
+                                        <p:outputLabel for="@next" value="Validade"/>
+                                        <p:calendar navigator="true" pattern="MM/yyyy" mask="true" required="true"
+                                                    value="#{meuPlanoControle.dadosPagamento.cartao.dataValidade}"/>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-auto form-group form-md-line-input" style="width: 400px;">
+                                        <p:outputLabel for="@next" value="Nome no cartão"/>
+                                        <p:inputText required="true" value="#{meuPlanoControle.dadosPagamento.cartao.nome}"/>
+                                    </div>
+                                </div>
+                            </p:row>
+                            <p:outputPanel rendered="#{meuPlanoControle.dadosPagamento.tipoPagamento ne null}" id="dadosFatura">
+                                <div class="row">
+                                    <div class="col">
+                                        <h5 class="mt-2">Dados de fatura</h5>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-auto form-group form-md-line-input" style="width: 200px;">
+                                        <p:outputLabel for="@next" value="CNPJ/CPF"/>
+                                        <p:inputText styleClass="form-control input-mask" widgetVar="cpfCnpj" required="true"
+                                                     value="#{meuPlanoControle.dadosPagamento.fatura.cpfCnpj}"/>
+                                    </div>
+                                    <div class="col form-group form-md-line-input">
+                                        <p:outputLabel for="@next" value="Nome"/>
+                                        <p:inputText required="true" value="#{meuPlanoControle.dadosPagamento.fatura.nome}"/>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-auto form-group form-md-line-input" style="width: 200px;">
+                                        <p:outputLabel for="inpCep" value="CEP"/>
+                                        <div class="input-group">
+                                            <div class="input-group-append">
+                                                <p:inputMask id="inpCep" mask="99.999-999" required="true" style="width: 140px !important;"
+                                                             value="#{meuPlanoControle.dadosPagamento.fatura.endereco.cep}"/>
+                                                <span class="input-group-btn">
+                                                    <p:commandLink action="#{meuPlanoControle.buscarEnderecoPorCep()}" process="@this, inpCep"
+                                                                   styleClass="btn blue btn-outline sbold" update="dadosFatura">
+                                                        <i class="fa fa-search"></i>
+                                                    </p:commandLink>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col pr-0 form-group form-md-line-input">
+                                        <p:outputLabel for="@next" value="Endereço"/>
+                                        <p:inputText required="true" value="#{meuPlanoControle.dadosPagamento.fatura.endereco.rua}"/>
+                                    </div>
+                                    <div class="col-auto px-0 form-group form-md-line-input" style="width: 100px;">
+                                        <p:outputLabel for="@next" value="Número"/>
+                                        <p:inputText required="true" value="#{meuPlanoControle.dadosPagamento.fatura.endereco.numero}"/>
+                                    </div>
+                                    <div class="col-auto pl-0 form-group form-md-line-input" style="width: 120px;">
+                                        <p:outputLabel for="@next" value="Complemento"/>
+                                        <p:inputText  value="#{meuPlanoControle.dadosPagamento.fatura.endereco.complemento}"/>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col form-group form-md-line-input">
+                                        <p:outputLabel for="@next" value="Bairro"/>
+                                        <p:inputText required="true" value="#{meuPlanoControle.dadosPagamento.fatura.endereco.bairro}"/>
+                                    </div>
+                                    <div class="col-auto form-group form-md-line-input" style="width: 120px;">
+                                        <p:outputLabel for="@next" value="UF"/>
+                                        <p:selectOneMenu required="true" converter="#{genericConverter}"
+                                                         value="#{meuPlanoControle.dadosPagamento.fatura.endereco.uf}">
+                                            <f:selectItem itemLabel="--" noSelectionOption="true"/>
+                                            <f:selectItems value="#{empresaControle.UFs}" var="uf" itemLabel="#{uf.descricao}" itemValue="#{uf.descricao}"/>
+                                        </p:selectOneMenu>
+                                    </div>
+                                    <div class="col form-group form-md-line-input">
+                                        <p:outputLabel for="@next" value="Cidade"/>
+                                        <p:inputText required="true" value="#{meuPlanoControle.dadosPagamento.fatura.endereco.cidade}"/>
+                                    </div>
+                                </div>
+                                <div class="mb-3" style="height: 1px; background-color: #ccc;"></div>
+                                <div class="row">
+                                    <div class="col-auto ml-auto text-right my-auto" style="width: 250px;">
+                                        <small>
+                                            Ao clicar em confirmar você concorda com nossos
+                                            <p:commandLink ajax="false" value="termos de uso" immediate="true" style="color: #4cb77a;font-size: 12px;">
+                                                <p:fileDownload value="#{empresaControle.baixaTermo()}"/>
+                                            </p:commandLink> e
+                                            <p:commandLink ajax="false" value="Política de privacidade" immediate="true" style="color: #4cb77a;font-size: 12px;">
+                                                <p:fileDownload value="#{empresaControle.baixaPoliticaPrivacidade()}"/>
+                                            </p:commandLink>.
+                                        </small>
+                                    </div>
+                                    <div class="col-auto">
+                                        <p:commandButton value="Confirmar" action="#{meuPlanoControle.geraCobrancaPacote()}"
+                                                         styleClass="btn btn-lg btn-success" process="campos" update="msgResul"/>
+                                    </div>
+                                </div>
+                                <h:messages class="alertMessage" id="msgResul"
+                                            errorClass="alert alert-danger" infoClass="alert alert-success" warnClass="alert alert-warning"/>
+                                <script>
+                                    //<![CDATA[
+                                    $(document).ready(() => {
+                                        const elem = PF('cpfCnpj').getJQ();
+                                        elem.on('input', () => {
+                                            const val = elem.val().replace(/\D/g, '');
+                                            elem.val(VMasker.toPattern(val, val.length <= 11 ? '999.999.999-99' : '99.999.999/9999-99'));
+                                        }).trigger('input');
+                                    });
+                                    //]]>
+                                </script>
+                            </p:outputPanel>
+                        </p:outputPanel>
+                    </div>
+                </div>
+            </div>
+            <script src="https://unpkg.com/vanilla-masker@1.1.1/build/vanilla-masker.min.js"></script>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <div class="form-body">
+        <p:importEnum type="br.com.villefortconsulting.sgfinancas.util.EnumTipoProdutoVenda"/>
+        <p:importEnum type="br.com.villefortconsulting.sgfinancas.util.EnumTipoUsoProduto"/>
+        <p:outputPanel id="prodConf">
+            <div class="row">
+                <div class="col">
+                    <p:outputLabel value="Tipos de produto disponíveis na venda"/>
+                    <div class="row mb-3">
+                        <div class="col">
+                            <p:dataTable value="#{parametroSistemaControle.sourceTipoProdutoUsoVenda}" var="item"
+                                         selection="#{parametroSistemaControle.listTipoProdutoUsoVenda}" rowKey="#{item.tipoProduto}-#{item.tipoUso}"
+                                         styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+                                <p:column selectionMode="multiple" style="width: 20px;"/>
+                                <p:column headerText="Tipo">
+                                    #{item.tipoProdutoName}
+                                </p:column>
+                            </p:dataTable>
+                        </div>
+                    </div>
+                    <p:outputLabel value="Tipos de produto disponíveis na compra"/>
+                    <div class="row">
+                        <div class="col">
+                            <p:dataTable value="#{parametroSistemaControle.sourceTipoProdutoUsoCompra}" var="item"
+                                         selection="#{parametroSistemaControle.listTipoProdutoUsoCompra}" rowKey="#{item.tipoProduto}-#{item.tipoUso}"
+                                         styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+                                <p:column selectionMode="multiple" style="width: 20px;"/>
+                                <p:column headerText="Tipo">
+                                    #{item.tipoProdutoName}
+                                </p:column>
+                            </p:dataTable>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col mt-3">
+                    <span>É considerado <strong>insumo</strong> os produtos que estão na listagem de composição de algum outro produto.</span>
+                    <br/>
+                    <span>É considerado <strong>kit de produto</strong> os produtos que possuem no mínimo um produto na composiçãoe o tipo de composição é "Kit de produto".</span>
+                    <br/>
+                    <span>É considerado <strong>produto compostos</strong> os produtos que: possuem no mínimo um produto na composição e o tipo de composição é "Produto composto".</span>
+                    <br/>
+                    <span>É considerado <strong>produto normal</strong> os produtos que não se aplicam a <strong>nenhuma</strong> regra acima.</span>
+                    <br/>
+                    <span>Se as listas ao lado não forem configuradas, será permitido o uso de todos os tipos de produtos em qualquer situação.</span>
+                </div>
+            </div>
+            <hr/>
+            <div class="row">
+                <div class="col">
+                    <div class="form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Permite venda com estoque negativo (produtos normais, insumos e kits de produto)"/>
+                        <p:selectOneMenu value="#{parametroSistemaControle.parametroSistemaSelecionado.permiteVendaSemEstoqueProdutosNormais}">
+                            <f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+                            <f:selectItem itemLabel="Não" itemValue="N"/>
+                            <f:selectItem itemLabel="Sim" itemValue="S"/>
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Permite venda com estoque negativo (produtos compostos)"/>
+                        <p:selectOneMenu value="#{parametroSistemaControle.parametroSistemaSelecionado.permiteVendaSemEstoqueProdutosCompostos}">
+                            <f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+                            <f:selectItem itemLabel="Não" itemValue="N"/>
+                            <f:selectItem itemLabel="Sim (deixar negativo)" itemValue="S"/>
+                            <f:selectItem itemLabel="Sim (gerar pedido de produção)" itemValue="P"/>
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+            </div>
+        </p:outputPanel>
+    </div>
+
+</html>

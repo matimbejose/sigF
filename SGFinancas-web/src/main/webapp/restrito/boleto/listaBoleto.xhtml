@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Boleto"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Financeiro</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/boleto/listaBoleto.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="formButtons">
+            <p:commandButton process="tbl, @this" update="form:msgResultado, tbl" action="#{remessaControle.gerarRemessa()}" value="Gerar arquivo remessa"/>
+            <p:commandButton type="button" value="Limpar filtros" onclick="clearDataTableFilters('tbl');"/>
+            <p:commandButton id="toggler" type="button" value="Colunas"/>
+            <p:columnToggler datasource="tbl" trigger="toggler"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <div class="layout-dashboard mb-3">
+                <div class="row">
+                    <div class="col intro-text">
+                        <span>
+                            Boletos de
+                            <p:calendar navigator="true" pattern="dd/MM/yyyy" styleClass="top-calendar m-0" value="#{boletoControle.filtro.data.min}"/>
+                            até
+                            <p:calendar navigator="true" pattern="dd/MM/yyyy" styleClass="top-calendar m-0" value="#{boletoControle.filtro.data.max}"/>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- BEGIN EXAMPLE TABLE PORTLET-->
+                    <div class="portlet light bordered">
+                        <div class="portlet-title">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <p:selectOneMenu id="auto4" value="#{boletoControle.filtro.contaBancaria}"
+                                                     panelStyle="width:180px" effect="fade"
+                                                     var="t" style="width:160px" filter="true" filterMatchMode="startsWith"
+                                                     converter="#{genericConverter}">
+                                        <p:column>
+                                            <h:outputText value="-- Todas contas bancárias --" rendered="#{t.descricao eq null}"/>
+                                            <h:outputText value="#{t.descricao}" rendered="#{t.descricao ne null}"/>
+                                        </p:column>
+
+                                        <f:selectItem itemLabel="-- Todas contas bancárias --" noSelectionOption="true"/>
+                                        <f:selectItems value="#{contaBancariaControle.listarContasBancarias()}"  var="contaBancaria" itemLabel="#{contaBancaria.descricao}" itemValue="#{contaBancaria}"/>
+
+                                    </p:selectOneMenu>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="input-group">
+                                        <div class="input-group-append">
+                                            <p:inputText value="#{boletoControle.filtro.descricao}" placeholder="Pesquisar..." />
+                                            <p:commandLink  title="Consultar" styleClass="btn blue btn-outline sbold" update="tbl" >
+                                                <i class="fa fa-search"></i>
+                                            </p:commandLink>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="portlet-body">
+
+                            <div class="portlet-body flip-scroll">
+                                <p:dataTable value="#{boletoControle.model}" emptyMessage="Nenhum registro encontrado." var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow" selection="#{remessaControle.boletosRemessa}" rowKey="#{item.id}">
+
+                                    <p:column headerText="#" width="55" sortBy="#{item.id}" visible="false">
+                                        <h:outputText value="#{item.id}"/>
+                                    </p:column>
+
+                                    <p:ajax event="rowSelectCheckbox" process="@this"/>
+
+                                    <p:column rendered="#{item.idRemessa eq null}" selectionMode="multiple" style="width:16px;text-align:center" width="50" />
+
+                                    <p:column rendered="#{item.idRemessa ne null}" width="50" />
+
+                                    <p:column headerText="Descrição" sortBy="#{idContaParcela.idConta.idPlanoConta.descricao}">
+                                        <h:outputText value="#{item.idContaParcela.idConta.idPlanoConta.descricao} (#{item.idContaParcela.numParcela}/#{item.idContaParcela.idConta.numeroParcelas})"/>
+                                    </p:column>
+
+                                    <p:column headerText="Observação" sortBy="#{idContaParcela.idConta.observacao}">
+                                        <h:outputText value="#{item.idContaParcela.idConta.observacao}"/>
+                                    </p:column>
+
+                                    <p:column headerText="Via" style="text-align: right" width="50">
+                                        <h:outputText value="#{item.numeroVia}ª"/>
+                                    </p:column>
+
+                                    <p:column headerText="Nosso número" >
+                                        <h:outputText value="#{item.nossoNumero}"/>
+                                    </p:column>
+
+                                    <p:column headerText="Emissão" sortBy="#{item.dataEmissao}" width="100">
+                                        <h:outputText value="#{item.dataEmissao}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                                        </h:outputText>
+                                    </p:column>
+
+                                    <p:column headerText="Venc." sortBy="#{item.dataVencimento}" width="100">
+                                        <h:outputText value="#{item.dataVencimento}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                                        </h:outputText>
+                                    </p:column>
+
+                                    <p:column headerText="Valor" sortBy="#{item.valor}" style="text-align: right" width="100">
+                                        <h:outputText value="#{item.valor}">
+                                            <f:convertNumber currencySymbol="R$" type="currency" />
+                                        </h:outputText>
+                                    </p:column>
+
+                                    <p:column width="117" headerText="Ações" >
+
+                                        <p:commandLink  ajax="false" rendered="#{item.idDocumento ne null}" styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                                        title="Download boleto" >
+                                            <i class="fa fa-arrow-down"></i>
+                                            <f:setPropertyActionListener value="#{item}" target="#{boletoControle.boletoSelecionado}"/>
+                                            <p:fileDownload  value="#{boletoControle.downloadBoleto()}" />
+                                        </p:commandLink>
+
+                                        <p:commandLink  ajax="false" rendered="#{item.idRemessa ne null}" styleClass="btn btn-circle btn-icon-only btn-default icones"
+                                                        title="Download remessa" >
+                                            <i class="fa fa-file-code-o"></i>
+                                            <f:setPropertyActionListener value="#{item.idRemessa}" target="#{remessaControle.remessaSelecionado}"/>
+                                            <p:fileDownload  value="#{remessaControle.downloadRemessa()}" />
+                                        </p:commandLink>
+
+                                        <ui:remove>
+                                            <h:commandLink  styleClass="btn btn-circle btn-icon-only btn-default icones" title="Remover remessa" rendered="#{item.idRemessa ne null}"
+                                                            action="#{boletoControle.doFinishExcluirRemessa()}" onclick="return confirm('Tem certeza que deseja excluir esta remessa?');" >
+                                                <i class="icon-trash"></i>
+                                                <f:setPropertyActionListener value="#{item}" target="#{boletoControle.boletoSelecionado}"/>
+                                            </h:commandLink>
+                                        </ui:remove>
+                                    </p:column>
+
+                                </p:dataTable>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

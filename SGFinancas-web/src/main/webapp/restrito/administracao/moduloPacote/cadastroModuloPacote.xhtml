@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite/components"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Pacote de módulos"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li><p:link outcome="/restrito/administracao/moduloPacote/listaModuloPacote.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteSave" action="#{moduloPacoteControle.doFinishAdd()}"/>
+            <h:commandButton id="remoteCancel" action="listaModulo.xhtml" immediate="true"/>
+        </ui:define>
+        <ui:define name="content">
+            <div class="form-body">
+                <div class="card">
+                    <div class="row">
+                        <div class="col-5 form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Nome"/>
+                            <p:inputText value="#{moduloPacoteControle.moduloPacoteSelecionado.nome}"
+                                         required="true" requiredMessage="Informe o nome do módulo"/>
+                        </div>
+                        <div class="col form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Valor adesão"/>
+                            <p:inputNumber value="#{moduloPacoteControle.moduloPacoteSelecionado.valorAdesao}"
+                                           required="true" requiredMessage="Informe o valor de adesão"
+                                           symbol="R$ " decimalSeparator=","
+                                           thousandSeparator="." decimalPlaces="2"/>
+                        </div>
+                        <div class="col form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Valor mensalidade"/>
+                            <p:inputNumber value="#{moduloPacoteControle.moduloPacoteSelecionado.valorMensalidade}"
+                                           required="true" requiredMessage="Informe o valor de mensalidade"
+                                           symbol="R$ " decimalSeparator=","
+                                           thousandSeparator="." decimalPlaces="2"/>
+                        </div>
+                        <div class="col form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Vencimento"/>
+                            <p:calendar navigator="true" value="#{moduloPacoteControle.moduloPacoteSelecionado.dataVencimento}"
+                                        pattern="dd/MM/yyyy" mask="true"/>
+                        </div>
+                        <div class="col form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Situação"/>
+                            <p:selectOneMenu value="#{moduloPacoteControle.moduloPacoteSelecionado.ativo}">
+                                <f:selectItem itemLabel="Ativo" itemValue="S"/>
+                                <f:selectItem itemLabel="Inativo" itemValue="N"/>
+                            </p:selectOneMenu>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Descrição"/>
+                            <p:inputTextarea value="#{moduloPacoteControle.moduloPacoteSelecionado.descricao}"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-8">
+                            <p:dataTable value="#{moduloPacoteControle.moduloPacoteSelecionado.moduloPacoteModuloList}" var="mpm" id="tbl"
+                                         styleClass="card p-0 ui-datatable-striped ui-datatable-sm ui-datatable-gridlines" emptyMessage="Nenhum módulo informado">
+                                <f:facet name="header">
+                                    Módulos do pacote
+                                    <div class="pull-right">
+                                        <p:commandButton value="Adicionar" action="#{moduloPacoteControle.adicionarModulo()}"
+                                                         process="@this" update="tbl"/>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </f:facet>
+
+                                <p:column headerText="Módulo">
+                                    <p:selectOneMenu value="#{mpm.idModulo}" converter="#{genericConverter}">
+                                        <f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+                                        <f:selectItems value="#{moduloControle.modulos}" var="modulo"
+                                                       itemLabel="#{modulo.nome}" itemValue="#{modulo}"/>
+                                        <p:ajax process="@this" update="tbl"/>
+                                    </p:selectOneMenu>
+                                </p:column>
+
+                                <p:column headerText="Valor de adesão" style="text-align: right;width: 150px;">
+                                    <cc:convertMoney value="#{mpm.idModulo.valorAdesao}"/>
+                                </p:column>
+
+                                <p:column headerText="Valor da mensalidade" style="text-align: right;width: 150px;">
+                                    <cc:convertMoney value="#{mpm.idModulo.valorMensalidade}"/>
+                                </p:column>
+
+                                <p:column headerText="Ações" width="40" style="text-align: center;">
+                                    <p:commandLink styleClass="icones" title="Remover" process="@this" update="tbl"
+                                                   action="#{moduloPacoteControle.removerModulo(mpm)}" ajax="true" immediate="true">
+                                        <i class="fa fa-minus-circle"></i>
+                                    </p:commandLink>
+                                </p:column>
+                            </p:dataTable>
+                        </div>
+                        <div class="col">
+                            <p:dataTable value="#{moduloPacoteControle.moduloPacoteSelecionado.moduloPacoteCategoriaEmpresaList}" var="mpce" id="tblCE"
+                                         styleClass="card p-0 ui-datatable-striped ui-datatable-sm ui-datatable-gridlines" emptyMessage="Nenhuma categoria informada">
+                                <f:facet name="header">
+                                    Categoria de empresa
+                                    <div class="pull-right">
+                                        <p:commandButton value="Adicionar" action="#{moduloPacoteControle.adicionarCategoria()}"
+                                                         process="@this" update="tblCE"/>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </f:facet>
+
+                                <p:column headerText="Categoria">
+                                    <p:selectOneMenu value="#{mpce.idCategoriaEmpresa}" converter="#{genericConverter}">
+                                        <f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+                                        <f:selectItems value="#{empresaControle.categoriaEmpresaList}" var="categoria"
+                                                       itemLabel="#{categoria.descricao}" itemValue="#{categoria}"/>
+                                        <p:ajax process="@this" update="tblCE"/>
+                                    </p:selectOneMenu>
+                                </p:column>
+
+                                <p:column headerText="Ações" width="40" style="text-align: center;">
+                                    <p:commandLink styleClass="icones" title="Remover" process="@this" update="tblCE"
+                                                   action="#{moduloPacoteControle.removerCategoria(mpce)}" ajax="true" immediate="true">
+                                        <i class="fa fa-minus-circle"></i>
+                                    </p:commandLink>
+                                </p:column>
+                            </p:dataTable>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

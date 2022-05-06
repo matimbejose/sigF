@@ -1,0 +1,203 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui">
+
+    <div class="layout-rightpanel">
+        <div class="right-panel-header">
+
+        </div>
+        <div class="right-panel-content">
+            <h:form style="height: calc(100% - 97px);">
+                <p:tabView>
+                    <p:tab title="Notificações">
+                        <div class="submenu-content">
+                            <ul>
+                                <li>
+                                    <span class="note-reminder">Você tem
+                                        <span class="notification-count"></span> notificações
+                                    </span>
+                                </li>
+
+                                <p:row rendered="#{empresaControle.logadoComoEmpresa}">
+
+                                    <p:row rendered="#{controleMenu.precisaAtualizarDados()}">
+                                        <li>
+                                            <h:commandLink id="linkCadastroEmpresa" action="#{controleMenu.doAcionarPagina('empresa/listaEmpresa.xhtml')}">
+                                                <span class="note-header">CADASTRO DA EMPRESA INCOMPLETO</span>
+                                                <span class="note-date">Cadastro / Empresa</span>
+                                                <span class="note-details">Os dados da empresa são importante para emissão de nota fiscal.</span>
+                                            </h:commandLink>
+                                        </li>
+                                    </p:row>
+
+                                    <p:row rendered="#{!controleMenu.existeContaCorrenteCadastrada()}">
+                                        <li>
+                                            <h:commandLink id="linkCadastroConta" action="#{controleMenu.doAcionarPagina('contaBancaria/listaContaBancaria.xhtml')}">
+                                                <span class="note-header">NENHUMA CONTA BANCÁRIA INFORMADA</span>
+                                                <span class="note-date">Cadastro / Conta bancária</span>
+                                                <span class="note-details">Uma conta é importante para ter o controle financeiro. </span>
+                                            </h:commandLink>
+                                        </li>
+                                    </p:row>
+
+                                    <p:row rendered="#{!controleMenu.existeCerticadoInformado()}">
+                                        <li>
+                                            <h:commandLink id="linkNotaFiscalProduto" action="#{controleMenu.doAcionarPagina('empresa/listaEmpresa.xhtml')}">
+                                                <span class="note-header">CERTIFICADO DIGITAL NÃO INFORMADO</span>
+                                                <span class="note-date">Cadastro / Empresa</span>
+                                                <span class="note-details">Um certificado é importante para emitir NFe e NFSe</span>
+                                            </h:commandLink>
+                                        </li>
+                                    </p:row>
+
+                                    <p:row rendered="#{!controleMenu.dadosNotaFiscalPreenchidos()}">
+                                        <li>
+                                            <h:commandLink id="linkParametroNotaFiscalProduto" action="#{controleMenu.doAcionarPagina('parametroSistema/listaParametroSistema.xhtml')}">
+                                                <span class="note-header">NÚMERO DA ÚLTIMA NFe EMITIDA NÃO INFORMADO</span>
+                                                <span class="note-date">Parâmetro do sistema</span>
+                                                <span class="note-details">O número das últimas NFe e NFSe emitidas são importantes para emitir NFe e NFSe</span>
+                                            </h:commandLink>
+                                        </li>
+                                    </p:row>
+
+                                    <p:row rendered="#{false and !controleMenu.dadosImportacaoPreenchidos()}">
+                                        <li>
+                                            <h:commandLink id="linkParametroImportacaoProduto" action="#{controleMenu.doAcionarPagina('parametroSistema/listaParametroSistema.xhtml')}">
+                                                <span class="note-header">A CATEGORIA PARA A IMPORTAÇÃO DE PRODUTOS NÃO INFORMADA</span>
+                                                <span class="note-date">Parâmetro do sistema</span>
+                                                <span class="note-details">A categoria é importante para a importação automática de produtos e serviços</span>
+                                            </h:commandLink>
+                                        </li>
+                                    </p:row>
+
+                                    <p:row rendered="#{controleMenu.mostraEmpresaExpirada() > 0}">
+                                        <li>
+                                            <h:commandLink id="linkCredenciamentoExpirado" action="#{controleMenu.doAcionarPagina('administracao/listaEmpresaCredenciada.xhtml')}">
+                                                <span class="note-header">#{controleMenu.mostraEmpresaExpirada()} EMPRESA(S) CUJO PERÍODO DE EXPERIÊNCIA ACABOU </span>
+                                                <span class="note-date">Venda</span>
+                                                <span class="note-details">Entrar em contato com o cliente </span>
+                                            </h:commandLink>
+                                        </li>
+                                    </p:row>
+
+                                    <p:row rendered="#{controleMenu.mostraClienteContatoHoje() > 0}">
+                                        <li>
+                                            <h:commandLink id="linkContatosCliente" action="#{empresaContatoClienteControle.doShowContatosHoje()}">
+                                                <span class="note-header">EXISTEM #{controleMenu.mostraClienteContatoHoje()} CONTATOS MARCADOS PARA HOJE</span>
+                                                <span class="note-date"></span>
+                                                <span class="note-details"></span>
+                                            </h:commandLink>
+                                        </li>
+                                    </p:row>
+
+                                    <p:row rendered="#{controleMenu.quatidadeDeContratoClienteVencendo() > 0}">
+                                        <li>
+                                            <h:commandLink id="linkContratosClienteVencendo" action="#{contratoClienteControle.doShowContratosVencendo()}">
+                                                <f:setPropertyActionListener value="#{true}" target="#{contratoClienteControle.contratosExpirando}"/>
+                                                <span class="note-header">EXISTEM #{controleMenu.quatidadeDeContratoClienteVencendo()} CONTRATOS PROXIMOS DE VENCER</span>
+                                                <span class="note-date">Venda / Contrato de cliente</span>
+                                                <span class="note-details"></span>
+                                            </h:commandLink>
+                                        </li>
+                                    </p:row>
+
+                                    <p:row rendered="#{controleMenu.quatidadeDeContratoFornecedorVencendo() > 0}">
+                                        <li>
+                                            <h:commandLink id="linkContratosFornecedorVencendo" action="#{contratoFornecedorControle.doShowContratosVencendo()}">
+                                                <f:setPropertyActionListener value="#{true}" target="#{contratoFornecedorControle.contratosExpirando}"/>
+                                                <span class="note-header">EXISTEM #{controleMenu.quatidadeDeContratoFornecedorVencendo()} CONTRATOS PROXIMOS DE VENCER</span>
+                                                <span class="note-date">Venda / Contrato de fornecedor</span>
+                                                <span class="note-details"></span>
+                                            </h:commandLink>
+                                        </li>
+                                    </p:row>
+
+                                </p:row>
+
+                            </ul>
+                        </div>
+                    </p:tab>
+
+                    <p:tab title="Mensagem" rendered="false">
+                        <div class="submenu-content messages">
+                            <ul>
+                                <li>
+                                    <p:graphicImage name="images/avatar-john.png" library="rain-layout" />
+                                    <span class="messager-name">John Swisher
+                                        <span class="time-stamp">24m</span>
+                                    </span>
+                                    <span class="message-text">User interface review is done.</span>
+                                    <div class="message-actions">
+                                        <i class="fa fa-times-circle delete"></i>
+                                        <i class="fa fa-check-circle check"></i>
+                                    </div>
+                                </li>
+                                <li>
+                                    <p:graphicImage name="images/avatar-warren.png" library="rain-layout" />
+                                    <span class="messager-name">Warren Shaw
+                                        <span class="time-stamp">2h</span>
+                                    </span>
+                                    <span class="message-text">Uh, we have sort of a problem here.</span>
+                                    <div class="message-actions">
+                                        <i class="fa fa-times-circle delete"></i>
+                                        <i class="fa fa-check-circle check"></i>
+                                    </div>
+                                </li>
+                                <li>
+                                    <p:graphicImage name="images/avatar-brenda.png" library="rain-layout" />
+                                    <span class="messager-name">Brenda Soto
+                                        <span class="time-stamp">9h</span>
+                                    </span>
+                                    <span class="message-text">You apparently didn’t put one of the new coversheets on TPS.</span>
+                                    <div class="message-actions">
+                                        <i class="fa fa-times-circle delete"></i>
+                                        <i class="fa fa-check-circle check"></i>
+                                    </div>
+                                </li>
+                                <li>
+                                    <p:graphicImage name="images/avatar-arlene.png" library="rain-layout" />
+                                    <span class="messager-name">Arlene Welch
+                                        <span class="time-stamp">7d</span>
+                                    </span>
+                                    <span class="message-text">Meeting reports attached.</span>
+                                    <div class="message-actions">
+                                        <i class="fa fa-times-circle delete"></i>
+                                        <i class="fa fa-check-circle check"></i>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </p:tab>
+
+                    <p:tab title="Monitoramento" rendered="false">
+                        <div class="submenu-content settings">
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6">
+                                    <div class="status-box wireless-status">
+                                        <i class="fa fa-wifi box-icon"></i>
+                                        <span class="status-name">SEFAZ</span>
+                                        <span class="status">Ativo</span>
+                                    </div>
+                                </div>
+                                <div class="ui-g-12 ui-md-6">
+                                    <div class="status-box wireless-status">
+                                        <i class="fa fa-wifi box-icon"></i>
+                                        <span class="status-name">PBH</span>
+                                        <span class="status">Ativo</span>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </p:tab>
+
+                </p:tabView>
+            </h:form>
+
+            <div class="p-2" style="position: fixed;bottom: 0;">
+                <p:row rendered="#{empresaControle.logadoComoEmpresa and usuarioControle.usuarioLogado.qtdEmpresas > 1}">
+                    (#{empresaControle.empresaLogada.tenatID}) #{empresaControle.empresaLogada.descricao}
+                </p:row>
+            </div>
+        </div>
+    </div>
+</ui:composition>

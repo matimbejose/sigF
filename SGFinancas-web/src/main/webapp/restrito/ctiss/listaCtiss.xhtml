@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Ctiss"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Nota fiscal</li>
+            <li>/</li>
+            <li>Apoio</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/ctiss/listaCtiss.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="formButtons">
+            <p:commandButton type="button" value="Limpar filtros" onclick="clearDataTableFilters('tbl');"/>
+            <p:commandButton id="toggler" type="button" value="Colunas"/>
+            <p:columnToggler datasource="tbl" trigger="toggler"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <h:messages class="alertMessage" errorClass="alert alert-danger" infoClass="alert alert-success"/>
+            <h:form acceptcharset="ISO-8859-1">
+                <p:dataTable value="#{ctissControle.model}" emptyMessage="Nenhum registro encontrado." var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+                    <p:column headerText="#" width="55" sortBy="#{item.id}" visible="false">
+                        <h:outputText value="#{item.id}"/>
+                    </p:column>
+
+                    <p:column headerText="Código" sortBy="#{item.codigo}" filterBy="#{item.codigo}" width="150">
+                        <f:facet name="filter">
+                            <p:inputText value="#{ctissControle.filtro.codigo}" onchange="PF('tbl').filter()"/>
+                        </f:facet>
+                        <h:outputText value="#{item.codigo}"/>
+                    </p:column>
+
+                    <p:column headerText="Descrição" sortBy="#{item.descricao}" filterBy="#{item.descricao}">
+                        <f:facet name="filter">
+                            <p:inputText value="#{ctissControle.filtro.descricao}" onchange="PF('tbl').filter()"/>
+                        </f:facet>
+                        <h:outputText value="#{item.descricao}"/>
+                    </p:column>
+
+                    <p:column headerText="Cidade"  width="200" sortBy="#{item.idCidade.descricao}">
+                        <f:facet name="filter">
+                            <p:selectOneMenu converter="#{genericConverter}" filter="true" filterMatchMode="contains">
+                                <f:selectItem itemLabel="Todos" noSelectionOption="true"/>
+                                <f:selectItems value="#{clienteControle.cidades}" var="cidade"
+                                               itemLabel="#{cidade.descricao}" itemValue="#{cidade}"/>
+                            </p:selectOneMenu>
+                        </f:facet>
+
+                        <h:outputText value="#{item.idCidade.descricao}"/>
+                    </p:column>
+
+                    <p:column headerText="Subitem" width="150" filterBy="#{item.subitem}">
+                        <f:facet name="filter">
+                            <p:inputText value="#{ctissControle.filtro.subItem}" onchange="PF('tbl').filter()"/>
+                        </f:facet>
+                        <h:outputText value="#{item.subitem}"/>
+                    </p:column>
+
+                    <p:column headerText="Aliquota" sortBy="#{item.aliquota}" filterBy="#{item.aliquota}" style="text-align: right" width="150">
+                        <f:facet name="filter">
+                            <p:inputText value="#{ctissControle.filtro.aliquota}" onchange="PF('tbl').filter()"/>
+                        </f:facet>
+                        <h:outputText value="#{item.aliquota/100.0}">
+                            <f:convertNumber type="percent" currencySymbol="%"  />
+                        </h:outputText>
+                    </p:column>
+
+                </p:dataTable>
+            </h:form>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

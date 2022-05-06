@@ -1,0 +1,106 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core" >
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Situação tributária"/>
+        <ui:define name="title">#{title}</ui:define>
+        <ui:define name="viewname">
+            <li>##SECTION_NAME##</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/situacaoTributaria/listaSituacaoTributaria.xhtml"> #{title}</p:link></li>
+        </ui:define>
+            
+
+        <ui:define name="content">
+
+
+            <h:messages class="alertMessage" id="msgResultado" errorClass="alert alert-danger" />
+            <div class="row">
+                <div class="col-md-12 ">
+                    <!-- BEGIN SAMPLE FORM PORTLET-->
+                    <div class="portlet light bordered">
+                        <div class="portlet-title">
+                            <div class="caption">
+                                <i class="fa fa-balance-scale"></i> 
+                                <h:column rendered="#{situacaoTributariaControle.situacaoTributariaSelecionado.id eq null}">
+                                    <span class="caption-subject font-dark sbold uppercase">Cadastro</span>
+                                </h:column>
+                                <h:column rendered="#{situacaoTributariaControle.situacaoTributariaSelecionado.id ne null}">
+                                    <span class="caption-subject font-dark sbold uppercase">Manutenção</span>
+                                </h:column>
+                            </div>
+                              <div class="actions">
+                                <h:form>
+                                    <h:commandLink styleClass="btn blue btn-circle btn-outline sbold" immediate="true" action="#{situacaoTributariaControle.mostrarAjuda()}">
+                                    <i class="icon-question"></i>
+                                </h:commandLink>
+                                </h:form>
+                            </div> 
+                            <div class="tools">
+                            </div>
+                        </div>
+                        <div class="portlet-body form">
+                            <h:form acceptcharset="ISO-8859-1" role="form">
+                                <div class="form-body">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group form-md-line-input">
+                                                            <label class="control-label"><span class="required">* </span>Descrição</label>
+                                                            <p:inputText value="#{situacaoTributariaControle.situacaoTributariaSelecionado.descricao}"
+                                                                required="true" 
+                                                                requiredMessage="Informe a descrição"
+                                                                styleClass="form-control" />
+                                                        </div>
+                                                    </div> 
+                                                         <div class="col-md-6">
+                                                            <label class="control-label"><span class="required">* </span>Simples nacional</label>
+                                                            <p:selectOneMenu  value="#{situacaoTributariaControle.situacaoTributariaSelecionado.simplesNascional}" 
+                                                                              requiredMessage="Informe o Simples nacional"
+                                                                              styleClass="form-control" 
+                                                                              styleClass="form-control">
+                                                            <f:selectItem itemLabel="Sim" itemValue="S" />
+                                                            <f:selectItem itemLabel="Não" itemValue="N" />
+                                                            </p:selectOneMenu >
+
+                                                        </div>
+                                                    <div class="row">
+                                                   
+                                                        <div class="col-md-6">
+                                                            <div class="form-group form-md-line-input">
+                                                                  <label class="control-label"><span class="required">* </span>Código do CST</label>
+                                                                  <p:inputNumber value="#{situacaoTributariaControle.situacaoTributariaSelecionado.codCst}"
+                                                                     required="true" 
+                                                                     requiredMessage="Informe o código do CST"
+                                                                     decimalPlaces="0" />
+                                                            </div>
+                                                        </div>  
+                                                        <div class="col-md-6">
+                                                            <div class="form-group form-md-line-input">
+                                                                <label class="control-label">Aplicação</label>
+                                                                <p:inputTextarea style="width: 100%; resize: none;" value="#{situacaoTributariaControle.situacaoTributariaSelecionado.aplicacao}" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                <div class="form-actions">
+                                    <h:commandButton action="#{situacaoTributariaControle.doFinishAdd()}"  styleClass="btn blue " value="Salvar" />
+                                    <h:commandButton action="listaSituacaoTributaria.xhtml" immediate="true" styleClass="btn default" value="Cancelar" />
+                                </div>
+                            </h:form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>
+

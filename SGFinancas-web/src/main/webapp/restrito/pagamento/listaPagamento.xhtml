@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:sec="http://www.springframework.org/security/facelets/tags"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite/components"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Histórico de pagamento"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Pagamento</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/pagamento/listaPagamento.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteBack" action="/restrito/pagamento/meuPlano.xhtml"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <style>
+                .money {
+                    text-align: right;
+                    width: 100px;
+                }
+            </style>
+            <p:dataTable value="#{meuPlanoControle.model}" var="item" id="tbl" widgetVar="tbl" lazy="true" rows="10" styleClass="card p-0 ui-datatable-striped ui-datatable-sm ui-datatable-gridlines">
+
+                <p:column width="40" style="text-align: center;">
+                    <p:rowToggler/>
+                </p:column>
+
+                <p:column headerText="#" width="55" sortBy="#{item.id}">
+                    <h:outputText value="#{item.id}"/>
+                </p:column>
+
+                <p:column headerText="Valor pago" styleClass="money">
+                    <cc:convertMoney value="#{item.valorPago}" rendered="#{item.valorPago ne null}"/>
+                    <h:outputText value="Não pago" rendered="#{item.valorPago eq null}"/>
+                </p:column>
+
+                <p:column headerText="Data de pagamento">
+                    <cc:convertDate value="#{item.dataPagamento}"/>
+                </p:column>
+
+                <p:column headerText="Valido até">
+                    <cc:convertDate value="#{item.dataValidade}"/>
+                </p:column>
+
+                <p:column headerText="Quantidade de módulos" width="100">
+                    <h:outputText value="#{item.pagamentoMensalidadeModuloList.size()}"/>
+                </p:column>
+
+                <p:rowExpansion>
+                    <p:dataTable value="#{item.pagamentoMensalidadeModuloList}" var="pmm" styleClass="card p-0 ui-datatable-striped ui-datatable-gridlines">
+
+                        <f:facet name="header">
+                            <div class="row">
+                                <div class="col-auto">
+                                    Módulos contratados
+                                </div>
+                                <div class="col">
+
+                                </div>
+                                <div class="col-auto">
+                                    <p:commandLink onclick="window.open(`#{item.idTransacaoGetnet.linkBoleto}`, `_BLANK`);" styleClass="btn p-0"
+                                                   rendered="#{item.dataPagamento eq null and item.idTransacaoGetnet.linkBoleto ne null}">
+                                        <i class="fa fa-file-pdf-o"></i> Baixar boleto
+                                    </p:commandLink>
+                                </div>
+                            </div>
+                        </f:facet>
+
+                        <p:column headerText="Nome">
+                            <h:outputText value="#{pmm.idModulo.nome}"/>
+                        </p:column>
+
+                        <p:column headerText="Descrição">
+                            <h:outputText value="#{pmm.idModulo.descricao}"/>
+                        </p:column>
+
+                        <p:column headerText="Valor de adesão" styleClass="money">
+                            <cc:convertMoney value="#{pmm.idModulo.valorAdesao}"/>
+                        </p:column>
+
+                        <p:column headerText="Valor da mensalidade" styleClass="money">
+                            <cc:convertMoney value="#{pmm.idModulo.valorMensalidade}"/>
+                        </p:column>
+
+                        <f:facet name="footer">
+                            <small>O valor de adesão é pago apenas na primeira mensalidade.</small>
+                        </f:facet>
+
+                    </p:dataTable>
+                </p:rowExpansion>
+
+            </p:dataTable>
+
+        </ui:define>
+
+    </ui:composition>
+
+</html>

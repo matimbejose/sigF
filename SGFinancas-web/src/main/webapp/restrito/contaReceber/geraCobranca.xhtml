@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Gerar cobrança"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Financeiro</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/contaReceber/listaContaReceber.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="content">
+            <style>
+                .old {
+                    background-color: #fca752 !important;
+                    background-image: none !important;
+                    color: #000000 !important;
+                }
+                .old.badge > strong {
+                    color: rgba(0, 0, 0, 0.5);
+                }
+                .ui-datatable-tablewrapper {
+                    max-height: calc(100vh - 562px);
+                    overflow-y: auto;
+                }
+            </style>
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- BEGIN EXAMPLE TABLE PORTLET-->
+                    <div class="portlet light bordered">
+                        <div class="row">
+                            <div class="col-md-12">
+                                Parcelas vencidas aparecerão em <span class="old badge"><strong>laranja</strong></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 mt-3">
+                                <p:dataTable value="#{contaReceberControle.model}" var="item" emptyMessage="Nenhuma conta encontrada."
+                                             lazy="true" first="#{contaReceberControle.first}" id="tbl" widgetVar="tbl" rows="#{1000}"
+                                             rowStyleClass="#{item.dataVencimento lt contaReceberControle.hoje ? 'old' : null}"
+                                             rowSelectMode="checkbox" selection="#{contaReceberControle.contasSelecionadas}" rowKey="#{item.id}">
+
+                                    <f:facet name="header">
+                                        Contas a receber hoje e em atraso para #{contaReceberControle.filtro.cliente.nome}
+                                        <p:commandButton id="toggler" type="button" value="Colunas" style="float:right"/>
+                                        <p:commandButton  type="button" value="Limpar filtros" style="float:right" onclick="clearDataTableFilters('tbl');"/>
+                                        <div class="clearfix"></div>
+                                        <p:columnToggler datasource="tbl" trigger="toggler"/>
+                                    </f:facet>
+
+                                    <p:ajax event="page" listener="#{contaReceberControle.onPageChange}"/>
+
+                                    <p:column selectionMode="multiple" style="width:35px;text-align:center;"/>
+
+                                    <p:column headerText="Plano de conta" sortBy="#{idConta.idPlanoConta.descricao}">
+                                        <h:outputText value="#{item.idConta.idPlanoConta.descricao} (#{item.numParcela}/#{item.idConta.numeroParcelas})"/>
+                                    </p:column>
+
+                                    <p:column headerText="Obs." sortBy="#{idConta.observacao}">
+                                        <h:outputText value="#{item.idConta.observacao}"/>
+                                    </p:column>
+
+                                    <p:column headerText="Conta bancária" sortBy="#{idContaBancaria.descricao}">
+                                        <h:outputText value="#{item.idContaBancaria.descricao}"/>
+                                    </p:column>
+
+                                    <p:column headerText="Cliente" sortBy="#{idConta.idCliente.nome}">
+                                        <h:outputText value="#{item.idConta.idCliente.nome}"/>
+                                    </p:column>
+
+                                    <p:column headerText="Origem">
+                                        <h:outputText value="#{contaReceberControle.mostraOrigem(item.idConta)}"/>
+                                    </p:column>
+
+                                    <p:column headerText="Venc." sortBy="#{item.dataVencimento}" width="95">
+                                        <h:outputText value="#{item.dataVencimento}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                        </h:outputText>
+                                    </p:column>
+
+                                    <p:column headerText="Valor bruto" sortBy="#{item.valor}" sortFunction="#{contaReceberControle.sortDoubleValue}"
+                                              style="text-align: right">
+                                        <h:outputText value="#{item.valor}">
+                                            <f:convertNumber currencySymbol="R$" type="currency"/>
+                                        </h:outputText>
+                                    </p:column>
+
+                                    <p:column rendered="#{item.situacao ne 'CC'}" headerText="Situação" sortBy="#{item.situacao}">
+                                        <h:outputText value="#{contaReceberControle.buscarSituacao(item.situacao)}"/>
+                                    </p:column>
+
+                                    <p:column rendered="#{item.situacao eq 'CC'}" headerText="Situação" sortBy="#{item.situacao}">
+                                        <h:outputText styleClass="font-red-haze" value="Cancelado"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                            <hr/>
+                        </div>
+                        <div class="card">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label class="control-label"><span class="required"> * </span>Assunto</label>
+                                    <p:inputText value="#{contaReceberControle.emailDTO.assunto}" placeholder="Assunto"/>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="control-label"><span class="required"> * </span>Remetente</label>
+                                    <p:inputText value="#{contaReceberControle.emailDTO.remetente}" placeholder="Remetente"/>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="control-label"><span class="required"> * </span>Título</label>
+                                    <p:inputText value="#{contaReceberControle.emailDTO.tituloMensagem}" placeholder="Título"/>
+                                </div>
+                            </div>
+                            <div class="row" style="margin-top: 15px;">
+                                <div class="col-md-12">
+                                    <label class="control-label">Mensagem
+                                        <br/>
+                                        <small>Será inserida uma tabela com os campos (Observação, Origem, Vencimento e Valor) após essa mensagem</small>
+                                    </label>
+                                    <p:inputTextarea value="#{contaReceberControle.emailDTO.mensagem}" placeholder="Título"/>
+                                </div>
+                            </div>
+                            <p:row rendered="#{contaReceberControle.filtro.cliente.email ne null}">
+                                <div class="row">
+                                    <div class="col">
+                                        <small>O e-mail de cobrança será enviado para: (#{contaReceberControle.filtro.cliente.email})</small>
+                                    </div>
+                                </div>
+                            </p:row>
+                            <div class="row mt-3">
+                                <div class="col">
+                                    <p:commandButton action="#{contaReceberControle.doFinishCharge('email')}" value="Enviar email"
+                                                     rendered="#{contaReceberControle.filtro.cliente.email ne null}"/>
+                                    <p:commandButton value="Enviar email (Email não informado para este cliente)"
+                                                     rendered="#{contaReceberControle.filtro.cliente.email eq null}" disabled="true"/>
+                                    <ui:remove>
+                                        <h:commandButton action="#{contaReceberControle.doFinishCharge('lista')}" styleClass="btn blue" value="Imprimir lista"/>
+                                    </ui:remove>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </ui:define>
+
+    </ui:composition>
+</html>

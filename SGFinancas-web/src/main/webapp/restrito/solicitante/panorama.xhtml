@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Panorama"/>
+        <ui:define name="title">#{title}</ui:define>
+        <ui:define name="viewname">
+            <li>Escola</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/solicitante/listaSolicitante.xhtml"> #{title}</p:link></li>
+        </ui:define>
+            
+
+        <ui:define name="content">
+
+            <h:messages class="alertMessage" errorClass="alert alert-danger" infoClass="alert alert-success"/>
+            <div class="row">
+                <div class="col-md-12 ">
+                    <!-- BEGIN SAMPLE FORM PORTLET-->
+                    <div class="portlet light bordered">
+                        <div class="portlet-title">
+                            <div class="caption">
+                                <i class="fa fa-sticky-note"></i> 
+                                <span class="caption-subject font-dark sbold uppercase">Panorama</span>
+                            </div>
+                        </div>
+                        <div class="portlet-body form">
+                            <h:form id="form" acceptcharset="ISO-8859-1" role="form" enctype="multipart/form-data">
+                                <div class="form-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label"> <span class="required"> * </span>Início do periodo</label>
+                                                <p:calendar navigator="true" value="#{solicitanteControle.dataInicio}" pattern="dd/MM/yyyy" mask="true"
+                                                            required="true" requiredMessage="Informe o início do período da consulta"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label"> <span class="required"> * </span>Fim do periodo</label>
+                                                <p:calendar navigator="true" value="#{solicitanteControle.dataFim}" required="true" pattern="dd/MM/yyyy"
+                                                            requiredMessage="Informe o fim do período da consulta" mask="true"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-actions">
+                                    <h:commandButton action="#{solicitanteControle.doFinishGerarPanorama()}"  styleClass="btn blue " value="Gerar relatório" />
+                                    <p:spacer width="10" height="10" />
+                                    <h:commandButton action="listaSolicitante.xhtml" immediate="true" styleClass="btn default" value="Voltar" />
+                                </div>
+                            </h:form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </ui:define>
+
+    </ui:composition>
+
+</html>

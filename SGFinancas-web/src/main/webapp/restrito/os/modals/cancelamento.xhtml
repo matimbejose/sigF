@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/templateModal.xhtml">
+
+        <ui:define name="title">Cancelamento da ordem de serviço</ui:define>
+
+        <ui:define name="content">
+            <p:messages/>
+            <p:outputPanel id="cancelamentoOS">
+                <div class="row mb-3">
+                    <div class="col">
+                        <p:outputLabel value="Informe o motivo de cancelamento da ordem de serviço"/>
+                        <p:inputTextarea value="#{osControle.vendaSelecionada.motivoCancelamentoOS}"/>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col text-right">
+                        <p:commandButton value="Salvar" action="#{osControle.doFinishCancelarOS()}" process="@all" update="@form"/>
+                        <p:spacer width="10"/>
+                        <p:commandButton value="Cancelar" action="#{osControle.closeModal()}" process="@this"/>
+                    </div>
+                </div>
+            </p:outputPanel>
+        </ui:define>
+
+    </ui:composition>
+</html>

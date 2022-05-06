@@ -1,0 +1,99 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Controle de acesso por IP"/>
+        <ui:define name="title">#{title}</ui:define>
+        <ui:define name="viewname">
+            <li>##SECTION_NAME##</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/controleAcessoIp/listaControleAcessoIp.xhtml"> #{title}</p:link></li>
+        </ui:define>
+        <ui:define name="content">
+            <h:messages class="alertMessage" id="msgResultado" errorClass="alert alert-danger" />
+            <div class="row">
+                <div class="col-md-12 ">
+                    <!-- BEGIN SAMPLE FORM PORTLET-->
+                    <div class="portlet light bordered">
+                        <div class="portlet-title">
+                            <div class="tools">
+                            </div>
+                        </div>
+                        <div class="portlet-body form">
+                            <h:form acceptcharset="ISO-8859-1" role="form" prependId="false">
+                                <div class="form-body">
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label">
+                                                    <span class="required">*</span> Descrição
+                                                </label>
+                                                <p:inputText value="#{controleAcessoIpControle.controleAcessoIpSelecionado.descricao}" required="true"  type="text" autocomplete="off" styleClass="form-control" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label">
+                                                    <span class="required">*</span> Faixa inicial
+                                                </label>
+                                                <p:inputText value="#{controleAcessoIpControle.controleAcessoIpSelecionado.faixaInicial}" required="true"  type="text" autocomplete="off" styleClass="form-control" id="ipv4Inicial"/>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label">
+                                                    <span class="required">*</span>Faixa final
+                                                </label>
+
+                                                <p:inputText value="#{controleAcessoIpControle.controleAcessoIpSelecionado.faixaFinal}" required="true"  type="text" autocomplete="off" styleClass="form-control" id="ipv4"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label">
+                                                    <span class="required">* </span>Tipo
+                                                </label>
+                                                <p:selectOneMenu value="#{controleAcessoIpControle.controleAcessoIpSelecionado.tipo}" styleClass="form-control" >
+                                                    <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                    <f:selectItem itemValue="P" itemLabel="Permite"/>
+                                                    <f:selectItem itemValue="R" itemLabel="Restringe"/>
+                                                </p:selectOneMenu>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="form-actions">
+                                        <h:commandButton action="#{controleAcessoIpControle.doFinishAdd()}"  styleClass="btn blue " value="Salvar" />
+                                        <h:commandButton action="listaControleAcessoIp.xhtml" immediate="true" styleClass="btn default" value="Cancelar" />
+                                </div>
+                            </h:form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script src="../../resources/js/ipv4Ipv6/jquery.input-ip-address-control-1.0.min.js"></script>
+            <script>
+                $(function () {
+                    $('#ipv4Inicial').ipAddress();
+                    $('#ipv4').ipAddress();
+
+                });
+            </script>
+
+        </ui:define>
+
+    </ui:composition>
+
+</html>

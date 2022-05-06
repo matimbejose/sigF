@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <ui:composition template="/WEB-INF/templateModalCadastro.xhtml">
+
+        <ui:define name="title">Cadastro de tipo de pagamento</ui:define>
+
+        <ui:define name="content">
+            <p:outputPanel class="form-body">
+                <div class="row">
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Descricao"/>
+                        <p:inputText value="#{tipoPagamentoControle.dtoCadastro.descricao}"/>
+                    </div>
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Permite parcelamento"/>
+                        <p:selectOneMenu value="#{tipoPagamentoControle.dtoCadastro.permiteParcelamento}">
+                            <f:selectItem itemValue="#{true}" itemLabel="Sim"/>
+                            <f:selectItem itemValue="#{false}" itemLabel="Não"/>
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+            </p:outputPanel>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <ui:composition template="/WEB-INF/templateModalCadastro.xhtml">
+
+        <ui:param name="title" value="Cadastro de funcionario vendedor"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="content">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Nome do funcionario"/>
+                            <p:inputText value="#{funcionarioControle.dtoCadastro.nome}"
+                                         required="true" requiredMessage="Informe o nome do funcionario" styleClass="form-control"/>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="CPF"/>
+                            <p:inputMask mask="999.999.999-99" value="#{funcionarioControle.dtoCadastro.cpf}"
+                                         required="true"
+                                         requiredMessage="Informe o cpf do funcionário"
+                                         validatorMessage="CPF inválido"
+                                         autocomplete="off"
+                                         >
+                            </p:inputMask>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Data de nascimento"/>
+                            <p:calendar navigator="true" value="#{funcionarioControle.dtoCadastro.dataNascimento}" pattern="dd/MM/yyyy" mask="true"
+                                        required="true"
+                                        requiredMessage="Informe a data de nascimento do funcionário"/>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <p:importEnum type="br.com.villefortconsulting.sgfinancas.util.EnumTipoContratacao"/>
+                        <p:outputLabel for="@next" value="Tipo de contratação"/>
+                        <p:selectOneMenu value="#{funcionarioControle.dtoCadastro.tipoContratacao}"
+                                         required="true" requiredMessage="Informe o tipo da contratação">
+                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                            <f:selectItems value="#{EnumTipoContratacao.ALL_VALUES}" var="enum"
+                                           itemLabel="#{enum.descricao}" itemValue="#{enum.descricao}"/>
+                        </p:selectOneMenu>
+                    </div>
+
+                    <div class="col">
+                        <p:outputLabel for="@next" value="Data da contratação"/>
+                        <p:calendar navigator="true" value="#{funcionarioControle.dtoCadastro.dataContratacao}" 
+                                    pattern="dd/MM/yyyy" mask="true" required="true" requiredMessage="Informe a data de contratação do funcionário"/>
+                    </div>
+
+
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Email"/>
+                            <p:inputText value="#{funcionarioControle.dtoCadastro.email}"
+                                         required="true"
+                                         requiredMessage="Favor informar o email."
+                                         validatorMessage="Email incorreto"
+                                         >
+                            </p:inputText>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

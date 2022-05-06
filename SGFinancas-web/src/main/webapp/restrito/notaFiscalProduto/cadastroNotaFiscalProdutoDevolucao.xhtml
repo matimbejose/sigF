@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Nota fiscal de devolução"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Nota fiscal</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/notaFiscalProduto/listaNotaFiscalProduto.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteSave" action="#{notaFiscalProdutoControle.doFinishAdd()}"/>
+            <h:commandButton id="remoteCancel" action="listaNotaFiscalProduto.xhtml" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <h1>NF-e de devolução</h1>
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-6 col-sm-12">
+                        <div class="card card-w-title">
+                            <h1>Detalhes</h1>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label"><span class="required">* </span>Emissão</label>
+                                        <p:calendar navigator="true" value="#{notaFiscalProdutoControle.nfSelecionado.dataEmissao}" pattern="dd/MM/yyyy" mask="true"
+                                                    required="true" requiredMessage="Informe a data de emissão"  />
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label"><span class="required">* </span>UF</label>
+                                        <p:selectOneMenu id="ufPrestacao" value="#{notaFiscalProdutoControle.nfSelecionado.idUfPrestacao}"
+                                                         converter="#{genericConverter}">
+                                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                            <f:selectItems value="#{notaFiscalProdutoControle.UFs}"  var="uf" itemLabel="#{uf.descricao}" itemValue="#{uf}"/>
+                                            <p:ajax event="change" process="@this" update="ufPrestacao, municipio" />
+                                        </p:selectOneMenu>
+                                    </div>
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label"><span class="required">* </span>Município</label>
+                                        <p:selectOneMenu id="municipio" value="#{notaFiscalProdutoControle.nfSelecionado.idMunicipioPrestacao}"
+                                                         panelStyle="width:180px" effect="fade"
+                                                         var="t" style="width:160px" filter="true" filterMatchMode="startsWith"
+                                                         converter="#{genericConverter}">
+                                            <p:column>
+                                                <h:outputText value="#{t.descricao}" />
+                                            </p:column>
+
+                                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                            <f:selectItems value="#{notaFiscalProdutoControle.municipios}"   var="municipio" itemLabel="#{municipio.descricao}" itemValue="#{municipio}"/>
+
+                                        </p:selectOneMenu>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row align-items-end">
+                                <div class="col-sm-12 col-md-6">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label"><span class="required">* </span>Presença do cliente no estabelecimento</label>
+                                        <p:selectOneMenu value="#{notaFiscalProdutoControle.nfSelecionado.tipoPresencaCliente}"
+                                                         required="true" requiredMessage="Informe presença do cliente no estabelecimento"
+                                                         >
+                                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                            <f:selectItem itemValue="1" itemLabel="Operação presencial"/>
+                                            <f:selectItem itemValue="2" itemLabel="Operação pela internet"/>
+                                            <f:selectItem itemValue="3" itemLabel="Operação por teleatendimento"/>
+                                            <f:selectItem itemValue="9" itemLabel="Operação nao presencial, outros"/>
+                                        </p:selectOneMenu>
+                                    </div>
+                                </div>
+                                <div class="col-sm-12 col-md-6">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label"><span class="required">* </span>Local de destino de operação</label>
+                                        <p:selectOneMenu value="#{notaFiscalProdutoControle.nfSelecionado.destinoOperacao}"
+                                                         required="true" requiredMessage="Informe local de destino de operação"
+                                                         >
+                                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                            <f:selectItem itemValue="1" itemLabel="Operação interna"/>
+                                            <f:selectItem itemValue="2" itemLabel="Operação interestadual"/>
+                                            <f:selectItem itemValue="3" itemLabel="Operação com exterior"/>
+                                        </p:selectOneMenu>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <p:row rendered="#{notaFiscalProdutoControle.nfSelecionado.tipoEmissao ne '4'}">
+                                    <div class="col-md-8">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label"><span class="required">* </span>Meio de pagamento</label>
+                                            <p:selectOneMenu id="meioDePagamento" panelStyle="width:180px" effect="fade" var="t"
+                                                             value="#{notaFiscalProdutoControle.nfSelecionado.meioDePagamento}">
+                                                <p:column>
+                                                    <h:outputText value="#{notaFiscalProdutoControle.getEnumMeioDePagamentoDesc(t)}" />
+                                                </p:column>
+
+                                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                <f:selectItems value="#{notaFiscalProdutoControle.enumMeioDePagamento}" var="meio" itemLabel="#{meio.descricao}" itemValue="#{meio.codigo}"/>
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+                                </p:row>
+                                <div class="col-md-4">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label">CFOP padrão</label>
+                                        <p:selectOneMenu value="#{notaFiscalProdutoControle.cfopPadrao}" panelStyle="width:500px" effect="fade" var="t"
+                                                         filter="true" filterMatchMode="startsWith" converter="#{genericConverter}">
+                                            <p:column>
+                                                <h:outputText value="#{t.codigo}" />
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{t.descricao}" />
+                                            </p:column>
+
+                                            <f:selectItem itemLabel="--  -- " noSelectionOption="true"/>
+                                            <f:selectItems value="#{cfopControle.cfopsVenda}"  var="cfop" itemLabel="#{cfop.codigo}" itemValue="#{cfop}"/>
+
+                                            <p:ajax event="change" listener="#{notaFiscalProdutoControle.updateCfop()}" update="tblProdutos"/>
+                                        </p:selectOneMenu>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                        <div class="card card-w-title">
+                            <h1>Informações</h1>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group form-md-line-input">
+                                        <label>Número da nota fiscal</label>
+                                        <p:inputNumber value="#{notaFiscalProdutoControle.nfSelecionado.numeroNotaFiscal}"
+                                                       maxValue="999999999" decimalPlaces="0" thousandSeparator=""
+                                                       id ="numeroNF"/>
+                                        <p:tooltip  for="numeroNF" value="Deixe o campo em branco para que o SGFinanças preencha automaticamente." position="top"/>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label">Série</label>
+                                        <p:inputNumber value="#{notaFiscalProdutoControle.nfSelecionado.serie}"
+                                                       maxValue="999"
+                                                       decimalPlaces="0" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <p:row rendered="#{notaFiscalProdutoControle.nfSelecionado.tipoEmissao eq '4'}">
+                                    <div class="col-md-12">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label"><span class="required">* </span>Justificativa de devolução</label>
+                                            <p:inputTextarea value="#{notaFiscalProdutoControle.nfSelecionado.justificativaDevolucao}"
+                                                             required="true" requiredMessage="Informe a justificativa para a devolução"
+                                                             rows="2"/>
+                                        </div>
+                                    </div>
+                                </p:row>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group form-md-line-input">
+                                        <label>Informações complementares</label>
+                                        <p:inputText value="#{notaFiscalProdutoControle.nfSelecionado.informacoesNota}"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label">Informações para o Fisco</label>
+                                        <p:inputText value="#{notaFiscalProdutoControle.nfSelecionado.informacoesFisco}"   />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 col-sm-12">
+                        <div class="card card-w-title">
+                            <h1>Produto</h1>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p:dataTable value="#{notaFiscalProdutoControle.compraSelecionada.listCompraProduto}" var="item" emptyMessage="Nenhum produto informado." editable="true" editMode="cell"
+                                                 class="table table-striped table-bordered table-hover table-striped table-condensed flip-content" id="tblProdutos">
+
+                                        <p:column headerText="Produto" style="text-align:left;min-width: 120px;width: 1px;">
+                                            <h:outputText value="#{item.idProduto.descricao}"/>
+                                        </p:column>
+
+                                        <p:column headerText="NCM" width="95">
+                                            <p:autoComplete value="#{item.idNcm}" converter="#{genericConverter}" forceSelection="true" widgetVar="ncm"
+                                                            completeMethod="#{notaFiscalProdutoControle.listarNcm}" style="width: 100%;max-width: 500px;"
+                                                            var="ncm" itemLabel="#{ncm.codigo}" itemValue="#{ncm}" onclick="PF('ncm').search(PF('ncm').input.get(0).value)">
+                                                <p:column style="width:10%">
+                                                    <h:outputText value="#{ncm.codigo}"/>
+                                                </p:column>
+
+                                                <p:column>
+                                                    <h:outputText value="#{ncm.descricao}"/>
+                                                </p:column>
+                                            </p:autoComplete>
+                                        </p:column>
+
+                                        <p:column headerText="CFOP" width="70" >
+                                            <p:selectOneMenu id="somCfop" value="#{item.idCfop}" panelStyle="width:500px" effect="fade"
+                                                             var="t" filter="true" filterMatchMode="startsWith" converter="#{genericConverter}">
+                                                <p:column>
+                                                    <h:outputText value="#{t.codigo}" />
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{t.descricao}" />
+                                                </p:column>
+
+                                                <f:selectItem itemLabel="--  -- " noSelectionOption="true"/>
+                                                <f:selectItems value="#{cfopControle.cfopsDevolucao}"  var="cfop" itemLabel="#{cfop.codigo}" itemValue="#{cfop}"/>
+                                            </p:selectOneMenu>
+                                        </p:column>
+
+                                        <p:column headerText="CST" width="60" rendered="#{!empresaControle.empresaPertenceAoSimplesNacional()}">
+                                            <p:selectOneMenu id="somCst" value="#{item.idCst}"  panelStyle="width:500px" effect="fade"
+                                                             var="t" filter="true" filterMatchMode="startsWith" converter="#{genericConverter}">
+                                                <p:column>
+                                                    <h:outputText value="#{t.codigo}" />
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{t.descricao}" />
+                                                </p:column>
+
+                                                <f:selectItem itemLabel="--  -- " noSelectionOption="true"/>
+                                                <f:selectItems value="#{cstControle.csts}"  var="cst" itemLabel="#{cst.codigo}" itemValue="#{cst}"/>
+                                            </p:selectOneMenu>
+                                        </p:column>
+
+                                        <p:column headerText="CSOSN" width="100" rendered="#{empresaControle.empresaPertenceAoSimplesNacional()}">
+                                            <p:selectOneMenu id="somCsosn" value="#{item.idCsosn}" panelStyle="width:500px" effect="fade"
+                                                             var="t" filter="true" filterMatchMode="startsWith" converter="#{genericConverter}">
+                                                <p:column>
+                                                    <h:outputText value="#{t.codigo}" />
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{t.descricao}" />
+                                                </p:column>
+
+                                                <f:selectItem itemLabel="--  -- " noSelectionOption="true"/>
+                                                <f:selectItems value="#{csosnControle.csosns}"  var="csosn" itemLabel="#{csosn.codigo}" itemValue="#{csosn}"/>
+                                            </p:selectOneMenu>
+                                        </p:column>
+
+                                        <p:column headerText="Qtd" width="70">
+                                            <p:inputNumber value="#{item.quantidade}"  thousandSeparator="." decimalSeparator="," decimalPlaces="2" >
+                                                <p:ajax event="blur" process="@this" immediate="true" update="tblProdutos" />
+                                            </p:inputNumber>
+                                        </p:column>
+
+                                        <p:column headerText="Valor unitário" styleClass="valor">
+                                            <p:inputNumber value="#{item.valor}" symbol="R$ " thousandSeparator="." decimalSeparator="," decimalPlaces="2" >
+                                                <p:ajax event="blur" process="@this"  immediate="true" update="tblProdutos" />
+                                            </p:inputNumber>
+                                        </p:column>
+
+                                        <p:column headerText="Desconto" styleClass="valor">
+                                            <p:inputNumber value="#{item.desconto}" symbol="R$ " thousandSeparator="." decimalSeparator="," decimalPlaces="2" >
+                                                <p:ajax event="blur" process="@this"  immediate="true" update="tblProdutos" />
+                                            </p:inputNumber>
+                                        </p:column>
+
+                                        <p:column headerText="Valor sem desconto" style="text-align:right" styleClass="valor">
+                                            <h:outputText value="#{item.valorTotal}">
+                                                <f:convertNumber locale="pt_BR" type="currency" />
+                                            </h:outputText>
+                                        </p:column>
+
+                                        <p:column headerText="Valor total" style="text-align:right" styleClass="valor">
+                                            <h:outputText value="#{item.valorTotal - item.desconto}">
+                                                <f:convertNumber locale="pt_BR" type="currency" />
+                                            </h:outputText>
+                                        </p:column>
+
+                                        <p:column headerText="" width="15">
+                                            <h:commandLink title="Remover produto" class="btn btn-circle btn-icon-only btn-default icones"
+                                                           action="#{notaFiscalProdutoControle.removerItem(item)}"  >
+                                                <i class="fa fa-trash-o"></i>
+                                            </h:commandLink>
+                                        </p:column>
+
+                                        <p:columnGroup type="footer">
+                                            <p:row>
+                                                <p:column colspan="7" footerText="Total" style="text-align:right; font-weight: bold"/>
+                                                <p:column footerText="#{notaFiscalProdutoControle.valorTotal}" style="text-align:right; font-weight: bold"/>
+                                                <p:column footerText="#{notaFiscalProdutoControle.valorTotalComDesconto}" style="text-align:right; font-weight: bold"/>
+                                                <p:column footerText=""/>
+                                            </p:row>
+                                        </p:columnGroup>
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-sm-12">
+                        <div class="card card-w-title">
+                            <h1>Fornecedor</h1>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label"><span class="required">* </span>Fornecedor</label>
+                                        <p:selectOneMenu value="#{notaFiscalProdutoControle.nfSelecionado.idFornecedor}"
+                                                         panelStyle="width:180px" effect="fade"
+                                                         var="t" style="width:160px" filter="true" filterMatchMode="startsWith"
+                                                         converter="#{genericConverter}">
+                                            <p:column>
+                                                <h:outputText value="#{t.razaoSocial}" />
+                                            </p:column>
+
+                                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                            <f:selectItems value="#{fornecedorControle.fornecedores}"  var="fornecedor" itemLabel="#{fornecedor.razaoSocial}" itemValue="#{fornecedor}"/>
+
+                                            <p:ajax update="pnlCliente" listener="#{notaFiscalProdutoControle.preencherFornecedor()}" event="change"/>
+                                        </p:selectOneMenu>
+                                    </div>
+                                </div>
+                            </div>
+                            <p:outputPanel id="pnlCliente">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label"><span class="required">* </span>Nome</label>
+                                            <p:inputText value="#{notaFiscalProdutoControle.nfSelecionado.nomeCliente}" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label"><span class="required">* </span>CPF/CNPJ</label>
+                                            <p:inputText value="#{notaFiscalProdutoControle.nfSelecionado.cpfCnpjCliente}" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">RG</label>
+                                            <p:inputText value="#{notaFiscalProdutoControle.nfSelecionado.rgCliente}" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label"><span class="required">* </span>Email</label>
+                                            <p:inputText value="#{notaFiscalProdutoControle.nfSelecionado.emailCliente}"
+                                                         required="true" requiredMessage="Informe o email do cliente"
+                                                         />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label"><span class="required">* </span>CEP</label>
+                                            <p:inputMask mask="99.999-999" value="#{notaFiscalProdutoControle.nfSelecionado.cepCliente}"
+                                                         rendered="true"
+                                                         requiredMessage="Informe o CEP"
+                                                         />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Telefone</label>
+                                            <p:inputMask mask="(99) 9999-9999?9" value="#{notaFiscalProdutoControle.nfSelecionado.telefoneCliente}" styleClass="telefone" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label"><span class="required">* </span>Endereco</label>
+                                            <p:inputText value="#{notaFiscalProdutoControle.nfSelecionado.enderecoCliente}"
+                                                         required="true"
+                                                         requiredMessage="Informe o endereço"
+                                                         />
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label"><span class="required">* </span>Nº</label>
+                                            <p:inputText value="#{notaFiscalProdutoControle.nfSelecionado.numeroCliente}"
+                                                         required="true" requiredMessage="Informe o número do endereço" />
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Complemento</label>
+                                            <p:inputText value="#{notaFiscalProdutoControle.nfSelecionado.complementoCliente}" />
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label"><span class="required">* </span>Bairro</label>
+                                            <p:inputText value="#{notaFiscalProdutoControle.nfSelecionado.bairroCliente}"
+                                                         required="true" requiredMessage="Infome o bairro" />
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label"><span class="required">* </span>UF</label>
+                                            <p:selectOneMenu id="uf" value="#{notaFiscalProdutoControle.nfSelecionado.idUFCliente}"
+                                                             required="true" requiredMessage="Informe a UF do cliente"
+                                                             converter="#{genericConverter}">
+                                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                <f:selectItems value="#{notaFiscalProdutoControle.UFs}"  var="uf" itemLabel="#{uf.descricao}" itemValue="#{uf}"/>
+                                                <p:ajax event="change" process="@this" update="uf, cidade" />
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label"><span class="required">* </span>Cidade</label>
+                                            <p:selectOneMenu id="cidade" value="#{notaFiscalProdutoControle.nfSelecionado.idCidadeCliente}"
+                                                             required="true" requiredMessage="Informe a cidade do cliente"
+                                                             converter="#{genericConverter}" filter="true">
+                                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                <f:selectItems value="#{notaFiscalProdutoControle.cidades}"  var="cidade" itemLabel="#{cidade.descricao}" itemValue="#{cidade}"/>
+                                                <p:ajax event="change" process="@this" listener="#{notaFiscalProdutoControle.preencherDescricaoCidade()}" />
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label"><span class="required">* </span>Cliente contribuinte de ICMS?</label>
+                                            <p:selectOneMenu value="#{notaFiscalProdutoControle.nfSelecionado.indicadorInscricaoEstadual}"
+                                                             required="true" requiredMessage="Informe se o cliente é contribuinte de ICMS"
+                                                             >
+                                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                <f:selectItem itemLabel="Contribuinte" itemValue="1" />
+                                                <f:selectItem itemLabel="Contribuinte isento" itemValue="2" />
+                                                <f:selectItem itemLabel="Não contribuinte" itemValue="9"/>
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Inscrição estadual</label>
+                                            <p:inputText value="#{notaFiscalProdutoControle.nfSelecionado.inscricaoEstadual}" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Inscrição municipal</label>
+                                            <p:inputText value="#{notaFiscalProdutoControle.nfSelecionado.inscricaoMunicipal}" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Inscrição no SUFRAMA</label>
+                                            <p:inputText value="#{notaFiscalProdutoControle.nfSelecionado.inscricaoSuframa}" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </p:outputPanel>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                        <div class="card card-w-title">
+                            <h1>Frete</h1>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label"><span class="required">* </span>Tem frete?</label>
+                                        <p:selectOneMenu  value="#{notaFiscalProdutoControle.nfSelecionado.temFrete}"
+                                                          required="true"
+                                                          requiredMessage="Informe se tem frete"
+                                                          >
+                                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                            <f:selectItem itemLabel="Sim" itemValue="S" />
+                                            <f:selectItem itemLabel="Não" itemValue="N" />
+                                            <p:ajax update="pnlFrete, pnlUsaTransporadora, pnlVeiculo, pnlTransportadora" process="@this" listener="#{notaFiscalProdutoControle.alterarFrete()}" event="change"  />
+                                        </p:selectOneMenu >
+                                    </div>
+                                </div>
+
+                                <p:outputPanel id="pnlFrete">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">
+                                                <p:row rendered="#{notaFiscalProdutoControle.nfSelecionado.temFrete eq 'S'}"><span class="required">* </span></p:row>
+                                                Responsável pelo frete
+                                            </label>
+
+                                            <p:inputText value="#{notaFiscalProdutoControle.nfSelecionado.responsavelFrete}"
+                                                         rendered="#{notaFiscalProdutoControle.nfSelecionado.temFrete ne 'S'}"
+                                                         disabled="true" readonly="true"
+                                                         />
+
+                                            <p:selectOneMenu  value="#{notaFiscalProdutoControle.nfSelecionado.responsavelFrete}"
+                                                              rendered="#{notaFiscalProdutoControle.nfSelecionado.temFrete eq 'S'}"
+                                                              required="true"
+                                                              requiredMessage="Informe se usa transportadora">
+                                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                <f:selectItem itemLabel="Emitente" itemValue="0" />
+                                                <f:selectItem itemLabel="Remetente" itemValue="1" />
+                                                <f:selectItem itemLabel="Terceiros" itemValue="2" />
+                                            </p:selectOneMenu >
+                                        </div>
+                                    </div>
+                                </p:outputPanel>
+                            </div>
+                            <div class="row">
+                                <p:outputPanel id="pnlUsaTransporadora">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">
+                                                <p:row rendered="#{notaFiscalProdutoControle.nfSelecionado.temFrete eq 'S'}"><span class="required">* </span></p:row>
+                                                Usa transportadora?</label>
+
+                                            <p:inputText value=""
+                                                         rendered="#{notaFiscalProdutoControle.nfSelecionado.temFrete ne 'S'}"
+                                                         disabled="true" readonly="true"
+                                                         />
+
+                                            <p:selectOneMenu  value="#{notaFiscalProdutoControle.nfSelecionado.usaTransportadora}"
+                                                              rendered="#{notaFiscalProdutoControle.nfSelecionado.temFrete eq 'S'}"
+                                                              required="true"
+                                                              requiredMessage="Informe se usa transportadora">
+                                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                <f:selectItem itemLabel="Sim" itemValue="S" />
+                                                <f:selectItem itemLabel="Não" itemValue="N" />
+                                                <p:ajax update="pnlTransportadora, pnlVeiculo" event="change" process="@this" />
+                                            </p:selectOneMenu >
+                                        </div>
+                                    </div>
+                                </p:outputPanel>
+                                <p:outputPanel id="pnlTransportadora">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">
+                                                <p:row rendered="#{notaFiscalProdutoControle.nfSelecionado.usaTransportadora eq 'S'}"><span class="required">* </span></p:row>
+                                                Transportadora</label>
+                                            <p:inputText value=""
+                                                         rendered="#{notaFiscalProdutoControle.nfSelecionado.usaTransportadora ne 'S'}"
+                                                         disabled="true" readonly="true"
+                                                         />
+
+                                            <p:selectOneMenu  value="#{notaFiscalProdutoControle.nfSelecionado.idTransportadora}"
+                                                              rendered="#{notaFiscalProdutoControle.nfSelecionado.usaTransportadora eq 'S'}"
+                                                              converter="#{genericConverter}"
+                                                              required="true"
+                                                              requiredMessage="Informe a transportadora"
+                                                              >
+                                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                <f:selectItems value="#{transportadoraControle.transportadoras}" var="transportadora" itemLabel="#{transportadora.descricao}" itemValue="#{transportadora}" />
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+                                </p:outputPanel>
+                            </div>
+                            <p:outputPanel id="pnlVeiculo">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">
+                                                <p:row rendered="#{notaFiscalProdutoControle.nfSelecionado.usaTransportadora eq 'S'}"><span class="required">* </span></p:row>
+                                                UF da placa do veículo</label>
+
+                                            <p:inputText value=""
+                                                         rendered="#{notaFiscalProdutoControle.nfSelecionado.usaTransportadora ne 'S'}"
+                                                         disabled="true" readonly="true"
+                                                         />
+
+                                            <p:selectOneMenu id="ufPlaca" value="#{notaFiscalProdutoControle.nfSelecionado.idUfPlacaVeiculo}"
+                                                             rendered="#{notaFiscalProdutoControle.nfSelecionado.usaTransportadora eq 'S'}"
+                                                             required="true" requiredMessage="Informe responsável a UF da placa"
+                                                             converter="#{genericConverter}">
+                                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                <f:selectItems value="#{notaFiscalProdutoControle.UFs}"  var="uf" itemLabel="#{uf.descricao}" itemValue="#{uf}"/>
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">
+                                                <p:row rendered="#{notaFiscalProdutoControle.nfSelecionado.usaTransportadora eq 'S'}"><span class="required">* </span></p:row>
+                                                Número da placa</label>
+
+                                            <p:inputText value=""
+                                                         rendered="#{notaFiscalProdutoControle.nfSelecionado.usaTransportadora ne 'S'}"
+                                                         disabled="true" readonly="true"
+                                                         />
+
+                                            <p:inputMask mask="aaa-9999" value="#{notaFiscalProdutoControle.nfSelecionado.placaVeiculo}"
+                                                         rendered="#{notaFiscalProdutoControle.nfSelecionado.usaTransportadora eq 'S'}"
+                                                         required="true" requiredMessage="Informe a placa do veículo"
+                                                         />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">
+                                                <p:row rendered="#{notaFiscalProdutoControle.nfSelecionado.usaTransportadora eq 'S'}"><span class="required">* </span></p:row>
+                                                RNTC do veículo</label>
+
+                                            <p:inputText value=""
+                                                         rendered="#{notaFiscalProdutoControle.nfSelecionado.usaTransportadora ne 'S'}"
+                                                         disabled="true" readonly="true"
+                                                         />
+
+                                            <p:inputText value="#{notaFiscalProdutoControle.nfSelecionado.rntcVeiculo}"
+                                                         rendered="#{notaFiscalProdutoControle.nfSelecionado.usaTransportadora eq 'S'}"
+                                                         required="true" requiredMessage="Informe o RTNC do veículo"
+                                                         />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">
+                                                <p:row rendered="#{notaFiscalProdutoControle.nfSelecionado.usaTransportadora eq 'S'}"><span class="required">* </span></p:row>
+                                                Tipo de volume transportado</label>
+
+                                            <p:inputText value=""
+                                                         rendered="#{notaFiscalProdutoControle.nfSelecionado.usaTransportadora ne 'S'}"
+                                                         disabled="true" readonly="true"
+                                                         />
+
+                                            <p:inputText value="#{notaFiscalProdutoControle.nfSelecionado.tipoVolumeTransportado}"
+                                                         rendered="#{notaFiscalProdutoControle.nfSelecionado.usaTransportadora eq 'S'}"
+                                                         required="true" requiredMessage="Informe o tipo de volume transportado"
+                                                         placeholder="Exemplo: Caixas, barril, pacotes..."
+                                                         />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">
+                                                <p:row rendered="#{notaFiscalProdutoControle.nfSelecionado.usaTransportadora eq 'S'}"><span class="required">* </span></p:row>
+                                                Nº identificação volumes</label>
+
+                                            <p:inputText value=""
+                                                         rendered="#{notaFiscalProdutoControle.nfSelecionado.usaTransportadora ne 'S'}"
+                                                         disabled="true" readonly="true"
+                                                         />
+
+                                            <p:inputText value="#{notaFiscalProdutoControle.nfSelecionado.numIdentificacaoVolume}"
+                                                         rendered="#{notaFiscalProdutoControle.nfSelecionado.usaTransportadora eq 'S'}"
+                                                         required="true" requiredMessage="Informe o nº de identificação dos volumes"
+                                                         />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">
+                                                <p:row rendered="#{notaFiscalProdutoControle.nfSelecionado.usaTransportadora eq 'S'}"><span class="required">* </span></p:row>
+                                                Qtd. volume transportado</label>
+
+                                            <p:inputText value=""
+                                                         rendered="#{notaFiscalProdutoControle.nfSelecionado.usaTransportadora ne 'S'}"
+                                                         disabled="true" readonly="true"
+                                                         />
+
+                                            <p:inputText value="#{notaFiscalProdutoControle.nfSelecionado.qtdVolumeTransportado}"
+                                                         rendered="#{notaFiscalProdutoControle.nfSelecionado.usaTransportadora eq 'S'}"
+                                                         required="true" requiredMessage="Informe a quantidade de volume transportado"
+                                                         />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">
+                                                <p:row rendered="#{notaFiscalProdutoControle.nfSelecionado.usaTransportadora eq 'S'}"><span class="required">* </span></p:row>
+                                                Peso bruto</label>
+
+                                            <p:inputText value=""
+                                                         rendered="#{notaFiscalProdutoControle.nfSelecionado.usaTransportadora ne 'S'}"
+                                                         disabled="true" readonly="true"
+                                                         />
+
+                                            <p:inputNumber value="#{notaFiscalProdutoControle.nfSelecionado.pesoBrutoTotal}"
+                                                           symbol=" Kg" symbolPosition="right" thousandSeparator="." decimalSeparator="," decimalPlaces="2"
+                                                           rendered="#{notaFiscalProdutoControle.nfSelecionado.usaTransportadora eq 'S'}"
+                                                           required="true" requiredMessage="Informe o peso bruto transportado" />
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">
+                                                <p:row rendered="#{notaFiscalProdutoControle.nfSelecionado.usaTransportadora eq 'S'}"><span class="required">* </span></p:row>
+                                                Peso líquido</label>
+
+                                            <p:inputText value=""
+                                                         rendered="#{notaFiscalProdutoControle.nfSelecionado.usaTransportadora ne 'S'}"
+                                                         disabled="true" readonly="true"
+                                                         />
+
+                                            <p:inputNumber value="#{notaFiscalProdutoControle.nfSelecionado.pesoLiquidoTotal}"
+                                                           symbol=" Kg" symbolPosition="right" thousandSeparator="." decimalSeparator="," decimalPlaces="2"
+                                                           rendered="#{notaFiscalProdutoControle.nfSelecionado.usaTransportadora eq 'S'}"
+                                                           required="true" requiredMessage="Informe o peso líquido transportado" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">
+                                                <p:row rendered="#{notaFiscalProdutoControle.nfSelecionado.usaTransportadora eq 'S'}"><span class="required">* </span></p:row>
+                                                O frete será somado a NF?</label>
+
+                                            <p:inputText value=""
+                                                         rendered="#{notaFiscalProdutoControle.nfSelecionado.usaTransportadora ne 'S'}"
+                                                         disabled="true" readonly="true"
+                                                         />
+
+                                            <p:selectOneMenu  value="#{notaFiscalProdutoControle.nfSelecionado.freteSomaNotaFiscal}"
+                                                              required="true" requiredMessage="Informe se frete será somado a nota fiscal"
+                                                              rendered="#{notaFiscalProdutoControle.nfSelecionado.usaTransportadora eq 'S'}"
+                                                              >
+                                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                <f:selectItem itemLabel="Sim" itemValue="S" />
+                                                <f:selectItem itemLabel="Não" itemValue="N" />
+                                            </p:selectOneMenu >
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">
+                                                <p:row rendered="#{notaFiscalProdutoControle.nfSelecionado.usaTransportadora eq 'S'}"><span class="required">* </span></p:row>
+                                                Valor do frete</label>
+
+                                            <p:inputText value=""
+                                                         rendered="#{notaFiscalProdutoControle.nfSelecionado.usaTransportadora ne 'S'}"
+                                                         disabled="true" readonly="true"
+                                                         />
+
+                                            <p:inputNumber value="#{notaFiscalProdutoControle.nfSelecionado.valorFrete}"
+                                                           symbol="R$ " thousandSeparator="." decimalSeparator="," decimalPlaces="2"
+                                                           rendered="#{notaFiscalProdutoControle.nfSelecionado.usaTransportadora eq 'S'}"
+                                                           required="true" requiredMessage="Informe o valor do frete"/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">
+                                                <p:row rendered="#{notaFiscalProdutoControle.nfSelecionado.usaTransportadora eq 'S'}"><span class="required">* </span></p:row>
+                                                Valor do seguro</label>
+
+                                            <p:inputText value=""
+                                                         rendered="#{notaFiscalProdutoControle.nfSelecionado.usaTransportadora ne 'S'}"
+                                                         disabled="true" readonly="true"
+                                                         />
+
+                                            <p:inputNumber value="#{notaFiscalProdutoControle.nfSelecionado.valorSeguro}"
+                                                           symbol="R$ " thousandSeparator="." decimalSeparator="," decimalPlaces="2"
+                                                           rendered="#{notaFiscalProdutoControle.nfSelecionado.usaTransportadora eq 'S'}"
+                                                           required="true" requiredMessage="Informe o valor do seguro" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">
+                                                <p:row rendered="#{notaFiscalProdutoControle.nfSelecionado.usaTransportadora eq 'S'}"><span class="required">* </span></p:row>
+                                                Valor despesas adicionais</label>
+
+                                            <p:inputText value=""
+                                                         rendered="#{notaFiscalProdutoControle.nfSelecionado.usaTransportadora ne 'S'}"
+                                                         disabled="true" readonly="true"
+                                                         />
+
+                                            <p:inputNumber value="#{notaFiscalProdutoControle.nfSelecionado.valorDespesasAdicionais}"
+                                                           symbol="R$ " thousandSeparator="." decimalSeparator="," decimalPlaces="2"
+                                                           rendered="#{notaFiscalProdutoControle.nfSelecionado.usaTransportadora eq 'S'}"
+                                                           required="true" requiredMessage="Informe o valor das despesas adicionais" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </p:outputPanel>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="card card-w-title">
+                            <h1>Impostos</h1>
+                            <p:row id="impostosPnl">
+                                <div class="row align-items-end">
+                                    <div class="col valor">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Devolução IPI (%)</label>
+                                            <p:inputNumber value="#{notaFiscalProdutoControle.nfSelecionado.porcentagemDevolucao}"
+                                                           symbol="%" symbolPosition="s" decimalPlaces="0">
+                                                <p:ajax event="change" listener="#{notaFiscalProdutoControle.atualizaPorcentagemImpostos}"
+                                                        update="devolIPI"/>
+                                            </p:inputNumber>
+                                        </div>
+                                    </div>
+                                    <div class="col valor">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Devolução IPI (R$)</label>
+                                            <p:inputNumber value="#{notaFiscalProdutoControle.nfSelecionado.valorIpiDevolucao}"
+                                                           disabled="true" symbol="R$ " symbolPosition="p" id="devolIPI"/>
+                                        </div>
+                                    </div>
+                                    <div class="col valor">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Origem da mercadoria</label>
+                                            <p:inputNumber value="#{notaFiscalProdutoControle.nfSelecionado.icms60Origem}"
+                                                           symbol="R$ " symbolPosition="p"/>
+                                        </div>
+                                    </div>
+                                    <div class="col valor">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Tributação do ICMS</label>
+                                            <p:inputNumber value="#{notaFiscalProdutoControle.nfSelecionado.icms60Cst}"
+                                                           symbol="R$ " symbolPosition="p"/>
+                                        </div>
+                                    </div>
+                                    <div class="col valor">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">BC do ICMS ST</label>
+                                            <p:inputNumber value="#{notaFiscalProdutoControle.nfSelecionado.icms60ValorCstRetencao}"
+                                                           symbol="R$ " symbolPosition="p"/>
+                                        </div>
+                                    </div>
+                                    <div class="col valor">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Valor da BC do ICMS Retido Anteriormente</label>
+                                            <p:inputNumber value="#{notaFiscalProdutoControle.nfSelecionado.icms60ValorIcmsStRetencao}"
+                                                           symbol="R$ " symbolPosition="p"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr/>
+                                <p:outputPanel id="mva">
+                                    <div class="row">
+                                        <div class="col-md-12"><h4>ICMS</h4></div>
+                                        <div class="col-3 valor">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label">Modalidade de BC</label>
+                                                <p:importEnum type="br.com.villefortconsulting.sgfinancas.util.EnumModalidadeBC"/>
+                                                <p:selectOneMenu value="#{notaFiscalProdutoControle.nfSelecionado.modBc}">
+                                                    <f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+                                                    <f:selectItems value="#{EnumModalidadeBC.ALL_VALUES}" var="item"
+                                                                   itemLabel="#{item.codigo} - #{item.descricao}" itemValue="#{item.codigo}"/>
+                                                </p:selectOneMenu>
+                                            </div>
+                                        </div>
+                                        <div class="col-3 valor">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label">Modalidade de BC ST</label>
+                                                <p:importEnum type="br.com.villefortconsulting.sgfinancas.util.EnumModalidadeBCST"/>
+                                                <p:selectOneMenu value="#{notaFiscalProdutoControle.nfSelecionado.modBcSt}">
+                                                    <f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+                                                    <f:selectItems value="#{EnumModalidadeBCST.ALL_VALUES}" var="item"
+                                                                   itemLabel="#{item.codigo} - #{item.descricao}" itemValue="#{item.codigo}"/>
+                                                    <p:ajax update="mva" process="@this"/>
+                                                </p:selectOneMenu>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row align-items-end">
+                                        <p:row rendered="#{notaFiscalProdutoControle.nfSelecionado.modBcSt eq '4'}">
+                                            <div class="col valor">
+                                                <div class="form-group form-md-line-input">
+                                                    <label class="control-label">MVA</label>
+                                                    <p:inputNumber value="#{notaFiscalProdutoControle.nfSelecionado.icms70PMvaSt}"
+                                                                   symbol="R$" symbolPosition="p"/>
+                                                </div>
+                                            </div>
+                                            <div class="col valor">
+                                                <div class="form-group form-md-line-input">
+                                                    <label class="control-label">Percentual da redução de BC</label>
+                                                    <p:inputNumber value="#{notaFiscalProdutoControle.nfSelecionado.icms70PRedBC}"
+                                                                   symbol="%" symbolPosition="s"/>
+                                                </div>
+                                            </div>
+                                            <div class="col valor">
+                                                <div class="form-group form-md-line-input">
+                                                    <label class="control-label">ICMS (%)</label>
+                                                    <p:inputNumber value="#{notaFiscalProdutoControle.nfSelecionado.icms70PIcms}"
+                                                                   symbol="%" symbolPosition="s" decimalPlaces="0">
+                                                    </p:inputNumber>
+                                                </div>
+                                            </div>
+                                            <div class="col valor">
+                                                <div class="form-group form-md-line-input">
+                                                    <label class="control-label">ICMS ST (%)</label>
+                                                    <p:inputNumber value="#{notaFiscalProdutoControle.nfSelecionado.icms70PIcmsSt}"
+                                                                   symbol="%" symbolPosition="s" decimalPlaces="0">
+                                                    </p:inputNumber>
+                                                </div>
+                                            </div>
+                                            <div class="col valor">
+                                                <div class="form-group form-md-line-input">
+                                                    <label class="control-label">Redução da BC do ICMS ST (%)</label>
+                                                    <p:inputNumber value="#{notaFiscalProdutoControle.nfSelecionado.icms70PRed}"
+                                                                   symbol="%" symbolPosition="s" decimalPlaces="0">
+                                                        <p:ajax event="change" listener="#{notaFiscalProdutoControle.atualizaPorcentagemImpostos}"
+                                                                update="aliqBcSt"/>
+                                                    </p:inputNumber>
+                                                </div>
+                                            </div>
+                                            <div class="col valor">
+                                                <div class="form-group form-md-line-input">
+                                                    <label class="control-label">BC do ICMS ST (R$)</label>
+                                                    <p:inputNumber value="#{notaFiscalProdutoControle.nfSelecionado.icms70VBcSt}"
+                                                                   symbol="R$ " symbolPosition="p" id="aliqBcSt"/>
+                                                </div>
+                                            </div>
+                                        </p:row>
+                                    </div>
+                                </p:outputPanel>
+                                <hr/>
+                                <div class="row">
+                                    <div class="col-md-12"><h4>PIS</h4></div>
+                                    <div class="col-md-3 valor">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Código de Situação Tributária</label>
+                                            <p:importEnum type="br.com.villefortconsulting.sgfinancas.util.EnumCodigoPIS"/>
+                                            <p:selectOneMenu value="#{notaFiscalProdutoControle.nfSelecionado.pisCst}" filter="true" filterMatchMode="contains">
+                                                <f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+                                                <f:selectItems value="#{EnumCodigoPIS.ALL_VALUES}" var="item"
+                                                               itemLabel="#{item.codigo} - #{item.descricao}" itemValue="#{item.codigo}"/>
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 valor">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Valor da BC</label>
+                                            <p:inputNumber value="#{notaFiscalProdutoControle.nfSelecionado.pisValorBc}"
+                                                           symbol="R$ " symbolPosition="p"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 group row">
+                                        <div class="col-md-6 valor">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label">Alíquota (%)</label>
+                                                <p:inputNumber value="#{notaFiscalProdutoControle.nfSelecionado.pisPercentualPis}"
+                                                               symbol="%" symbolPosition="s" decimalPlaces="0">
+                                                    <p:ajax event="change" listener="#{notaFiscalProdutoControle.atualizaPorcentagemImpostos}"
+                                                            update="aliqPis"/>
+                                                </p:inputNumber>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 valor">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label">Alíquota (R$)</label>
+                                                <p:inputNumber value="#{notaFiscalProdutoControle.nfSelecionado.pisValorPis}"
+                                                               disabled="true" symbol="R$ " symbolPosition="p" id="aliqPis"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr/>
+                                <div class="row">
+                                    <div class="col-md-12"><h4>COFINS</h4></div>
+                                    <div class="col-md-3 valor">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Código de Situação Tributária</label>
+                                            <p:importEnum type="br.com.villefortconsulting.sgfinancas.util.EnumCodigoCOFINS"/>
+                                            <p:selectOneMenu value="#{notaFiscalProdutoControle.nfSelecionado.cofinsCst}" filter="true" filterMatchMode="contains">
+                                                <f:selectItem itemLabel="-- Selecione --" noSelectionOption="true"/>
+                                                <f:selectItems value="#{EnumCodigoCOFINS.ALL_VALUES}" var="item"
+                                                               itemLabel="#{item.codigo} - #{item.descricao}" itemValue="#{item.codigo}"/>
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 valor">
+                                        <div class="form-group form-md-line-input">
+                                            <label class="control-label">Valor da BC</label>
+                                            <p:inputNumber value="#{notaFiscalProdutoControle.nfSelecionado.cofinsValorBC}"
+                                                           symbol="R$ " symbolPosition="p"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 group row">
+                                        <div class="col-md-6 valor">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label">Alíquota (%)</label>
+                                                <p:inputNumber value="#{notaFiscalProdutoControle.nfSelecionado.cofinsPercentualCofins}"
+                                                               symbol="%" symbolPosition="s" decimalPlaces="0">
+                                                    <p:ajax event="change" listener="#{notaFiscalProdutoControle.atualizaPorcentagemImpostos}"
+                                                            update="aliqCofins"/>
+                                                </p:inputNumber>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 valor">
+                                            <div class="form-group form-md-line-input">
+                                                <label class="control-label">Alíquota (R$)</label>
+                                                <p:inputNumber value="#{notaFiscalProdutoControle.nfSelecionado.cofinsValorCofins}"
+                                                               disabled="true" symbol="R$ " symbolPosition="p" id="aliqCofins"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </p:row>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <style>
+                .valor {
+                    width: 90px;
+                }
+            </style>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

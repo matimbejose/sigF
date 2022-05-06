@@ -1,0 +1,12 @@
+FROM 192.168.0.52:8082/wildfly20:latest
+COPY /files/server.properties-dev /opt/jboss/wildfly/standalone/configuration/server.properties
+COPY /files/standalone-full.xml /opt/jboss/wildfly/standalone/configuration/standalone.xml
+COPY /SGFinancas-web/target/SGFinancas-web-1.0 /opt/jboss/wildfly/standalone/deployments/SGFinancas-web-1.0.war
+COPY /files/server.properties-dev /opt/jboss/wildfly/standalone/deployments/SGFinancas-web-1.0.war.dodeploy
+ENV JAVA_OPTS="-Dline.separator=$'\r\n' -Dfile.encoding=ISO-8859-1 -Duser.language=pt -Duser.country=BR -server -Xms1024m -Xmx2048m -Dcom.sun.jersey.server.impl.cdi.lookupExtensionInBeanManager=true -Djboss.as.management.blocking.timeout=3600 -Djava.awt.headless=true -Djava.net.preferIPv4Stack=true"
+ENV TZ="America/Sao_Paulo"
+ENV DB_SERVERNAME=${DB_SERVERNAME}
+ENV DB_SERVERPORT=${DB_SERVERPORT}
+ENV DB_DATABASENAME=${DB_DATABASENAME}
+ENV DB_USERNAME=${DB_USERNAME}
+ENV DB_PASSWORD=${DB_PASSWORD}

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Detalhes da empresa credenciada"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Segurança</li>
+            <li>/</li>
+            <li>Administração</li>
+            <li>/</li>
+            <li>
+                <p:link outcome="/restrito/administracao/listaEmpresaCredenciada.xhtml"> #{title}</p:link>
+            </li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteHelp" rendered="false" action="#{empresaControle.mostrarAjuda()}" immediate="true"/>
+            <h:commandButton id="remoteBack" action="listaEmpresaCredenciada.xhtml" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <div class="card card-w-title">
+                <h5>#{empresaCredenciadaControle.empresaSelecionada.descricao}</h5>
+                <div class="row">
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Uso Interno?"/>
+                        <p:selectOneMenu value="#{empresaCredenciadaControle.empresaSelecionada.acessoPrivado}"
+                                         disabled="#{!usuarioControle.usuarioLogado.administrator}">
+                            <f:selectItem itemLabel="Sim" itemValue="S"/>
+                            <f:selectItem itemLabel="Não" itemValue="N"/>
+                            <p:ajax process="@this" listener="#{empresaCredenciadaControle.atualizaAcesso()}"/>
+                        </p:selectOneMenu >
+                    </div>
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Ativo?"/>
+                        <p:selectOneMenu disabled="true" value="#{empresaCredenciadaControle.empresaSelecionada.ativo}">
+                            <f:selectItem itemLabel="Sim" itemValue="S"/>
+                            <f:selectItem itemLabel="Não" itemValue="N"/>
+                        </p:selectOneMenu >
+                    </div>
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Data de constituição"/>
+                        <p:calendar navigator="true" value="#{empresaCredenciadaControle.empresaSelecionada.dataConstituicao}" disabled="true" pattern="dd/MM/yyyy" mask="true"/>
+                    </div>
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Regime Tributário"/>
+                        <p:inputText disabled="true" value="#{empresaCredenciadaControle.empresaSelecionada.descricaoRegimeTributario}"/>
+                    </div>
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Tipo"/>
+                        <p:selectOneMenu disabled="true" value="#{empresaCredenciadaControle.empresaSelecionada.tipo}">
+                            <f:selectItem itemLabel="Pública" itemValue="PB"/>
+                            <f:selectItem itemLabel="Privada" itemValue="PR"/>
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Indicador inscrição estadual"/>
+                        <p:selectOneMenu disabled="true" value="#{empresaCredenciadaControle.empresaSelecionada.indicadorInscricaoEstadual}">
+                            <f:selectItem itemLabel="Não contribuinte" itemValue="NC"/>
+                            <f:selectItem itemLabel="Contribuinte" itemValue="CO"/>
+                            <f:selectItem itemLabel="Contribuinte isento" itemValue="CI"/>
+                        </p:selectOneMenu >
+                    </div>
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Inscrição estadual"/>
+                        <p:inputText disabled="true" value="#{empresaCredenciadaControle.empresaSelecionada.inscricaoEstadual}"/>
+                    </div>
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Inscrição municipal"/>
+                        <p:inputText disabled="true" value="#{empresaCredenciadaControle.empresaSelecionada.inscricaoMunicipal}"/>
+                    </div>
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Número de registro do cartório"/>
+                        <p:inputText disabled="true" value="#{empresaCredenciadaControle.empresaSelecionada.numRegistroCartorio}"/>
+                    </div>
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="NIRE"/>
+                        <p:inputText disabled="true" value="#{empresaCredenciadaControle.empresaSelecionada.nire}"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Faturamento"/>
+                        <p:inputNumber disabled="true" value="#{empresaCredenciadaControle.empresaSelecionada.faturamento}" symbol="R$ " thousandSeparator="." decimalSeparator="," decimalPlaces="2"/>
+                    </div>
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Telefone"/>
+                        <p:inputMask disabled="true" value="#{empresaCredenciadaControle.empresaSelecionada.fone}" mask="(99) 9999-9999?9"/>
+                    </div>
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Email"/>
+                        <p:inputText disabled="true" value="#{empresaCredenciadaControle.empresaSelecionada.email}"/>
+                    </div>
+                    <div class="col-auto form-group form-md-line-input" style="width: calc(100% / 5 * 2);">
+                        <p:outputLabel for="@next" value="Por onde nos conheceu"/>
+                        <p:inputText disabled="true" value="#{empresaCredenciadaControle.empresaSelecionada.ondeConheceu}"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <h5>Endereço</h5>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-2 form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="CEP"/>
+                        <p:inputMask disabled="true" value="#{empresaCredenciadaControle.empresaSelecionada.endereco.cep}" mask="99.999-999"/>
+                    </div>
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Logradouro"/>
+                        <p:inputText disabled="true" value="#{empresaCredenciadaControle.empresaSelecionada.endereco.endereco}"/>
+                    </div>
+                    <div class="col-2 form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Número"/>
+                        <p:inputText disabled="true" value="#{empresaCredenciadaControle.empresaSelecionada.endereco.numero}"/>
+                    </div>
+                    <div class="col-3 form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Complemento"/>
+                        <p:inputText disabled="true" value="#{empresaCredenciadaControle.empresaSelecionada.endereco.complemento}"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Bairro"/>
+                        <p:inputText disabled="true" value="#{empresaCredenciadaControle.empresaSelecionada.endereco.bairro}"/>
+                    </div>
+                    <div class="col-2 form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="UF"/>
+                        <p:inputText disabled="true" value="#{empresaCredenciadaControle.empresaSelecionada.endereco.idCidade.idUF.descricao}"/>
+                    </div>
+                    <div class="col-3 form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Cidade"/>
+                        <p:inputText disabled="true" value="#{empresaCredenciadaControle.empresaSelecionada.endereco.idCidade.descricao}"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <h5>Configuração da empresa</h5>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-3 form-group form-md-line-input">
+                        <p:outputLabel for="@next" value="Cria usuário ao cadastrar cliente?"/>
+                        <p:selectOneMenu value="#{empresaCredenciadaControle.criaUsuarioAoCadastrarCliente}"
+                                         disabled="#{!usuarioControle.usuarioLogado.administrator}">
+                            <f:selectItem itemLabel="Sim" itemValue="S"/>
+                            <f:selectItem itemLabel="Não" itemValue="N"/>
+                            <p:ajax process="@this" listener="#{empresaCredenciadaControle.atualizaConfiguracaoCriaUsuario()}"/>
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+    </ui:composition>
+</html>

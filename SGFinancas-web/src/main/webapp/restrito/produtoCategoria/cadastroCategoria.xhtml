@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Categoria de #{empresaControle.enumTipoUsoSistema.produtoServicoLabelPlural}"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Cadastro</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/produtoCategoria/listaProdutoCategoria.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteSave" action="#{produtoCategoriaControle.doFinishAdd()}"/>
+            <h:commandButton id="remoteCancel" action="listaProdutoCategoria.xhtml" immediate="true"/>
+            <h:commandButton id="remoteHelp" rendered="false" action="#{produtoCategoriaControle.mostrarAjuda()}" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <div class="card">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Descrição"/>
+                            <p:inputText value="#{produtoCategoriaControle.produtoCategoriaSelecionado.descricao}"
+                                         required="true" requiredMessage="Informe a descrição do produto"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card card-w-title">
+                <h5>
+                    Subcategoria
+                    <div class="pull-right">
+                        <p:commandButton value="Adicionar" onclick="PF('pnlItens').show();return true;" update="tblSubcategoria, dadosSubcategoria"
+                                         actionListener="#{produtoCategoriaControle.resetSubcategoria}" immediate="true" styleClass="outlined-button"/>
+                    </div>
+                </h5>
+                <p:dataTable id="tblSubcategoria" value="#{produtoCategoriaControle.produtoCategoriaSelecionado.listProdutoCategoriaSubcategoria}"
+                             var="item" emptyMessage="Nenhuma subcategoria definida"  styleClass="#{clienteControle.styleClass}">
+                    <p:column headerText="Descrição">
+                        <h:outputText value="#{item.descricao}"/>
+                    </p:column>
+                    <p:column headerText="Observação">
+                        <h:outputText value="#{item.observacao}"/>
+                    </p:column>
+                    <p:column width="77" headerText="Ações">
+                        <div class="actions">
+                            <p:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Editar item"
+                                           process="@this" action="#{produtoCategoriaControle.editItem(item)}" update="form:dadosSubcategoria"
+                                           onclick="PF('pnlItens').show();">
+                                <i class="fa fa-pencil"></i>
+                            </p:commandLink>
+
+                            <p:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Remover item"
+                                           process="@this" actionListener="#{produtoCategoriaControle.removeItem(item)}"
+                                           update="form:dadosSubcategoria, tblSubcategoria">
+                                <i class="fa fa-trash-o"></i>
+                            </p:commandLink>
+                        </div>
+                    </p:column>
+                </p:dataTable>
+            </div>
+            <p:dialog widgetVar="pnlItens">
+                <p:outputPanel id="dadosSubcategoria">
+                    <p:messages/>
+                    <p:row rendered="#{produtoCategoriaControle.produtoCategoriaSubcategoriaSelecionado ne null}">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group form-md-line-input">
+                                    <p:outputLabel for="@next" value="Descrição"/>
+                                    <p:inputText value="#{produtoCategoriaControle.produtoCategoriaSubcategoriaSelecionado.descricao}"/>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group form-md-line-input">
+                                    <p:outputLabel for="@next" value="Observação"/>
+                                    <p:inputText value="#{produtoCategoriaControle.produtoCategoriaSubcategoriaSelecionado.observacao}"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2">
+                                <p:commandButton actionListener="#{produtoCategoriaControle.addItem}" value="Salvar"
+                                                 process="@this, dadosSubcategoria" update="dadosSubcategoria, tblSubcategoria"/>
+                            </div>
+                        </div>
+                    </p:row>
+                </p:outputPanel>
+            </p:dialog>
+        </ui:define>
+
+    </ui:composition>
+</html>

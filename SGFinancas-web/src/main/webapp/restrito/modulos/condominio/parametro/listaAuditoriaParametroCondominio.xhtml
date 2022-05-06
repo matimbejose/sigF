@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html">
+    <ui:composition template="/restrito/generic/auditoria.xhtml">
+        <ui:define name="remotes">
+            <h:commandButton id="remoteBack" action="listaProduto.xhtml"/>
+        </ui:define>
+
+        <ui:param name="descricaoMenu" value="Cadastro"/>
+        <ui:param name="title" value="Parâmetro"/>
+        <ui:param name="caminhoAuditoria" value="/restrito/modulos/condominio/parametro/listaAuditoriaParametroCondominio.xhtml"/>
+        <ui:param name="objetoSelecionado" value="único"/>
+
+        <ui:param name="model" value="#{parametroCondominioControle.dadosAuditoria}"/>
+        <ui:define name="colunas"/>
+    </ui:composition>
+
+</html>

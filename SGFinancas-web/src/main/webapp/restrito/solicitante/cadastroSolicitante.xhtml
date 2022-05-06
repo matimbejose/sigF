@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Solicitante"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Escola</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/solicitante/listaSolicitante.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteSave" action="#{solicitanteControle.doFinishAdd()}"/>
+            <h:commandButton id="remoteCancel" action="listaSolicitante.xhtml" immediate="true"/>
+            <h:commandButton id="remoteHelp" rendered="false" action="#{solicitanteControle.mostrarAjuda()}" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <div class="row">
+                <div class="col-md-12 col-sm-12">
+                    <div class="card card-w-title">
+                        <h1>Identificação</h1>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group form-md-line-input">
+                                    <label class="control-label"><span class="required">* </span>Nome</label>
+                                    <p:inputText value="#{solicitanteControle.solicitanteSelecionado.nome}"
+                                                 required="true" requiredMessage="Informe o nome do solicitante"/>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group form-md-line-input">
+                                    <label class="control-label"><span class="required">* </span>Email</label>
+                                    <p:inputText value="#{solicitanteControle.solicitanteSelecionado.email}"
+                                                 required="true" requiredMessage="Informe o email"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group form-md-line-input">
+                                    <label class="control-label"><span class="required">* </span>Telefone celular</label>
+                                    <p:inputMask value="#{solicitanteControle.solicitanteSelecionado.telefoneCelular}" required="true" requiredMessage="Informe o telefone celular" mask="(99) 99999-9999"/>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group form-md-line-input">
+                                    <label class="control-label">Telefone fixo</label>
+                                    <p:inputMask value="#{solicitanteControle.solicitanteSelecionado.telefoneFixo}" mask="(99) 9999-9999?9" styleClass="telefone"/>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group form-md-line-input">
+                                    <label class="control-label">Tipo de pessoa</label>
+                                    <p:selectOneMenu  value="#{solicitanteControle.solicitanteSelecionado.tipoPessoa}" >
+                                        <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                        <f:selectItem itemLabel="Pessoa Júridica" itemValue="PJ" />
+                                        <f:selectItem itemLabel="Pessoa Física" itemValue="PF" />
+                                        <p:ajax update="pnlCpfCnpj" event="change" process="@this" />
+                                    </p:selectOneMenu >
+                                </div>
+                            </div>
+                            <div class="col">
+                                <p:outputPanel id="pnlCpfCnpj">
+                                    <div class="form-group">
+                                        <label class="control-label">
+                                            <h:outputText rendered="#{solicitanteControle.solicitanteSelecionado.tipoPessoa eq null}" value="CPF/CNPJ" />
+                                            <h:outputText rendered="#{solicitanteControle.solicitanteSelecionado.tipoPessoa eq 'PJ'}" value="CNPJ" />
+                                            <h:outputText rendered="#{solicitanteControle.solicitanteSelecionado.tipoPessoa eq 'PF'}" value="CPF" />
+                                        </label>
+
+                                        <p:inputText disabled="true" readonly="true"
+                                                     rendered="#{solicitanteControle.solicitanteSelecionado.tipoPessoa eq null}"/>
+
+                                        <p:inputMask mask="99.999.999/9999-99" value="#{solicitanteControle.solicitanteSelecionado.cpfCnpj}"
+                                                     autocomplete="off" validatorMessage="CNPJ inválido"
+                                                     rendered="#{solicitanteControle.solicitanteSelecionado.tipoPessoa eq 'PJ'}">
+                                        </p:inputMask>
+
+                                        <p:inputMask mask="999.999.999-99" value="#{solicitanteControle.solicitanteSelecionado.cpfCnpj}"
+                                                     validatorMessage="CPF inválido" autocomplete="off"
+                                                     rendered="#{solicitanteControle.solicitanteSelecionado.tipoPessoa eq 'PF'}">
+                                        </p:inputMask>
+                                    </div>
+                                </p:outputPanel>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2">
+                                <div class="form-group form-md-line-input">
+                                    <label class="control-label">UF</label>
+                                    <p:selectOneMenu id="uf" value="#{solicitanteControle.ufSelecionado}"  converter="#{genericConverter}">
+                                        <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                        <f:selectItems value="#{solicitanteControle.UFs}"  var="uf" itemLabel="#{uf.descricao}" itemValue="#{uf}"/>
+                                        <p:ajax event="change" process="@this" update="uf, cidade" />
+                                    </p:selectOneMenu>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group form-md-line-input">
+                                    <label class="control-label">Cidade</label>
+                                    <p:selectOneMenu id="cidade" value="#{solicitanteControle.solicitanteSelecionado.idCidade}"
+                                                     panelStyle="width:180px" effect="fade"
+                                                     var="t" filter="true" filterMatchMode="contains"
+                                                     converter="#{genericConverter}">
+                                        <p:column>
+                                            <h:outputText value="#{t.descricao}" />
+                                        </p:column>
+
+                                        <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                        <f:selectItems value="#{solicitanteControle.cidades}"  var="cidade" itemLabel="#{cidade.descricao}" itemValue="#{cidade}"/>
+                                    </p:selectOneMenu>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group form-md-line-input">
+                                    <label class="control-label">Área de atuação</label>
+                                    <p:selectOneMenu value="#{solicitanteControle.solicitanteSelecionado.idAreaAtuacao}"
+                                                     panelStyle="width:180px" effect="fade"
+                                                     var="t" filter="true" filterMatchMode="contains"
+                                                     converter="#{genericConverter}">
+                                        <p:column>
+                                            <h:outputText value="#{t.descricao}" />
+                                        </p:column>
+
+                                        <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                        <f:selectItems value="#{areaAtuacaoControle.areaAtuacaos}"  var="a" itemLabel="#{a.descricao}" itemValue="#{a}"/>
+                                    </p:selectOneMenu>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group form-md-line-input">
+                                    <label class="control-label">Empresa</label>
+                                    <p:inputText value="#{solicitanteControle.solicitanteSelecionado.empresa}"/>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group form-md-line-input">
+                                    <label class="control-label">Cargo</label>
+                                    <p:inputText value="#{solicitanteControle.solicitanteSelecionado.cargo}"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group form-md-line-input">
+                                    <label class="control-label">Origem</label>
+                                    <p:selectOneMenu value="#{solicitanteControle.solicitanteSelecionado.origem}">
+                                        <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                        <f:selectItems value="#{solicitanteControle.listarOrigemSolicitante()}"  var="o" itemLabel="#{o.value}" itemValue="#{o.key}"/>
+                                    </p:selectOneMenu>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group form-md-line-input">
+                                    <label class="control-label">Indicação</label>
+                                    <p:selectOneMenu value="#{solicitanteControle.solicitanteSelecionado.idSolicitanteIndicou}"
+                                                     panelStyle="width:180px" effect="fade" styleClass="prime-min-width"
+                                                     var="t" style="width:160px;" filter="true" filterMatchMode="contains"
+                                                     converter="#{genericConverter}">
+                                        <p:column>
+                                            <h:outputText value="#{t.nome}" />
+                                        </p:column>
+                                        <p:column>
+                                            <h:outputText value="#{t.cpfCnpj}" />
+                                        </p:column>
+
+                                        <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                        <f:selectItems value="#{solicitanteControle.solicitantesIndicou}"  var="s" itemLabel="#{s.nome}" itemValue="#{s}"/>
+                                        <p:ajax update="somTurma" event="change" process="@this" />
+                                    </p:selectOneMenu>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group form-md-line-input">
+                                    <label class="control-label">Curso de interesse</label>
+                                    <p:selectOneMenu value="#{solicitanteControle.solicitanteSelecionado.idCurso}"
+                                                     panelStyle="width:180px" effect="fade" styleClass="prime-min-width"
+                                                     var="t" style="width:160px;" filter="true" filterMatchMode="contains"
+                                                     converter="#{genericConverter}">
+                                        <p:column>
+                                            <h:outputText value="#{t.descricao}" />
+                                        </p:column>
+
+                                        <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                        <f:selectItems value="#{cursoControle.cursos}"  var="c" itemLabel="#{c.descricao}" itemValue="#{c}"/>
+                                        <p:ajax update="somTurma" event="change" process="@this" />
+                                    </p:selectOneMenu>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group form-md-line-input">
+                                    <label class="control-label">Turma de interesse</label>
+                                    <p:selectOneMenu id="somTurma" value="#{solicitanteControle.solicitanteSelecionado.idTurma}"
+                                                     panelStyle="width:180px" effect="fade" styleClass="prime-min-width"
+                                                     var="t" style="width:160px;" filter="true" filterMatchMode="contains"
+                                                     converter="#{genericConverter}">
+                                        <p:column>
+                                            <h:outputText value="#{t.descricao}" />
+                                        </p:column>
+
+                                        <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                        <f:selectItems value="#{solicitanteControle.turmas}"  var="t" itemLabel="#{t.descricao}" itemValue="#{t}"/>
+                                    </p:selectOneMenu>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group form-md-line-input">
+                                    <label class="control-label">Observação</label>
+                                    <p:inputText value="#{solicitanteControle.solicitanteSelecionado.observacao}"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

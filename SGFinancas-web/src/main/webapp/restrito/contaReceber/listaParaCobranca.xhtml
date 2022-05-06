@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Gerar cobrança"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Financeiro</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/contaReceber/listaContaReceber.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteCancel" onclick="clearDataTableFilters('tbl');" action="#{contaReceberControle.retornarTelaListaContaReceber()}" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="formButtons">
+            <p:commandButton type="button" value="Limpar filtros" onclick="clearDataTableFilters('tbl');"/>
+            <p:commandButton id="toggler" type="button" value="Colunas"/>
+            <p:columnToggler datasource="tbl" trigger="toggler"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <style>
+                .old {
+                    background-color: #fca752 !important;
+                    background-image: none !important;
+                    color: #000000 !important;
+                }
+                .old.badge > strong {
+                    color: rgba(0, 0, 0, 0.5);
+                }
+            </style>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-12">
+                            Parcelas vencidas aparecerão em <span class="old badge"><strong>laranja</strong></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mt-3">
+                            <p:dataTable value="#{contaReceberControle.model}" emptyMessage="Nenhum registro encontrado." var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow" sortBy="#{item.idConta.idCliente}" expandableRowGroups="true" rowStyleClass="#{item.dataVencimento lt contaReceberControle.hoje ? 'old' : null}">
+
+                                <f:facet name="header">
+                                    Contas a receber hoje e em atraso
+                                </f:facet>
+
+                                <p:headerRow>
+                                    <p:column colspan="8">
+                                        <h:outputText value="#{item.idConta.idCliente.nome}"/>
+                                        <h:commandLink type="button" class="btn btn-circle btn-icon-only btn-default icones pull-right"
+                                                       title="Gerar cobrança para as contas selecionadas" action="#{contaReceberControle.doSelectClientForCharge(item.idConta.idCliente)}">
+                                            <i class="fa fa-file-text-o"></i>
+                                        </h:commandLink>
+                                    </p:column>
+                                </p:headerRow>
+
+                                <p:summaryRow listener="#{contaReceberControle.calcularSubtituloContaReceber}">
+                                    <p:column colspan="8" style="text-align:right">
+                                        #{contaReceberControle.getSubtituloContaReceber(item.idConta.idCliente)}
+                                    </p:column>
+                                </p:summaryRow>
+
+                                <p:ajax event="page" listener="#{contaReceberControle.onPageChange}"/>
+
+                                <p:column headerText="Plano de conta" sortBy="#{idConta.idPlanoConta.descricao}" filterBy="#{item.planoConta}">
+                                    <f:facet name="filter">
+                                        <p:selectOneMenu var="t" filter="true" filterMatchMode="contains" converter="#{genericConverter}"
+                                                         onchange="PF('tbl').filter()" value="#{contaReceberControle.filtro.planoConta}">
+                                            <p:column>
+                                                <h:outputText value="-- Todos planos de conta --" rendered="#{t.descricao eq null}"/>
+                                                <h:outputText value="#{t.descricao}" rendered="#{t.descricao ne null}"/>
+                                            </p:column>
+
+                                            <f:selectItem itemLabel="-- Todos planos de conta --" noSelectionOption="true"/>
+                                            <f:selectItems value="#{planoContaControle.listarPlanosContaParaTransacoesContaReceber()}"
+                                                           var="plano" itemLabel="#{plano.descricao}" itemValue="#{plano}"/>
+                                        </p:selectOneMenu>
+                                    </f:facet>
+                                    <h:outputText value="#{item.idConta.idPlanoConta.descricao} (#{item.numParcela}/#{item.idConta.numeroParcelas})"/>
+                                </p:column>
+
+                                <p:column headerText="Obs." sortBy="#{idConta.observacao}" filterBy="#{item.observacao}">
+                                    <f:facet name="filter">
+                                        <p:inputText value="#{contaReceberControle.filtro.observacao}" onchange="PF('tbl').filter()"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.idConta.observacao}"/>
+                                </p:column>
+
+                                <p:column headerText="Conta bancária" sortBy="#{idContaBancaria.descricao}" filterBy="#{item.contaBancaria}">
+                                    <f:facet name="filter">
+                                        <p:selectOneMenu var="t" filter="true" filterMatchMode="contains" converter="#{genericConverter}"
+                                                         onchange="PF('tbl').filter()" value="#{contaReceberControle.filtro.contaBancaria}">
+                                            <p:column>
+                                                <h:outputText value="-- Todas contas bancárias --" rendered="#{t.descricao eq null}"/>
+                                                <h:outputText value="#{t.descricao}" rendered="#{t.descricao ne null}"/>
+                                            </p:column>
+
+                                            <f:selectItem itemLabel="-- Todas contas bancárias --" noSelectionOption="true"/>
+                                            <f:selectItems value="#{contaBancariaControle.listarContasBancarias()}" var="contaBancaria"
+                                                           itemLabel="#{contaBancaria.descricao}" itemValue="#{contaBancaria}"/>
+
+                                        </p:selectOneMenu>
+                                    </f:facet>
+                                    <h:outputText value="#{item.idContaBancaria.descricao}"/>
+                                </p:column>
+
+                                <p:column headerText="Origem">
+                                    <h:outputText value="#{contaReceberControle.mostraOrigem(item.idConta)}"/>
+                                </p:column>
+
+                                <p:column headerText="Cliente" filterBy="#{item.cliente}">
+                                    <f:facet name="filter">
+                                        <p:selectOneMenu var="t" filter="true" filterMatchMode="contains" converter="#{genericConverter}"
+                                                         onchange="PF('tbl').filter()" value="#{contaReceberControle.filtro.cliente}">
+                                            <p:column>
+                                                <h:outputText value="-- Todos clientes --" rendered="#{t.nome eq null}"/>
+                                                <h:outputText value="#{t.nome}" rendered="#{t.nome ne null}"/>
+                                            </p:column>
+
+                                            <f:selectItem itemLabel="-- Todos clientes --" noSelectionOption="true"/>
+                                            <f:selectItems value="#{clienteControle.clientes}"  var="cliente"
+                                                           itemLabel="#{cliente.nome}" itemValue="#{cliente}"/>
+
+                                        </p:selectOneMenu>
+                                    </f:facet>
+                                    <h:outputText value="#{item.idConta.idCliente.nome}"/>
+                                </p:column>
+
+                                <p:column headerText="Venc." sortBy="#{item.dataVencimento}" width="95" filterBy="#{item.dataInicio}">
+                                    <f:facet name="filter">
+                                        <p:calendar navigator="true" pattern="dd/MM/yyyy" placeholder="Data início" mask="true" onchange="PF('tbl').filter()"
+                                                    value="#{contaReceberControle.filtro.dataInicio}"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.dataVencimento}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </p:column>
+
+                                <p:column headerText="Valor bruto" sortBy="#{item.valor}" sortFunction="#{contaReceberControle.sortDoubleValue}"
+                                          style="text-align: right" filterBy="#{îtem.valor}">
+                                    <f:facet name="filter">
+                                        <p:inputNumber value="#{contaReceberControle.filtro.valor}" onchange="PF('tbl').filter()" symbol="R$ "
+                                                       symbolPosition="p" thousandSeparator="." decimalSeparator="," decimalPlaces="2"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.valor}">
+                                        <f:convertNumber currencySymbol="R$" type="currency"/>
+                                    </h:outputText>
+                                </p:column>
+
+                                <p:column rendered="#{item.situacao ne 'CC'}" headerText="Situação" sortBy="#{item.situacao}">
+                                    <h:outputText value="#{contaReceberControle.buscarSituacao(item.situacao)}"/>
+                                </p:column>
+
+                                <p:column rendered="#{item.situacao eq 'CC'}" headerText="Situação" sortBy="#{item.situacao}">
+                                    <h:outputText styleClass="font-red-haze" value="Cancelado"/>
+                                </p:column>
+
+                            </p:dataTable>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+</html>

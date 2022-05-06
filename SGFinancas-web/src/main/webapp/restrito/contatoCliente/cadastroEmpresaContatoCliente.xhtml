@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Contato cliente"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Segurança</li>
+            <li>/</li>
+            <li>Administração</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/contatoCliente/listaEmpresaContatoCliente.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteSave" action="#{empresaContatoClienteControle.doFinishAdd()}"/>
+            <h:commandButton id="remoteCancel" action="listaEmpresaContatoCliente.xhtml" immediate="true"/>
+            <h:commandButton id="remoteHelp" rendered="false" action="#{empresaContatoClienteControle.mostrarAjuda()}" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <div class="form-body">
+                <div class="card">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group form-md-line-input">
+                            <label class="control-label"><span class="required">* </span>Nome</label>
+                            <p:inputText value="#{empresaContatoClienteControle.empresaContatoClienteSelecionado.nomeContato}"
+                                         required="true"
+                                         requiredMessage="Informe o nome"
+                                         styleClass="form-control" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group form-md-line-input">
+                            <label class="control-label"><span class="required">* </span>Data do contato</label>
+                            <p:calendar navigator="true" value="#{empresaContatoClienteControle.empresaContatoClienteSelecionado.dataContato}"
+                                        required="true" requiredMessage="Informe a data do contato" maxdate="#{empresaContatoClienteControle.dataHoje()}"
+                                        pattern="dd/MM/yyyy" mask="true"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group form-md-line-input">
+                            <label class="control-label"><span class="required">* </span>Telefone</label>
+                            <p:inputMask value="#{empresaContatoClienteControle.empresaContatoClienteSelecionado.telefone}" mask="(99) 9999-9999?9" styleClass="form-control telefone" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group form-md-line-input">
+                            <label class="control-label">Email</label>
+                            <p:inputText value="#{empresaContatoClienteControle.empresaContatoClienteSelecionado.email}"
+                                         styleClass="form-control" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group form-md-line-input">
+                            <label class="control-label">Data próximo contato</label>
+                            <p:calendar navigator="true" value="#{empresaContatoClienteControle.empresaContatoClienteSelecionado.dataProximoContato}"
+                                        mindate="#{empresaContatoClienteControle.dataHoje()}" pattern="dd/MM/yyyy" mask="true"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group form-md-line-input">
+                            <label class="control-label">Observação</label>
+                            <p:inputText value="#{empresaContatoClienteControle.empresaContatoClienteSelecionado.observacao}"  styleClass="form-control" />
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

@@ -1,0 +1,439 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:cc="http://xmlns.jcp.org/jsf/composite/components"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <p:importEnum type="br.com.villefortconsulting.sgfinancas.controle.apoio.ContaControleBase$EnumConta" var="EnumConta"/>
+    <style>
+        .ui-datagrid.ui-widget .ui-widget-content button {
+            margin-right: 10px;
+        }
+    </style>
+    <div class="form-body">
+        <div class="row">
+            <div class="col-md-12 col-sm-12 pb-3">
+                <div class="card">
+                    <h5>Detalhes da conta</h5>
+                    <p:outputPanel id="detalhes">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group form-md-line-input">
+                                    <label class="control-label"><span class="required"> * </span>Plano de conta</label>
+                                    <p:selectOneMenu value="#{controle.contaSelecionada.idPlanoConta}" panelStyle="width:180px" effect="fade" var="t"
+                                                     style="width:160px" filter="true" filterMatchMode="startsWith" converter="#{genericConverter}"
+                                                     required="true" requiredMessage="Informe um item do plano de conta"
+                                                     disabled="#{!controle.podeEditarDados}">
+                                        <p:column>
+                                            <h:outputText value="#{t.codigo}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <h:outputText value="#{t.descricao}"/>
+                                        </p:column>
+                                        <p:ajax event="change" process="@this"/>
+                                        <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                        <f:selectItems value="#{planoContaControle.listarPlanosContaParaTransacoes()}" var="planoConta" id="itens"
+                                                       itemLabel="#{planoConta.descricao}" itemValue="#{planoConta}"
+                                                       itemDisabled="#{planoConta.tipoIndicador ne 'S' or planoConta.idContaPai.bloqueiaFilhoContaPagar eq 'S'}"
+                                                       itemDescription="#{planoContaControle.obterNomesDosPais(planoConta)}"/>
+                                    </p:selectOneMenu>
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-4">
+                                <div class="form-group form-md-line-input">
+                                    <p:row rendered="#{controle.tipoConta eq EnumConta.PAGAR}">
+                                        <label class="control-label">Fornecedor</label>
+                                        <p:selectOneMenu value="#{controle.contaSelecionada.idFornecedor}" panelStyle="width:180px" effect="fade" var="t"
+                                                         style="width:160px" filter="true"  filterMatchMode="startsWith" converter="#{genericConverter}"
+                                                         disabled="#{!controle.podeEditarDados}">
+                                            <p:column>
+                                                <h:outputText value="#{t.razaoSocial}"/>
+                                            </p:column>
+                                            <p:ajax event="change" process="@this"/>
+                                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                            <f:selectItems value="#{fornecedorControle.fornecedores}" var="fornecedor"
+                                                           itemLabel="#{fornecedor.razaoSocial}" itemValue="#{fornecedor}"/>
+                                        </p:selectOneMenu>
+                                    </p:row>
+                                    <p:row rendered="#{controle.tipoConta eq EnumConta.RECEBER}">
+                                        <label class="control-label">Cliente</label>
+                                        <p:selectOneMenu value="#{controle.contaSelecionada.idCliente}" panelStyle="width:180px" effect="fade" var="t"
+                                                         filter="true" filterMatchMode="startsWith" converter="#{genericConverter}"
+                                                         disabled="#{!controle.podeEditarDados}">
+                                            <p:column>
+                                                <h:outputText value="#{t.nome}"/>
+                                            </p:column>
+                                            <p:ajax event="change" process="@this"/>
+                                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                            <f:selectItems value="#{clienteControle.clientes}" var="cliente" itemLabel="#{cliente.nome}" itemValue="#{cliente}"/>
+                                        </p:selectOneMenu>
+                                    </p:row>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group form-md-line-input">
+                                    <label class="control-label">Centro de custo</label>
+                                    <p:selectOneMenu value="#{controle.contaSelecionada.idCentroCusto}" panelStyle="width:180px" effect="fade" var="t"
+                                                     style="width:160px" filter="true" filterMatchMode="startsWith" converter="#{genericConverter}"
+                                                     disabled="#{!controle.podeEditarDados}">
+                                        <p:column>
+                                            <h:outputText value="#{t.descricao}"/>
+                                        </p:column>
+                                        <p:ajax event="change" process="@this"/>
+                                        <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                        <f:selectItems value="#{centroCustoControle.centroCustos}" var="centroCusto" itemLabel="#{centroCusto.descricao}"
+                                                       itemValue="#{centroCusto}"/>
+                                    </p:selectOneMenu>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group form-md-line-input">
+                                    <label class="control-label">Observação da conta</label>
+                                    <p:inputTextarea value="#{controle.contaSelecionada.observacao}" styleClass="form-control" disabled="#{true}"/>
+                                </div>
+                            </div>
+                        </div>
+                    </p:outputPanel>
+                    <p:fileUpload fileUploadListener="#{controle.setPart}" mode="advanced" id="fileUpload"
+                                  multiple="true" style="display: none;" auto="true" process="@this" update="fileList"/>
+                    <p:dataTable value="#{controle.listaAnexos}" var="arquivo" id="fileList" emptyMessage="Nenhum arquivo enviado."
+                                 styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+                        <f:facet name="header">
+                            Arquivos
+                            <p:commandButton onclick="Array.from(document.querySelectorAll('.ui-fileupload'))/* Busca os widgets p:fileUpload */
+                                            .filter(element => element.id.indexOf(':fileUpload') >= 0)[0]/* Pega o que tiver o ID correto */
+                                            .querySelector('input[type=file]')/* Busca o input nele e dispara um clique */
+                                            .click();
+                                    return false;" value="Adicionar" class="pull-right" rendered="#{!inativo}"/>
+                            <div class="clearfix"></div>
+                        </f:facet>
+                        <p:column headerText="Nome do arquivo">
+                            <h:outputText value="#{arquivo.nome}" title="#{arquivo.nome}"/>
+                        </p:column>
+                        <p:column headerText="Data do upload">
+                            <h:outputText value="#{arquivo.dataEnvio}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="Usuário">
+                            <h:outputText value="#{arquivo.nomeUsuarioEnvio}" title="#{arquivo.nomeUsuarioEnvio}"/>
+                        </p:column>
+                        <p:column headerText="" style="width: 16px;text-align: center;">
+                            <f:facet name="header">
+                                <i class="fa fa-arrow-down" title="Baixar arquivos"></i>
+                            </f:facet>
+                            <p:commandLink title="Baixar arquivo" ajax="false" class="btn btn-circle btn-icon-only btn-default icones" immediate="true">
+                                <i class="fa fa-arrow-down"></i>
+                                <p:fileDownload value="#{documentoControle.downloadAnexo(arquivo)}"/>
+                            </p:commandLink>
+                        </p:column>
+                        <p:column headerText="" style="width: 16px;" rendered="#{!inativo}">
+                            <f:facet name="header">
+                                <p:commandLink action="#{controle.removerArquivos()}" title="Remover todos os arquivos" class="btn btn-circle btn-default btn-xs"
+                                               update="fileList" style="padding: 0;" immediate="true">
+                                    <i class="icon-trash"></i>
+                                </p:commandLink>
+                            </f:facet>
+                            <p:commandLink action="#{controle.removerArquivo(arquivo)}" title="Remover arquivo" class="btn btn-circle btn-default btn-xs"
+                                           update="fileList" style="padding: 0;" immediate="true">
+                                <i class="icon-trash"></i>
+                            </p:commandLink>
+                        </p:column>
+                    </p:dataTable>
+                </div>
+            </div>
+        </div>
+
+        <p:dataGrid id="tblParcela" var="item" value="#{controle.parcelas}" first="#{controle.numParcelaAtual - 1}" layout="grid"
+                    columns="1" rows="1" paginator="true" paginatorPosition="bottom" 
+                    styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+            <h:messages class="alertMessage" errorClass="alert alert-danger"/>
+
+            <f:facet name="header">
+                Parcela <span id="numParcelaAtual">#{item.numParcela}</span>/#{controle.parcelas.size()}
+                <p:commandButton id="btnAddParcela" rendered="#{controle.possuiParcelasEmAberto() and item.idConta.tipoConta eq 'N'}"
+                                 immediate="true" process="@this" update="tblParcela" action="#{controle.addParcela()}" value="Adicionar"/>
+                <div class="pull-right">
+
+
+                </div>
+                <div class="clearfix"></div>
+            </f:facet>
+
+            <script>
+                numParcelaAtual.innerHTML = #{item.numParcela};
+            </script>
+
+            <div class="row">
+                <div class="col">
+                    <div class="form-group form-md-line-input">
+                        <label class="control-label">Data emissão</label>
+                        <p:calendar navigator="true" value="#{item.dataEmissao}" disabled="#{item.situacao eq 'PG'}" pattern="dd/MM/yyyy" mask="true">
+                            <p:ajax event="dateSelect" process="@this"/>
+                            <p:ajax event="change" process="@this"/>
+                        </p:calendar>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="form-group form-md-line-input">
+                        <label class="control-label">Data vencimento</label>
+                        <p:calendar navigator="true" value="#{item.dataVencimento}" disabled="#{item.situacao eq 'PG'}" pattern="dd/MM/yyyy" mask="true"/>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="form-group form-md-line-input">
+                        <label class="control-label">Data pagamento</label>
+                        <p:calendar navigator="true" value="#{item.dataPagamento}" maxdate="#{controle.hoje}" disabled="#{item.situacao eq 'PG'}" pattern="dd/MM/yyyy" mask="true"/>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="form-group form-md-line-input">
+                        <cc:addButton label="Forma de pagamento" entityName="formaPagamento">
+                            <p:selectOneMenu value="#{item.idFormaPagamento}" panelStyle="width:180px" effect="fade" var="t" style="width:160px" filter="true" filterMatchMode="contains" disabled="#{item.situacao eq 'PG'}" converter="#{genericConverter}">
+                                <p:column>
+                                    <h:outputText value="#{t.descricao}"/>
+                                </p:column>
+
+                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                <f:selectItems value="#{formaPagamentoControle.formasPagamento}" var="formaPagamento" itemLabel="#{formaPagamento.descricao}" itemValue="#{formaPagamento}"/>
+                            </p:selectOneMenu>
+                        </cc:addButton>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="form-group form-md-line-input">
+                        <cc:addButton label="Conta Bancaria" entityName="contaBancaria">
+                            <p:selectOneMenu value="#{item.idContaBancaria}" panelStyle="width:180px" effect="fade" var="t"
+                                             style="width:160px" filter="true" filterMatchMode="contains"
+                                             disabled="#{item.situacao eq 'PG'}" converter="#{genericConverter}">
+                                <p:column>
+                                    <h:outputText value="#{t.descricao}"/>
+                                </p:column>
+
+                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                <f:selectItems value="#{contaBancariaControle.contaBancarias}" var="cB"
+                                               itemLabel="#{cB.descricao}" itemValue="#{cB}"/>
+                            </p:selectOneMenu>
+                        </cc:addButton>
+                    </div>
+                </div>
+                <div class="w-100"></div>
+                <div class="col">
+                    <div class="form-group form-md-line-input">
+                        <label class="control-label">Valor bruto</label>
+                        <p:inputNumber value="#{item.valor}" id="valorBruto" symbol="R$ " thousandSeparator="." decimalSeparator="," decimalPlaces="2"
+                                       disabled="#{item.situacao eq 'PG' or item.idConta.tipoConta eq 'V' or !controle.podeEditarValor}">
+                            <p:ajax event="change" process="@parent, valorBruto, tblParcela" update="tblParcela" global="false" partialSubmit="true" listener="#{controle.calcularTributosTotais(item)}"/>
+                        </p:inputNumber>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group form-md-line-input">
+                        <label class="control-label">Valor pago</label>
+                        <p:inputText value="#{item.valorPago eq 0 ? 0: item.valorPago}" disabled="true" styleClass="form-control" >
+                            <f:convertNumber type="currency" locale="pt_BR"/>
+                        </p:inputText>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group form-md-line-input">
+                        <label class="control-label">Valor líquido</label>
+                        <p:inputText value="#{item.valorTotal}" disabled="true" styleClass="form-control" >
+                            <f:convertNumber type="currency" locale="pt_BR"/>
+                        </p:inputText>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group form-md-line-input">
+                        <label class="control-label">Juros</label>
+                        <p:inputNumber value="#{item.juros}" symbol="R$ " disabled="#{item.situacao eq 'PG'}" thousandSeparator="." decimalSeparator="," decimalPlaces="2" >
+                            <p:ajax event="change" process="@this" global="false" update="tblParcela" listener="#{controle.calcularTributosTotais(item)}"/>
+                        </p:inputNumber>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group form-md-line-input">
+                        <label class="control-label">Multa</label>
+                        <p:inputNumber value="#{item.multa}" symbol="R$ " disabled="#{item.situacao eq 'PG'}" thousandSeparator="." decimalSeparator="," decimalPlaces="2" >
+                            <p:ajax event="change" process="@this" global="false" update="tblParcela" listener="#{controle.calcularTributosTotais(item)}"/>
+                        </p:inputNumber>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group form-md-line-input">
+                        <label class="control-label">Encargos</label>
+                        <p:inputNumber value="#{item.encargos}" symbol="R$ " disabled="#{item.situacao eq 'PG'}" thousandSeparator="." decimalSeparator="," decimalPlaces="2" >
+                            <p:ajax event="change" process="@this" global="false" update="tblParcela" listener="#{controle.calcularTributosTotais(item)}"/>
+                        </p:inputNumber>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group form-md-line-input">
+                        <label class="control-label">Outros custos</label>
+                        <p:inputNumber value="#{item.outrosCustos}" symbol="R$ " disabled="#{item.situacao eq 'PG'}" thousandSeparator="." decimalSeparator="," decimalPlaces="2" >
+                            <p:ajax event="change" process="@this" global="false" update="tblParcela" listener="#{controle.calcularTributosTotais(item)}"/>
+                        </p:inputNumber>
+                    </div>
+                </div>
+                <div class="w-100"></div>
+                <div class="col">
+                    <div class="form-group form-md-line-input">
+                        <label class="control-label">IR</label>
+                        <p:inputNumber value="#{item.valorIR}" symbol="R$ " disabled="#{item.situacao eq 'PG'}" thousandSeparator="." decimalSeparator="," decimalPlaces="2" >
+                            <p:ajax event="change" process="@this" global="false" update="tblParcela" listener="#{controle.calcularTributosTotais(item)}"/>
+                        </p:inputNumber>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group form-md-line-input">
+                        <label class="control-label">PIS</label>
+                        <p:inputNumber value="#{item.valorPIS}" disabled="#{item.situacao eq 'PG'}" symbol="R$ " thousandSeparator="." decimalSeparator="," decimalPlaces="2" >
+                            <p:ajax event="change" process="@this" global="false" update="tblParcela" listener="#{controle.calcularTributosTotais(item)}"/>
+                        </p:inputNumber>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="form-group form-md-line-input">
+                        <label class="control-label">CSLL</label>
+                        <p:inputNumber value="#{item.valorCSLL}" disabled="#{item.situacao eq 'PG'}" symbol="R$ " thousandSeparator="." decimalSeparator="," decimalPlaces="2" >
+                            <p:ajax event="change" process="@this" global="false" update="tblParcela" listener="#{controle.calcularTributosTotais(item)}"/>
+                        </p:inputNumber>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group form-md-line-input">
+                        <label class="control-label">INSS</label>
+                        <p:inputNumber value="#{item.valorINSS}" disabled="#{item.situacao eq 'PG'}" symbol="R$ " thousandSeparator="." decimalSeparator="," decimalPlaces="2" >
+                            <p:ajax event="change" process="@this" global="false" update="tblParcela" listener="#{controle.calcularTributosTotais(item)}"/>
+                        </p:inputNumber>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group form-md-line-input">
+                        <label class="control-label">COFINS</label>
+                        <p:inputNumber value="#{item.valorCOFINS}" disabled="#{item.situacao eq 'PG'}" symbol="R$ " thousandSeparator="." decimalSeparator="," decimalPlaces="2" >
+                            <p:ajax event="change" process="@this" global="false" update="tblParcela" listener="#{controle.calcularTributosTotais(item)}"/>
+                        </p:inputNumber>
+                    </div>
+                </div>
+
+                <div class="w-100"></div>
+                <div class="col">
+                    <div class="form-group form-md-line-input">
+                        <label class="control-label">ISS</label>
+                        <p:inputNumber value="#{item.valorISS}" disabled="#{item.situacao eq 'PG'}" symbol="R$ " thousandSeparator="." decimalSeparator="," decimalPlaces="2" >
+                            <p:ajax event="change" process="@this" global="false" update="tblParcela" listener="#{controle.calcularTributosTotais(item)}"/>
+                        </p:inputNumber>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group form-md-line-input">
+                        <label class="control-label">Desconto</label>
+                        <p:inputNumber value="#{item.desconto}" disabled="#{item.situacao eq 'PG'}" symbol="R$ " thousandSeparator="." decimalSeparator="," decimalPlaces="2" >
+                            <p:ajax event="change" process="@this" global="false" update="tblParcela" listener="#{controle.calcularTributosTotais(item)}"/>
+                        </p:inputNumber>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group form-md-line-input">
+                        <label class="control-label">Acréscimo</label>
+                        <p:inputNumber value="#{item.acrescimo}" disabled="#{item.situacao eq 'PG'}" symbol="R$ " thousandSeparator="." decimalSeparator="," decimalPlaces="2" >
+                            <p:ajax event="change" process="@this" global="false" update="tblParcela" listener="#{controle.calcularTributosTotais(item)}"/>
+                        </p:inputNumber>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="form-group form-md-line-input">
+                        <label class="control-label">Tarifa</label>
+                        <p:inputNumber value="#{item.tarifa}" disabled="#{item.situacao eq 'PG'}" symbol="R$ " thousandSeparator="." decimalSeparator="," decimalPlaces="2" >
+                            <p:ajax event="change" process="@this" global="false" update="tblParcela" listener="#{controle.calcularTributosTotais(item)}"/>
+                        </p:inputNumber>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group form-md-line-input">
+                        <label class="control-label">ICMS</label>
+                        <p:inputNumber value="#{item.valorICMS}" disabled="#{item.situacao eq 'PG'}" symbol="R$ " thousandSeparator="." decimalSeparator="," decimalPlaces="2" >
+                            <p:ajax event="change" process="@this" global="false" update="tblParcela" listener="#{controle.calcularTributosTotais(item)}" />
+                        </p:inputNumber>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group form-md-line-input">
+                        <label class="control-label">Nº do documento</label>
+                        <p:inputText value="#{item.numNf}" styleClass="form-control" maxlength="10"/>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="form-group form-md-line-input">
+                        <label class="control-label">Observação da parcela</label>
+                        <p:inputTextarea value="#{item.observacao}" styleClass="form-control"/>
+                    </div>
+                </div>
+
+            </div>
+            <div>
+                <p:commandButton id="btnCalcular" rendered="#{controle.contaSelecionada.idCliente ne null}"
+                                 process="@this, tblParcela" update="tblParcela" disabled="#{item.situacao eq 'PG'}"
+                                 action="#{controle.calcularTributosTotais()}" value="Calcular impostos">
+                    <f:setPropertyActionListener target="#{controle.contaParcelaSelecionada}" value="#{item}"/>
+                    <f:setPropertyActionListener target="#{controle.clienteSelecionado}" value="#{controle.contaSelecionada.idCliente}"/>
+                </p:commandButton>
+
+                <p:commandButton value="Baixar" process="@this, tblParcela" update="tblParcela" actionListener="#{controle.calcularTributosTotais(item)}"
+                                 action="#{controle.baixarParcela()}" rendered="#{item.situacao eq 'NP'}" >
+                    <f:setPropertyActionListener value="#{item}" target="#{controle.contaParcelaSelecionada}"/>
+                </p:commandButton>
+
+                <p:commandButton value="Cancelar baixa" process="@this, tblParcela" update="tblParcela, form:detalhes"
+                                 actionListener="#{controle.cancelarbaixaParcela()}" rendered="#{item.situacao eq 'PG' or item.situacao eq 'PP'}" >
+                    <f:setPropertyActionListener value="#{item}" target="#{controle.contaParcelaSelecionada}"/>
+                </p:commandButton>
+
+                <p:commandButton value="Apagar parcela" process="@this, tblParcela" update="tblParcela"
+                                 action="#{controle.removerParcela(item)}" rendered="#{item.idConta.tipoConta eq 'N' and item.situacao eq 'NP' and item.canceladoAgora eq false}"/>
+
+                <p:row rendered="#{controle.tipoConta eq EnumConta.RECEBER}">
+                    <p:commandButton value="Emitir boleto" rendered="#{item.situacao ne 'CC'}" ajax="false">
+                        <f:setPropertyActionListener value="#{item}" target="#{contaReceberControle.contaParcelaSelecionada}" />
+                        <p:fileDownload value="#{contaReceberControle.emitirBoleto()}" />
+                    </p:commandButton>
+
+                    <p:commandButton value="Emitir NFS" process="@this" action="#{notaFiscalServicoControle.doStartAdd()}"
+                                     rendered="#{item.idNFS eq null and item.advemContrato eq 'S' }">
+                        <f:setPropertyActionListener value="#{item}" target="#{notaFiscalServicoControle.parcelaSelecionada}" />
+                    </p:commandButton>
+
+                    <p:commandButton value="Salvar e emitir NFS" process="@this, tblParcela"
+                                     action="#{contaReceberControle.salvarEEmitir(notaFiscalServicoControle)}"
+                                     rendered="#{item.idNFS eq null and item.advemContrato eq 'S' }">
+                        <f:setPropertyActionListener value="#{item}" target="#{notaFiscalServicoControle.parcelaSelecionada}" />
+                    </p:commandButton>
+
+                    <p:commandButton value="Vincular NFS" process="@this" action="#{contaReceberControle.doStartNFSBond()}"
+                                     rendered="#{(item.idNFS eq null or item.idNFS.id eq null) and item.advemContrato eq 'S' }">
+                        <f:setPropertyActionListener value="#{item}" target="#{contaReceberControle.contaParcelaSelecionada}" />
+                    </p:commandButton>
+
+                    <p:commandButton value="Ver NFS" process="@this" action="#{contaReceberControle.doShowNFSVinculada()}"
+                                     rendered="#{item.idNFS ne null}">
+                        <f:setPropertyActionListener value="#{item}" target="#{contaReceberControle.contaParcelaSelecionada}" />
+                    </p:commandButton>
+                </p:row>
+            </div>
+
+        </p:dataGrid>
+
+    </div>
+
+</ui:composition>

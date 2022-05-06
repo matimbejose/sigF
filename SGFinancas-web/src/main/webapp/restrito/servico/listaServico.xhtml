@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:sec="http://www.springframework.org/security/facelets/tags"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite/components">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Serviço"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Cadastro</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/servico/listaServico.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <sec:ifAnyGranted roles ="SERVICO_GERENCIAR" >
+                <h:commandButton id="remoteAdd" action="#{servicoControle.doStartAdd()}"/>
+                <h:commandButton id="remoteImport" action="#{servicoControle.mudaSituacaoImportacao()}"/>
+            </sec:ifAnyGranted>
+        </ui:define>
+
+        <ui:define name="formButtons">
+            <p:commandButton type="button" value="Limpar filtros" onclick="clearDataTableFilters('tbl');"/>
+            <p:commandButton id="toggler" type="button" value="Colunas"/>
+            <p:columnToggler datasource="tbl" trigger="toggler"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <p:dataTable value="#{servicoControle.model}" emptyMessage="Nenhum registro encontrado." var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+                <p:column headerText="#" width="55" sortBy="#{item.id}" visible="false">
+                    <h:outputText value="#{item.id}"/>
+                </p:column>
+
+                <p:column headerText="Descrição" sortBy="#{item.descricao}" filterBy="#{item.descricao}">
+                    <f:facet name="filter">
+                        <p:inputText value="#{servicoControle.filtro.descricao}" onchange="PF('tbl').filter()"/>
+                    </f:facet>
+                    <h:outputText value="#{item.descricao} - (NÃO ATUALIZADO)" rendered="#{item.idPlanoConta eq null}"/>
+                    <h:outputText value="#{item.descricao}" rendered="#{item.idPlanoConta ne null}"/>
+                </p:column>
+
+                <p:column headerText="Categoria" sortBy="#{item.idProdutoCategoria.descricao}" filterBy="#{item.idProdutoCategoria.descricao}">
+                    <f:facet name="filter">
+                        <p:selectOneMenu onchange="PF('tbl').filter()" styleClass="custom-filter" filter="true"
+                                         value="#{servicoControle.filtro.idProdutoCategoria}" converter="#{genericConverter}">
+                            <f:selectItem itemLabel="Todos" noSelectionOption="true"/>
+                            <f:selectItems value="#{produtoControle.produtosCategoria}" var="produtoCategoria"
+                                           itemLabel="#{produtoCategoria.descricao}" itemValue="#{produtoCategoria}"/>
+                        </p:selectOneMenu>
+                    </f:facet>
+
+                    <h:outputText value="#{item.idProdutoCategoria.descricao}"/>
+                </p:column>
+
+                <p:column headerText="Custo serviço" sortBy="#{item.custoServico}" filterBy="#{item.custoServico}" width="100">
+                    <f:facet name="filter">
+                        <p:inputText value="#{servicoControle.filtro.custoServico}" onchange="PF('tbl').filter()"/>
+                    </f:facet>
+                    <h:outputText value="#{item.custoServico}">
+                        <f:convertNumber locale="pt_BR" type="currency" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Valor venda" sortBy="#{item.valorVenda}" filterBy="#{item.valorVenda}" width="100">
+                    <f:facet name="filter">
+                        <p:inputText value="#{servicoControle.filtro.valorVenda}" onchange="PF('tbl').filter()"/>
+                    </f:facet>
+                    <h:outputText value="#{item.valorVenda}">
+                        <f:convertNumber locale="pt_BR" type="currency" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Tempo de execução" sortBy="#{item.tempoExecucao}" width="100">
+                    <div style="font-family: Consolas;">
+                        <cc:convertTime value="#{item.tempoExecucao}" placeholder="--:--:--"/>
+                    </div>
+                </p:column>
+
+                <p:column headerText="Permite seleção de funcionário" width="100" visible="false">
+                    <h:outputText value="Sim" rendered="#{item.permiteSelecaoProfissional eq 'S'}"/>
+                    <h:outputText value="Não" rendered="#{item.permiteSelecaoProfissional ne 'S'}"/>
+                </p:column>
+
+                <ui:remove>
+                    <p:column headerText="Pontos"  width="80" style="text-align: right">
+                        <h:outputText value="#{item.pontos}">
+                            <f:convertNumber locale="pt_BR" minFractionDigits="2" />
+                        </h:outputText>
+                    </p:column>
+                </ui:remove>
+
+                <p:column headerText="Ativo" sortBy="#{item.ativo}" filterBy="#{item.ativo}" width="100">
+                    <f:facet name="filter">
+                        <p:selectOneMenu onchange="PF('tbl').filter()" styleClass="custom-filter"
+                                         value="#{servicoControle.filtro.ativo}">
+                            <f:selectItem itemLabel="Todos" noSelectionOption="true"/>
+                            <f:selectItem itemLabel="Sim" itemValue="S"/>
+                            <f:selectItem itemLabel="Não" itemValue="N"/>
+                        </p:selectOneMenu>
+                    </f:facet>
+                    <h:outputText value="Sim" rendered="#{item.ativo eq 'S'}"/>
+                    <h:outputText value="Não" rendered="#{item.ativo eq 'N'}"/>
+                </p:column>
+
+                <sec:ifAnyGranted roles ="SERVICO_GERENCIAR" >
+                    <p:column width="117" headerText="Ações" >
+                        <div class="actions">
+                            <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Alterar Serviço"
+                                           action="#{servicoControle.doStartAlterar()}" rendered="#{item.ativo eq 'S'}">
+                                <i class="fa fa-edit"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{servicoControle.servicoSelecionado}"/>
+                            </h:commandLink>
+
+                            <h:commandLink  styleClass="btn btn-circle btn-icon-only btn-default icones" title="Remover Serviço"
+                                            action="#{servicoControle.doFinishExcluir()}" rendered="#{item.ativo eq 'S'}"
+                                            onclick="return confirm('Tem certeza que deseja excluir este Serviço?');" >
+                                <i class="icon-trash"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{servicoControle.servicoSelecionado}"/>
+                            </h:commandLink>
+                            <h:commandLink  title="Auditoria"  styleClass="btn btn-circle btn-icon-only btn-default icones" action="#{servicoControle.doShowAuditoria()}" >
+                                <i class="fa fa-history"></i>
+                                <f:setPropertyActionListener value="#{item}" target="#{servicoControle.servicoSelecionado}"/>
+                            </h:commandLink>
+                        </div>
+                    </p:column>
+                </sec:ifAnyGranted>
+
+            </p:dataTable>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

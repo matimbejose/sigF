@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="autorizacao_desconto_folha" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="dbf1ee1e-2fac-41b7-9215-1776f546f95d">
+    <property name="ireport.zoom" value="1.6105100000000008"/>
+    <property name="ireport.x" value="0"/>
+    <property name="ireport.y" value="0"/>
+    <property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+    <parameter name="relatorioDto" class="br.com.villefortconsulting.sgfinancas.entidades.dto.RelatorioDTO"/>
+    <parameter name="titulo" class="java.lang.String"/>
+    <queryString>
+		<![CDATA[]]>
+    </queryString>
+    <field name="dataLancamento" class="java.util.Date">
+        <fieldDescription><![CDATA[dataLancamento]]></fieldDescription>
+    </field>
+    <field name="contaDebito" class="java.lang.String">
+        <fieldDescription><![CDATA[contaDebito]]></fieldDescription>
+    </field>
+    <field name="contaCredito" class="java.lang.String">
+        <fieldDescription><![CDATA[contaCredito]]></fieldDescription>
+    </field>
+    <field name="situacao" class="java.lang.String">
+        <fieldDescription><![CDATA[situacao]]></fieldDescription>
+    </field>
+    <field name="valor" class="java.lang.Double">
+        <fieldDescription><![CDATA[valor]]></fieldDescription>
+    </field>
+    <pageHeader>
+        <band height="23">
+            <textField>
+                <reportElement x="689" y="0" width="72" height="23" uuid="d4c5d00c-3c1e-4168-a619-12e92d811628"/>
+                <textElement textAlignment="Right" verticalAlignment="Middle">
+                    <font fontName="Arial" size="10" isItalic="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="true" pattern="dd/MM/yyyy HH:mm">
+                <reportElement x="0" y="0" width="97" height="23" uuid="cc92bec4-754f-4bf0-be56-5ba3cf196159"/>
+                <box leftPadding="5"/>
+                <textElement verticalAlignment="Middle">
+                    <font fontName="Arial" size="10" isBold="false"/>
+                    <paragraph lineSpacingSize="0.0"/>
+                </textElement>
+                <textFieldExpression><![CDATA[new Date()]]></textFieldExpression>
+            </textField>
+            <textField evaluationTime="Report">
+                <reportElement x="761" y="0" width="40" height="23" uuid="d0b82d63-c62c-469a-9ef3-1fea0c8e5643"/>
+                <textElement verticalAlignment="Middle">
+                    <font fontName="Arial" size="10" isItalic="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="97" y="0" width="592" height="23" uuid="1ec3ad9b-e473-40e7-b84e-01a2073fa423"/>
+                <box leftPadding="5"/>
+                <textElement textAlignment="Center" verticalAlignment="Top">
+                    <font fontName="Arial" size="13" isBold="false"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{titulo}]]></textFieldExpression>
+            </textField>
+        </band>
+    </pageHeader>
+    <columnHeader>
+        <band height="16">
+            <property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+            <staticText>
+                <reportElement mode="Opaque" x="70" y="0" width="114" height="15" uuid="3eded563-eece-41d1-b8bf-5fc7138d8aa5">
+                    <property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+                </reportElement>
+                <box leftPadding="0">
+                    <bottomPen lineWidth="0.5"/>
+                </box>
+                <textElement textAlignment="Left" verticalAlignment="Middle">
+                    <font fontName="Arial" size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Data do lançamento]]></text>
+            </staticText>
+            <staticText>
+                <reportElement mode="Opaque" x="184" y="0" width="139" height="15" uuid="36875e90-a933-4676-a899-a5404ad0ebcf"/>
+                <box leftPadding="0">
+                    <bottomPen lineWidth="0.5"/>
+                </box>
+                <textElement textAlignment="Left" verticalAlignment="Middle">
+                    <font fontName="Arial" size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Conta de crédito]]></text>
+            </staticText>
+            <staticText>
+                <reportElement mode="Opaque" x="323" y="0" width="144" height="15" uuid="c04288b8-dcf0-4be8-89d0-d5acc856bed6"/>
+                <box leftPadding="0">
+                    <bottomPen lineWidth="0.5"/>
+                </box>
+                <textElement textAlignment="Left" verticalAlignment="Middle">
+                    <font fontName="Arial" size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Conta de débito]]></text>
+            </staticText>
+            <staticText>
+                <reportElement mode="Opaque" x="467" y="0" width="129" height="15" uuid="946cdad6-b0a7-448c-a7ea-6043c2f6e591"/>
+                <box leftPadding="0">
+                    <bottomPen lineWidth="0.5"/>
+                </box>
+                <textElement textAlignment="Left" verticalAlignment="Middle">
+                    <font fontName="Arial" size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Valor]]></text>
+            </staticText>
+            <staticText>
+                <reportElement mode="Opaque" x="596" y="0" width="121" height="15" uuid="bb88cd0c-4bd1-4f38-ae0c-6c4d80ffcf64"/>
+                <box leftPadding="0">
+                    <bottomPen lineWidth="0.5"/>
+                </box>
+                <textElement textAlignment="Left" verticalAlignment="Middle">
+                    <font fontName="Arial" size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Situação]]></text>
+            </staticText>
+        </band>
+    </columnHeader>
+    <detail>
+        <band height="15">
+            <property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+            <textField pattern="" isBlankWhenNull="true">
+                <reportElement x="184" y="0" width="139" height="15" uuid="eb4d0c55-1f7b-4e21-a61d-9ab9554ea962">
+                    <property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+                </reportElement>
+                <textElement>
+                    <font size="7"/>
+                    <paragraph lineSpacing="Single"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{contaCredito}]]></textFieldExpression>
+            </textField>
+            <textField pattern="" isBlankWhenNull="true">
+                <reportElement x="321" y="0" width="146" height="15" uuid="3f9ec6a6-b70b-49ef-9da8-80837ca1bc4e"/>
+                <textElement>
+                    <font size="7"/>
+                    <paragraph lineSpacing="Single"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{contaDebito}]]></textFieldExpression>
+            </textField>
+            <textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+                <reportElement x="70" y="0" width="114" height="15" uuid="b31d0d22-54ad-4bba-bc5f-f6128798658e">
+                    <property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+                    <property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+                </reportElement>
+                <textElement>
+                    <font size="7"/>
+                    <paragraph lineSpacing="Single"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{dataLancamento}]]></textFieldExpression>
+            </textField>
+            <textField pattern="" isBlankWhenNull="true">
+                <reportElement x="596" y="0" width="121" height="15" uuid="2f33943e-bc34-4887-8761-94bcd5c63a3b"/>
+                <textElement>
+                    <font size="7"/>
+                    <paragraph lineSpacing="Single"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{situacao}]]></textFieldExpression>
+            </textField>
+            <textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+                <reportElement x="467" y="0" width="129" height="15" uuid="a78784af-b5db-4f35-a9f3-510c28046f37"/>
+                <textElement>
+                    <font size="7"/>
+                    <paragraph lineSpacing="Single"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{valor}]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+    <pageFooter>
+        <band height="22" splitType="Stretch">
+            <textField>
+                <reportElement mode="Opaque" x="0" y="0" width="337" height="22" forecolor="#000000" backcolor="#FFFFFF" uuid="897bfc14-5b63-4a81-b549-536ccfea869b"/>
+                <textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+                    <font fontName="Arial" size="10" isBold="false" isItalic="false"/>
+                    <paragraph lineSpacing="Single"/>
+                </textElement>
+                <textFieldExpression><![CDATA[" © 2015-2017 Villefortconsulting.com | Todos os direitos reservados. "]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement mode="Opaque" x="726" y="0" width="76" height="20" forecolor="#000000" backcolor="#FFFFFF" uuid="47db4ce7-7aa5-47c2-b122-c7f1e9061bf1"/>
+                <textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+                    <font fontName="Arial" size="10" isBold="false" isItalic="false"/>
+                    <paragraph lineSpacing="Single"/>
+                </textElement>
+                <textFieldExpression><![CDATA["SGFinanças"]]></textFieldExpression>
+            </textField>
+        </band>
+    </pageFooter>
+</jasperReport>

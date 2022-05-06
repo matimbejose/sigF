@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:sec="http://www.springframework.org/security/facelets/tags"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <f:metadata>
+        <f:event listener="#{contaReceberControle.iniciaFiltroPeriodo()}" type="preRenderView"/>
+
+        <f:event listener="#{contaReceberControle.clearClienteSelecionado()}" type="preRenderView"/>
+    </f:metadata>
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Parcelas para Antecipação"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Antecipação</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/antecipador/listaParcelasAntecipacao.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteAccept" action="#{contaReceberControle.doStartAdd()}" rendered="#{empresaControle.empresaLogada.podePedirAdiantamento eq 'S'}"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <div class="layout-dashboard mb-3">
+                <div class="row">
+                    <div class="col intro-text">
+                        <span>
+                            Resumo de
+                            <p:calendar navigator="true" pattern="dd/MM/yyyy" styleClass="top-calendar m-0" value="#{contaReceberControle.filtro.dataInicio}">
+                                <p:ajax event="dateSelect" update="tbl" oncomplete="updateChart(PF(`chartData`).jq.val());"/>
+                            </p:calendar>
+                            até
+                            <p:calendar navigator="true" pattern="dd/MM/yyyy" styleClass="top-calendar m-0" value="#{contaReceberControle.filtro.dataFim}">
+                                <p:ajax event="dateSelect" update="tbl" oncomplete="updateChart(PF(`chartData`).jq.val());"/>
+                            </p:calendar>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="clearfix"></div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <p:dataTable value="#{contaReceberControle.modelAntecipacao}" emptyMessage="Nenhum registro encontrado." var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow" sortBy="#{item.dataVencimento}" sortOrder="descending">
+
+                        <p:ajax event="page" listener="#{contaReceberControle.onPageChange}"/>
+
+                        <p:column headerText="#" sortBy="#{item.id}" visible="false" width="60" >
+                            <h:outputText value="#{item.id}"/>
+                        </p:column>
+
+                        <p:column headerText="Plano de conta" sortBy="#{idConta.idPlanoConta.descricao}">
+                            <h:outputText value="#{item.idConta.idPlanoConta.descricao} (#{item.numParcela}/#{item.idConta.numeroParcelas})"/>
+                        </p:column>
+
+                        <p:column headerText="Obs." sortBy="#{idConta.observacao}" >
+                            <h:outputText value="#{contaReceberControle.trataObservacao(item)}"/>
+                        </p:column>
+
+                        <p:column headerText="Conta bancária" sortBy="#{idContaBancaria.descricao}" >
+                            <h:outputText value="#{item.idContaBancaria.descricao}"/>
+                        </p:column>
+
+                        <p:column headerText="Cliente" sortBy="#{idConta.idCliente.nome}">
+                            <h:outputText value="#{item.idConta.idCliente.nome}"/>
+                        </p:column>
+
+                        <p:column headerText="Origem" sortBy="#{item.idConta.tipoConta}" >
+                            <p:importEnum type="br.com.villefortconsulting.sgfinancas.util.EnumTipoConta"/>
+                            <h:outputText value="#{contaReceberControle.mostraOrigem(item.idConta)}"/>
+                        </p:column>
+
+                        <p:column headerText="Vencimento" width="95" sortBy="#{item.dataVencimento}">
+                            <h:outputText value="#{item.dataVencimento}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="Pagamento" width="95" sortBy="#{item.dataPagamento}" visible="#{false}">
+                            <h:outputText value="#{item.dataPagamento}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="Valor total" sortBy="#{item.valorTotal}" style="text-align: right" >
+                            <h:outputText value="#{item.valorTotal}">
+                                <f:convertNumber currencySymbol="R$" type="currency"/>
+                            </h:outputText>
+                        </p:column>
+
+
+                        <p:column rendered="#{item.situacao ne 'CC'}" headerText="Situação" sortBy="#{item.situacao}" >
+                            <p:importEnum type="br.com.villefortconsulting.sgfinancas.util.EnumSituacaoConta"/>
+
+                            <h:outputText value="#{contratoClienteControle.buscarSituacao(item.situacao)}"/>
+                        </p:column>
+
+
+                        <f:facet name="footer">
+                            Total de parcelas: #{contaReceberControle.model.rowCount} <span style="padding:0px 12px; "> - </span>
+                            Valor bruto: R$#{contaReceberControle.totalParcelasAntecipacao()} <span style="padding:0px 12px; "> - </span>
+                            Valor liquido: R$
+                        </f:facet>
+                    </p:dataTable>
+                </div>
+            </div>
+
+            <style>
+                .table  {
+                    border-collapse: collapse;
+                    width: 100%;
+                }
+                .table td:last-child {
+                    text-align: right;
+                }
+                .table tr:not(:last-child) {
+                    border-bottom: 1px #ccc solid;
+                }
+            </style>
+        </ui:define>
+
+    </ui:composition>
+</html>

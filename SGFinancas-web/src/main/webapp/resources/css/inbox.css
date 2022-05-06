@@ -1,0 +1,15 @@
+.inbox-nao-lida {
+    font-weight: bold;
+}
+.inbox-usuario {
+    font-size: 1.0em; 
+    color: black;
+}
+.inbox-assunto {
+    font-size: 1.0em; 
+    color: gray;
+}
+.inbox-data {
+    font-size: 0.9em; 
+    color: lightgrey;
+}

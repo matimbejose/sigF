@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Relatório</li>
+            <li>/</li>
+            <li><p:link outcome="#{link}"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="content">
+            <ui:include src="/WEB-INF/msgErro.xhtml"/>
+            <div class="row">
+                <div class="col-6 mx-auto" style="min-width: 800px;">
+                    <div class="card">
+                        <ui:insert name="config"></ui:insert>
+                        <div class="row">
+                            <div class="col ml-auto mt-1">
+                                <p:commandButton value="Gerar relatório" update="form" ajax="false">
+                                    <p:fileDownload value="#{fileDownload}"/>
+                                </p:commandButton>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+</html>

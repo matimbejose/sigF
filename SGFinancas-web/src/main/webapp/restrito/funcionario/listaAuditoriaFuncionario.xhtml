@@ -1,0 +1,40 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+
+    <ui:composition template="/restrito/generic/auditoria.xhtml">
+        <ui:define name="remotes">
+            <h:commandButton id="remoteBack" action="listaFuncionario.xhtml"/>
+        </ui:define>
+
+        <ui:param name="title" value="Funcionário"/>
+        <ui:param name="descricaoMenu" value="Módulos / Pessoal"/>
+        <ui:param name="caminhoAuditoria" value="/restrito/contratoSaida/listaAuditoriaContratoFornecedor.xhtml"/>
+        <ui:param name="objetoSelecionado" value="#{funcionarioControle.funcionarioSelecionado.nome}"/>
+
+        <ui:param name="model" value="#{funcionarioControle.dadosAuditoria}"/>
+
+        <ui:define name="colunas">
+
+            <p:column headerText="Data de lançamento" sortBy="#{item[0].nome}">
+                <h:outputText value="#{item[0].nome}"/>
+            </p:column>
+
+            <p:column headerText="CPF" width="200" sortBy="#{item[0].cpf}">
+                <h:outputText value="#{item[0].cpf}"/>
+            </p:column>
+
+            <p:column headerText="Matrícula" sortBy="#{item[0].matricula}">
+                <h:outputText value="#{item[0].matricula}"/>
+            </p:column>
+
+        </ui:define>
+
+    </ui:composition>
+
+
+</html>

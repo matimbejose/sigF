@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite/components"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Análise Orçamentária"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Financeiro</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/planoConta/analiseOrcamentaria.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes"/>
+
+        <ui:define name="content">
+            <ui:include src="/WEB-INF/msgErro.xhtml"/>
+            <div class="form-body">
+                <div class="row mb-3">
+                    <div class="col-3">
+                        <p:calendar navigator="true" value="#{planoContaControle.dataLacamento}"  placeholder="Data de lançamento" required="true"
+                                    pattern="MM/yyyy" mask="true" requiredMessage="Informe a data de análise"/>
+                    </div>
+                    <div class="col-3">
+                        <p:selectOneMenu value="#{planoContaControle.grupoContabil}">
+                            <f:selectItem itemLabel="Todos os grupos contábeis" itemValue="T"/>
+                            <f:selectItem itemLabel="Somente Ativo" itemValue="1"/>
+                            <f:selectItem itemLabel="Somente Passivo" itemValue="2"/>
+                            <f:selectItem itemLabel="Somente Receita" itemValue="#{planoContaControle.codigoReceita}"/>
+                            <f:selectItem itemLabel="Somente Despesa" itemValue="#{planoContaControle.codigoDespesa}"/>
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="col-3">
+                        <p:selectOneMenu value="#{planoContaControle.centroSelecionado}"
+                                         panelStyle="width:180px" effect="fade"
+                                         var="t" style="width:160px" filter="true" filterMatchMode="startsWith"
+                                         converter="#{genericConverter}">
+                            <p:column>
+                                <h:outputText value="#{t.descricao}"/>
+                            </p:column>
+
+                            <f:selectItem itemLabel="Todos centro de custo" noSelectionOption="true"/>
+                            <f:selectItems value="#{centroCustoControle.centroCustos}"  var="centroCusto" itemLabel="#{centroCusto.descricao}" itemValue="#{centroCusto}"/>
+
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="col-3">
+                        <div class="input-group">
+                            <div class="input-group-append">
+                                <p:inputText value="#{planoContaControle.descricao}" placeholder="Pesquisar..."/>
+                                <p:commandLink title="Consultar" styleClass="btn" action="#{planoContaControle.obterPlanoContaLancamentoResultado()}" update="tbl">
+                                    <i class="fa fa-search"></i>
+                                </p:commandLink>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <p:dataTable value="#{planoContaControle.listaLancamentos}" emptyMessage="Nenhum registro encontrado." var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+                            <p:column headerText="Código" style="width: 15%;">
+                                <h:outputText value="#{item.idPlanoConta.codigo}"/>
+                            </p:column>
+
+                            <p:column headerText="Descrição">
+                                <h:outputText value="#{item.idPlanoConta.descricao}"/>
+                            </p:column>
+
+                            <p:column headerText="Previsto" style="width: 15%; text-align:right">
+                                <h:outputText value="#{item.previsaoFix}">
+                                    <f:convertNumber type="currency" currencySymbol="R$ "/>
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="Realizado" style="width: 15%; text-align:right">
+                                <h:outputText value="#{item.realizado}">
+                                    <f:convertNumber type="currency" currencySymbol="R$ "/>
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="Desempenho" style="text-align:center ;width: 14%;">
+                                <span style="color: #{planoContaControle.getCorFonte(item)};">
+                                    <cc:convertMoney value="#{item.desempenho}" rendered="#{item.previsao ne null or item.realizado ne null}"/>
+                                </span>
+                            </p:column>
+
+                        </p:dataTable>
+                    </div>
+                </div>
+
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

@@ -1,0 +1,100 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+
+        <ui:param name="title" value="Controle de acesso ao ip"/>
+        <ui:define name="title">#{title}</ui:define>
+        <ui:define name="viewname">
+            <li>##SECTION_NAME##</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/controleAcessoIp/listaAuditoriaControleAcessoIp.xhtml"> #{title}</p:link></li>
+        </ui:define>
+        <ui:define name="content">
+            <h:messages class="alertMessage" id="msgResultado" errorClass="alert alert-danger" />
+            <div class="row">
+                <div class="col-md-12 ">
+                    <!-- BEGIN SAMPLE FORM PORTLET-->
+                    <div class="portlet light bordered">
+                        <div class="portlet-title">
+                            <div class="caption">
+                                <i class="fa fa-sort-numeric-desc"></i>
+
+                                <span class="caption-subject font-dark sbold uppercase">Auditoria - #{controleAcessoIpControle.controleAcessoIpSelecionado.descricao}</span>
+
+                            </div>
+                            <div class="tools">
+                            </div>
+                        </div>
+                        <div class="portlet-body form">
+                            <h:form acceptcharset="ISO-8859-1" role="form">
+
+                                <div class="form-body">
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="input-group">
+                                                <p:inputText value="#{controleAcessoIpControle.filtro.descricao}" placeholder="Informe parte da descrição..." />
+                                                <span class="input-group-btn">
+                                                    <p:commandLink  title="Consultar" class="btn-sm" update="tbl" process="@form" >
+                                                        <i class="fa fa-search text-info"></i>
+                                                    </p:commandLink>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br/>
+                                    <div class="portlet-body flip-scroll">
+                                        <p:dataTable value="#{controleAcessoIpControle.dadosAuditoria}" var="item" emptyMessage="Nenhma alteração encontrada."
+                                                     rows="10" paginator="true" paginatorPosition="bottom"
+                                                     rowsPerPageTemplate="10,20,30"
+                                                     class="table table-striped table-bordered table-hover table-striped table-condensed flip-content" id="tbl">
+
+                                            <p:column headerText="Descrição" sortBy="#{item[0].descricao}">
+                                                <h:outputText value="#{item[0].descricao}"/>
+                                            </p:column>
+
+                                            <p:column headerText="Usuário" sortBy="#{item[1].usuario}">
+                                                <h:outputText value="#{item[1].usuario}"/>
+                                            </p:column>
+
+                                            <p:column headerText="Data de atualização" sortBy="#{item[1].dataAtualizacao}">
+                                                <h:outputText value="#{item[1].dataAtualizacao}" >
+                                                    <f:convertDateTime pattern="dd/MM/yy HH:mm"/>
+                                                </h:outputText>
+                                            </p:column>
+
+                                            <p:column headerText="IP" sortBy="#{item[1].ip}">
+                                                <h:outputText value="#{item[1].ip}"/>
+                                            </p:column>
+
+                                            <p:column headerText="Ação" sortBy="#{item[2].getRepresentation()}">
+                                                <h:outputText value="Adicionado" rendered="#{item[2].getRepresentation() eq '0'}"/>
+                                                <h:outputText value="Modificado" rendered="#{item[2].getRepresentation() eq '1'}"/>
+                                                <h:outputText value="Excluído" rendered="#{item[2].getRepresentation() eq '2'}"/>
+                                            </p:column>
+
+                                        </p:dataTable>
+                                    </div>
+                                </div>
+                                <div class="form-actions">
+                                    <h:panelGrid columns="4" >
+                                        <h:commandButton action="listaControleAcessoIp.xhtml" immediate="true" styleClass="btn default" value="Voltar" />
+                                    </h:panelGrid>
+                                </div>
+                            </h:form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

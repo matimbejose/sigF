@@ -1,0 +1,111 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <f:metadata >
+        <f:event listener="#{usuarioControle.controleMenu.setMenuAdministracaoControleAcessoIp() }" type="preRenderView" />
+    </f:metadata>
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+        <ui:param name="title" value="Controle de acesso por IP"/>
+        <ui:define name="title">#{title}</ui:define>
+        <ui:define name="viewname">
+            <li>##SECTION_NAME##</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/controleAcessoIp/listaControleAcessoIp.xhtml"> #{title}</p:link></li>
+        </ui:define>
+        <ui:define name="content">
+            <h:messages class="alertMessage" errorClass="alert alert-danger" infoClass="alert alert-success"/>
+            <h:form acceptcharset="ISO-8859-1">
+                <div class="row">
+                    <div class="col-md-12">
+                        <!-- BEGIN EXAMPLE TABLE PORTLET-->
+                        <div class="portlet light bordered">
+
+                            <div class="portlet-title">
+
+                                <div class="caption">
+                                    <i class="fa fa-sort-numeric-desc"></i>Listagem
+                                </div>
+                                <div class="actions">
+                                    <a href="#{controleAcessoIpControle.doStartAdd() }"  title="Novo orgão" class="btn btn-circle blue-dark btn-sm">
+                                        <i class="fa fa-plus"></i> Adicionar </a>
+                                </div>
+                            </div>
+
+                            <div class="portlet-body">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="input-group">
+                                            <p:inputText value="#{controleAcessoIpControle.filtro.descricao}" placeholder="Informe parte da descrição..." />
+                                            <span class="input-group-btn">
+                                                <p:commandLink  title="Consultar" class="btn-sm" update="tbl" process="@form" >
+                                                    <i class="fa fa-search text-info"></i>
+                                                </p:commandLink>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br/>
+
+
+                                <div class="portlet-body flip-scroll">
+                                    <p:dataTable value="#{controleAcessoIpControle.model}" emptyMessage="Nenhum registro encontrado." var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+                                        <p:column headerText="#" width="55" sortBy="#{item.id}">
+                                            <h:outputText value="#{item.id}"/>
+                                        </p:column>
+
+                                        <p:column headerText="Descrição" sortBy="#{item.descricao}">
+                                            <h:outputText value="#{item.descricao}"/>
+                                        </p:column>
+
+                                        <p:column headerText="Faixa final" sortBy="#{item.faixaFinal}">
+                                            <h:outputText value="#{item.faixaFinal}"/>
+                                        </p:column>
+                                        <p:column headerText="Faixa inicil" sortBy="#{item.faixaInicial}">
+                                            <h:outputText value="#{item.faixaInicial}"/>
+                                        </p:column>
+                                        <p:column headerText="Tipo" sortBy="#{item.tipo}">
+                                            <h:outputText rendered="#{item.tipo eq 'R'}" value="Restringe"/>
+                                            <h:outputText rendered="#{item.tipo eq 'P'}" value="Permite"/>
+                                        </p:column>
+
+                                        <p:column width="117" headerText="Ações" >
+
+                                            <div class="actions">
+                                                <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Alterar controle de acesso ao ip" action="#{controleAcessoIpControle.doStartAlterar()}"  >
+                                                    <i class="fa fa-edit"></i>
+                                                    <f:setPropertyActionListener value="#{item}" target="#{controleAcessoIpControle.controleAcessoIpSelecionado}"/>
+                                                </h:commandLink>
+
+                                                <h:commandLink  styleClass="btn btn-circle btn-icon-only btn-default icones" title="Remover controle de acesso ao ip" action="#{controleAcessoIpControle.doFinishExcluir()}" onclick="return confirm('Tem certeza que deseja excluir este controle de acesso ao ip ?');" >
+                                                    <i class="icon-trash"></i>
+                                                    <f:setPropertyActionListener value="#{item}" target="#{controleAcessoIpControle.controleAcessoIpSelecionado}"/>
+                                                </h:commandLink>
+
+                                                <h:commandLink styleClass="btn btn-circle btn-icon-only btn-default icones" title="Auditoria" action="#{controleAcessoIpControle.doShowAuditoria()}" >
+                                                    <i class="fa fa-history"></i>
+                                                    <f:setPropertyActionListener value="#{item}" target="#{controleAcessoIpControle.controleAcessoIpSelecionado}"/>
+                                                </h:commandLink>
+
+                                            </div>
+
+                                        </p:column>
+
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </h:form>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

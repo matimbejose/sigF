@@ -1,0 +1,132 @@
+.login-body {
+    background: url("\#{resource['harmony-layout:images/template/image-bg.svg']}") no-repeat;
+    background-size: cover;
+    width: 100%;
+
+    .logo {
+        position: relative;
+        padding: 50px 154px;
+
+        img {
+            height: 40px;
+            width: auto;
+            vertical-align: middle;
+        }
+
+        .app-name {
+            font-weight: bold;
+            font-size: 24px;
+            vertical-align: middle;
+            margin-left: 12px;
+            color: #ffffff;
+        }
+    }
+
+    .login-panel {
+        position: relative;
+        background-color: #f4f4f4;
+        height: 444px;
+        width: 760px;
+        @include shadow(0 1px 3px 0 rgba(0, 0, 0, 0.16));
+        margin: 0 auto;
+
+        .mobile {
+            display: none;
+        }
+
+        .left-part {
+            float: left;
+            width: 50%;
+            padding: 36px 75px 36px 36px;
+
+            .login-panel-header {
+                font-size: 28px;
+                font-weight: 600;
+                text-align: left;
+                color: #333333;
+            }
+
+            .login-panel-subheader {
+                font-size: 17px;
+                display: block;
+                text-align: left;
+                color: #666666;
+                margin-top: 6px;
+            }
+
+            .ui-inputfield {
+                width: 100%;
+                margin-top: 6px;
+                margin-bottom: 24px;
+                display: block;
+            }
+
+            .ui-inputswitch {
+                vertical-align: middle;
+                margin-right: 12px;
+            }
+
+            .ui-outputlabel {
+                vertical-align: middle;
+            }
+
+            button {
+                margin-top: 28px;
+            }
+        }
+
+        .right-part {
+            float: right;
+        }
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .login-body {
+        .logo {
+            padding: 50px 80px;    
+        }
+        .login-panel {
+            width: 308px;
+            height: 528px;
+
+            .mobile {
+                display: block;
+                width: 100%;
+            }
+        
+            .left-part {
+                float: none;
+                width: 100%;
+                padding: 24px 17px;
+
+                .login-panel-header {
+                    font-size: 21px;
+                }
+    
+                .login-panel-subheader {
+                    font-size: 15px;
+                }
+
+                button {
+                    width: 100%;
+                }
+
+                .ui-commandlink {
+                    margin-top: 25px;
+                    width: 100%;
+                    text-align: center;
+                }
+            }
+
+            .right-part {
+                float: none;
+                width: 100%;
+                
+                img {
+                    display: none;  
+                }
+            }
+        }
+    }
+}

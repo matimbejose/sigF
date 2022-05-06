@@ -1,0 +1,36 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/restrito/generic/auditoria.xhtml">
+        <ui:define name="remotes">
+            <h:commandButton id="remoteBack" action="listaBoleto.xhtml"/>
+        </ui:define>
+
+        <ui:param name="title" value="Emitidos"/>
+        <ui:param name="descricaoMenu" value="Venda / Boleto"/>
+        <ui:param name="caminhoAuditoria" value="/restrito/boleto/listaAuditoriaBoleto.xhtml"/>
+        <ui:param name="objetoSelecionado" value="#{boletoControle.boletoSelecionado.nossoNumero}"/>
+
+        <ui:param name="model" value="#{boletoControle.dadosAuditoria}"/>
+
+        <ui:define name="colunas">
+
+            <p:column headerText="Nosso número" sortBy="#{item[0].nossoNumero}">
+                <h:outputText value="#{item[0].nossoNumero}"/>
+            </p:column>
+
+            <p:column headerText="Nosso número" sortBy="#{item[0].valor}">
+                <h:outputText value="#{item[0].valor}"/>
+            </p:column>
+
+
+        </ui:define>
+
+    </ui:composition>
+
+</html>

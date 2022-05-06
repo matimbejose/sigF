@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Carta de correção"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Nota fiscal</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/notaFiscalProduto/listaNotaFiscalProduto.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteSave" action="#{notaFiscalProdutoControle.doFinishAddCorrecao()}"/>
+            <h:commandButton id="remoteCancel" action="listaNotaFiscalProdutoCorrecao.xhtml" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <div class="row">
+                <div class="col-md-12 ">
+                    <div class="form-body">
+                        <div class="card">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label"><span class="required">* </span>Data da correção</label>
+                                        <p:calendar navigator="true" required="true"
+                                                    requiredMessage="Informe a data da correção"
+                                                    mask="true" value="#{notaFiscalProdutoControle.nfCorrecaoSelecionado.data}"
+                                                    pattern="dd/MM/yyyy HH:mm"/>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label"><span class="required">* </span>Número da sequência</label>
+                                        <p:inputNumber value="#{notaFiscalProdutoControle.nfCorrecaoSelecionado.nroSequencia}" decimalPlaces="0" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group form-md-line-input">
+                                        <label class="control-label"><span class="required">* </span>Correção</label>
+                                        <p:inputTextarea value="#{notaFiscalProdutoControle.nfCorrecaoSelecionado.descricaoCorrecao}"
+                                                         required="true" requiredMessage="Informe a correção"
+                                                         styleClass="form-control" style="min-height: 80px;"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

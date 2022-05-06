@@ -1,0 +1,127 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Aluno"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="viewname">
+            <li>Escola</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/aluno/listaAluno.xhtml"> #{title}</p:link></li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteSave" action="#{alunoControle.doFinishAdd()}"/>
+            <h:commandButton id="remoteCancel" action="listaAluno.xhtml" immediate="true"/>
+            <h:commandButton id="remoteHelp" rendered="false" action="#{turmaControle.mostrarAjuda()}" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <div class="form-body">
+                <div class="card">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label"><span class="required">* </span> Aluno</label>
+
+                                <p:inputText value="#{alunoControle.solicitanteTurmaSelecionado.idSolicitante.nome}"
+                                             rendered="#{alunoControle.solicitanteTurmaSelecionado.id ne null}"
+                                             disabled="true" styleClass="form-control" />
+
+                                <p:selectOneMenu id="auto" value="#{alunoControle.solicitanteTurmaSelecionado.idSolicitante}"
+                                                 panelStyle="width:250px" effect="fade"
+                                                 var="t" filter="true" filterMatchMode="startsWith"
+                                                 rendered="#{alunoControle.solicitanteTurmaSelecionado.id eq null}"
+                                                 required="true"
+                                                 requiredMessage="Informe o aluno"
+                                                 converter="#{genericConverter}">
+                                    <p:column>
+                                        <h:outputText value="#{t.nome}" />
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{t.cpfCnpj}" />
+                                    </p:column>
+
+                                    <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                    <f:selectItems value="#{alunoControle.alunos}"  var="c" itemLabel="#{c.nome}" itemValue="#{c}"/>
+
+                                </p:selectOneMenu>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label">
+                                    <span class="required">* </span>
+                                    Data da inscrição
+                                </label>
+                                <p:calendar navigator="true"  value="#{alunoControle.solicitanteTurmaSelecionado.dataInscricao}" maxdate="#{alunoControle.hoje}"
+                                             required="true" requiredMessage="Informe a data da inscriçãp" pattern="dd/MM/yyyy" mask="true"/>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label"><span class="required">* </span>Situação</label>
+                                <p:selectOneMenu value="#{alunoControle.solicitanteTurmaSelecionado.situacao}"
+                                                 required="true"
+                                                 requiredMessage="Informe a situação">
+                                    <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                    <f:selectItem itemLabel="Pago" itemValue="P"/>
+                                    <f:selectItem itemLabel="Não pago" itemValue="N"/>
+                                    <p:ajax event="change" process="@this" update="pnlPagamento" />
+                                </p:selectOneMenu>
+                            </div>
+                        </div>
+                    </div>
+                    <p:outputPanel id="pnlPagamento">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group form-md-line-input">
+                                    <label class="control-label">
+                                        <p:row rendered="#{alunoControle.solicitanteTurmaSelecionado.situacao eq 'P'}"><span class="required">* </span></p:row>
+                                        Valor
+                                    </label>
+                                    <p:inputText value="#{alunoControle.solicitanteTurmaSelecionado.valor}"
+                                                 rendered="#{alunoControle.solicitanteTurmaSelecionado.situacao ne 'P'}"
+                                                 disabled="true" styleClass="form-control" />
+
+                                    <p:inputNumber value="#{alunoControle.solicitanteTurmaSelecionado.valor}"
+                                                   symbol="R$ "
+                                                   rendered="#{alunoControle.solicitanteTurmaSelecionado.situacao eq 'P'}"
+                                                   decimalSeparator="," thousandSeparator="." decimalPlaces="2"
+                                                   required ="true" requiredMessage="Informe o valor." />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group form-md-line-input">
+                                    <label class="control-label">
+                                        Desconto
+                                    </label>
+                                    <p:inputText value="#{alunoControle.solicitanteTurmaSelecionado.desconto}"
+                                                 rendered="#{alunoControle.solicitanteTurmaSelecionado.situacao ne 'P'}"
+                                                 disabled="true" styleClass="form-control" />
+
+                                    <p:inputNumber value="#{alunoControle.solicitanteTurmaSelecionado.desconto}"
+                                                   symbol="R$ "
+                                                   rendered="#{alunoControle.solicitanteTurmaSelecionado.situacao eq 'P'}"
+                                                   decimalSeparator="," thousandSeparator="." decimalPlaces="2"  />
+                                </div>
+                            </div>
+                        </div>
+                    </p:outputPanel>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

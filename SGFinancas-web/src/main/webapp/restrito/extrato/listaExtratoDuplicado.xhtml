@@ -1,0 +1,119 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <ui:param name="title" value="Extratos duplicados"/>
+        <ui:define name="title">#{title}</ui:define>
+        <ui:define name="viewname">
+            <li>Financeiro</li>
+            <li>/</li>
+            <li><p:link outcome="/restrito/extrato/listaExtratoDuplicado.xhtml"> #{title}</p:link></li>
+        </ui:define>
+        <ui:define name="content">
+            <script type="text/css" >
+                .ui-widget-header {
+                    color: rgb(51, 51, 51);
+                    font-weight: bold;
+                    border-width: 1px;
+                    border-style: solid;
+                    border-color: rgb(238, 238, 238);
+                    border-image: initial;
+                    background: red !important;
+                }
+            </script>
+
+            <h:messages class="alertMessage" errorClass="alert alert-danger" infoClass="alert alert-success"/>
+            <h:form acceptcharset="ISO-8859-1">
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <!-- BEGIN EXAMPLE TABLE PORTLET-->
+                        <div class="portlet light bordered">
+
+                            <div class="row">
+
+                                <div class="portlet-title">
+
+                                    <div class="caption">
+                                        <h:column>
+                                            <span class="caption-subject font-dark sbold uppercase"> Extratos duplicados</span>
+                                        </h:column>
+                                    </div>
+
+                                </div>
+                                <div class="col-md-12">
+                                    <p:dataTable value="#{extratoValidacaoControle.listaExtratosDuplicados}" emptyMessage="Nenhum registro encontrado." var="item" id="tbl" widgetVar="tbl" rowsPerPageTemplate="10,20,30" lazy="true" rows="10" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="Total de registros: {totalRecords}" styleClass="card p-0 ui-datatable-scrollable ui-datatable-striped ui-datatable-sm ui-datatable-gridlines ui-datatable-reflow">
+
+
+                                        <p:column headerText="Conta bancaria">
+                                            <h:outputText value="#{item.idContaBancaria.descricao}"/>
+                                        </p:column>
+
+                                        <p:column headerText="Descrição">
+                                            <h:outputText value="#{item.descricao}"/>
+                                        </p:column>
+
+                                        <p:column headerText="Tipo"  width="80">
+                                            <h:outputText value="#{extratoContaCorrenteControle.buscarTipo(item.tipo)}"/>
+                                        </p:column>
+
+                                        <p:column headerText="Data"  width="115">
+                                            <h:outputText value="#{item.dataMovimentacao}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                                            </h:outputText>
+                                        </p:column>
+
+                                        <p:column headerText="Saldo anterior"  style="text-align: right" width="135">
+                                            <h:outputText value="#{item.saldoAnterior}" rendered="#{item.saldoAnterior ge 0}">
+                                                <f:convertNumber type="currency" locale="pt_BR" />
+                                            </h:outputText>
+                                            <h:outputText value="#{item.saldoAnterior}" style="color: red" rendered="#{item.saldoAnterior lt 0}">
+                                                <f:convertNumber type="currency" locale="pt_BR" />
+                                            </h:outputText>
+                                        </p:column>
+
+                                        <p:column headerText="Valor"  style="text-align: right" width="110">
+                                            <h:outputText value="#{item.valor}" rendered="#{item.tipo eq 'C'}">
+                                                <f:convertNumber type="currency" locale="pt_BR" />
+                                            </h:outputText>
+                                            <h:outputText value="#{-item.valor}" style="color: red" rendered="#{item.tipo eq 'D'}">
+                                                <f:convertNumber type="currency" locale="pt_BR" />
+                                            </h:outputText>
+                                        </p:column>
+
+                                        <p:column headerText="Saldo" style="text-align: right" width="145">
+                                            <h:outputText value="#{item.saldo}" rendered="#{item.saldo ge 0}">
+                                                <f:convertNumber type="currency" locale="pt_BR" />
+                                            </h:outputText>
+                                            <h:outputText value="#{item.saldo}" style="color: red" rendered="#{item.saldo lt 0}">
+                                                <f:convertNumber type="currency" locale="pt_BR" />
+                                            </h:outputText>
+                                        </p:column>
+
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <h:panelGrid columns="4" >
+                                    <h:commandButton action="#{extratoValidacaoControle.doFinishAtualizarContasComExtratoDuplicado()}" styleClass="btn green " value="Atualizar extrato" />
+
+                                    <p:spacer width="10" height="10" />
+
+                                    <h:commandButton action="listaExtratoContaCorrente.xhtml" styleClass="btn default " value="Voltar" />
+                                </h:panelGrid>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </h:form>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

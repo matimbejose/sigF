@@ -1,0 +1,112 @@
+.exception-body {
+    background: url("\#{resource['harmony-layout:images/template/image-bg.svg']}") no-repeat;
+    background-size: cover;
+    width: 100%;
+
+    .logo {
+        position: relative;
+        padding: 50px 154px;
+
+        img {
+            height: 40px;
+            width: auto;
+            vertical-align: middle;
+            background-size: cover;
+        }
+
+        .app-name {
+            font-weight: bold;
+            font-size: 24px;
+            vertical-align: middle;
+            margin-left: 12px;
+            color: #ffffff;
+        }
+    }
+
+    .exception-panel {
+        position: relative;
+        background-color: #f4f4f4;
+        height: 444px;
+        width: 760px;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.16);
+        margin: 0 auto;
+
+        .mobile {
+            display: none;
+        }
+
+        .left-part {
+            float: left;
+            width: 50%;
+            padding: 36px 42px 36px 36px;
+
+            .exception-panel-header {
+                font-size: 28px;
+                font-weight: 600;
+                text-align: left;
+                color: #333333;
+            }
+
+            .exception-panel-subheader {
+                font-size: 17px;
+                display: block;
+                text-align: left;
+                color: #666666;
+                margin-top: 14px;
+            }
+
+            button {
+                margin-top: 260px;
+            }
+        }
+
+        .right-part {
+            float: right;   
+        }
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .exception-body {
+        .logo {
+            padding: 50px 80px;    
+        }
+        
+        .exception-panel {
+            width: 308px;
+            height: 528px;
+
+            .mobile {
+                display: block;
+                width: 100%;
+            }
+        
+            .left-part {
+                float: none;
+                width: 100%;
+                padding: 24px 17px;
+
+                .exception-panel-header {
+                    font-size: 21px;
+                }
+    
+                .exception-panel-subheader {
+                    font-size: 15px;
+                }
+
+                button {
+                    width: 100%;
+                }
+            }
+
+            .right-part {
+                float: none;
+                width: 100%;
+                
+                img {
+                    display: none;  
+                }
+            }
+        }
+    }
+}

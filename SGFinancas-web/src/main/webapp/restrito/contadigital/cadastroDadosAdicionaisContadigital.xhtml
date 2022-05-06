@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/template.xhtml">
+
+        <f:metadata>
+            <f:event listener="#{empresaControle.preecherEmpresa()}" type="preRenderView"/>
+        </f:metadata>
+
+        <ui:param name="title" value="Cadastro Dados Adicionais Conta Digital"/>
+
+
+
+        <ui:define name="viewname">
+            <li>#{title}</li>
+        </ui:define>
+
+        <ui:define name="remotes">
+            <h:commandButton id="remoteSave" action="#{empresaControle.doFinishCriarContaDigital()}"/>
+            <h:commandButton id="remoteCancel" action="/restrito/empresa/listaEmpresa.xhtml" immediate="true"/>
+            <h:commandButton id="remoteHelp" rendered="false" action="#{empresaControle.mostrarAjuda()}" immediate="true"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <div class="form-body">
+                <h1> Cadastro Conta digital</h1>
+                <div class="row">
+
+                    <div class="col-md-6 col-sm-12">
+                        <div class="card card-w-title">
+
+                            <div class="form-body">
+                                <div class="row">
+                                    <h5 class="col-md-12 page-header"> Informações da Empresa</h5>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">Empresa: </label>
+                                            <p:inputText value="#{empresaControle.empresaSelecionada.descricao}"
+                                                         disabled="true" styleClass="form-control"
+                                                         />
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label">CNPJ: </label>
+                                            <p:inputText value=" #{empresaControle.empresaSelecionada.cnpj}"
+                                                         disabled="true" styleClass="form-control"
+                                                         />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <h5 class="col-md-12 page-header"> Usuário da conta digital </h5>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">E-mail</label>
+                                            <p:inputText value="#{empresaControle.empresaSelecionada.email}"
+                                                         disabled="true"
+                                                         styleClass="form-control"/>
+                                        </div>
+
+
+                                        <div class="form-group">
+                                            <label><span class="required">* </span>Senha</label>
+                                            <p:inputText
+                                                value="#{empresaControle.empresaSelecionada.senha}"
+                                                type="password"
+                                                required="true"
+                                                requiredMessage="Informe a senha"/>
+                                            <br/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                        <div class="card card-w-title">
+                            <div class="form-body">
+                                <div class="row">
+                                    <h5 class="col-md-12 page-header"> Informações do Titular</h5>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>Responsável</label>
+                                            <p:inputText class="form-control"
+                                                         disabled="true"
+                                                         value="#{empresaControle.empresaSelecionada.responsavel}"/>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <span class="required">* </span><label>CPF </label>
+                                            <p:inputMask mask="999.999.999-99"
+                                                         value="#{empresaControle.empresaSelecionada.cpfRepresentante}"
+                                                         autocomplete="off"/>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <span class="required">* </span>
+                                            <label>Data Nascimento</label>
+                                            <p:calendar navigator="true" mask="99/99/9999"
+                                                        navigator="true"
+                                                        value="#{empresaControle.empresaSelecionada.dataNascimentoRepresentante}"
+                                                        pattern="dd/MM/yyyy"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <span class="required">* </span><label>Telefone</label>
+                                            <p:inputMask mask="(99) 9999-9999?9" value="#{empresaControle.empresaSelecionada.telefone}" autocomplete="off"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <span class="required">* </span>
+                                            <label>Celular</label>
+                                            <p:inputMask mask="(99) 99999-9999" value="#{empresaControle.empresaSelecionada.celularRepresentante}" autocomplete="off" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <h5 class="col-md-12 page-header"> Conta Para transferencia Digital </h5>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label"><span
+                                                    class="required">* </span>Conta bancária vinculada a conta digital</label>
+                                            <p:selectOneMenu value="#{empresaControle.contaBancariaSelecionada}"
+                                                             required="true"
+                                                             requiredMessage="Informe a conta bancária"
+                                                             panelStyle="width:180px" effect="fade"
+                                                             var="t" style="width:160px" filter="true"
+                                                             filterMatchMode="startsWith"
+                                                             converter="#{genericConverter}">
+                                                <p:column>
+                                                    <h:outputText value="#{t.descricao}"/>
+                                                </p:column>
+
+                                                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                                                <f:selectItems value="#{contaBancariaControle.contaBancarias}"
+                                                               var="contaBancaria"
+                                                               itemLabel="#{contaBancaria.descricao}"
+                                                               itemValue="#{contaBancaria}"/>
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <h5 class="col-md-12 page-header"></h5>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <br/> <br/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+    </ui:composition>
+</html>
+

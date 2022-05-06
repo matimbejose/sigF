@@ -1,0 +1,48 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/restrito/generic/auditoria.xhtml">
+        <ui:define name="remotes">
+            <h:commandButton id="remoteBack" action="listaContaReceber.xhtml"/>
+        </ui:define>
+
+        <ui:param name="descricaoMenu" value="Venda"/>
+        <ui:param name="title" value="Conta a receber"/>
+        <ui:param name="caminhoAuditoria" value="/restrito/contaReceber/listaAuditoriaContaReceber.xhtml"/>
+        <ui:param name="objetoSelecionado" value="#{contaReceberControle.contaSelecionada.idPlanoConta.descricao}"/>
+
+        <ui:param name="model" value="#{contaReceberControle.dadosAuditoria}"/>
+        <ui:define name="colunas">
+            <p:column headerText="Data Vencimento" sortBy="#{item[0].dataVencimento}">
+                <h:outputText value="#{item[0].dataVencimento}">
+                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                </h:outputText>
+            </p:column>
+
+            <p:column headerText="Valor" sortBy="#{item[0].valor}">
+                <h:outputText value="#{item[0].valor}">
+                    <f:convertNumber currencySymbol="R$" type="currency"/>
+                </h:outputText>
+            </p:column>
+
+            <p:column headerText="Valor total" sortBy="#{item[0].valorTotal}">
+                <h:outputText value="#{item[0].valorTotal}">
+                    <f:convertNumber currencySymbol="R$" type="currency"/>
+                </h:outputText>
+            </p:column>
+
+            <p:column headerText="Valor pago" sortBy="#{item[0].ip}">
+                <h:outputText value="#{item[0].valorPago}">
+                    <f:convertNumber currencySymbol="R$" type="currency"/>
+                </h:outputText>
+            </p:column>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <div class="form-body">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group form-md-line-input">
+                    <p:outputLabel for="@next" value="Item do plano de conta p/ conta bancária"/>
+                    <p:selectOneMenu value="#{parametroSistemaControle.parametroSistemaSelecionado.idPlanoContaContaBancaria}"
+                                     panelStyle="width:180px" effect="fade"
+                                     var="t" style="width:160px" filter="true" filterMatchMode="startsWith"
+                                     converter="#{genericConverter}"
+                                     required="true"
+                                     requiredMessage="Informe um item do Item do plano de conta p/ conta bancária">
+                        <p:column>
+                            <h:outputText value="#{t.codigo}" />
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{t.descricao}" />
+                        </p:column>
+
+                        <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                        <f:selectItems value="#{planoContaControle.planosContaPorEmpresa()}"  var="planoConta"
+                                       itemLabel="#{planoConta.descricao}" itemValue="#{planoConta}"
+                                       itemDisabled="#{planoConta.tipoIndicador eq 'N'}" />
+
+                    </p:selectOneMenu>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group form-md-line-input">
+                    <p:outputLabel for="@next" value="Item do plano de conta p/ cliente"/>
+                    <p:selectOneMenu value="#{parametroSistemaControle.parametroSistemaSelecionado.idPlanoContaCliente}"
+                                     panelStyle="width:180px" effect="fade"
+                                     var="t" style="width:160px" filter="true" filterMatchMode="startsWith"
+                                     converter="#{genericConverter}"
+                                     required="true"
+                                     requiredMessage="Informe um item do Item do plano de conta p/ cliente">
+                        <p:column>
+                            <h:outputText value="#{t.codigo}" />
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{t.descricao}" />
+                        </p:column>
+
+                        <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                        <f:selectItems value="#{planoContaControle.planosContaPorEmpresa()}"  var="planoConta"
+                                       itemLabel="#{planoConta.descricao}" itemValue="#{planoConta}"
+                                       itemDisabled="#{planoConta.tipoIndicador eq 'N'}" />
+
+                    </p:selectOneMenu>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group form-md-line-input">
+                    <p:outputLabel for="@next" value="Item do plano de conta p/ fornecedor"/>
+                    <p:selectOneMenu value="#{parametroSistemaControle.parametroSistemaSelecionado.idPlanoContaFornecedor}"
+                                     panelStyle="width:180px" effect="fade"
+                                     var="t" style="width:160px" filter="true" filterMatchMode="startsWith"
+                                     converter="#{genericConverter}"
+                                     required="true"
+                                     requiredMessage="Informe um item do Item do plano de conta p/ fornecedor">
+                        <p:column>
+                            <h:outputText value="#{t.codigo}" />
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{t.descricao}" />
+                        </p:column>
+
+                        <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                        <f:selectItems value="#{planoContaControle.planosContaPorEmpresa()}"  var="planoConta"
+                                       itemLabel="#{planoConta.descricao}" itemValue="#{planoConta}"
+                                       itemDisabled="#{planoConta.tipoIndicador eq 'N'}" />
+
+                    </p:selectOneMenu>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group form-md-line-input">
+                    <p:outputLabel for="@next" value="Item do plano de conta p/ produto"/>
+                    <p:selectOneMenu value="#{parametroSistemaControle.parametroSistemaSelecionado.idPlanoContaProduto}"
+                                     panelStyle="width:180px" effect="fade"
+                                     var="t" style="width:160px" filter="true" filterMatchMode="startsWith"
+                                     converter="#{genericConverter}"
+                                     required="true"
+                                     requiredMessage="Informe um item do Item do plano de conta p/ produto">
+                        <p:column>
+                            <h:outputText value="#{t.codigo}" />
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{t.descricao}" />
+                        </p:column>
+
+                        <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                        <f:selectItems value="#{planoContaControle.planosContaPorEmpresa()}"  var="planoConta"
+                                       itemLabel="#{planoConta.descricao}" itemValue="#{planoConta}"
+                                       itemDisabled="#{planoConta.tipoIndicador eq 'N'}" />
+
+                    </p:selectOneMenu>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group form-md-line-input">
+                    <p:outputLabel for="@next" value="Item do plano de conta p/ serviço"/>
+                    <p:selectOneMenu value="#{parametroSistemaControle.parametroSistemaSelecionado.idPlanoContaServico}"
+                                     panelStyle="width:180px" effect="fade"
+                                     var="t" style="width:160px" filter="true" filterMatchMode="startsWith"
+                                     converter="#{genericConverter}"
+                                     required="true"
+                                     requiredMessage="Informe um item do Item do plano de conta p/ serviço">
+                        <p:column>
+                            <h:outputText value="#{t.codigo}" />
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{t.descricao}" />
+                        </p:column>
+
+                        <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                        <f:selectItems value="#{planoContaControle.planosContaPorEmpresa()}"  var="planoConta"
+                                       itemLabel="#{planoConta.descricao}" itemValue="#{planoConta}"
+                                       itemDisabled="#{planoConta.tipoIndicador eq 'N'}" />
+
+                    </p:selectOneMenu>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group form-md-line-input">
+                    <label class="control-label"><span class="required"> * </span>Item do plano de conta p/ transportadora</label>
+                    <p:selectOneMenu value="#{parametroSistemaControle.parametroSistemaSelecionado.idPlanoContaTransportadora}"
+                                     panelStyle="width:180px" effect="fade"
+                                     var="t" style="width:160px" filter="true" filterMatchMode="startsWith"
+                                     converter="#{genericConverter}"
+                                     required="true"
+                                     requiredMessage="Informe um item do Item do plano de conta p/ produto">
+                        <p:column>
+                            <h:outputText value="#{t.codigo}" />
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{t.descricao}" />
+                        </p:column>
+
+                        <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                        <f:selectItems value="#{planoContaControle.planosContaPorEmpresa()}"  var="planoConta"
+                                       itemLabel="#{planoConta.descricao}" itemValue="#{planoConta}"
+                                       itemDisabled="#{planoConta.tipoIndicador eq 'N'}" />
+
+                    </p:selectOneMenu>
+                </div>
+            </div>
+        </div>
+        <hr/>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group form-md-line-input">
+                    <p:outputLabel for="@next" value="Plano de conta padrão para venda"/>
+                    <p:selectOneMenu value="#{parametroSistemaControle.parametroSistemaSelecionado.idPlanoContaVendaPadrao}"
+                                     panelStyle="width:180px" effect="fade"
+                                     var="t" style="width:160px" filter="true" filterMatchMode="startsWith"
+                                     converter="#{genericConverter}"
+                                     required="true"
+                                     requiredMessage="Informe um item do plano de contas padrão para venda">
+                        <p:column>
+                            <h:outputText value="#{t.codigo}" />
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{t.descricao}" />
+                        </p:column>
+
+                        <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                        <f:selectItems value="#{planoContaControle.listarPlanosContaParaTransacoesContaReceber()}"  var="planoContaVenda"
+                                       itemLabel="#{planoContaVenda.descricao}" itemValue="#{planoContaVenda}"
+                                       itemDisabled="#{planoContaVenda.tipoIndicador eq 'N'}" />
+
+                    </p:selectOneMenu>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group form-md-line-input">
+                    <p:outputLabel for="@next" value="Plano de conta padrão para compra"/>
+                    <p:selectOneMenu value="#{parametroSistemaControle.parametroSistemaSelecionado.idPlanoContaCompraPadrao}"
+                                     panelStyle="width:180px" effect="fade"
+                                     var="t" style="width:160px" filter="true" filterMatchMode="startsWith"
+                                     converter="#{genericConverter}"
+                                     required="true"
+                                     requiredMessage="Informe um item do plano de contas padrão para compra">
+                        <p:column>
+                            <h:outputText value="#{t.codigo}" />
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{t.descricao}" />
+                        </p:column>
+
+                        <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                        <f:selectItems value="#{planoContaControle.listarPlanosContaParaTransacoesCompra()}"  var="planoContaCompra"
+                                       itemLabel="#{planoContaCompra.descricao}" itemValue="#{planoContaCompra}"
+                                       itemDisabled="#{planoContaCompra.tipoIndicador eq 'N'}" />
+
+                    </p:selectOneMenu>
+                </div>
+            </div>
+            <ui:remove>
+                <div class="col-md-6">
+                    <div class="form-group form-md-line-input">
+                        <label class="control-label"><span class="required"> * </span>Plano de conta p/ funcionário</label>
+                        <p:selectOneMenu value="#{parametroSistemaControle.parametroSistemaSelecionado.idPlanoContaFuncionario}"
+                                         panelStyle="width:180px" effect="fade"
+                                         var="t" style="width:160px" filter="true" filterMatchMode="startsWith"
+                                         converter="#{genericConverter}"
+                                         required="true"
+                                         requiredMessage="Informe um item do plano de conta p/ produto">
+                            <p:column>
+                                <h:outputText value="#{t.codigo}" />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{t.descricao}" />
+                            </p:column>
+
+                            <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                            <f:selectItems value="#{planoContaControle.planosContaPorEmpresa()}"  var="planoConta"
+                                           itemLabel="#{planoConta.descricao}" itemValue="#{planoConta}"
+                                           itemDisabled="#{planoConta.tipoIndicador eq 'N'}" />
+
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+            </ui:remove>
+
+        </div>
+    </div>
+
+</html>

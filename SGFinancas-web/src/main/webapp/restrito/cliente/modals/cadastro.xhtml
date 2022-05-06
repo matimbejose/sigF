@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <ui:composition template="/WEB-INF/templateModalCadastro.xhtml">
+
+        <ui:param name="title" value="Cadastro de cliente"/>
+
+        <ui:define name="title">#{title}</ui:define>
+
+        <ui:define name="content">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-8">
+                        <div class="form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Nome"/>
+                            <p:inputText value="#{clienteControle.dtoCadastro.nome}" styleClass="form-control" required="true"/>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="CPF/CNPJ"/>
+                            <p:inputText value="#{clienteControle.dtoCadastro.cpfCnpj}" styleClass="form-control"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Telefone Celular"/>
+                            <p:inputText value="#{clienteControle.dtoCadastro.telefoneCelular}" styleClass="form-control"/>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Email"/>
+                            <p:inputText value="#{clienteControle.dtoCadastro.email}" styleClass="form-control"/>
+                        </div>
+                    </div>
+                </div>
+                <p:row rendered="#{clienteControle.ehCpf()}">
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Inscrição municipal"/>
+                                <p:inputText value="#{clienteControle.dtoCadastro.inscricaoMunicipal}" styleClass="form-control"/>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group form-md-line-input">
+                                <p:outputLabel for="@next" value="Inscrição estadual"/>
+                                <p:inputText value="#{clienteControle.dtoCadastro.inscricaoEstadual}" styleClass="form-control"/>
+                            </div>
+                        </div>
+                    </div>
+                </p:row>
+                <div class="row">
+                    <div class="col-3">
+                        <div class="form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="CEP"/>
+                            <p:inputText value="#{clienteControle.dtoCadastro.cep}" styleClass="form-control"/>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Endereço"/>
+                            <p:inputText value="#{clienteControle.dtoCadastro.endereco}" styleClass="form-control"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-3">
+                        <div class="form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Número"/>
+                            <p:inputText value="#{clienteControle.dtoCadastro.numero}" styleClass="form-control"/>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Bairro"/>
+                            <p:inputText value="#{clienteControle.dtoCadastro.bairro}" styleClass="form-control"/>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group form-md-line-input">
+                            <p:outputLabel for="@next" value="Complemento"/>
+                            <p:inputText value="#{clienteControle.dtoCadastro.complemento}" styleClass="form-control"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/templateModal.xhtml">
+
+        <ui:define name="title"></ui:define>
+
+        <ui:define name="content">
+            <p:carousel value="#{orcamentoControle.listaAnexos}" var="img" id="carrossel">
+                <p:row rendered="#{img.conteudo eq null}">
+                    <div onclick="PF('input').jq.find('input[type=file]').click();" class="text-blue-madison text-center" style="padding-top: 130px;cursor: pointer;">
+                        <i class="fa fa-5x fa-plus-circle"></i>
+                        <br/>
+                        <div class="fa-2x" style="padding-top: 105px;">Adicionar</div>
+                    </div>
+                </p:row>
+                <p:row rendered="#{img.conteudo ne null}">
+                    <div class="img-container">
+                        <img src="#{img.conteudo}" class="foto-container"/>
+                    </div>
+                    <div class="row">
+                        <div class="col file-name-container pr-0 pt-1 text-center">
+                            #{img.nome}
+                        </div>
+                        <div class="col-2 remove-btn-container pl-0">
+                            <p:commandButton icon="fa fa-fw fa-trash-o" action="#{orcamentoControle.removerAnexo(img)}" update="carrossel"/>
+                        </div>
+                    </div>
+                </p:row>
+            </p:carousel>
+            <p:fileUpload fileUploadListener="#{orcamentoControle.setPart}" mode="advanced" widgetVar="input" style="display: none;" process="@this"
+                          update="carrossel" auto="true"/>
+            <style>
+                .ui-carousel img {
+                    max-width: 500px;
+                    max-height: 400px;
+                }
+                .ui-carousel-item {
+                    height: 347px;
+                }
+                .img-container {
+                    display: table-cell;
+                    vertical-align: middle;
+                    text-align: center;
+                    width: 378px;
+                    height: 320px;
+                    padding-top: 10px;
+                }
+                img.foto-container {
+                    max-height: 100%;
+                }
+                div.remove-btn-container {
+                    max-width: 45px;
+                }
+                .remove-btn-container button {
+                    width: 100%;
+                    height: 25px;
+                }
+                .remove-btn-container button.ui-button span.ui-button-text {
+                    padding: 3px 14px;
+                }
+            </style>
+        </ui:define>
+
+    </ui:composition>
+</html>

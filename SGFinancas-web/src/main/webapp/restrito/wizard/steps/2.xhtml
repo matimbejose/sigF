@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <div class="row">
+        <div class="col my-4 mx-4">
+            <div class="balao">
+                <p>...Ainda complementando as informações da sua empresa:</p>
+                <p>1-Para emitir nota fiscal de produto, favor informar o tipo de certificado digital (A1 - anexar arquivo do certificado; A3 - plugar token) e preencher os campos de Inscrição Estadual e Inscrição Municipal;</p>
+                <p>2-Para emitir nota fiscal de serviço favor informar o tipo de certificado digital (A1 - anexar arquivo do certificado; A3 - plugar token) e preencher os campo de Inscrição Municipal</p>
+                <p>...Caso não emita notas fiscais ou queira cadastrar essas informações posteriormente clique no botão PULAR e depois acesse na lateral esquerda do SG Finanças, MENU->CADASTRO->MINHA EMPRESA->BOTÃO ALTERAR EMPRESA->ABA INFORMAÇÕES PARA NOTA FISCAL...</p>
+                <p>...Se você não emite notas fiscais, clique no botão PULAR...</p>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h4>Minha empresa</h4>
+            <h5>Informações para Nota Fiscal (Certificado digital / Nota Fiscal)</h5>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col form-group form-md-line-input">
+            <p:outputLabel for="@next" value="Tipo de certificado digital"/>
+            <p:selectOneMenu value="#{wizardControle.tela2TipoCertificadoDigital}">
+                <f:selectItem itemLabel="-- Selecione -- " noSelectionOption="true"/>
+                <f:selectItem itemLabel="Certificado A1" itemValue="A1"/>
+                <f:selectItem itemLabel="Certificado A3" itemValue="A3"/>
+                <p:ajax event="change"  process="@this"/>
+            </p:selectOneMenu>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col form-group form-md-line-input">
+            <p:outputLabel for="@next" value="Inscrição estadual"/>
+            <p:inputText value="#{wizardControle.tela2InscricaoEstadual}"/>
+        </div>
+        <div class="col form-group form-md-line-input">
+            <p:outputLabel for="@next" value="Inscrição municipal"/>
+            <p:inputText value="#{wizardControle.tela2InscricaoMunicipal}"/>
+        </div>
+    </div>
+</html>
